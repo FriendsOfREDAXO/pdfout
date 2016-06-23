@@ -4,7 +4,7 @@ Dieses Addon stellt den HTML to PDF converter DOMpdf zur Verfügung.
 
 --
 
-Nach der Instaalltion und Aktivierung des Addons kann folgendes am Anfang des
+Nach der Installation und Aktivierung des Addons kann folgendes am Anfang des
 Ausgabe Templates eingegeben werden:
 
 	<?php
