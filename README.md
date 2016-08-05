@@ -1,6 +1,6 @@
 ## PDF out
 
-Dieses Addon stellt den HTML to PDF converter DOMpdf zur Verfügung.
+Dieses Addon stellt den HTML to PDF converter DOMpdf (http://dompdf.github.io) zur Verfügung.
 
 --
 
@@ -11,13 +11,18 @@ Ausgabe Templates eingegeben werden:
 	  // ?pdf=1
 	  $print_pdf = rex_request('pdf', 'int');
 	  use Dompdf\Dompdf;
+	  use Dompdf\Options;	
 	  if ($print_pdf) {
+		  // Optionen festlegen
+		  $pdf_options = new Options(); 
+		  $pdf_options->setDpi(100); // legt die Dpi für das Dokument fest
+		  $pdf_options->set('defaultFont', 'Helvetica'); // Standard-Font
+		  // PDF erstellen
 		  $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
 		  header('Content-Type: application/pdf');
-
-		  $dompdf = new Dompdf();
+		  $dompdf = new Dompdf($pdf_options);
 		  $dompdf->loadHtml('REX_ARTICLE[]');
-		  $dompdf->setPaper('A4', 'landscape');
+		  $dompdf->setPaper('A4', 'portrait');
 		  $dompdf->render();
 		  $dompdf->stream($art_pdf_name);
 		  die();
