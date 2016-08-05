@@ -1,7 +1,7 @@
 <?php
 $file = rex_file::get(rex_path::addon('pdfout','README.md'));
 $Parsedown = new Parsedown();
-$content =  '<div id="modulsammlung">'.$Parsedown->text($file);
+$content =  '<div id="pdfout">'.$Parsedown->text($file);
 
 
 $fragment = new rex_fragment();
