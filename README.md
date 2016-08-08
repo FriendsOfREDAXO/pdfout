@@ -24,7 +24,7 @@ Ausgabe Templates eingegeben werden:
 		  $dompdf->loadHtml('REX_ARTICLE[]');
 		  $dompdf->setPaper('A4', 'portrait');
 		  $dompdf->render();
-		  $dompdf->stream($art_pdf_name);
+		  $dompdf->stream($art_pdf_name ,array('Attachment'=>false)); // bei true wird Download erzwungen
 		  die();
 		}
 	?>
