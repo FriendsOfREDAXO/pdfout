@@ -7,7 +7,7 @@ Dieses Addon stellt den HTML to PDF converter DOMpdf (http://dompdf.github.io) z
 Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden. 
 - Den nachfolgenden Code am Anfang des gewünschten Templates setzen 
 - Der Aufruf erfolgt dann über die Variable pdf=1 die über die URL übergeben wird. 
-
+''
 	<?php
 	  // ?pdf=1
 	  $print_pdf = rex_request('pdf', 'int');
