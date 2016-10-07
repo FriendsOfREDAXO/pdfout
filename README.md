@@ -1,14 +1,14 @@
 ## PDF out
 
 Dieses Addon stellt den HTML to PDF converter DOMpdf (http://dompdf.github.io) zur Verfügung.
-
+Mit PDF out kannst due deine Seiten oder Formularabfragen leicht als PDF-Dokument ausgeben.
 ___
 
 Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden.
-- Den nachfolgenden Code am Anfang des gewünschten Templates setzen
-- Der Aufruf erfolgt dann über die Variable pdf=1 die über die URL übergeben wird.
+- Den nachfolgenden Code am Anfang des gewünschten Templates oder als separates Template einsetzen
+- Der Aufruf erfolgt dann über die Variable pdf=1 die über die URL übergeben wird. Der aktuelle Artikel kann so dann als PDF ausgegeben werden. 
 
-Sofern dann an eine aufgerufenen URL **?pdf=1** angeängt wird wird der Inhalt von REX_ARTICLE[] oder REX_TEMPLATE [] als PDF ausgegeben.
+Sofern dann an eine aufgerufenen URL **?pdf=1** angeängt wird, wird der Inhalt von REX_ARTICLE[] oder REX_TEMPLATE [] als PDF ausgegeben.
 
 
 	<?php
