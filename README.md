@@ -14,9 +14,10 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angeängt wird wird der Inhalt v
 	<?php
 	  // ?pdf=1
 	  $print_pdf = rex_request('pdf', 'int');
-	  use Dompdf\Dompdf;
-	  use Dompdf\Options;
 	  if ($print_pdf) {
+	  	 // Dompdf laden
+		 use Dompdf\Dompdf;
+	  	 use Dompdf\Options;
 		  // Optionen festlegen
 		  $pdf_options = new Options();
 		  $pdf_options->setDpi(100); // legt die Dpi für das Dokument fest
