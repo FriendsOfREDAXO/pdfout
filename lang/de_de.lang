@@ -2,11 +2,4 @@ pdfout_title = PDFout
 
 pdfout_main = Hauptseite
 
-pdfout_config = Einstellungen
-pdfout_config_url = URL
-pdfout_config_ids = IDs
-pdfout_config_save = Einstellungen speichern
-pdfout_config_saved = Einstellungen wurden gespeichert!
-
-
 perm_general_pdfout[] = Rechte für PDFout-Addon

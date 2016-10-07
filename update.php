@@ -8,6 +8,7 @@
 
 // $this->getVersion() liefert die noch aktuell installierte Version
 
+/*
 if (rex_string::versionCompare($this->getVersion(), '1.1', '<')) {
     // Änderungen für Nutzer die von Versionen kleiner 1.1 kommen
 }
@@ -15,6 +16,7 @@ if (rex_string::versionCompare($this->getVersion(), '1.1', '<')) {
 if (rex_string::versionCompare($this->getVersion(), '1.2', '<')) {
     // Änderungen für Nutzer die von Versionen kleiner 1.2 kommen
 }
+*/
 
 // DB-Anpassungen:
 // rex_sql_table::get(rex::getTable('my_table'))
