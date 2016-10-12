@@ -1,7 +1,7 @@
 ## PDF out
 
 Dieses Addon stellt den HTML to PDF converter DOMpdf (http://dompdf.github.io) zur Verfügung.
-Mit PDF out kannst due deine Seiten oder Formularabfragen leicht als PDF-Dokument ausgeben.
+Mit PDF out kannst du deine Seiten oder Formularabfragen leicht als PDF-Dokument ausgeben.
 ___
 
 Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden.
