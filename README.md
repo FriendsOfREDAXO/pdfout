@@ -47,9 +47,10 @@ ___
 Font-Awsome fonts werden nicht korrekt dargestellt. 
 Folgender Workarround hilft: 
 Einbindung z.B. CDN im Template
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+
 Zusätzlichen Stil in Style-Tag inline einfügen: 
 		
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">```
 		<style>
 		.fa {
 		    display: inline;
