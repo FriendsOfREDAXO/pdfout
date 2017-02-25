@@ -1,6 +1,10 @@
 ### Modulsammlung - Changelog
 ___
 
+### 25.020.2017 Version 1.0.1
+
+- Update en_gb.lang - Danke an @ynamite!
+
 ### 07.10.2016 Version 1.0
 
 * Versionsanpassung
