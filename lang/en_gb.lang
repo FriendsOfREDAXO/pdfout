@@ -1,0 +1,5 @@
+pdfout_title = PDFout
+
+pdfout_main = Main page
+
+perm_general_pdfout[] = Permissions for PDFout addon
