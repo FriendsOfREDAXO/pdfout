@@ -75,3 +75,7 @@ ___
 
 - [DOMpdf](http://dompdf.github.io)
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
+
+**Projekt-Lead**
+
+[Thomas Skerbis](https://github.com/skerbis)
