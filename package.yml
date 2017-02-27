@@ -13,4 +13,4 @@ page:
         main: { title: 'translate:main' }
 
 requires:
-    redaxo: '>=5.1.0'
+    redaxo: '^5.1.0'
