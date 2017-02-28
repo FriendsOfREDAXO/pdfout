@@ -1,7 +1,7 @@
 ### Modulsammlung - Changelog
 ___
 
-### 25.020.2017 Version 1.1
+### 28.02.2017 Version 1.1
 
 - Vendor update 0.8.0
 
