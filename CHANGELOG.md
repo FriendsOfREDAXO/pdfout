@@ -1,7 +1,7 @@
 ### Modulsammlung - Changelog
 ___
 
-### 17.03. Version 1.2
+### 17.03.2017 Version 1.2
 - dompdf files stay in addon vendor folder
 
 ### 28.02.2017 Version 1.1
