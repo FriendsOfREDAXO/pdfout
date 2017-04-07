@@ -35,8 +35,9 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 		}
 	?>
 
-
-
+### Alternativer Aufrruf der Class
+In einigen Fällen funktionieren die use-Anweisungen in Redaxo nicht. 
+Alternativ kann man auch `new Dompdf\Options()`und `Dompdf\Dompdf()`verwenden. 
 ___
 ## Tipps
 - Es empfiehlt sich im verwendeten Template die CSS-Definitionen nicht als externe Dateien sondern inline zu hinterlegen. Dies beschleunigt die Generierung, da keine externen Ressourcen eingelesen werden müssen.
