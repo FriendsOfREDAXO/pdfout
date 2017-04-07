@@ -35,7 +35,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 		}
 	?>
 
-### Alternativer Aufrruf der Class
+### Alternativer Aufruf der Class
 In einigen Fällen funktionieren die use-Anweisungen in Redaxo nicht. 
 Alternativ kann man auch `new Dompdf\Options()`und `Dompdf\Dompdf()`verwenden. 
 ___
