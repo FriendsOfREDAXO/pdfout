@@ -50,7 +50,7 @@ ___
 
 ### Font-Awsome einbinden: 
 Font-Awsome fonts werden nicht korrekt dargestellt. 
-Folgender Workarround hilft: 
+Folgender Workaround hilft: 
 Einbindung z.B. CDN im Template
 
 Zusätzlichen Stil in Style-Tag inline einfügen: 
