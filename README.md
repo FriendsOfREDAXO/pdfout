@@ -32,8 +32,9 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 		}
 	?>
 	
-### Erweitertes Beispiel 
+### Erweitertes Beispiel mit inline-css 
 Unbedingt die Kommentare beachten
+Externe CSS können im <head> eingebunden werden
 
 	<?php
 	$print_pdf = rex_request('pdf', 'int');
@@ -70,13 +71,9 @@ Unbedingt die Kommentare beachten
 		 h1 {font-size: 2.5em; font-color: #990000;}
 
 		</style>
-
 		';
-		// Dateiname im Header
-		   $filename = rex_string::normalize('rezept_'.rex_article::getCurrent()->getValue('name')).'.pdf';
-		  header("Content-Disposition: attachment; filename=\"$fileName\"");
-		// Dateiname kann angepasst werden
-		      $art_pdf_name =  rex_string::normalize('rezept_'.rex_article::getCurrent()->getValue('name'));
+		      // Dateiname 
+		      $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
 		      header('Content-Type: application/pdf');
 		      $options = new Dompdf\Options();
 		      $options->set('defaultFont', 'Helvetica');
