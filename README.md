@@ -34,6 +34,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	
 ### Erweitertes Beispiel 
 Unbedingt die Kommentare beachten
+
 	<?php
 	$print_pdf = rex_request('pdf', 'int');
 	// ?pdf=1 
