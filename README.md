@@ -33,7 +33,8 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	?>
 	
 ### Erweitertes Beispiel mit inline-css 
-Unbedingt die Kommentare beachten
+Unbedingt die Kommentare beachten.
+
 Externe CSS können im <**head**> eingebunden werden
 
 	<?php
