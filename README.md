@@ -57,7 +57,7 @@ Externe CSS können im <**head**> eingebunden werden
 
 		</head>
 		<body>
-		<img id="titel" src="media/rezepte-titel.jpg" style="width:100%"; height:auto;" />
+		<img id="titel" src="media/logo.jpg" style="width:100%"; height:auto;" />
 		<style>
 		/* hier CSS anlegen, Beispiel: */
 
