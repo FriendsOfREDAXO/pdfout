@@ -14,25 +14,28 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	<?php
 	  // ?pdf=1
 	  $print_pdf = rex_request('pdf', 'int');
-	  if ($print_pdf) {
-		  // Optionen festlegen
-		  $pdf_options = new Dompdf\Options();
-		  $pdf_options->setDpi(100); // legt die Dpi für das Dokument fest
-		  $pdf_options->set('defaultFont', 'Helvetica'); // Standard-Font
-		  // PDF erstellen
+	  if ($print_pdf) 
+		  // Dateiname aus Artikelname erstellen. 
 		  $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
+		  // PDF erstellen
 		  header('Content-Type: application/pdf');
-		  $dompdf = new Dompdf\Dompdf($options);
-		  $dompdf->loadHtml('REX_ARTICLE[]');
+		  $dompdf = new Dompdf\Dompdf();
 		  // Hinweis: Anstelle von REX_ARTICLE[] kann auch ein gestaltetes Template REX_TEMPLATE[XX] angegeben werden
+		  $dompdf->loadHtml('REX_ARTICLE[]');
 		  $dompdf->setPaper('A4', 'portrait');
+		  // Optionen festlegen 
+		  $dompdf->set_option('defaultFont', 'Helvetica');
+		  $dompdf->set_option('dpi', '100');
+		  // Rendern des PDF
 		  $dompdf->render();
+		  // Ausliefern des PDF
 		  $dompdf->stream($art_pdf_name ,array('Attachment'=>false)); // bei true wird Download erzwungen
 		  die();
 		}
 	?>
 	
-### Erweitertes Beispiel mit inline-css 
+### Erweitertes Beispiel mit inline-css und Url-Ersetzung
+Damit Bilder ausgegeben werden können, müssen die Bild-Urls umgeschrieben werden. MediaManager-Urls können nicht genutzt werden. Die Bilder müssen direkt aus dem media/-Ordner ausgelesen werden. 
 Unbedingt die Kommentare beachten.
 
 Externe CSS können im <**head**> eingebunden werden
@@ -41,15 +44,15 @@ Externe CSS können im <**head**> eingebunden werden
 	$print_pdf = rex_request('pdf', 'int');
 	// ?pdf=1 
 	if ($print_pdf) {
-		$xpdfcontent = REX_ARTICLE[];
+		$pdfcontent = REX_ARTICLE[];
 		// Hier Beispiele für Image-Rewrite
 		// Bei der Verwendung von MediaManager-Bildern anpassen    
-		$xpdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $xpdfcontent);
-		$xpdfcontent = str_replace("index.php?rex_media_type=redactorImage&amp;rex_media_file=", "media/", $xpdfcontent);
-		$xpdfcontent = str_replace("index.php?rex_media_type=redactorImage&rex_media_file=", "media/", $xpdfcontent);
+		$pdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $pdfcontent);
+		$pdfcontent = str_replace("index.php?rex_media_type=redactorImage&amp;rex_media_file=", "media/", $pdfcontent);
+		$pdfcontent = str_replace("index.php?rex_media_type=redactorImage&rex_media_file=", "media/", $pdfcontent);
 		// übliche Links in das Medienverzeichnis    
-		$xpdfcontent = str_replace("/media/", "media/", $xpdfcontent);
-		$xpdfcontent = str_replace(".media/", "media/", $xpdfcontent);
+		$pdfcontent = str_replace("/media/", "media/", $pdfcontent);
+		$pdfcontent = str_replace(".media/", "media/", $pdfcontent);
 
 		// Kopfdefinition
 		$pre = '
@@ -79,7 +82,7 @@ Externe CSS können im <**head**> eingebunden werden
 		      $options = new Dompdf\Options();
 		      $options->set('defaultFont', 'Helvetica');
 		      $dompdf = new Dompdf\Dompdf($options);
-		      $dompdf->loadHtml($pre.$xpdfcontent.'</body>');
+		      $dompdf->loadHtml($pre.$pdfcontent.'</body>');
 		      $dompdf->setPaper('A4', 'portrait');
 		      $dompdf->render();
 		      $dompdf->stream($art_pdf_name ,array('Attachment'=>false));
