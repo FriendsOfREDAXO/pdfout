@@ -20,7 +20,6 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 		  // PDF erstellen
 		  header('Content-Type: application/pdf');
 		  $dompdf = new Dompdf\Dompdf();
-		  // Hinweis: Anstelle von REX_ARTICLE[] kann auch ein gestaltetes Template REX_TEMPLATE[XX] angegeben werden
 		  $dompdf->loadHtml('REX_ARTICLE[]');
 		  $dompdf->setPaper('A4', 'portrait');
 		  // Optionen festlegen 
