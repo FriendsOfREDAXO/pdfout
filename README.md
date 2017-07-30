@@ -15,12 +15,16 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	  // ?pdf=1
 	  $print_pdf = rex_request('pdf', 'int');
 	  if ($print_pdf) {
+	  	  // Alternativ kann auch ein Template geladen werden
+	  	  $pdfcontent = REX_ARTICLE[];
+		  // Outputfilter auf Inhalt anwenden, sofern verwendet
+		  $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
 		  // Dateiname aus Artikelname erstellen. 
 		  $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
 		  // PDF erstellen
 		  header('Content-Type: application/pdf');
 		  $dompdf = new Dompdf\Dompdf();
-		  $dompdf->loadHtml('REX_ARTICLE[]');
+		  $dompdf->loadHtml($pdfcontent);
 		  $dompdf->setPaper('A4', 'portrait');
 		  // Optionen festlegen 
 		  $dompdf->set_option('defaultFont', 'Helvetica');
@@ -44,6 +48,8 @@ Externe CSS können im <**head**> eingebunden werden
 	// ?pdf=1 
 	if ($print_pdf) {
 		$pdfcontent = REX_ARTICLE[];
+		// Outputfilter auf Inhalt anwenden, sofern verwendet
+		$pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
 		// Hier Beispiele für Image-Rewrite
 		// Bei der Verwendung von MediaManager-Bildern anpassen    
 		$pdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $pdfcontent);
