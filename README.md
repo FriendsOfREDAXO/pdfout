@@ -14,7 +14,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	<?php
 	  // ?pdf=1
 	  $print_pdf = rex_request('pdf', 'int');
-	  if ($print_pdf) 
+	  if ($print_pdf) {
 		  // Dateiname aus Artikelname erstellen. 
 		  $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
 		  // PDF erstellen
