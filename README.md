@@ -16,7 +16,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	  $print_pdf = rex_request('pdf', 'int');
 	  if ($print_pdf) {
 	  	  // Alternativ kann auch ein Template geladen werden
-	  	  $pdfcontent = REX_ARTICLE[];
+	  	  $pdfcontent = 'REX_ARTICLE[]';
 		  // Outputfilter auf Inhalt anwenden, sofern verwendet
 		  $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
 		  // Dateiname aus Artikelname erstellen. 
@@ -47,7 +47,7 @@ Externe CSS können im <**head**> eingebunden werden
 	$print_pdf = rex_request('pdf', 'int');
 	// ?pdf=1 
 	if ($print_pdf) {
-		$pdfcontent = REX_ARTICLE[];
+		$pdfcontent = 'REX_ARTICLE[]';
 		// Outputfilter auf Inhalt anwenden, sofern verwendet
 		$pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
 		// Hier Beispiele für Image-Rewrite
