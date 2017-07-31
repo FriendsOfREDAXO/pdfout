@@ -2,7 +2,10 @@
 
 PDF out stellt den "HTML to PDF"-Converter dompdf (http://dompdf.github.io) in REDAXO zur Verfügung.
 Mit dompdf können Ausgaben in REDAXO als PDF generiert werden. 
+PDF out ist keine "out of the box"-Lösung. Es stellt nur die entsprechenden Werkzeuge bereit.  
 ___
+
+### Mögliche Anwendung: 
 
 Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 - Den nachfolgenden Code am Anfang des gewünschten Templates oder als separates Template einsetzen
