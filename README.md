@@ -41,7 +41,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	?>
 	
 ### Erweitertes Beispiel mit inline-css und Url-Ersetzung
-Damit Bilder ausgegeben werden können, müssen die Bild-Urls umgeschrieben werden. MediaManager-Urls können nicht genutzt werden. Die Bilder müssen direkt aus dem media/-Ordner ausgelesen werden. 
+Damit Bilder ausgegeben werden können, müssen die Bild-Urls umgeschrieben werden. MediaManager-Urls können nicht sofort genutzt werden. Die Bilder müssen direkt aus dem media/-Ordner ausgelesen werden oder mit voller URL angegeben werden. (siehe hierzu: https://github.com/FriendsOfREDAXO/pdfout/issues/13)  
 Unbedingt die Kommentare beachten.
 
 Externe CSS können im <**head**> eingebunden werden
