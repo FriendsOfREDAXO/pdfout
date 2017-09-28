@@ -35,14 +35,19 @@ class Text extends Shape
         $surface = $this->document->getSurface();
         $x = $this->x;
         $y = $this->y;
+        $style = $surface->getStyle();
+        $surface->setFont($style->fontFamily, $style->fontStyle, $style->fontWeight);
 
-        $width = $surface->measureText($this->text);
+        switch ($style->textAnchor) {
+            case "middle":
+                $width = $surface->measureText($this->text);
+                $x -= $width / 2;
+                break;
 
-        if ($surface->getStyle()->textAnchor == "middle") {
-            $x -= $width / 2;
-        }
-        if ($surface->getStyle()->textAnchor == "end") {
-            $x -= $width;
+            case "end":
+                $width = $surface->measureText($this->text);
+                $x -= $width;
+                break;
         }
 
         $surface->fillText($this->getText(), $x, $y);

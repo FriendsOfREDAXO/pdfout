@@ -17,11 +17,11 @@ HTML attributes.
 
 *This document applies to the latest stable code which may not reflect the current 
 release. For released code please
-[navigate to the approrpiate tag](https://github.com/dompdf/dompdf/tags).*
+[navigate to the appropriate tag](https://github.com/dompdf/dompdf/tags).*
 
 ----
 
-**Check out the [demo](http://pxd.me/dompdf/www/examples.php) and ask any
+**Check out the [demo](https://dompdf.net/examples.php) and ask any
 question on [StackOverflow](http://stackoverflow.com/questions/tagged/dompdf) or
 on the [Google Groups](http://groups.google.com/group/dompdf).**
 
