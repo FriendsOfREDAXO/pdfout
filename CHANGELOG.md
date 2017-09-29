@@ -1,7 +1,7 @@
 ### Modulsammlung - Changelog
 ___
 
-### 29.09.2017 Version 1.2.2
+### 29.09.2017 Version 1.3.0
 - Vendor update 0.8.1
 - Improves compatibility with PHP 7.1
 - Improves table rendering around page breaks and margins
