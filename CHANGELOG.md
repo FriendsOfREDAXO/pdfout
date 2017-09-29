@@ -1,6 +1,10 @@
 ### Modulsammlung - Changelog
 ___
 
+### 29.09.2017 Version 1.2.2
+- Vendor update 0.8.1
+- https://github.com/dompdf/dompdf/releases/tag/v0.8.1
+
 ### 31.07.2017 Version 1.2.1
 - new examples
 
