@@ -3,6 +3,11 @@ ___
 
 ### 29.09.2017 Version 1.2.2
 - Vendor update 0.8.1
+- Improves compatibility with PHP 7.1
+- Improves table rendering around page breaks and margins
+- Fixes paging of generated content
+- Improves handling of CSS selectors, media queries, and inherited properties
+- Fixes Unicode support in (encrypted) PDF documents
 - https://github.com/dompdf/dompdf/releases/tag/v0.8.1
 
 ### 31.07.2017 Version 1.2.1
