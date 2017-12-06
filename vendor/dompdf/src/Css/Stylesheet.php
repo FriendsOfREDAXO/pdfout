@@ -9,6 +9,7 @@
  */
 namespace Dompdf\Css;
 
+use DOMElement;
 use DOMXPath;
 use Dompdf\Dompdf;
 use Dompdf\Helpers;
@@ -743,7 +744,7 @@ class Stylesheet
 
                         // the selector is not handled, until we support all possible selectors force an empty set (silent failure)
                         default:
-                            $query = "/..";
+                            $query = "/../.."; // go up two levels because generated content starts on the body element
                             $tok = "";
                             break;
                     }
@@ -965,6 +966,11 @@ class Stylesheet
 
                 /** @var \DOMElement $node */
                 foreach ($nodes as $node) {
+                    // Only DOMElements get styles
+                    if ($node->nodeType != XML_ELEMENT_NODE) {
+                        continue;
+                    }
+
                     foreach (array_keys($query["pseudo_elements"], true, true) as $pos) {
                         // Do not add a new pseudo element if another one already matched
                         if ($node->hasAttribute("dompdf_{$pos}_frame_id")) {
