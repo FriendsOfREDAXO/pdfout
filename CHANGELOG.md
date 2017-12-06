@@ -1,7 +1,7 @@
 ### Modulsammlung - Changelog
 ___
 
-### 29.09.2017 Version 1.3.1
+### 06.12.2017 Version 1.3.1
 - Vendor update 0.8.2
 - Bug Fix: "no block level parent found" errors
 - Bug Fix: links to external resources broken
