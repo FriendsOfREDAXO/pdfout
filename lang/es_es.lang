@@ -1,0 +1,5 @@
+pdfout_title = PDFOUT
+
+pdfout_main = Página principal
+
+perm_general_pdfout[] = Permisos para el complemento de PDFout
