@@ -1,6 +1,9 @@
 ### Modulsammlung - Changelog
 ___
 
+### 14.05.2018 Version 1.3.2
+- Traducción en castellano thx @nandes2062
+
 ### 06.12.2017 Version 1.3.1
 - Vendor update 0.8.2
 - Bug Fix: "no block level parent found" errors
