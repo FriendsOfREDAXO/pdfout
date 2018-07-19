@@ -1,4 +1,4 @@
-## PDF out – domppdf für REDAXO
+## PDF out – dompdf für REDAXO
 
 PDF out stellt den "HTML to PDF"-Converter dompdf (http://dompdf.github.io) in REDAXO zur Verfügung.
 Mit dompdf können Ausgaben in REDAXO als PDF generiert werden. 
