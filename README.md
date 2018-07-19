@@ -49,55 +49,55 @@ Unbedingt die Kommentare beachten.
 Externe CSS können im <**head**> eingebunden werden
 ```php
 <?php
-	$print_pdf = rex_request('pdf', 'int');
-	// ?pdf=1 
-	if ($print_pdf) {
-		$pdfcontent = 'REX_ARTICLE[]';
-		// Outputfilter auf Inhalt anwenden, sofern verwendet
-		$pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
-		// Hier Beispiele für Image-Rewrite
-		// Bei der Verwendung von MediaManager-Bildern anpassen    
-		$pdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $pdfcontent);
-		$pdfcontent = str_replace("index.php?rex_media_type=redactorImage&amp;rex_media_file=", "media/", $pdfcontent);
-		$pdfcontent = str_replace("index.php?rex_media_type=redactorImage&rex_media_file=", "media/", $pdfcontent);
-		// übliche Links in das Medienverzeichnis    
-		$pdfcontent = str_replace("/media/", "media/", $pdfcontent);
-		$pdfcontent = str_replace(".media/", "media/", $pdfcontent);
+$print_pdf = rex_request('pdf', 'int');
+// ?pdf=1 
+if ($print_pdf) {
+	$pdfcontent = 'REX_ARTICLE[]';
+	// Outputfilter auf Inhalt anwenden, sofern verwendet
+	$pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
+	// Hier Beispiele für Image-Rewrite
+	// Bei der Verwendung von MediaManager-Bildern anpassen    
+	$pdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $pdfcontent);
+	$pdfcontent = str_replace("index.php?rex_media_type=redactorImage&amp;rex_media_file=", "media/", $pdfcontent);
+	$pdfcontent = str_replace("index.php?rex_media_type=redactorImage&rex_media_file=", "media/", $pdfcontent);
+	// übliche Links in das Medienverzeichnis    
+	$pdfcontent = str_replace("/media/", "media/", $pdfcontent);
+	$pdfcontent = str_replace(".media/", "media/", $pdfcontent);
 
-		// Kopfdefinition
-		$pre = '
-		<head>
+	// Kopfdefinition
+	$pre = '
+	<head>
 
-		</head>
-		<body>
-		<img id="titel" src="media/logo.jpg" style="width:100%"; height:auto;" />
-		<style>
-		/* hier CSS anlegen, Beispiel: */
+	</head>
+	<body>
+	<img id="titel" src="media/logo.jpg" style="width:100%"; height:auto;" />
+	<style>
+	/* hier CSS anlegen, Beispiel: */
 
-		body { 
-		    padding-left: 80px; 
-		    padding-top:10px; 
-		    line-height: 1.56em; 
-		    }
-		a {
-		    display: none;
-		    } 
-		 h1 {font-size: 2.5em; font-color: #990000;}
+	body { 
+	    padding-left: 80px; 
+	    padding-top:10px; 
+	    line-height: 1.56em; 
+	    }
+	a {
+	    display: none;
+	    } 
+	 h1 {font-size: 2.5em; font-color: #990000;}
 
-		</style>
-		';
-		      // Dateiname 
-		      $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
-		      header('Content-Type: application/pdf');
-		      $options = new Dompdf\Options();
-		      $options->set('defaultFont', 'Helvetica');
-		      $dompdf = new Dompdf\Dompdf($options);
-		      $dompdf->loadHtml($pre.$pdfcontent.'</body>');
-		      $dompdf->setPaper('A4', 'portrait');
-		      $dompdf->render();
-		      $dompdf->stream($art_pdf_name ,array('Attachment'=>false));
-		      die();
-	  }
+	</style>
+	';
+	      // Dateiname 
+	      $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
+	      header('Content-Type: application/pdf');
+	      $options = new Dompdf\Options();
+	      $options->set('defaultFont', 'Helvetica');
+	      $dompdf = new Dompdf\Dompdf($options);
+	      $dompdf->loadHtml($pre.$pdfcontent.'</body>');
+	      $dompdf->setPaper('A4', 'portrait');
+	      $dompdf->render();
+	      $dompdf->stream($art_pdf_name ,array('Attachment'=>false));
+	      die();
+  }
 ?>
 ```
 ___
@@ -116,23 +116,23 @@ Einbindung z.B. CDN im Template
 Zusätzlichen Stil in Style-Tag inline einfügen: 
 
 ```html	
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">```
-		<style>
-		.fa {
-		    display: inline;
-		    font-style: normal;
-		    font-variant: normal;
-		    font-weight: normal;
-		    font-size: 14px
-		    line-height: 1;
-		    color: #2F2ABD;
-		    font-family: FontAwesome;
-		    font-size: inherit;
-		    text-rendering: auto;
-		    -webkit-font-smoothing: antialiased;
-		    -moz-osx-font-smoothing: grayscale;
-		  }
-		</style>  
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+	<style>
+	.fa {
+	    display: inline;
+	    font-style: normal;
+	    font-variant: normal;
+	    font-weight: normal;
+	    font-size: 14px
+	    line-height: 1;
+	    color: #2F2ABD;
+	    font-family: FontAwesome;
+	    font-size: inherit;
+	    text-rendering: auto;
+	    -webkit-font-smoothing: antialiased;
+	    -moz-osx-font-smoothing: grayscale;
+	  }
+	</style>  
 ```
 ___
 ### Credits
