@@ -13,40 +13,42 @@ Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 
 Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt von REX_ARTICLE[] oder REX_TEMPLATE [] als PDF ausgegeben.
 
-### Beispiel-Code 
-	<?php
-	  // ?pdf=1
-	  $print_pdf = rex_request('pdf', 'int');
-	  if ($print_pdf) {
-	  	  // Alternativ kann auch ein Template geladen werden
-	  	  $pdfcontent = 'REX_ARTICLE[]';
-		  // Outputfilter auf Inhalt anwenden, sofern verwendet
-		  $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
-		  // Dateiname aus Artikelname erstellen. 
-		  $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
-		  // PDF erstellen
-		  header('Content-Type: application/pdf');
-		  $dompdf = new Dompdf\Dompdf();
-		  $dompdf->loadHtml($pdfcontent);
-		  $dompdf->setPaper('A4', 'portrait');
-		  // Optionen festlegen 
-		  $dompdf->set_option('defaultFont', 'Helvetica');
-		  $dompdf->set_option('dpi', '100');
-		  // Rendern des PDF
-		  $dompdf->render();
-		  // Ausliefern des PDF
-		  $dompdf->stream($art_pdf_name ,array('Attachment'=>false)); // bei true wird Download erzwungen
-		  die();
-		}
-	?>
-	
+### Beispiel-Code
+
+```php
+<?php
+  // ?pdf=1
+  $print_pdf = rex_request('pdf', 'int');
+  if ($print_pdf) {
+	  // Alternativ kann auch ein Template geladen werden
+	  $pdfcontent = 'REX_ARTICLE[]';
+	  // Outputfilter auf Inhalt anwenden, sofern verwendet
+	  $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
+	  // Dateiname aus Artikelname erstellen. 
+	  $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
+	  // PDF erstellen
+	  header('Content-Type: application/pdf');
+	  $dompdf = new Dompdf\Dompdf();
+	  $dompdf->loadHtml($pdfcontent);
+	  $dompdf->setPaper('A4', 'portrait');
+	  // Optionen festlegen 
+	  $dompdf->set_option('defaultFont', 'Helvetica');
+	  $dompdf->set_option('dpi', '100');
+	  // Rendern des PDF
+	  $dompdf->render();
+	  // Ausliefern des PDF
+	  $dompdf->stream($art_pdf_name ,array('Attachment'=>false)); // bei true wird Download erzwungen
+	  die();
+	}
+?>
+```
 ### Erweitertes Beispiel mit inline-css und Url-Ersetzung
 Damit Bilder ausgegeben werden können, müssen die Bild-Urls umgeschrieben werden. MediaManager-Urls können nicht sofort genutzt werden. Die Bilder müssen direkt aus dem media/-Ordner ausgelesen werden oder mit voller URL angegeben werden. (siehe hierzu: https://github.com/FriendsOfREDAXO/pdfout/issues/13)  
 Unbedingt die Kommentare beachten.
 
 Externe CSS können im <**head**> eingebunden werden
-
-	<?php
+```php
+<?php
 	$print_pdf = rex_request('pdf', 'int');
 	// ?pdf=1 
 	if ($print_pdf) {
@@ -96,8 +98,8 @@ Externe CSS können im <**head**> eingebunden werden
 		      $dompdf->stream($art_pdf_name ,array('Attachment'=>false));
 		      die();
 	  }
-	?>
-
+?>
+```
 ___
 ## Tipps
 - Es empfiehlt sich im verwendeten Template die CSS-Definitionen nicht als externe Dateien sondern inline zu hinterlegen. Dies beschleunigt die Generierung, da keine externen Ressourcen eingelesen werden müssen.
@@ -112,7 +114,8 @@ Folgender Workaround hilft:
 Einbindung z.B. CDN im Template
 
 Zusätzlichen Stil in Style-Tag inline einfügen: 
-		
+
+```html	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">```
 		<style>
 		.fa {
@@ -130,7 +133,7 @@ Zusätzlichen Stil in Style-Tag inline einfügen:
 		    -moz-osx-font-smoothing: grayscale;
 		  }
 		</style>  
-
+```
 ___
 ### Credits
 
