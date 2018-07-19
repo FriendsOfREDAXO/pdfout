@@ -1,7 +1,7 @@
 ### Modulsammlung - Changelog
 ___
 
-### 19.07.2018 Version 1.3.2
+### 19.07.2018 Version 1.4.0
 - Menüpunkt entfernt
 
 ### 14.05.2018 Version 1.3.2
