@@ -1,8 +1,8 @@
-## PDF out
+## PDF out – domppdf für REDAXO
 
 PDF out stellt den "HTML to PDF"-Converter dompdf (http://dompdf.github.io) in REDAXO zur Verfügung.
 Mit dompdf können Ausgaben in REDAXO als PDF generiert werden. 
-PDF out ist keine "out of the box"-Lösung. Es stellt nur die entsprechenden Werkzeuge bereit.  
+PDF out ist keine "out of the box"-Lösung. Es stellt nur die PHP Class/es bereit.  
 ___
 
 ### Mögliche Anwendung: 
@@ -105,8 +105,6 @@ ___
 - URLs zu Ressourcen sollten ohne / beginnen und vom Webroot aus definiert sein z.B. media/zyz.jpg oder assets/css/pdf_styles.css. Ein Search & Replace per PHP kann hierbei helfen. https://github.com/FriendsOfREDAXO/pdfout/issues/2
 - Fixierte Divs können zur Anzeige von Fuß und Kopfzeile verwendet werden. Ideal ist es diese direkt nach dem Bodytag zu integrieren. Dann können auch mittels CSS count z.B. Seitenzahlen ausgegegeben werden.
 - Google Fonts zur lokalen Nutzung herunterladen: https://google-webfonts-helper.herokuapp.com/fonts
-
-
 
 ### Font-Awsome einbinden: 
 Font-Awsome fonts werden nicht korrekt dargestellt. 
