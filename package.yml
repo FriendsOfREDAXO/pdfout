@@ -1,16 +1,8 @@
 # Alle hier gesetzten Werte können über $addon->getProperty($key) abgefragt werden
 
 package: pdfout
-version: '1.4.0-dev'
+version: '1.4.0'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout
-
-page:
-    title: 'translate:title' # Werte die mit "translate:" beginnen, werden anhand der Sprachdatei übersetzt. Der Addon-Präfix (hier "dummy_") kann weggelassen werden.
-    perm: pdfout[]
-    icon: rex-icon fa-file-pdf-o
-    subpages:
-        main: { title: 'translate:main' }
-
 requires:
     redaxo: '^5.3.0'
