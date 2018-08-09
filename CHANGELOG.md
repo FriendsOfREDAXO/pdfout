@@ -1,8 +1,11 @@
 ### Modulsammlung - Changelog
 ___
 
+### 09.08.2018 Version 1.4.2
+- changes in readme
+
 ### 19.07.2018 Version 1.4.0
-- Menüpunkt entfernt
+- removed: navigation
 
 ### 14.05.2018 Version 1.3.2
 - Traducción en castellano thx @nandes2062
@@ -40,7 +43,7 @@ ___
 
 ### 07.10.2016 Version 1.0
 
-* Versionsanpassung
+* first stable release
 
 ### 23.06.2016 Version 0.1
 
