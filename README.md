@@ -21,9 +21,10 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
   $print_pdf = rex_request('pdf', 'int');
   if ($print_pdf) {
 	  rex_response::cleanOutputBuffers(); // OutputBuffer leeren
-	  // Alternativ kann auch ein Template geladen werden
+	  // Artikel laden oder alternativ ein Template
 	  $pdfcontent = 'REX_ARTICLE[]';
-	  // Outputfilter auf Inhalt anwenden, sofern verwendet
+	  // Outputfilter auf Inhalt anwenden, sofern erforderlich 
+	  // Wenn nicht, wird die Generierung beschleunigt
 	  $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
 	  // Dateiname aus Artikelname erstellen. 
 	  $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
@@ -55,7 +56,8 @@ $print_pdf = rex_request('pdf', 'int');
 if ($print_pdf) {
         rex_response::cleanOutputBuffers(); // OutputBuffer leeren
 	$pdfcontent = 'REX_ARTICLE[]';
-	// Outputfilter auf Inhalt anwenden, sofern verwendet
+	// Outputfilter auf Inhalt anwenden, sofern erforderlich
+	// Wenn nicht, wird die Generierung beschleunigt
 	$pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
 	// Hier Beispiele für Image-Rewrite
 	// Bei der Verwendung von MediaManager-Bildern anpassen    
