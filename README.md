@@ -20,6 +20,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
   // ?pdf=1
   $print_pdf = rex_request('pdf', 'int');
   if ($print_pdf) {
+	  rex_response::cleanOutputBuffers(); // OutputBuffer leeren
 	  // Alternativ kann auch ein Template geladen werden
 	  $pdfcontent = 'REX_ARTICLE[]';
 	  // Outputfilter auf Inhalt anwenden, sofern verwendet
@@ -52,6 +53,7 @@ Externe CSS können im <**head**> eingebunden werden
 $print_pdf = rex_request('pdf', 'int');
 // ?pdf=1 
 if ($print_pdf) {
+        rex_response::cleanOutputBuffers(); // OutputBuffer leeren
 	$pdfcontent = 'REX_ARTICLE[]';
 	// Outputfilter auf Inhalt anwenden, sofern verwendet
 	$pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
