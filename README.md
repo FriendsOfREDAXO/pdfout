@@ -110,7 +110,7 @@ ___
 - Fixierte Divs können zur Anzeige von Fuß und Kopfzeile verwendet werden. Ideal ist es diese direkt nach dem Bodytag zu integrieren. Dann können auch mittels CSS count z.B. Seitenzahlen ausgegegeben werden.
 - Google Fonts zur lokalen Nutzung herunterladen: https://google-webfonts-helper.herokuapp.com/fonts
 
-### Font-Awsome einbinden: 
+### Font-Awsome 4.x einbinden: 
 Font-Awsome fonts werden nicht korrekt dargestellt. 
 Folgender Workaround hilft: 
 Einbindung z.B. CDN im Template
