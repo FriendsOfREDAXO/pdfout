@@ -142,6 +142,7 @@ ___
 ### Credits
 
 - [dompdf](http://dompdf.github.io)
+- [First release: Oliver Kreischer](https://github.com/olien)
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
 
 **Projekt-Lead**
