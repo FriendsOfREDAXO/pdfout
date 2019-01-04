@@ -1,4 +1,4 @@
-### Modulsammlung - Changelog
+### PDFOut - Changelog
 ___
 
 ### 09.08.2018 Version 1.4.2
