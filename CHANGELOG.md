@@ -1,5 +1,9 @@
-### Modulsammlung - Changelog
+### PDFOut - Changelog
 ___
+
+### 04.01.2019 Version 1.5.0
+- Vendor update 0.8.3 
+- The new project lead is [Simon Krull](http://github.com/crydotsnake)
 
 ### 09.08.2018 Version 1.4.2
 - changes in readme
