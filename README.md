@@ -144,7 +144,8 @@ ___
 - [dompdf](http://dompdf.github.io)
 - [First release: Oliver Kreischer](https://github.com/olien)
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
+- [Thomas Skerbis](https://github.com/skerbis)
 
 **Projekt-Lead**
 
-[Thomas Skerbis](https://github.com/skerbis)
+[Simon Krull](https://github.com/crydotsnake)
