@@ -1,6 +1,9 @@
 ### PDFOut - Changelog
 ___
 
+### 05.01.2019 Version 1.6.0
+- Wenn man hinter der URL `?pdftest=1` eingibt, kommt zum test die README des Addons.
+
 ### 04.01.2019 Version 1.5.0
 - Vendor update 0.8.3 
 - The new project lead is [Simon Krull](http://github.com/crydotsnake)
