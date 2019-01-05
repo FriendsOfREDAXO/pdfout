@@ -2,7 +2,7 @@
 ___
 
 ### 06.01.2019 Version 1.6.0
-- Wenn man hinter der URL `?pdftest=1` eingibt, kommt zum test die README des Addons.
+- Wenn man hinter der Backend URL `?pdftest=1` eingibt, kommt zum test die README des Addons.
 
 ### 04.01.2019 Version 1.5.0
 - Vendor update 0.8.3 
