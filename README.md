@@ -1,6 +1,6 @@
 ## PDF out – dompdf für REDAXO
 
-[diese Seite als PDF](index.php?pdftest=1)
+
 
 PDF out stellt den "HTML to PDF"-Converter dompdf (http://dompdf.github.io) in REDAXO zur Verfügung.
 Mit dompdf können Ausgaben in REDAXO als PDF generiert werden. 
@@ -15,8 +15,11 @@ Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 
 Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt von REX_ARTICLE[] oder REX_TEMPLATE [] als PDF ausgegeben.
 
-### Hinweis 
+### Demo
 
+[diese Seite als PDF](index.php?pdftest=1)
+
+**Hinweis**
 - Der Aufruf klappt nur über das REDAXO Backend.
 - Wenn man hinter die Backend url `?pdftest=1` dranhängt, kommt die README vom Addon.
 
