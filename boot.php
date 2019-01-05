@@ -8,7 +8,7 @@ if (rex::isBackend() && rex::getUser()) {
         rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $file = rex_file::get(rex_path::addon('pdfout', 'README.md'));
         $readmeHtml = rex_markdown::factory()->parse($file);
-        $art_pdf_name = 'pdftest'; // Dateiname
+        $art_pdf_name = 'readme'; // Dateiname
         $dompdf = new Dompdf\Dompdf();
         $dompdf->loadHtml($readmeHtml);
         // Optionen festlegen
