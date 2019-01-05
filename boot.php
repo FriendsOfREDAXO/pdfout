@@ -7,10 +7,10 @@ if ($print_pdftest==1) {
 
     rex_response::cleanOutputBuffers(); // OutputBuffer leeren
     $file = rex_file::get(rex_path::addon('pdfout','README.md'));
-    $pdfcontent = rex_markdown::factory()->parse($file);
+    $readmeHtml = rex_markdown::factory()->parse($file);
     $art_pdf_name =  'pdftest'; // Dateiname
     $dompdf = new Dompdf\Dompdf();
-    $dompdf->loadHtml($pdfcontent);
+    $dompdf->loadHtml($readmeHtml);
     // Optionen festlegen
     $dompdf->set_option('defaultFont', 'Helvetica');
     $dompdf->set_option('dpi', '100');
