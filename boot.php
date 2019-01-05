@@ -8,7 +8,6 @@ if (rex::isBackend() && rex::getUser()) {
         rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $file = rex_file::get(rex_path::addon('pdfout', 'README.md'));
         $readmeHtml = rex_markdown::factory()->parse($file);
-        $art_pdf_name = 'readme'; // Dateiname
         $dompdf = new Dompdf\Dompdf();
         $dompdf->loadHtml($readmeHtml);
         // Optionen festlegen
@@ -18,7 +17,7 @@ if (rex::isBackend() && rex::getUser()) {
         $dompdf->render();
         // Ausliefern des PDF
         header('Content-Type: application/pdf');
-        $dompdf->stream($art_pdf_name, array('Attachment' => false)); // bei true wird Download erzwungen
+        $dompdf->stream('readme', array('Attachment' => false)); // bei true wird Download erzwungen
         die();
 
     }
