@@ -1,6 +1,6 @@
 <?php
 
-require_once $this->getPath('vendor/dompdf/src/'.'Autoloader.php');
+require_once $this->getPath('vendor/'.'autoload.php');
 
 if (rex::isBackend() && rex::getUser()) {
     $print_pdftest = rex_request('pdftest', 'int');
