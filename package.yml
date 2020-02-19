@@ -1,8 +1,9 @@
-# Alle hier gesetzten Werte können über $addon->getProperty($key) abgefragt werden
-
 package: pdfout
-version: '1.6.0'
+version: '1.7.0'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout
 requires:
-    redaxo: '^5.3.0'
+    redaxo: '^5.8.0'
+    php:
+        version: '^7.1'
+        extensions: [gd]
