@@ -1,13 +1,30 @@
-## PDF out – dompdf für REDAXO
-
-
+# PDF out – dompdf für REDAXO
 
 PDF out stellt den "HTML to PDF"-Converter dompdf (http://dompdf.github.io) in REDAXO zur Verfügung.
 Mit dompdf können Ausgaben in REDAXO als PDF generiert werden. 
 PDF out ist keine "out of the box"-Lösung. Es stellt nur die PHP Class/es bereit.  
 ___
 
-### Mögliche Anwendung: 
+## Anforderungen
+
+- DOM-Erweiterung
+- MBString-Erweiterung
+- php-font-lib
+- php-svg-lib
+
+> Man sollte beachten, dass einige erforderliche Abhängigkeiten weitere Abhängigkeiten haben können (insbesondere php-svg-lib erfordert sabberworm/php-css-parser).
+
+## Empfehlungen
+
+OPcache (OPcache, XCache, APC, etc.): verbessert die Leistung
+GD (für Bildverarbeitung)
+IMagick- oder GMagick-Erweiterung: verbessert die Bildverarbeitungsleistung
+Besuchen Sie das Wiki für weitere Informationen: https://github.com/dompdf/dompdf/wiki/Requirements
+
+Übersetzt mit www.DeepL.com/Translator (kostenlose Version)
+
+
+## Mögliche Anwendung: 
 
 Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 - Den nachfolgenden Code am Anfang des gewünschten Templates oder als separates Template einsetzen
@@ -15,7 +32,7 @@ Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 
 Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt von REX_ARTICLE[] oder REX_TEMPLATE [] als PDF ausgegeben.
 
-### Demo
+## Demo
 
 [diese Seite als PDF](index.php?pdftest=1)
 
@@ -23,7 +40,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 - Der Aufruf klappt nur über das REDAXO Backend.
 - Wenn man hinter die Backend url `?pdftest=1` dranhängt, kommt die README vom Addon.
 
-### Beispiel-Code
+## Beispiel-Code
 
 ```php
 <?php
@@ -54,7 +71,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	}
 ?>
 ```
-### Erweitertes Beispiel mit inline-css und Url-Ersetzung
+## Erweitertes Beispiel mit inline-css und Url-Ersetzung
 Damit Bilder ausgegeben werden können, müssen die Bild-Urls umgeschrieben werden. MediaManager-Urls können nicht sofort genutzt werden. Die Bilder müssen direkt aus dem media/-Ordner ausgelesen werden oder mit voller URL angegeben werden. (siehe hierzu: https://github.com/FriendsOfREDAXO/pdfout/issues/13)  
 Unbedingt die Kommentare beachten.
 
@@ -122,7 +139,7 @@ ___
 - Fixierte Divs können zur Anzeige von Fuß und Kopfzeile verwendet werden. Ideal ist es diese direkt nach dem Bodytag zu integrieren. Dann können auch mittels CSS count z.B. Seitenzahlen ausgegegeben werden.
 - Google Fonts zur lokalen Nutzung herunterladen: https://google-webfonts-helper.herokuapp.com/fonts
 
-### Font-Awsome 4.x einbinden: 
+## Font-Awsome 4.x einbinden: 
 Font-Awsome fonts werden nicht korrekt dargestellt. 
 Folgender Workaround hilft: 
 Einbindung z.B. CDN im Template
@@ -149,13 +166,13 @@ Zusätzlichen Stil in Style-Tag inline einfügen:
 	</style>  
 ```
 ___
-### Credits
+## Credits
 
 - [dompdf](http://dompdf.github.io)
-- [First release: Oliver Kreischer](https://github.com/olien)
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
+- [First release: Oliver Kreischer](https://github.com/olien)
+- [Simon Krull](https://github.com/crydotsnake)
 - [Thomas Skerbis](https://github.com/skerbis)
 
-**Projekt-Lead**
 
-[Simon Krull](https://github.com/crydotsnake)
+
