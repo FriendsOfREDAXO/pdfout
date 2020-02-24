@@ -185,7 +185,7 @@ Möchte man dompdf-urls  der andere URLs mit Parametern kombinieren, muss die ü
 Also z.B.: 
 
 ```
-<a href="<?= rex_url::assets('addons/pdf_viewer/vendor/web/viewer.html?file='.urlencode("index.php?pdftest=1"))?>
+<a href="<?= rex_url::assets('addons/pdfout/vendor/web/viewer.html?file='.urlencode("index.php?pdftest=1"))?>
 
 ```
 
