@@ -1,8 +1,8 @@
 # PDF out – dompdf und pdfjs für REDAXO
 
 PDF out stellt den "HTML to PDF"-Converter [dompdf](http://dompdf.github.io) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
-Mit dompdf können Ausgaben in REDAXO als PDF generiert werden. 
-PDF out ist keine "out of the box"-Lösung. Es stellt nur die PHP Class/es bereit.  
+Mit dompdf können Ausgaben in REDAXO als PDF generiert werden und mittels pdf.js angezeigt werden.  
+PDF out ist keine "out of the box"-Lösung. Es stellt nur die nötigen vendoren bereit.  
 ___
 
 
