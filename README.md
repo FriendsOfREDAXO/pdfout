@@ -1,11 +1,15 @@
-# PDF out – dompdf für REDAXO
+# PDF out – dompdf und pdfjs für REDAXO
 
-PDF out stellt den "HTML to PDF"-Converter dompdf (http://dompdf.github.io) in REDAXO zur Verfügung.
+PDF out stellt den "HTML to PDF"-Converter [dompdf](http://dompdf.github.io) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
 Mit dompdf können Ausgaben in REDAXO als PDF generiert werden. 
 PDF out ist keine "out of the box"-Lösung. Es stellt nur die PHP Class/es bereit.  
 ___
 
-## Anforderungen
+
+## PDF-Generierung mittels dompdf
+
+
+### Anforderungen
 
 - DOM-Erweiterung
 - MBString-Erweiterung
@@ -14,7 +18,7 @@ ___
 
 > Man sollte beachten, dass einige erforderliche Abhängigkeiten weitere Abhängigkeiten haben können (insbesondere php-svg-lib erfordert sabberworm/php-css-parser).
 
-## Empfehlungen
+### Empfehlungen
 
 OPcache (OPcache, XCache, APC, etc.): verbessert die Leistung
 GD (für Bildverarbeitung)
@@ -24,7 +28,7 @@ Besuchen Sie das Wiki für weitere Informationen: https://github.com/dompdf/domp
 Übersetzt mit www.DeepL.com/Translator (kostenlose Version)
 
 
-## Mögliche Anwendung: 
+### Mögliche Anwendung: 
 
 Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 - Den nachfolgenden Code am Anfang des gewünschten Templates oder als separates Template einsetzen
@@ -32,7 +36,7 @@ Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 
 Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt von REX_ARTICLE[] oder REX_TEMPLATE [] als PDF ausgegeben.
 
-## Demo
+### Demo
 
 [diese Seite als PDF](index.php?pdftest=1)
 
@@ -71,7 +75,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	}
 ?>
 ```
-## Erweitertes Beispiel mit inline-css und Url-Ersetzung
+### Erweitertes Beispiel mit inline-css und Url-Ersetzung
 Damit Bilder ausgegeben werden können, müssen die Bild-Urls umgeschrieben werden. MediaManager-Urls können nicht sofort genutzt werden. Die Bilder müssen direkt aus dem media/-Ordner ausgelesen werden oder mit voller URL angegeben werden. (siehe hierzu: https://github.com/FriendsOfREDAXO/pdfout/issues/13)  
 Unbedingt die Kommentare beachten.
 
@@ -132,7 +136,7 @@ if ($print_pdf) {
 ?>
 ```
 ___
-## Tipps
+### Tipps
 - Es empfiehlt sich im verwendeten Template die CSS-Definitionen nicht als externe Dateien sondern inline zu hinterlegen. Dies beschleunigt die Generierung, da keine externen Ressourcen eingelesen werden müssen.
 - Auf Bootsstrap CSS oder andere CSS-Frameworks bei der Ausgabe möglichst verzichten, da zuviele Styles abgearbeitet werden müssen. 
 - URLs zu Ressourcen sollten ohne / beginnen und vom Webroot aus definiert sein z.B. media/zyz.jpg oder assets/css/pdf_styles.css. Ein Search & Replace per PHP kann hierbei helfen. https://github.com/FriendsOfREDAXO/pdfout/issues/2
@@ -165,8 +169,29 @@ Zusätzlichen Stil in Style-Tag inline einfügen:
 	  }
 	</style>  
 ```
+
+
+
+## Ausgabe eines PDF mit pdf.js
+
+### Link-Beispiel
+
+```html
+<a href="<?= rex_url::assets('addons/pdf_viewer/vendor/web/viewer.html?file=/media/deinePDFdatei.pdf') ?>">Link</a> 
+```
+### Tipp
+Möchte man dompdf-urls  der andere URLs mit Parametern kombinieren, muss die übergebene Url unbedingt per urlencode kodiert werden. `urlencode($foo)`
+
+Also z.B.: 
+
+```
+<a href="<?= rex_url::assets('addons/pdf_viewer/vendor/web/viewer.html?file='.urlencode("index.php?pdftest=1"))?>
+
+```
+
+
 ___
-## Credits
+### Credits
 
 - [dompdf](http://dompdf.github.io)
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
