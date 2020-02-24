@@ -189,6 +189,9 @@ Also z.B.:
 
 ```
 
+## Lead
+- [Thomas Skerbis](https://github.com/skerbis)
+
 
 ___
 ### Credits
@@ -197,7 +200,7 @@ ___
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
 - [First release: Oliver Kreischer](https://github.com/olien)
 - [Simon Krull](https://github.com/crydotsnake)
-- [Thomas Skerbis](https://github.com/skerbis)
+
 
 
 
