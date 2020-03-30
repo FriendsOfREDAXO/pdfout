@@ -1,8 +1,1 @@
-<?xml version="1.0"?>
-<svg width="64" height="64" xmlns="http://www.w3.org/2000/svg">
- <g>
-  <rect stroke="#666666" id="svg_1" height="60.499994" width="60.166667" y="1.666669" x="1.999998" stroke-width="1.5" fill="none"/>
-  <line stroke-linecap="butt" stroke-linejoin="miter" id="svg_3" y2="59.333253" x2="59.749916" y1="4.333415" x1="4.250079" stroke-width="1.5" stroke="#999999" fill="none"/>
-  <line stroke-linecap="butt" stroke-linejoin="miter" id="svg_4" y2="59.999665" x2="4.062838" y1="3.750342" x1="60.062164" stroke-width="1.5" stroke="#999999" fill="none"/>
- </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><g><rect id="svg_1" width="60.167" height="60.5" x="2" y="1.667" fill="none" stroke="#666" stroke-width="1.5"/><line id="svg_3" x1="4.25" x2="59.75" y1="4.333" y2="59.333" fill="none" stroke="#999" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1.5"/><line id="svg_4" x1="60.062" x2="4.063" y1="3.75" y2="60" fill="none" stroke="#999" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1.5"/></g></svg>
