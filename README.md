@@ -51,27 +51,26 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
   // ?pdf=1
   $print_pdf = rex_request('pdf', 'int');
   if ($print_pdf) {
-	  rex_response::cleanOutputBuffers(); // OutputBuffer leeren
 	  // Artikel laden oder alternativ ein Template
 	  $pdfcontent = 'REX_ARTICLE[]';
 	  // Outputfilter auf Inhalt anwenden, sofern erforderlich 
 	  // Wenn nicht, wird die Generierung beschleunigt
 	  $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
-	  // Dateiname aus Artikelname erstellen. 
-	  $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
-	  // PDF erstellen
-	  header('Content-Type: application/pdf');
-	  $dompdf = new Dompdf\Dompdf();
-	  $dompdf->loadHtml($pdfcontent);
-	  $dompdf->setPaper('A4', 'portrait');
-	  // Optionen festlegen 
-	  $dompdf->set_option('defaultFont', 'Helvetica');
-	  $dompdf->set_option('dpi', '100');
-	  // Rendern des PDF
-	  $dompdf->render();
-	  // Ausliefern des PDF
-	  $dompdf->stream($art_pdf_name ,array('Attachment'=>false)); // bei true wird Download erzwungen
-	  die();
+
+	      // Dompdf konfigurieren
+	      $dompdf = new Dompdf\Dompdf($options);
+	      $dompdf->set_option('defaultFont', 'Helvetica');
+	      $dompdf->set_option('dpi', '100');
+	      $dompdf->setPaper('A4', 'portrait');
+	      
+	      // Inhalte laden und rendern
+	      $dompdf->loadHtml($pdfcontent);
+	      $dompdf->render();
+
+	      // Datei als PDF-Download ausliefern
+	      $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
+	      rex_response::sendResource($dompdf->output(), 'Content-Type: application/pdf', null, null, null, 'attachment', $art_pdf_name); 
+	      
 	}
 ?>
 ```
@@ -85,7 +84,6 @@ Externe CSS können im <**head**> eingebunden werden
 $print_pdf = rex_request('pdf', 'int');
 // ?pdf=1 
 if ($print_pdf) {
-        rex_response::cleanOutputBuffers(); // OutputBuffer leeren
 	$pdfcontent = 'REX_ARTICLE[]';
 	// Outputfilter auf Inhalt anwenden, sofern erforderlich
 	// Wenn nicht, wird die Generierung beschleunigt
@@ -121,17 +119,21 @@ if ($print_pdf) {
 
 	</style>
 	';
-	      // Dateiname 
-	      $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
-	      header('Content-Type: application/pdf');
-	      $options = new Dompdf\Options();
-	      $options->set('defaultFont', 'Helvetica');
+	      // Dompdf konfigurieren
 	      $dompdf = new Dompdf\Dompdf($options);
-	      $dompdf->loadHtml($pre.$pdfcontent.'</body>');
+	      $dompdf->set_option('defaultFont', 'Helvetica');
+	      $dompdf->set_option('dpi', '100');
 	      $dompdf->setPaper('A4', 'portrait');
+	      
+	      // Inhalte laden und rendern
+	      $dompdf->loadHtml($pre.$pdfcontent.'</body>');
 	      $dompdf->render();
-	      $dompdf->stream($art_pdf_name ,array('Attachment'=>false));
-	      die();
+
+	      // Datei als PDF-Download ausliefern.
+	      $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
+	      rex_response::sendResource($dompdf->output(), 'Content-Type: application/pdf', null, null, null, 'attachment', $art_pdf_name); 
+	      
+	      
   }
 ?>
 ```
