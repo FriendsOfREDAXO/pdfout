@@ -137,6 +137,50 @@ if ($print_pdf) {
   }
 ?>
 ```
+
+##  Mediamanager-Bilder alternative Einbindung
+
+Wesentlich ist hierbei eine Einstellung im Template und das Einfügen von der Server-URL, was man auch via OPF lösen könnte. 
+
+**Modul**:
+```
+<?php 
+
+$imgs = explode(",","REX_MEDIALIST[1]");
+foreach ($imgs as $img) {
+    echo "<img src='".rex::getServer()."index.php?rex_media_type=pdf-optimized&rex_media_file=".$img."'><br>";
+}
+?>
+```
+
+**Template**:
+Habe das Beispiel-Template verwendet. Hier ist der Teil ab Zeile 39 relevant. Neu ist die Option `$options->set('isRemoteEnabled', TRUE);` - damit wird offenbar das Abrufen von Remote-URL aktiviert. 
+
+```
+          // Dateiname 
+          $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
+          header('Content-Type: application/pdf');
+          $options = new Dompdf\Options();
+          $options->set('defaultFont', 'Helvetica');
+          $options->set('isRemoteEnabled', TRUE);
+
+          $dompdf = new Dompdf\Dompdf($options);
+          $dompdf->loadHtml($pre.$pdfcontent.'</body>');
+          $dompdf->setPaper('A4', 'portrait');
+          $dompdf->render();
+          $dompdf->stream($art_pdf_name ,array('Attachment'=>false));
+          die();
+```
+
+IMHO könnte man die Anweisungen am Anfang des Templates entsprechend umschreiben, dass die lokale URL via `rex::getServer()` vorangestellt werden:
+`
+    $pdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $pdfcontent);
+`
+
+Weitere Infos:  https://github.com/dompdf/dompdf/issues/1118
+
+
+
 ___
 ### Tipps
 - Es empfiehlt sich im verwendeten Template die CSS-Definitionen nicht als externe Dateien sondern inline zu hinterlegen. Dies beschleunigt die Generierung, da keine externen Ressourcen eingelesen werden müssen.
