@@ -124,11 +124,9 @@ if ($print_pdf) {
 	      $dompdf->set_option('defaultFont', 'Helvetica');
 	      $dompdf->set_option('dpi', '100');
 	      $dompdf->setPaper('A4', 'portrait');
-	      
 	      // Inhalte laden und rendern
 	      $dompdf->loadHtml($pre.$pdfcontent.'</body>');
 	      $dompdf->render();
-
 	      // Datei als PDF-Download ausliefern.
 	      $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
 	      rex_response::sendResource($dompdf->output(), 'Content-Type: application/pdf', null, null, null, 'attachment', $art_pdf_name); 
@@ -143,7 +141,7 @@ if ($print_pdf) {
 Wesentlich ist hierbei eine Einstellung im Template und das Einfügen von der Server-URL, was man auch via OPF lösen könnte. 
 
 **Modul**:
-```
+```php
 <?php 
 
 $imgs = explode(",","REX_MEDIALIST[1]");
@@ -156,20 +154,19 @@ foreach ($imgs as $img) {
 **Template**:
 Habe das Beispiel-Template verwendet. Hier ist der Teil ab Zeile 39 relevant. Neu ist die Option `$options->set('isRemoteEnabled', TRUE);` - damit wird offenbar das Abrufen von Remote-URL aktiviert. 
 
-```
-          // Dateiname 
-          $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
-          header('Content-Type: application/pdf');
-          $options = new Dompdf\Options();
-          $options->set('defaultFont', 'Helvetica');
-          $options->set('isRemoteEnabled', TRUE);
-
-          $dompdf = new Dompdf\Dompdf($options);
-          $dompdf->loadHtml($pre.$pdfcontent.'</body>');
-          $dompdf->setPaper('A4', 'portrait');
-          $dompdf->render();
-          $dompdf->stream($art_pdf_name ,array('Attachment'=>false));
-          die();
+```php
+// Dateiname 
+$art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
+header('Content-Type: application/pdf');
+$options = new Dompdf\Options();
+$options->set('defaultFont', 'Helvetica');
+$options->set('isRemoteEnabled', TRUE);
+$dompdf = new Dompdf\Dompdf($options);
+$dompdf->loadHtml($pre.$pdfcontent.'</body>');
+$dompdf->setPaper('A4', 'portrait');
+$dompdf->render();
+$dompdf->stream($art_pdf_name ,array('Attachment'=>false));
+die();
 ```
 
 IMHO könnte man die Anweisungen am Anfang des Templates entsprechend umschreiben, dass die lokale URL via `rex::getServer()` vorangestellt werden:
