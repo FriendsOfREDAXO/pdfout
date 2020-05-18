@@ -58,7 +58,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	      $dompdf->set_option('defaultFont', 'Helvetica');
 	      $dompdf->set_option('dpi', '100');
 	      $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
-		  $dompdf->setPaper('A4', 'portrait');
+	      $dompdf->setPaper('A4', 'portrait');
 
 	      // Inhalte laden und rendern
 	      $dompdf->loadHtml($pdfcontent);
