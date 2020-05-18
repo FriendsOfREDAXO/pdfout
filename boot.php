@@ -8,7 +8,7 @@ if (rex::isBackend() && rex::getUser()) {
         rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $file = rex_file::get(rex_path::addon('pdfout', 'README.md'));
         $readmeHtml = rex_markdown::factory()->parse($file);
-        $dompdf = new Dompdf\Dompdf();
+        $dompdf = new pdfout();
         $dompdf->loadHtml($readmeHtml);
         // Optionen festlegen
         $dompdf->set_option('defaultFont', 'Helvetica');
