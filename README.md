@@ -57,8 +57,9 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	      $dompdf = new Dompdf\Dompdf($options);
 	      $dompdf->set_option('defaultFont', 'Helvetica');
 	      $dompdf->set_option('dpi', '100');
-	      $dompdf->setPaper('A4', 'portrait');
-	      
+		  $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
+		  $dompdf->setPaper('A4', 'portrait');
+
 	      // Inhalte laden und rendern
 	      $dompdf->loadHtml($pdfcontent);
 	      $dompdf->render();
@@ -130,7 +131,9 @@ if ($print_pdf) {
 	      // Dompdf konfigurieren
 	      $dompdf = new Dompdf\Dompdf($options);
 	      $dompdf->set_option('defaultFont', 'Helvetica');
-	      $dompdf->set_option('dpi', '100');
+		  $dompdf->set_option('dpi', '100');
+		  $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
+
 	      $dompdf->setPaper('A4', 'portrait');
 	      // Inhalte laden und rendern
 	      $dompdf->loadHtml($pre.$pdfcontent.'</body>');
@@ -169,6 +172,7 @@ header('Content-Type: application/pdf');
 $options = new Dompdf\Options();
 $options->set('defaultFont', 'Helvetica');
 $options->set('isRemoteEnabled', TRUE);
+$options->set('font_cache', rex_path::addonCache('pdfout', 'fonts'));
 $dompdf = new Dompdf\Dompdf($options);
 $dompdf->loadHtml($pre.$pdfcontent.'</body>');
 $dompdf->setPaper('A4', 'portrait');
