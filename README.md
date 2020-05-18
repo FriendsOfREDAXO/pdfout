@@ -131,7 +131,7 @@ if ($print_pdf) {
 	      // Dompdf konfigurieren
 	      $dompdf = new Dompdf\Dompdf($options);
 	      $dompdf->set_option('defaultFont', 'Helvetica');
-		  $dompdf->set_option('dpi', '100');
+	      $dompdf->set_option('dpi', '100');
 		  $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
 
 	      $dompdf->setPaper('A4', 'portrait');
