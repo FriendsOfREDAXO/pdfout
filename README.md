@@ -54,10 +54,9 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	  $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
 
 	      // Dompdf konfigurieren
-	      $dompdf = new Dompdf\Dompdf($options);
+	      $dompdf = new pdfout($options);
 	      $dompdf->set_option('defaultFont', 'Helvetica');
 	      $dompdf->set_option('dpi', '100');
-	      $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
 	      $dompdf->setPaper('A4', 'portrait');
 
 	      // Inhalte laden und rendern
@@ -129,10 +128,9 @@ if ($print_pdf) {
 	</style>
 	';
 	      // Dompdf konfigurieren
-	      $dompdf = new Dompdf\Dompdf($options);
+	      $dompdf = $dompdf = new pdfout($options);
 	      $dompdf->set_option('defaultFont', 'Helvetica');
 	      $dompdf->set_option('dpi', '100');
-	      $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
 
 	      $dompdf->setPaper('A4', 'portrait');
 	      // Inhalte laden und rendern
