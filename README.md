@@ -8,7 +8,6 @@ ___
 
 ## PDF-Generierung mittels dompdf
 
-
 ### Anforderungen
 
 - DOM-Erweiterung
@@ -25,10 +24,7 @@ GD (für Bildverarbeitung)
 IMagick- oder GMagick-Erweiterung: verbessert die Bildverarbeitungsleistung
 Besuchen Sie das Wiki für weitere Informationen: https://github.com/dompdf/dompdf/wiki/Requirements
 
-Übersetzt mit www.DeepL.com/Translator (kostenlose Version)
-
-
-### Mögliche Anwendung: 
+### Mögliche Anwendung
 
 Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 - Den nachfolgenden Code am Anfang des gewünschten Templates oder als separates Template einsetzen
@@ -74,11 +70,23 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 	}
 ?>
 ```
-### Erweitertes Beispiel mit inline-css und Url-Ersetzung
-Damit Bilder ausgegeben werden können, müssen die Bild-Urls umgeschrieben werden. MediaManager-Urls können nicht sofort genutzt werden. Die Bilder müssen direkt aus dem media/-Ordner ausgelesen werden oder mit voller URL angegeben werden. (siehe hierzu: https://github.com/FriendsOfREDAXO/pdfout/issues/13)  
-Unbedingt die Kommentare beachten.
+### Erweitertes Beispiel mit inline-css und URL-Ersetzung
 
-Externe CSS können im <**head**> eingebunden werden
+Damit Bilder ausgegeben werden können, müssen die Bild-URLs umgeschrieben werden. MediaManager-URLs können nicht sofort genutzt werden. Die Bilder müssen direkt aus dem `media/`-Ordner ausgelesen werden oder mit voller URL angegeben werden. (siehe hierzu: https://github.com/FriendsOfREDAXO/pdfout/issues/13). Unbedingt die Kommentare beachten.
+
+**Exemplarische Logik**
+```
+if (true === $html) {
+	echo rex_url::media($file); // URL für den Browser
+} else if (true === $pdf) {
+	echo rex_path::media($file); // URL für dompdf
+}
+```
+
+> Tipp: Wenn möglich, dann Bilddateien als JPG innerhalb eines `<img>`-Tags platzieren. Dies bietet die beste Performance.
+
+Externes CSS kann im `<head>` eingebunden werden.
+
 ```php
 <?php
 $print_pdf = rex_request('pdf', 'int');
@@ -136,9 +144,9 @@ if ($print_pdf) {
 ?>
 ```
 
-##  Mediamanager-Bilder alternative Einbindung
+##  Media-Manager-Bilder alternative Einbindung
 
-Wesentlich ist hierbei eine Einstellung im Template und das Einfügen von der Server-URL, was man auch via OPF lösen könnte. 
+Wesentlich ist hierbei eine Einstellung im Template und das Einfügen der Server-URL, was man auch via Output Filter lösen könnte. 
 
 **Modul**:
 ```php
@@ -169,15 +177,9 @@ $dompdf->stream($art_pdf_name ,array('Attachment'=>false));
 die();
 ```
 
-IMHO könnte man die Anweisungen am Anfang des Templates entsprechend umschreiben, dass die lokale URL via `rex::getServer()` vorangestellt werden:
-`
-    $pdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $pdfcontent);
-`
+IMHO könnte man die Anweisungen am Anfang des Templates entsprechend umschreiben, dass die lokale URL via `rex::getServer()` vorangestellt werden: `$pdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $pdfcontent);`
 
 Weitere Infos:  https://github.com/dompdf/dompdf/issues/1118
-
-
-
 ___
 ## Tipps
 - Es sollte auf die numerische Angabe bei font-weight verzichtet werden. 
@@ -214,8 +216,6 @@ Zusätzlichen Stil in Style-Tag inline einfügen:
 	</style>  
 ```
 
-
-
 ## Ausgabe eines PDF mit pdf.js
 
 ### Link-Beispiel
@@ -244,7 +244,4 @@ ___
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
 - [First release: Oliver Kreischer](https://github.com/olien)
 - [Simon Krull](https://github.com/crydotsnake)
-
-
-
-
+- [Alexander Walther](https://github.com/alexplusde)
