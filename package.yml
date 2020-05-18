@@ -8,3 +8,13 @@ requires:
     php:
         version: '^7.1'
         extensions: [gd]
+
+page:
+    title: translate:pdfout
+    icon: fa-icon rex-icon fa-file-pdf-o
+    perm: admin[]
+    subpages:
+        help:
+            title: translate:pdfout_docs
+            subPath: README.md
+            perm: admin[]
