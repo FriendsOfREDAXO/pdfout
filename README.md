@@ -76,7 +76,8 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 Damit Bilder ausgegeben werden können, müssen die Bild-URLs umgeschrieben werden. MediaManager-URLs können nicht sofort genutzt werden. Die Bilder müssen direkt aus dem `media/`-Ordner ausgelesen werden oder mit voller URL angegeben werden. (siehe hierzu: https://github.com/FriendsOfREDAXO/pdfout/issues/13). Unbedingt die Kommentare beachten.
 
 **Exemplarische Logik**
-```
+
+```php
 if (true === $html) {
 	echo rex_url::media($file); // URL für den Browser
 } else if (true === $pdf) {
