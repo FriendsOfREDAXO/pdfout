@@ -241,8 +241,7 @@ Also z.B.:
 
 ### Wo finde ich weitere Hilfe?
 
-Search it verfügt über ein umfangreiches Dokumentations-Plugin im Backend, das auch Beispiel Module für die Suche enthält.
-Fragen können auch im [REDAXO-Channel auf Slack](https://friendsofredaxo.slack.com/messages/redaxo/) gestellt werden.
+Fragen können im [REDAXO-Channel auf Slack](https://friendsofredaxo.slack.com/messages/redaxo/) gestellt werden.
 
 ### Autor
 
