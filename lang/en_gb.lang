@@ -1,4 +1,6 @@
+pdfout = PDFout
 pdfout_title = PDFout
+pdfout_docs = Help
 
 pdfout_main = Main page
 
