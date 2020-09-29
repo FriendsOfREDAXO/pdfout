@@ -1,8 +1,8 @@
-# PDF out – dompdf und pdfjs für REDAXO 5
+# PDFout – PDF Generator: dompdf und PDF-Viewer: pdfjs 
 
-PDF out stellt den "HTML to PDF"-Converter [dompdf](http://dompdf.github.io) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
+PDFout stellt den "HTML to PDF"-Converter [dompdf](http://dompdf.github.io) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
 
-Mit dompdf können Ausgaben in REDAXO als PDF generiert werden und mittels pdf.js angezeigt werden. PDF out ist keine "out of the box"-Lösung. Es stellt nur die nötigen Vendoren bereit.  
+Mit dompdf können Ausgaben in REDAXO als PDF generiert werden und mittels pdf.js angezeigt werden. PDFout ist keine "out of the box"-Lösung. Es stellt nur die nötigen Vendoren bereit.  
 
 ## Installation
 
@@ -15,7 +15,7 @@ Die Installation erfolgt über den REDAXO-Installer, alternativ gibt es die aktu
 - php-font-lib
 - php-svg-lib
 
-> Bitte beachten: Einige Erweiterungen bringen ebenfalls Abhängigkeiten mit sich, z. B. insbesondere `php-svg-lib` erfordert `sabberworm/php-css-parser`.
+> Bitte beachten: Einige Erweiterungen bringen ebenfalls Abhängigkeiten mit sich, z.B. insbesondere `php-svg-lib` erfordert `sabberworm/php-css-parser`.
 
 Zusätzlich empfohlen:
 
@@ -223,12 +223,12 @@ Zusätzlichen Stil in Style-Tag inline einfügen:
 ### Link-Beispiel
 
 ```html
-<a href="<?= rex_url::assets('addons/pdf_viewer/vendor/web/viewer.html?file=/media/deinePDFdatei.pdf') ?>">Link</a>
+<a href="<?= rex_url::assets('addons/pdfout/vendor/web/viewer.html?file=/media/deinePDFdatei.pdf') ?>">PDF anzeigen</a>
 ```
 
 ### Tipp
 
-Möchte man dompdf-urls  der andere URLs mit Parametern kombinieren, muss die übergebene URL unbedingt per `urlencode` kodiert werden: `urlencode($foo)`
+Möchte man dompdf-urls der andere URLs mit Parametern kombinieren, muss die übergebene URL unbedingt per `urlencode` kodiert werden: `urlencode($foo)`
 
 Also z.B.:
 
