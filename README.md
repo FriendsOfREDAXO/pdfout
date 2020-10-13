@@ -250,13 +250,14 @@ http://www.redaxo.org
 https://github.com/FriendsOfREDAXO 
 
 **Projekt-Lead** 
-[Thomas Skerbis](https://github.com/skerbis)
+[FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
 
 Wir bedanken uns bei...
 
 - [dompdf](http://dompdf.github.io)
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
 - [First release: Oliver Kreischer](https://github.com/olien)
+- [Thomas Skerbis](https://github.com/skerbis)
 - [Simon Krull](https://github.com/crydotsnake)
 - [Alexander Walther](https://github.com/alexplusde)
 
