@@ -6,7 +6,7 @@ supportpage: https://github.com/FriendsOfREDAXO/pdfout
 requires:
     redaxo: '^5.8.0'
     php:
-        version: '^7.1'
+        version: '>=7.1'
         extensions: [gd]
 
 page:
