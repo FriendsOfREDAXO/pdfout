@@ -422,7 +422,7 @@ class Style
             $d["src"] = "";
             $d["unicode_range"] = "";
 
-            // vendor-previxed properties
+            // vendor-prefixed properties
             $d["_dompdf_background_image_resolution"] = &$d["background_image_resolution"];
             $d["_dompdf_image_resolution"] = &$d["image_resolution"];
             $d["_dompdf_keep"] = "";
@@ -794,7 +794,13 @@ class Style
                         unset($this->_prop_cache[$shorthand]);
                     }
                 }
-                $this->__set($prop, $val);
+                //FIXME: temporary hack around lack of persistence of base href for URLs
+                if (($prop === "background_image" || $prop === "list_style_image") && isset($style->_props_computed[$prop])) {
+                    $this->__set($prop, $style->_props_computed[$prop]);
+                } else {
+                    // computed value not set, recompute use the specified value
+                    $this->__set($prop, $val);
+                }
             }
         }
     }
@@ -1692,7 +1698,9 @@ class Style
             } else if (
                 (($style === "border" || $style === "outline") && $type === "width" && strpos($val, "%") !== false)
                 ||
-                (($style === "margin" || $style === "padding") && (strpos($val, "%") !== false || $val === "auto"))
+                ($style === "padding" && strpos($val, "%") !== false)
+                ||
+                ($style === "margin" && (strpos($val, "%") !== false || $val === "auto"))
             ) {
                 $this->_props_computed[$prop] = $val;
             } elseif (($style === "border" || $style === "outline") && $type === "width" && strpos($val, "%") === false) {
@@ -1806,7 +1814,7 @@ class Style
 
         if (empty($val) || $val === "none") {
             $path = "none";
-        } else if (mb_strpos($val, "url") === false) {
+        } elseif (mb_strpos($val, "url") === false) {
             $path = "none"; //Don't resolve no image -> otherwise would prefix path and no longer recognize as none
         } else {
             $val = preg_replace("/url\(\s*['\"]?([^'\")]+)['\"]?\s*\)/", "\\1", trim($val));
@@ -1817,7 +1825,7 @@ class Style
                 $this->_stylesheet->get_host(),
                 $this->_stylesheet->get_base_path(),
                 $val);
-            if ($parsed_url["protocol"] == "" && $this->_stylesheet->get_protocol() == "") {
+            if (($parsed_url["protocol"] == "" || $parsed_url["protocol"] == "file://") && ($this->_stylesheet->get_protocol() == "" || $this->_stylesheet->get_protocol() == "file://")) {
                 $path = realpath($path);
                 // If realpath returns FALSE then specifically state that there is no background image
                 if (!$path) {
@@ -1884,7 +1892,12 @@ class Style
     function set_background_image($val)
     {
         $this->_props["background_image"] = $val;
-        $this->_props_computed["background_image"] = "url(" . $this->_image($val) . ")";
+        $parsed_val = $this->_image($val);
+        if ($parsed_val === "none") {
+            $this->_props_computed["background_image"] = "none";
+        } else {
+            $this->_props_computed["background_image"] = "url(" . $parsed_val . ")";
+        }
         $this->_prop_cache["background_image"] = null;
     }
 
@@ -2486,30 +2499,29 @@ class Style
     protected function _set_border($side, $border_spec, $important)
     {
         $border_spec = preg_replace("/\s*\,\s*/", ",", $border_spec);
-        //$border_spec = str_replace(",", " ", $border_spec); // Why did we have this ?? rbg(10, 102, 10) > rgb(10  102  10)
         $arr = explode(" ", $border_spec);
-
-        // FIXME: handle partial values
-        //For consistency of individual and combined properties, and with ie8 and firefox3
-        //reset all attributes, even if only partially given
-        //$this->_set_style_side_type('border', $side, 'style', self::$_defaults['border_' . $side . '_style'], $important);
-        //$this->_set_style_side_type('border', $side, 'width', self::$_defaults['border_' . $side . '_width'], $important);
-        //$this->_set_style_side_type('border', $side, 'color', self::$_defaults['border_' . $side . '_color'], $important);
 
         foreach ($arr as $value) {
             $value = trim($value);
-            if (in_array($value, self::$BORDER_STYLES)) {
-                $this->_set_style_side_type('border', $side, 'style', $value, $important);
-            } elseif (preg_match("/[.0-9]+(?:px|pt|pc|em|ex|%|in|mm|cm)|(?:thin|medium|thick)/", $value)) {
-                $this->_set_style_side_type('border', $side, 'width', $value, $important);
-            } elseif ($value === "inherit") {
-                $this->_set_style_side_type('border', $side, 'style', $value, $important);
-                $this->_set_style_side_type('border', $side, 'width', $value, $important);
-                $this->_set_style_side_type('border', $side, 'color', $value, $important);
+            $prop = "";
+            if (strtolower($value) === "inherit") {
+                $this->__set("border_${side}_color", "inherit");
+                $this->__set("border_${side}_style", "inherit");
+                $this->__set("border_${side}_width", "inherit");
+                continue;
+            } elseif (in_array($value, self::$BORDER_STYLES)) {
+                $prop = "border_${side}_style";
+            } elseif ($value === "0" || preg_match("/[.0-9]+(?:px|pt|pc|em|ex|%|in|mm|cm)|(?:thin|medium|thick)/", $value)) {
+                $prop = "border_${side}_width";
             } else {
                 // must be color
-                $this->_set_style_side_type('border', $side, 'color', $this->munge_color($value), $important);
+                $prop = "border_${side}_color";
             }
+
+            if ($important) {
+                $this->_important_props[$prop] = true;
+            }
+            $this->__set($prop, $value);
         }
     }
 
@@ -2835,7 +2847,7 @@ class Style
 
             if (in_array($value, self::$BORDER_STYLES)) {
                 $this->__set("outline_style", $value);
-            } else if (preg_match("/[.0-9]+(?:px|pt|pc|em|ex|%|in|mm|cm)|(?:thin|medium|thick)/", $value)) {
+            } else if ($value === "0" || preg_match("/[.0-9]+(?:px|pt|pc|em|ex|%|in|mm|cm)|(?:thin|medium|thick)/", $value)) {
                 $this->__set("outline_width", $value);
             } else {
                 // must be color
@@ -2911,7 +2923,12 @@ class Style
     function set_list_style_image($val)
     {
         $this->_props["list_style_image"] = $val;
-        $this->_props_computed["list_style_image"] = "url(" . $this->_image($val) . ")";
+        $parsed_val = $this->_image($val);
+        if ($parsed_val === "none") {
+            $this->_props_computed["list_style_image"] = "none";
+        } else {
+            $this->_props_computed["list_style_image"] = "url(" . $parsed_val . ")";
+        }
         $this->_prop_cache["list_style_image"] = null;
     }
 
@@ -3301,7 +3318,7 @@ class Style
         $this->_props_computed["z_index"] = null;
         $this->_prop_cache["z_index"] = null;
 
-        if (round($val) != $val && $val !== "auto") {
+        if ($val !== "auto" && round($val) != $val) {
             return;
         }
 
