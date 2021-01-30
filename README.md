@@ -108,7 +108,6 @@ if ($print_pdf) {
 
  </head>
  <body>
- <img id="titel" src="media/logo.jpg" style="width:100%"; height:auto;" />
  <style>
  /* hier CSS anlegen, Beispiel: */
 
