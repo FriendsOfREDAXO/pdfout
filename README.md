@@ -54,6 +54,10 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
        $dompdf->set_option('dpi', '100');
        $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
        $dompdf->setPaper('A4', 'portrait');
+       
+       // Erlaube das Laden externer Sourcen, z.B. Fonts
+       // Siehe unbedingt: https://github.com/dompdf/dompdf/blob/v1.0.2/src/Options.php#L163..L182
+       // $dompdf->set_option('isRemoteEnabled',true);
 
        // Inhalte laden und rendern
        $dompdf->loadHtml($pdfcontent);
