@@ -2,12 +2,13 @@
 use Dompdf\Dompdf;
 class PdfOut extends Dompdf
 {
- public static function sendPdf($html = '', $defaultFont ='Courier', $Attachment = false)
+ public static function sendPdf($html = '', $defaultFont ='Courier', $Attachment = false, $remoteFiles = true;)
  {
   rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $dompdf = new self();
         $dompdf->loadHtml($html);
         // Optionen festlegen
+        $dompdf->set_option('isRemoteEnabled', $remoteFiles);
         $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
         $dompdf->set_option('defaultFont', $defaultFont);
         $dompdf->setPaper('A4', 'portrait');
