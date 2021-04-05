@@ -1,4 +1,6 @@
 <?php
+$addon = rex_addon::get('pdfout');
+rex_dir::create($addon->getCachePath());
 
 require_once $this->getPath('vendor/'.'autoload.php');
 
