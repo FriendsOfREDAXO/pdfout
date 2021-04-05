@@ -44,7 +44,7 @@ if ($print_pdf) {
   // Outputfilter auf Inhalt anwenden, sofern erforderlich
   // Wenn nicht verwendet, wird die Generierung beschleunigt
   $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
-  PdfOut::sendPdf('artikelname_ohne_endung', $pdfcontent);
+  PdfOut::sendPdf('Dateiname_ohne_endung', $pdfcontent);
 }
 ```
 ## Die Methode sendPdf
