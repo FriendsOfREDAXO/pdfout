@@ -48,9 +48,9 @@ if ($print_pdf) {
 }
 ```
 
-In diesem Beispiel wird überprüft ob pdfout als parameter übergeben wurde und der Output von REX_ARTICLE als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, sollte man ein Template erstellen und alle nötigen Styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]. 
+In diesem Beispiel wird überprüft ob pdfout als Parameter übergeben wurde und der Output von REX_ARTICLE wird als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, sollte man ein Template erstellen und alle nötigen Styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]. 
 
-> Die Abfrage nach einem Request ist optional. Der Aufruf kann überall erfolgen z.B. auch ein einem Extensionpoint oder nach dem Ausfüllen eines Formulars. 
+> Die Abfrage nach einem Request ist optional. Der Aufruf kann überall erfolgen, z.B. auch in einem Extensionpoint oder nach dem Ausfüllen eines Formulars. 
 
 
 ## Die Methode sendPdf
@@ -70,20 +70,20 @@ PdfOut::sendPdf($name = 'pdf_file', $html = '', $orientation = 'portrait', $defa
 
 ## Bilder im PDF
 
-Medien die direkt aus dem Medien-Ordner geladen werden müssen relativ zum Root der Website aufgerufen werden. 
+Medien die direkt aus dem Medien-Ordner geladen werden, müssen relativ zum Root der Website aufgerufen werden. 
 
-Also: `media/image.php`
+Also: `media/image.png`
 
-Medien die über den Mediamanager aufgerufen werden sollten immer über die volle URL aufgerufen werden. 
+Medien, die über den Mediamanager aufgerufen werden, sollten immer über die volle URL aufgerufen werden. 
 
 Also: `https://domain.tld/media/media_type/image.php`
 
 ## CSS und Fonts
 
-CSS und Fonts sollten möglichst inline im HTML eingebunden sein. Die Pfade können vollständige URls oder Pfade relativ zum Root haben. 
+CSS und Fonts sollten möglichst inline im HTML eingebunden sein. Die Pfade externer Assets können vollständige URls oder Pfade relativ zum Root haben. 
 
 ## Individuelle Einstellung
-Es handelt sich hierbei immer noch um das reguläre domPDF das über den Aufruf new PdfOut() instanziert werden kann. 
+Es handelt sich hierbei immer noch um das reguläre domPDF das über den Aufruf `new PdfOut()` instanziert werden kann. 
 
 Mehr dazu bei: [dompdf](http://dompdf.github.io)
 
@@ -99,12 +99,13 @@ Mehr dazu bei: [dompdf](http://dompdf.github.io)
 
 ### Medienfiles umschreiben 
 
-Die direkt aus dem media-Verzeichnis ausgelesen werden.
+Die direkt aus dem Media-Verzeichnis ausgelesen werden.
 
 ```php
 $media = rex_url::media($file); // normal
 // wenn pdfout = 1
 if(rex_request('pdfout', 'int')) { 
+// entfernt Slash am Anfang
 $media = ltrim(rex_url::media($file),'/'); 
 }
 ```
