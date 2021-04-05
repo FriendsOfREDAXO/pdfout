@@ -26,7 +26,7 @@ class PdfOut extends Dompdf
     {
         if ($file!='')
         {
-            return rex_url::assets('addons/pdfout/vendor/web/viewer.html?file=');
+            return rex_url::assets('addons/pdfout/vendor/web/viewer.html?file='.$file);
         }
         else {
             return '#';
