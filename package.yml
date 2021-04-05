@@ -1,5 +1,5 @@
 package: pdfout
-version: '3.1.0-dev'
+version: '4.0.0-dev'
 vendor: '1.0.2'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout
