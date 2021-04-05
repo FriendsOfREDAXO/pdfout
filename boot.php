@@ -15,7 +15,6 @@ if (rex::isBackend() && rex::getUser()) {
         $dompdf->loadHtml($readmeHtml);
         // Optionen festlegen
         $dompdf->set_option('defaultFont', 'Courier');
-        $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->set_option('dpi', '100');
         // Rendern des PDF
