@@ -2,7 +2,7 @@
 use Dompdf\Dompdf;
 class PdfOut extends Dompdf
 {
- public static function sendpdf($html = '', $defaultFont ='Courier', $Attachment = false)
+ public static function sendPdf($html = '', $defaultFont ='Courier', $Attachment = false)
  {
   rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $dompdf = new self();
