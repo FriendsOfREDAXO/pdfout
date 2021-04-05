@@ -77,7 +77,9 @@ Also: `https://domain.tld/media/media_type/image.php`
 CSS und Fonts sollten möglichst inline im HTML eingebunden sein. Die Pfade können vollständige URls oder Pfade relativ zum Root haben. 
 
 ## Individuelle Einstellung
+Es handelt sich hierbei immer noch um das reguläre domPDF das über den Aufruf new PdfOut() instanziert werden kann. 
 
+Mehr dazu bei: [dompdf](http://dompdf.github.io)
 
 
 ## Tipps
@@ -149,14 +151,13 @@ http://www.redaxo.org
 https://github.com/FriendsOfREDAXO 
 
 **Projekt-Lead** 
-[FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
+[Thomas Skerbis](https://github.com/skerbis)
 
 Wir bedanken uns bei...
 
 - [dompdf](http://dompdf.github.io)
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
 - [First release: Oliver Kreischer](https://github.com/olien)
-- [Thomas Skerbis](https://github.com/skerbis)
 - [Simon Krull](https://github.com/crydotsnake)
 - [Alexander Walther](https://github.com/alexplusde)
 
