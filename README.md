@@ -97,6 +97,18 @@ Mehr dazu bei: [dompdf](http://dompdf.github.io)
 - Fixierte Divs können zur Anzeige von Fuß und Kopfzeile verwendet werden. Ideal ist es diese direkt nach dem Bodytag zu integrieren. Dann können auch mittels CSS count z.B. Seitenzahlen ausgegegeben werden.
 - Google Fonts zur lokalen Nutzung herunterladen: <https://google-webfonts-helper.herokuapp.com/fonts>
 
+### Medienfiles umschreiben 
+
+Die direkt aus dem media-Verzeichnis ausgelesen werden.
+
+```php
+$media = rex_url::media($file); // normal
+// wenn pdfout = 1
+if(rex_request('pdfout', 'int')) { 
+$media = ltrim(rex_url::media($file),'/'); 
+}
+```
+
 ### Font-Awsome 4.x einbinden:
 
 Font-Awsome fonts werden nicht korrekt dargestellt.
