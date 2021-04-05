@@ -124,22 +124,12 @@ Zusätzlichen Stil in Style-Tag inline einfügen:
 
 ## Ausgabe eines PDF mit pdf.js
 
-### Link-Beispiel
+Mit `PdfOut::viewer($file)` erhält man den Link zum aufruf des PDF. Es können auch PdfOut-PDF-Ulrs angegeben werrden. Sie müssen nicht mehr speziell encodet werden. 
 
-```html
-<a href="<?= rex_url::assets('addons/pdfout/vendor/web/viewer.html?file=/media/deinePDFdatei.pdf') ?>">PDF anzeigen</a>
+```php
+<a href="<?=PdfOut::viewer('/media/pdfdatei.pdf')?>">PDF anzeigen</a>
 ```
 
-### Tipp
-
-Möchte man dompdf-urls der andere URLs mit Parametern kombinieren, muss die übergebene URL unbedingt per `urlencode` kodiert werden: `urlencode($foo)`
-
-Also z.B.:
-
-```html
-<a href="<?= rex_url::assets('addons/pdfout/vendor/web/viewer.html?file='.urlencode("index.php?pdftest=1"))?>
-
-```
 
 ## Support & Credits
 
