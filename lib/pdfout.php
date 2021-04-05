@@ -22,5 +22,15 @@ class PdfOut extends Dompdf
         $pdf->stream(rex_string::normalize($name), array('Attachment' => false));
         die();
     }
+    public static function viewer($file = '')
+    {
+        if ($file!='')
+        {
+            return rex_url::assets('addons/pdfout/vendor/web/viewer.html?file=');
+        }
+        else {
+            return '#';
+        }
+    }
 
 }
