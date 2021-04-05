@@ -10,10 +10,11 @@ if (rex::isBackend() && rex::getUser()) {
     if ($print_pdftest == 1) {
         rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $file = rex_file::get(rex_path::addon('pdfout', 'README.md'));
-        $readmeHtml = rex_markdown::factory()->parse($file);
+        $readmeHtml = '<style>body {font-family: DejaVu Sans; }</style>'.rex_markdown::factory()->parse($file);
         $dompdf = new Dompdf\Dompdf();
         $dompdf->loadHtml($readmeHtml);
         // Optionen festlegen
+        $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
         $dompdf->set_option('defaultFont', 'Courier');
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->set_option('dpi', '100');
@@ -26,3 +27,4 @@ if (rex::isBackend() && rex::getUser()) {
 
     }
 }
+
