@@ -2,7 +2,7 @@
 use Dompdf\Dompdf;
 class PdfOut extends Dompdf
 {
- public static function sendPdf($html = '', $orientation = 'portrait', $defaultFont ='Courier', $Attachment = false, $remoteFiles = true;)
+ public static function sendPdf($html = '', $orientation = 'portrait', $defaultFont ='Courier', $attachment = false, $remoteFiles = true;)
  {
   rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $dompdf = new self();
@@ -18,7 +18,7 @@ class PdfOut extends Dompdf
         $dompdf->render();
         // Ausliefern des PDF
         header('Content-Type: application/pdf');
-        $dompdf->stream('readme', array('Attachment' => $Attachment)); // bei true wird Download erzwungen
+        $dompdf->stream('readme', array('Attachment' => $attachment)); // bei true wird Download erzwungen
    die();
  }
  
