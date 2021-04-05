@@ -38,155 +38,51 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 ## Beispiel-Code
 
 ```php
-<?php
-  // ?pdf=1
-  $print_pdf = rex_request('pdf', 'int');
-  if ($print_pdf) {
-   // Artikel laden oder alternativ ein Template
-   $pdfcontent = 'REX_ARTICLE[]';
-   // Outputfilter auf Inhalt anwenden, sofern erforderlich
-   // Wenn nicht, wird die Generierung beschleunigt
-   $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
-
-       // Dompdf konfigurieren
-       $dompdf = new Dompdf\Dompdf($options);
-       $dompdf->set_option('defaultFont', 'Helvetica');
-       $dompdf->set_option('dpi', '100');
-       $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
-       $dompdf->setPaper('A4', 'portrait');
-       
-       // Erlaube das Laden externer Sourcen, z.B. Fonts
-       // Siehe unbedingt: https://github.com/dompdf/dompdf/blob/v1.0.2/src/Options.php#L163..L182
-       // $dompdf->set_option('isRemoteEnabled',true);
-
-       // Inhalte laden und rendern
-       $dompdf->loadHtml($pdfcontent);
-       $dompdf->render();
-
-       // Datei als PDF-Download ausliefern
-       $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
-       rex_response::sendResource($dompdf->output(), 'Content-Type: application/pdf', null, null, null, 'attachment', $art_pdf_name);
- }
-?>
-```
-
-### Erweitertes Beispiel mit inline-css und URL-Ersetzung
-
-Damit Bilder ausgegeben werden können, müssen die Bild-URLs umgeschrieben werden. MediaManager-URLs können nicht sofort genutzt werden. Die Bilder müssen direkt aus dem `media/`-Ordner ausgelesen werden oder mit voller URL angegeben werden. (siehe hierzu: <https://github.com/FriendsOfREDAXO/pdfout/issues/13).> Unbedingt die Kommentare beachten.
-
-**Exemplarische Logik**
-
-```php
-if (true === $html) {
- echo rex_url::media($file); // URL für den Browser
-} else if (true === $pdf) {
- echo rex_path::media($file); // URL für dompdf
-}
-```
-
-> **Tipp:** Wenn möglich, dann Bilddateien als JPG innerhalb eines `<img>`-Tags platzieren. Dies bietet die beste Performance.
-
-Externes CSS kann im `<head>` eingebunden werden.
-
-```php
-<?php
 $print_pdf = rex_request('pdf', 'int');
-// ?pdf=1
 if ($print_pdf) {
- $pdfcontent = 'REX_ARTICLE[]';
- // Outputfilter auf Inhalt anwenden, sofern erforderlich
- // Wenn nicht, wird die Generierung beschleunigt
- $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
- // Hier Beispiele für Image-Rewrite
- // Bei der Verwendung von MediaManager-Bildern anpassen
- $pdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $pdfcontent);
- $pdfcontent = str_replace("index.php?rex_media_type=redactorImage&amp;rex_media_file=", "media/", $pdfcontent);
- $pdfcontent = str_replace("index.php?rex_media_type=redactorImage&rex_media_file=", "media/", $pdfcontent);
- // übliche Links in das Medienverzeichnis
- $pdfcontent = str_replace("/media/", "media/", $pdfcontent);
- $pdfcontent = str_replace(".media/", "media/", $pdfcontent);
-
- // Kopfdefinition
- $pre = '
- <head>
-
- </head>
- <body>
- <style>
- /* hier CSS anlegen, Beispiel: */
-
- body {
-     padding-left: 80px;
-     padding-top:10px;
-     line-height: 1.56em;
-     }
- a {
-     display: none;
-     }
-  h1 {font-size: 2.5em; font-color: #990000;}
-
- </style>
- ';
-       // Dompdf konfigurieren
-       $dompdf = new Dompdf\Dompdf($options);
-       $dompdf->set_option('defaultFont', 'Helvetica');
-       $dompdf->set_option('dpi', '100');
-       $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
-
-       $dompdf->setPaper('A4', 'portrait');
-       // Inhalte laden und rendern
-       $dompdf->loadHtml($pre.$pdfcontent.'</body>');
-       $dompdf->render();
-       // Datei als PDF-Download ausliefern.
-       $art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
-       rex_response::sendResource($dompdf->output(), 'Content-Type: application/pdf', null, null, null, 'attachment', $art_pdf_name);
-  }
-?>
-```
-
-### Media-Manager-Bilder alternative Einbindung
-
-Wesentlich ist hierbei eine Einstellung im Template und das Einfügen der Server-URL, was man auch via Output Filter lösen könnte.
-
-**Modul**:
-
-```php
-<?php
-
-$imgs = explode(",","REX_MEDIALIST[1]");
-foreach ($imgs as $img) {
-    echo "<img src='".rex::getServer()."index.php?rex_media_type=pdf-optimized&rex_media_file=".$img."'><br>";
+  $pdfcontent = 'REX_ARTICLE[]';
+  // Outputfilter auf Inhalt anwenden, sofern erforderlich
+  // Wenn nicht verwendet, wird die Generierung beschleunigt
+  $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
+  PdfOut::sendPdf('artikelname_ohne_endung', $pdfcontent);
 }
-?>
 ```
+## Die Methode sendPDF
 
-**Template**:
-Habe das Beispiel-Template verwendet. Hier ist der Teil ab Zeile 39 relevant. Neu ist die Option `$options->set('isRemoteEnabled', TRUE);` - damit wird offenbar das Abrufen von Remote-URL aktiviert.
+Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stenen zur Verfügung 
+
+- $name = 'Dateiname ohne Endung'
+- $html = Das HTML das übergen werden soll 
+- $orientation = 'portrait' oder 'landscape'
+- $defaultFont = 'Courier'
+- $attachment = false 
+- $remoteFiles = true oder false
 
 ```php
-// Dateiname
-$art_pdf_name =  rex_string::normalize(rex_article::getCurrent()->getValue('name'));
-header('Content-Type: application/pdf');
-$options = new Dompdf\Options();
-$options->set('defaultFont', 'Helvetica');
-$options->set('isRemoteEnabled', TRUE);
-$options->set('font_cache', rex_path::addonCache('pdfout', 'fonts'));
-$dompdf = new Dompdf\Dompdf($options);
-$dompdf->loadHtml($pre.$pdfcontent.'</body>');
-$dompdf->setPaper('A4', 'portrait');
-$dompdf->render();
-$dompdf->stream($art_pdf_name ,array('Attachment'=>false));
-die();
+PdfOut::sendPdf($name = 'pdf_file', $html = '', $orientation = 'portrait', $defaultFont ='Courier', $attachment = false, $remoteFiles = true)
 ```
 
-IMHO könnte man die Anweisungen am Anfang des Templates entsprechend umschreiben, dass die lokale URL via `rex::getServer()` vorangestellt werden: `$pdfcontent = str_replace("/index.php?rex_media_type=standard&amp;rex_media_file=", "media/", $pdfcontent);`
+## Bilder im PDF
 
-Weitere Infos:  <https://github.com/dompdf/dompdf/issues/1118>
-___
+Medien die direkt aus dem Medien-Ordner geladen werden müssen relativ zum Root der Website aufgerufen werden. 
+
+Also: `media/image.php`
+
+Medien die über den Mediamanager aufgerufen werden sollten immer über die volle URL aufgerufen werden. 
+
+Also: `https://domain.tld/media/media_type/image.php`
+
+## CSS und Fonts
+
+CSS und Fonts sollten möglichst inline im HTML eingebunden sein. Die Pfade können vollständige URls oder Pfade relativ zum Root haben. 
+
+## Individuelle Einstellung
+
+
 
 ## Tipps
 
-- Es sollte auf die numerische Angabe bei font-weight verzichtet werden.
+- Auf die numerische Angabe bei font-weight sollte verzichtet werden.
 - Es empfiehlt sich im verwendeten Template die CSS-Definitionen nicht als externe Dateien sondern inline zu hinterlegen. Dies beschleunigt die Generierung, da keine externen Ressourcen eingelesen werden müssen.
 - Auf Bootsstrap CSS oder andere CSS-Frameworks bei der Ausgabe möglichst verzichten, da zuviele Styles abgearbeitet werden müssen.
 - URLs zu Ressourcen sollten ohne / beginnen und vom Webroot aus definiert sein z.B. media/zyz.jpg oder assets/css/pdf_styles.css. Ein Search & Replace per PHP kann hierbei helfen.
