@@ -47,7 +47,7 @@ if ($print_pdf) {
   PdfOut::sendPdf('artikelname_ohne_endung', $pdfcontent);
 }
 ```
-## Die Methode sendPDF
+## Die Methode sendPdf
 
 Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stenen zur Verfügung 
 
