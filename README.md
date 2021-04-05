@@ -47,7 +47,7 @@ if ($print_pdf) {
   PdfOut::sendPdf('Dateiname_ohne_endung', $pdfcontent);
 }
 ```
-In diesem Beispiel wird der Output von REX_ARTICLE als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, sollte man ein Template erstellen und alle nötigen styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]
+In diesem Beispiel wird der Output von REX_ARTICLE als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, sollte man ein Template erstellen und alle nötigen Styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]. 
 
 
 ## Die Methode sendPdf
@@ -59,7 +59,7 @@ Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stenen zur Ve
 - $orientation = 'portrait' oder 'landscape'
 - $defaultFont = 'Courier'
 - $attachment = false 
-- $remoteFiles = true oder false
+- $remoteFiles = true oder false - true wird benötigt wen MediaManager-Dateien gekaden werden sollen. Der übergebene HTML-Code sollte ggf. überprüft werden. 
 
 ```php
 PdfOut::sendPdf($name = 'pdf_file', $html = '', $orientation = 'portrait', $defaultFont ='Courier', $attachment = false, $remoteFiles = true)
