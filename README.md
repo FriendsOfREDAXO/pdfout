@@ -47,7 +47,10 @@ if ($print_pdf) {
   PdfOut::sendPdf('Dateiname_ohne_endung', $pdfcontent);
 }
 ```
-In diesem Beispiel wird der Output von REX_ARTICLE als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, sollte man ein Template erstellen und alle nötigen Styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]. 
+
+In diesem Beispiel wird überprüft ob pdfout als parameter übergeben wurde und der Output von REX_ARTICLE als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, sollte man ein Template erstellen und alle nötigen Styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]. 
+
+> Die Abfrage nach einem Request ist optional. Der Aufruf kann überall erfolgen z.B. auch ein einem Extensionpoint oder nach dem Ausfüllen eines Formulars. 
 
 
 ## Die Methode sendPdf
