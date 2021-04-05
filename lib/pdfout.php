@@ -9,7 +9,7 @@ class PdfOut extends Dompdf
         $dompdf->loadHtml($html);
         // Optionen festlegen
         $dompdf->set_option('isRemoteEnabled', $remoteFiles);
-        $dompdf->set_option('chroot', rex_path::base());
+        $dompdf->set_option('chroot', mb_substr(rex_path::base(), 0, -1));
         $dompdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
         $dompdf->set_option('defaultFont', $defaultFont);
         $dompdf->setPaper('A4', $orientation);
