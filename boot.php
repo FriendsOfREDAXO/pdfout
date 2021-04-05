@@ -11,7 +11,7 @@ if (rex::isBackend() && rex::getUser()) {
         rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $file = rex_file::get(rex_path::addon('pdfout', 'README.md'));
         $readmeHtml = '<style>body {font-family: DejaVu Sans; }</style>'.rex_markdown::factory()->parse($file);
-        PdfOut::sendPdf($readmeHtml);
+        PdfOut::sendPdf('readme',$readmeHtml);
 
     }
 }
