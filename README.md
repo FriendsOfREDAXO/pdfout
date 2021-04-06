@@ -41,14 +41,14 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 $print_pdf = rex_request('pdfout', 'int');
 if ($print_pdf) {
   $pdfcontent = 'REX_ARTICLE[]';
-  // Outputfilter auf Inhalt anwenden, sofern erforderlich
+  // Outputfilter auf Inhalt anwenden, sofern erforderlich, z.B. wenn Template genutzt wird. 
   // Wenn nicht verwendet, wird die Generierung beschleunigt
   $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
   PdfOut::sendPdf('Dateiname_ohne_endung', $pdfcontent);
 }
 ```
 
-In diesem Beispiel wird überprüft ob pdfout als Parameter übergeben wurde und der Output von REX_ARTICLE wird als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, sollte man ein Template erstellen und alle nötigen Styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]. 
+In diesem Beispiel wird überprüft ob pdfout als Parameter übergeben wurde und der Output von REX_ARTICLE wird als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, kann man ein Template erstellen und alle nötigen Styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]. 
 
 > Die Abfrage nach einem Request ist optional. Der Aufruf kann überall erfolgen, z.B. auch in einem Extensionpoint oder nach dem Ausfüllen eines Formulars. 
 
