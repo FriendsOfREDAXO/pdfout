@@ -1,6 +1,6 @@
 # PdfOut – PDF Generator(dompdf)  & Viewer (pdf.js) 
 
-PDFout stellt den "HTML to PDF"-Converter [dompdf](http://dompdf.github.io) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
+PdfOut stellt den "HTML to PDF"-Converter [dompdf](http://dompdf.github.io) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
 
 Mit dompdf können Ausgaben in REDAXO als PDF generiert werden und mittels pdf.js angezeigt werden. PDFout ist keine "out of the box"-Lösung. Es stellt nur die nötigen Vendoren bereit.  
 
