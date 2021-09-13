@@ -76,7 +76,7 @@ Also: `media/image.png`
 
 Medien, die über den Mediamanager aufgerufen werden, sollten immer über die volle URL aufgerufen werden. 
 
-Also: `https://domain.tld/media/media_type/image.php`
+Also: `https://domain.tld/media/media_type/image.png`
 
 ## CSS und Fonts
 
