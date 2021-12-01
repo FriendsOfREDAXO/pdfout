@@ -19,7 +19,7 @@ class PdfOut extends Dompdf
         $pdf->render();
         // Ausliefern des PDF
         header('Content-Type: application/pdf');
-        $pdf->stream(rex_string::normalize($name), array('Attachment' => false));
+        $pdf->stream(rex_string::normalize($name), array('Attachment' => $attachment));
         die();
     }
     public static function viewer($file = '')
