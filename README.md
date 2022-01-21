@@ -55,7 +55,7 @@ In diesem Beispiel wird überprüft ob pdfout als Parameter übergeben wurde und
 
 ## Die Methode sendPdf
 
-Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stenen zur Verfügung 
+Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stehen zur Verfügung 
 
 - $name = 'Dateiname ohne Endung'
 - $html = Das HTML das übergen werden soll 
