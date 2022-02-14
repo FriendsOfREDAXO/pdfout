@@ -94,22 +94,16 @@ class Page extends AbstractFrameDecorator
     }
 
     /**
-     * Set the frame's containing block.  Overridden to set $this->bottom_page_edge.
-     *
-     * @param float $x
-     * @param float $y
-     * @param float $w
-     * @param float $h
+     * Calculate the bottom edge of the page area after margins have been
+     * applied for the current page.
      */
-    function set_containing_block($x = null, $y = null, $w = null, $h = null)
+    public function calculate_bottom_page_edge(): void
     {
-        parent::set_containing_block($x, $y, $w, $h);
+        [, , , $cbh] = $this->get_containing_block();
+        $style = $this->get_style();
+        $margin_bottom = (float) $style->length_in_pt($style->margin_bottom, $cbh);
 
-        if (isset($h)) {
-            $style = $this->get_style();
-            $margin_bottom = (float) $style->length_in_pt($style->margin_bottom, $h);
-            $this->bottom_page_edge = $h - $margin_bottom;
-        }
+        $this->bottom_page_edge = $cbh - $margin_bottom;
     }
 
     /**
@@ -258,7 +252,8 @@ class Page extends AbstractFrameDecorator
             $style->padding_top
         ], $cbw);
 
-        return $childPos > $contentEdge && $contentEdge <= $this->bottom_page_edge;
+        return Helpers::lengthGreater($childPos, $contentEdge)
+            && Helpers::lengthLessOrEqual($contentEdge, $this->bottom_page_edge);
     }
 
     /**
@@ -403,11 +398,17 @@ class Page extends AbstractFrameDecorator
                 // Rule C
                 $block_parent = $frame->find_block_parent();
                 $parent_style = $block_parent->get_style();
+                $line = $block_parent->get_current_line_box();
+                $line_count = count($block_parent->get_line_boxes());
+                $line_number = $frame->get_containing_line() && empty($line->get_frames())
+                    ? $line_count - 1
+                    : $line_count;
+
                 // The line number of the frame can be less than the current
                 // number of line boxes, in case we are backtracking. As long as
                 // we are not checking for widows yet, just checking against the
                 // number of line boxes is sufficient in most cases, though.
-                if (count($block_parent->get_line_boxes()) <= $parent_style->orphans) {
+                if ($line_number <= $parent_style->orphans) {
                     Helpers::dompdf_debug("page-break", "orphans");
 
                     return false;
@@ -574,7 +575,7 @@ class Page extends AbstractFrameDecorator
         }
 
         // Check if $frame flows off the page
-        if ($max_y <= $this->bottom_page_edge) {
+        if (Helpers::lengthLessOrEqual($max_y, $this->bottom_page_edge)) {
             // no: do nothing
             return false;
         }

@@ -45,17 +45,20 @@ class TableRow extends AbstractFrameReflower
             return;
         }
 
+        // Counters and generated content
+        $this->_set_content();
+
         $this->_frame->position();
         $style = $this->_frame->get_style();
         $cb = $this->_frame->get_containing_block();
 
         foreach ($this->_frame->get_children() as $child) {
-            if ($page->is_full()) {
-                return;
-            }
-
             $child->set_containing_block($cb);
             $child->reflow();
+
+            if ($page->is_full()) {
+                break;
+            }
         }
 
         if ($page->is_full()) {
@@ -73,7 +76,7 @@ class TableRow extends AbstractFrameReflower
     /**
      * @throws Exception
      */
-    function get_min_max_width(): array
+    public function get_min_max_width(): array
     {
         throw new Exception("Min/max width is undefined for table rows");
     }
