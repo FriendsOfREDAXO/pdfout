@@ -70,9 +70,9 @@ PdfOut::sendPdf($name = 'pdf_file', $html = '', $orientation = 'portrait', $defa
 
 ## Bilder im PDF
 
-Medien die direkt aus dem Medien-Ordner geladen werden, müssen relativ zum Root der Website aufgerufen werden. 
+Medien die direkt aus dem Medien-Ordner geladen werden, müssen in einem Unterordner des Frontpage-Ordners der Website aufgerufen werden. 
 
-Also: `media/image.png`
+Also z.B.: `media/image.png`
 
 Medien, die über den Mediamanager aufgerufen werden, sollten immer über die volle URL aufgerufen werden. 
 
