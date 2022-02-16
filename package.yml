@@ -1,10 +1,10 @@
 package: pdfout
-version: '5.0.0-dev'
+version: '5.0.0'
 vendor: 'v1.2.0'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout
 requires:
-    redaxo: '^5.8.0'
+    redaxo: '^5.10.0'
     php:
         version: '>=7.4'
         extensions: [gd]
