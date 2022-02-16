@@ -11,7 +11,7 @@ class PdfOut extends Dompdf
         
         // Optionen festlegen
         $options = $pdf->getOptions();
-		$options->setChroot(rex_path::frontend());
+	$options->setChroot(rex_path::frontend());
         $options->setDefaultFont($defaultFont);
         $options->setDpi(300);
         $options->setFontCache(rex_path::addonCache('pdfout', 'fonts'));
