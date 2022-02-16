@@ -16,7 +16,7 @@ class PdfOut extends Dompdf
         $options->setDpi(300);
         $options->setFontCache(rex_path::addonCache('pdfout', 'fonts'));
         $options->setIsRemoteEnabled($remoteFiles);
-        $dompdf->setOptions($options);
+        $pdf->setOptions($options);
       
         $pdf->setPaper('A4', $orientation);
       
