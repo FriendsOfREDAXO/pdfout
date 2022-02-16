@@ -11,16 +11,15 @@ class PdfOut extends Dompdf
         
         // Optionen festlegen
         $options = $pdf->getOptions();
-        $options->setChroot(rex_path::base());
+		$options->setChroot(rex_path::frontend());
         $options->setDefaultFont($defaultFont);
         $options->setDpi(300);
         $options->setFontCache(rex_path::addonCache('pdfout', 'fonts'));
         $options->setIsRemoteEnabled($remoteFiles);
         $pdf->setOptions($options);
-      
         $pdf->setPaper('A4', $orientation);
-      
-        // Rendern des PDF
+
+		// Rendern des PDF
         $pdf->render();
         // Ausliefern des PDF
         header('Content-Type: application/pdf');
@@ -39,3 +38,4 @@ class PdfOut extends Dompdf
     }
 
 }
+
