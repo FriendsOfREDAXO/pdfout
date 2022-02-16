@@ -8,13 +8,18 @@ class PdfOut extends Dompdf
         rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $pdf = new self();
         $pdf->loadHtml($html);
+        
         // Optionen festlegen
-        $pdf->set_option('isRemoteEnabled', $remoteFiles);
-        $pdf->set_option('chroot', rex_path::base());
-        $pdf->set_option('font_cache', rex_path::addonCache('pdfout', 'fonts'));
-        $pdf->set_option('defaultFont', $defaultFont);
+        $options = $dompdf->getOptions();
+        $options->setChroot(rex_path::base());
+        $options->setDefaultFont($defaultFont);
+        $options->setDpi(300);
+        $options->setFontCache(rex_path::addonCache('pdfout', 'fonts');
+        $options->setIsRemoteEnabled($remoteFiles);
+        $dompdf->setOptions($options);
+      
         $pdf->setPaper('A4', $orientation);
-        $pdf->set_option('dpi', '100');
+      
         // Rendern des PDF
         $pdf->render();
         // Ausliefern des PDF
@@ -29,7 +34,7 @@ class PdfOut extends Dompdf
             return rex_url::assets('addons/pdfout/vendor/web/viewer.html?file='.urlencode($file));
         }
         else {
-            return '#';
+            return '#pdf_missing';
         }
     }
 
