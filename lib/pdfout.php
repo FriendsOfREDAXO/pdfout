@@ -10,7 +10,7 @@ class PdfOut extends Dompdf
         $pdf->loadHtml($html);
         
         // Optionen festlegen
-        $options = $dompdf->getOptions();
+        $options = $pdf->getOptions();
         $options->setChroot(rex_path::base());
         $options->setDefaultFont($defaultFont);
         $options->setDpi(300);
