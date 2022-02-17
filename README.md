@@ -62,7 +62,9 @@ Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stehen zur Ve
 - $orientation = 'portrait' oder 'landscape'
 - $defaultFont = 'Courier'
 - $attachment = false 
-- $remoteFiles = true oder false - true wird benötigt wen MediaManager-Dateien gekaden werden sollen. Der übergebene HTML-Code sollte ggf. überprüft werden. 
+- $remoteFiles = true oder false - true wird benötigt wenn MediaManager-Dateien eingebunden werden sollen. Der übergebene HTML-Code sollte ggf. überprüft werden.
+
+> Die Ausgabe ist immer A4 in 300 dpi.
 
 ```php
 PdfOut::sendPdf($name = 'pdf_file', $html = '', $orientation = 'portrait', $defaultFont ='Courier', $attachment = false, $remoteFiles = true)
@@ -74,16 +76,16 @@ Medien die direkt aus dem Medien-Ordner geladen werden, müssen in einem Unteror
 
 Also z.B.: `media/image.png`
 
-Medien, die über den Mediamanager aufgerufen werden, sollten immer über die volle URL aufgerufen werden. 
+Medien, die über den Mediamanager aufgerufen werden, sollten *immer* über die volle URL aufgerufen werden. 
 
 Also: `https://domain.tld/media/media_type/image.png`
 
 ## CSS und Fonts
 
-CSS und Fonts sollten möglichst inline im HTML eingebunden sein. Die Pfade externer Assets können vollständige URls oder Pfade relativ zum Root haben. 
+CSS und Fonts sollten möglichst inline im HTML eingebunden sein. Die Pfade externer Assets können vollständige URls oder Pfade relativ zum des Frontpage-Ordners  haben. 
 
 ## Individuelle Einstellung
-Es handelt sich hierbei immer noch um das reguläre domPDF das über den Aufruf `new PdfOut()` instanziert werden kann. 
+Es handelt sich hierbei um das reguläre domPDF das über den Aufruf `new PdfOut()` instanziert werden kann. 
 
 Mehr dazu bei: [dompdf](http://dompdf.github.io)
 
@@ -92,8 +94,8 @@ Mehr dazu bei: [dompdf](http://dompdf.github.io)
 
 - Auf die numerische Angabe bei font-weight sollte verzichtet werden.
 - Es empfiehlt sich im verwendeten Template die CSS-Definitionen nicht als externe Dateien sondern inline zu hinterlegen. Dies beschleunigt die Generierung, da keine externen Ressourcen eingelesen werden müssen.
-- Auf Bootsstrap CSS oder andere CSS-Frameworks bei der Ausgabe möglichst verzichten, da zuviele Styles abgearbeitet werden müssen.
-- URLs zu Ressourcen sollten ohne / beginnen und vom Webroot aus definiert sein z.B. media/zyz.jpg oder assets/css/pdf_styles.css. Ein Search & Replace per PHP kann hierbei helfen.
+- Auf Bootsstrap CSS oder andere CSS-Frameworks bei der Ausgabe möglichst verzichten, da zu viele Styles abgearbeitet werden müssen.
+- URLs zu Ressourcen sollten ohne / beginnen und vom Frontpage-Ordner aus definiert sein z.B. media/zyz.jpg oder assets/css/pdf_styles.css. Ein Search & Replace per PHP kann hierbei helfen.
 - Fixierte Divs können zur Anzeige von Fuß und Kopfzeile verwendet werden. Ideal ist es diese direkt nach dem Bodytag zu integrieren. Dann können auch mittels CSS count z.B. Seitenzahlen ausgegegeben werden.
 - Google Fonts zur lokalen Nutzung herunterladen: <https://google-webfonts-helper.herokuapp.com/fonts>
 
