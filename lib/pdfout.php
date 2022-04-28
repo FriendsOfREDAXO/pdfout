@@ -26,11 +26,11 @@ class PdfOut extends Dompdf
         if($saveToPath == '') {
             header('Content-Type: application/pdf');
             $pdf->stream(rex_string::normalize($name), array('Attachment' => $attachment));
+            die();
         } else {
-            file_put_contents($saveToPath.$name.'.pdf', $pdf->output());
+            file_put_contents($saveToPath.rex_string::normalize($name).'.pdf', $pdf->output());
         }
 
-        die();
     }
 
     public static function viewer($file = '')
