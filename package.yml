@@ -1,6 +1,6 @@
 package: pdfout
 version: '5.2.0'
-vendor: 'v1.2.1'
+vendor: 'v1.2.2'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout
 requires:
