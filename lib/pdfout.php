@@ -22,12 +22,12 @@ class PdfOut extends Dompdf
         // Rendern des PDF
         $pdf->render();
         // Ausliefern des PDF - entweder anzeigen der File oder auf Server speichern
-        if($saveToPath == '') {
+        if($saveToPath === '') {
             header('Content-Type: application/pdf');
             $pdf->stream(rex_string::normalize($name), array('Attachment' => $attachment));
             die();
         } else {
-            if ($outattach = $pdf->output()) {
+            if ($outattach === $pdf->output()) {
             rex_file::put($saveToPath.rex_string::normalize($name).'.pdf', $outattach);
             }
         }
@@ -36,7 +36,7 @@ class PdfOut extends Dompdf
 
     public static function viewer(string $file = ''): string
     {
-        if ($file!='')
+        if ($file!=='')
         {
             return rex_url::assets('addons/pdfout/vendor/web/viewer.html?file='.urlencode($file));
         }
