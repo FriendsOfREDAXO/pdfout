@@ -1,7 +1,0 @@
-pdfout = PDFout
-pdfout_title = PDFout
-pdfout_docs = Hilfe
-
-pdfout_main = Hauptseite
-
-perm_general_pdfout[] = Rechte für PDFout-Addon
