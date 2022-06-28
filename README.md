@@ -114,34 +114,6 @@ $media = ltrim(rex_url::media($file),'/');
 }
 ```
 
-### Font-Awsome 4.x einbinden:
-
-Font-Awsome fonts werden nicht korrekt dargestellt.
-Folgender Workaround hilft:
-Einbindung z.B. CDN im Template
-
-Zusätzlichen Stil in Style-Tag inline einfügen:
-
-```html 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
- <style>
- .fa {
-     display: inline;
-     font-style: normal;
-     font-variant: normal;
-     font-weight: normal;
-     font-size: 14px
-     line-height: 1;
-     color: #2F2ABD;
-     font-family: FontAwesome;
-     font-size: inherit;
-     text-rendering: auto;
-     -webkit-font-smoothing: antialiased;
-     -moz-osx-font-smoothing: grayscale;
-   }
- </style>  
-```
-
 ## Ausgabe eines PDF mit pdf.js
 
 Mit `PdfOut::viewer($file)` erhält man den Link zum aufruf des PDF. Es können auch PdfOut-PDF-Ulrs angegeben werrden. Sie müssen nicht mehr speziell encodet werden. 
