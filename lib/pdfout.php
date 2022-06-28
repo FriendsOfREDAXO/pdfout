@@ -27,7 +27,7 @@ class PdfOut extends Dompdf
             $pdf->stream(rex_string::normalize($name), array('Attachment' => $attachment));
             die();
         } else {
-            if ($outattach === $pdf->output()) {
+            if ($outattach == $pdf->output()) {
             rex_file::put($saveToPath.rex_string::normalize($name).'.pdf', $outattach);
             }
         }
