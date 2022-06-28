@@ -32,7 +32,7 @@ class PdfOut extends Dompdf
 
     }
 
-    public static function viewer($file = ''): string
+    public static function viewer(string $file = ''): string
     {
         if ($file!='')
         {
