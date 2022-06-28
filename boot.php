@@ -3,7 +3,7 @@ $addon = rex_addon::get('pdfout');
 rex_dir::create($addon->getCachePath());
 rex_dir::create(rex_path::addonCache('pdfout', 'fonts'));
 
-require_once $this->getPath('vendor/'.'autoload.php');
+require_once $addon->getPath('vendor/'.'autoload.php');
 
 if (rex::isBackend() && rex::getUser()) {
     $print_pdftest = rex_request('pdftest', 'int');
