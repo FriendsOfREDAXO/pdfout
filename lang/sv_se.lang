@@ -1,7 +1,1 @@
-pdfout = PDFout
-pdfout_title = PDFout
-pdfout_docs = Hjälp
-
-pdfout_main = Huvudsida
-
 perm_general_pdfout[] = Rättigheter till PDFout addon
