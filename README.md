@@ -1,6 +1,6 @@
 # PdfOut – PDF Generator(dompdf)  & Viewer (pdf.js) 
 
-PdfOut stellt den "HTML to PDF"-Converter [dompdf](http://dompdf.github.io) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
+PdfOut stellt den "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dompdf) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
 
 Mit dompdf können Ausgaben in REDAXO als PDF generiert werden und mittels pdf.js angezeigt werden. 
 
@@ -14,6 +14,7 @@ Die Installation erfolgt über den REDAXO-Installer, alternativ gibt es die aktu
 - MBString-Erweiterung
 - php-font-lib
 - php-svg-lib
+- gd-lib oder ImageMagick
 
 > Bitte beachten: Einige Erweiterungen bringen ebenfalls Abhängigkeiten mit sich, z.B. insbesondere `php-svg-lib` erfordert `sabberworm/php-css-parser`.
 
