@@ -3,7 +3,7 @@ use Dompdf\Dompdf;
 
 class PdfOut extends Dompdf
 {
-    public static function sendPdf($name = 'pdf_file', $html = '', $orientation = 'portrait', $defaultFont = 'Courier', $attachment = false, $remoteFiles = true, $saveToPath = ''): void
+    public static function sendPdf(string $name = 'pdf_file', string $html = '', string $orientation = 'portrait', string $defaultFont = 'Courier', bool $attachment = false, bool $remoteFiles = true, string $saveToPath = ''): void
     {
         rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $pdf = new self();
@@ -32,7 +32,7 @@ class PdfOut extends Dompdf
 
     }
 
-    public static function viewer($file = ''): string
+    public static function viewer(string $file = ''): string
     {
         if ($file!='')
         {

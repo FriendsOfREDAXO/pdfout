@@ -9,9 +9,11 @@ if (rex::isBackend() && rex::getUser()) {
     $print_pdftest = rex_request('pdftest', 'int');
     if ($print_pdftest == 1) {
         $file = rex_file::get(rex_path::addon('pdfout', 'README.md'));
-        $readmeHtml = '<style>body {font-family: DejaVu Sans; }</style>'.rex_markdown::factory()->parse($file);
+        if($file)
+        {    
+        $readmeHtml = '<style>body {font-family: DejaVu Sans; }</style>'.rex_markdown::factory()->parse($file);   
         PdfOut::sendPdf('readme',$readmeHtml);
-
+        }
     }
 }
 
