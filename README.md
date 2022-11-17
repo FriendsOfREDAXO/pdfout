@@ -66,7 +66,7 @@ Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stehen zur Ve
 - $remoteFiles = true oder false - true wird benötigt wenn MediaManager-Dateien eingebunden werden sollen. Der übergebene HTML-Code sollte ggf. überprüft werden.
 - $saveToPath = Speichere PDF als Datei im angegebenen Pfad
 
-> Die Ausgabe ist immer A4 in 300 dpi.
+> Die Ausgabe ist immer A4 in 100 dpi.
 
 ```php
 PdfOut::sendPdf($name = 'pdf_file', $html = '', $orientation = 'portrait', $defaultFont ='Courier', $attachment = false, $remoteFiles = true)
