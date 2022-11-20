@@ -118,8 +118,13 @@ $media = ltrim(rex_url::media($file),'/');
 
 Mit `PdfOut::viewer($file)` erhält man den Link zum aufruf des PDF. Es können auch PdfOut-PDF-Ulrs angegeben werrden. Sie müssen nicht mehr speziell encodet werden. 
 
+Als Link zum Download
 ```php
-<a href="<?=PdfOut::viewer('/media/pdfdatei.pdf')?>">PDF anzeigen</a>
+<a href="<?=PdfOut::viewer('/media/pdfdatei.pdf')?>" download>PDF anzeigen</a>
+```
+
+```php
+<iframe src="<?=PdfOut::viewer('/media/pdfdatei.pdf')?>"></iframe>
 ```
 
 
