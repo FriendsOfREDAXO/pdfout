@@ -12,6 +12,7 @@ class PdfOut extends Dompdf
     protected $remoteFiles = true;
     protected $saveToPath = '';
     protected $dpi = 100;
+    protected $saveAndSend = true;
 
     public function setName(string $name): self
     {
@@ -60,12 +61,16 @@ class PdfOut extends Dompdf
         $this->dpi = $dpi;
         return $this;
     }
+    
+    public function setSaveAndSend(bool $saveAndSend): self
+    {
+        $this->saveAndSend = $saveAndSend;
+        return $this;
+    }
 
     public function send(): void
     {
-        rex_response::cleanOutputBuffers(); // OutputBuffer leeren
         $this->loadHtml($this->html);
-
         // Optionen festlegen
         $options = $this->getOptions();
         $options->setChroot(rex_path::frontend());
@@ -75,20 +80,21 @@ class PdfOut extends Dompdf
         $options->setIsRemoteEnabled($this->remoteFiles);
         $this->setOptions($options);
         $this->setPaper('A4', $this->orientation);
-
         // Rendern des PDF
         $this->render();
-        // Ausliefern des PDF - entweder anzeigen der File oder auf Server speichern
-        if ($this->saveToPath === '') {
+        // Ausliefern des PDF - als File und/oder auf Server speichern
+        if ($this->saveToPath === '' || $this->saveAndSend === true) {
+            rex_response::cleanOutputBuffers(); // OutputBuffer leeren
             header('Content-Type: application/pdf');
             $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
-            die();
-        } else {
-            $outattach = $this->output();
-            if (!is_null($outattach)) {
-                rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $outattach);
+        }
+        if ($this->saveToPath !== '') {
+            $savedata = $this->output();
+            if (!is_null($savedata)) {
+                rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $savedata);
             }
         }
+        die();
     }
 
     /**
@@ -104,6 +110,7 @@ class PdfOut extends Dompdf
             ->setOrientation($orientation)
             ->setAttachment($attachment)
             ->setRemoteFiles($remoteFiles)
+            ->setSaveAndSend(false)
             ->setDpi(100);
         $pdf->send();
     }
