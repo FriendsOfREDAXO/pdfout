@@ -3,7 +3,7 @@ use Dompdf\Dompdf;
 
 class PdfOut extends Dompdf
 {
-    protected $name = 'pdf_filex';
+    protected $name = 'pdf_file';
     protected $html = '';
     protected $orientation = 'portrait';
     protected $font = 'Dejavu Sans';
