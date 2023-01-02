@@ -39,14 +39,30 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 ## Beispiel-Code
 
 ```php
-$print_pdf = rex_request('pdfout', 'int');
-if ($print_pdf) {
-  $pdfcontent = 'REX_ARTICLE[]';
-  // Outputfilter auf Inhalt anwenden, sofern erforderlich, z.B. wenn Template genutzt wird. 
-  // Wenn nicht verwendet, wird die Generierung beschleunigt
-  $pdfcontent = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $pdfcontent));
-  PdfOut::sendPdf('Dateiname_ohne_endung', $pdfcontent);
+$content = `
+<style>
+body {  
+    font-family: "Helvetica"
 }
+</style>
+REX_ARTICLE[]
+`;
+
+$pdf = new PdfOut(); 
+
+$pdf->setName('REX_ARTICLE[field=name]')
+    ->setFont('Helvetica')
+    ->setHtml($content,true)
+    ->setOrientation('portrait')
+    ->setAttachment(true)
+    ->setRemoteFiles(false)
+    ->setDpi(300);
+    
+// Save File to path and don't send File 
+$pdf->setSaveToPath('/path/to/save/pdf/')->setSaveAndSend(false);
+
+// Generate and send the PDF
+$pdf->send();
 ```
 
 In diesem Beispiel wird überprüft ob pdfout als Parameter übergeben wurde und der Output von REX_ARTICLE wird als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, kann man ein Template erstellen und alle nötigen Styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]. 
