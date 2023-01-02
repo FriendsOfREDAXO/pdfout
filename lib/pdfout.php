@@ -20,8 +20,12 @@ class PdfOut extends Dompdf
         return $this;
     }
 
-    public function setHtml(string $html): self
+    public function setHtml(string $html, bool $outputfiler = false): self
     {
+        if ($outputfilter)
+        {    
+        $html = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $html));
+        }
         $this->html = $html;
         return $this;
     }
@@ -32,7 +36,7 @@ class PdfOut extends Dompdf
         return $this;
     }
 
-    public function setFont(string $fontt): self
+    public function setFont(string $font): self
     {
         $this->font = $font;
         return $this;
