@@ -1,9 +1,10 @@
 <?php
+
 use Dompdf\Dompdf;
 
 class PdfOut extends Dompdf
 {
-    protected $name = 'pdf_filex';
+    protected $name = 'pdf_file';
     protected $html = '';
     protected $orientation = 'portrait';
     protected $font = 'Dejavu Sans';
@@ -78,22 +79,21 @@ class PdfOut extends Dompdf
         // Rendern des PDF
         $this->render();
         // Ausliefern des PDF - entweder anzeigen der File oder auf Server speichern
-        if($this->saveToPath === '') {
+        if ($this->saveToPath === '') {
             header('Content-Type: application/pdf');
             $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
             die();
         } else {
-            $outattach = $this->output();  
-            if (!is_null($outattach))
-            {    
-                rex_file::put($this->saveToPath.rex_string::normalize($this->name).'.pdf', $outattach);
-            }    
+            $outattach = $this->output();
+            if (!is_null($outattach)) {
+                rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $outattach);
+            }
         }
     }
 
- /**
- * @deprecated since 7.0.0
- */
+    /**
+     * @deprecated since 7.0.0
+     */
     public static function sendPdf(string $name = 'pdf_file', string $html = '', string $orientation = 'portrait', string $defaultFont = 'Courier', bool $attachment = false, bool $remoteFiles = true, string $saveToPath = ''): void
     {
         $pdf = new PdfOut();
@@ -111,11 +111,9 @@ class PdfOut extends Dompdf
 
     public static function viewer(string $file = ''): string
     {
-        if ($file!=='')
-        {
-            return rex_url::assets('addons/pdfout/web/viewer.html?file='.urlencode($file));
-        }
-        else {
+        if ($file !== '') {
+            return rex_url::assets('addons/pdfout/web/viewer.html?file=' . urlencode($file));
+        } else {
             return '#pdf_missing';
         }
     }
