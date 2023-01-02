@@ -18,7 +18,7 @@ if (rex::isBackend() && rex::getUser() !== null) {
                 ->setHtml($readmeHtml, true)
                 ->setOrientation('portrait')
                 ->setAttachment(false)
-                ->setRemoteFiles(false)
+                ->setRemoteFiles(false);
             // execute and generate
             $pdf->run();
         }
