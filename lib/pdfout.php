@@ -3,7 +3,7 @@ use Dompdf\Dompdf;
 
 class PdfOut extends Dompdf
 {
-    protected $name = 'pdf_file';
+    protected $name = 'pdf_filex';
     protected $html = '';
     protected $orientation = 'portrait';
     protected $font = 'Dejavu Sans';
@@ -90,7 +90,26 @@ class PdfOut extends Dompdf
             }    
         }
     }
-    public function viewer(string $file = ''): string
+
+ /**
+ * @deprecated since 7.0.0, use `rex_mediapool::filename` instead
+ */
+    public static function sendPdf(string $name = 'pdf_file', string $html = '', string $orientation = 'portrait', string $defaultFont = 'Courier', bool $attachment = false, bool $remoteFiles = true, string $saveToPath = ''): void
+    {
+        $pdf = new PdfOut();
+        // Set the PDF properties
+        $pdf->setName($name)
+            ->setFont($defaultFont)
+            ->setHtml($html)
+            ->setOrientation($orientation)
+            ->setAttachment($attachment)
+            ->setRemoteFiles($remoteFiles)
+            ->setDpi(100);
+        $pdf->send();
+    }
+
+
+    public static function viewer(string $file = ''): string
     {
         if ($file!=='')
         {
