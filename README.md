@@ -41,30 +41,30 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 ```php
 $print_pdf = rex_request('pdfout', 'int');
 if ($print_pdf) {
-$content = `
+    $content = `
 <style>
-body {  
-    font-family: "Helvetica"
-}
+    body {
+        font-family: "Helvetica"
+    }
 </style>
 REX_ARTICLE[]
 `;
 
-$pdf = new PdfOut(); 
+    $pdf = new PdfOut();
 
-$pdf->setName('REX_ARTICLE[field=name]')
-    ->setFont('Helvetica')
-    ->setHtml($content,true)
-    ->setOrientation('portrait')
-    ->setAttachment(true)
-    ->setRemoteFiles(false)
-    ->setDpi(300);
-    
-// Save File to path and don't send File 
-$pdf->setSaveToPath('/path/to/save/pdf/')->setSaveAndSend(false);
+    $pdf->setName('REX_ARTICLE[field=name]')
+        ->setFont('Helvetica')
+        ->setHtml($content, true)
+        ->setOrientation('portrait')
+        ->setAttachment(true)
+        ->setRemoteFiles(false)
+        ->setDpi(300);
 
-// Generate and send the PDF
-$pdf->send();
+    // Save File to path and don't send File
+    $pdf->setSaveToPath('/path/to/save/pdf/')->setSaveAndSend(false);
+
+    // Generate and send the PDF
+    $pdf->send();
 }
 ```
 
