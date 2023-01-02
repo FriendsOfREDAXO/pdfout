@@ -72,7 +72,7 @@ class PdfOut extends Dompdf
         return $this;
     }
 
-    public function send(): void
+    public function run(): void
     {
         $this->loadHtml($this->html);
         // Optionen festlegen
