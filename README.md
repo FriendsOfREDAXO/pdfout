@@ -2,7 +2,7 @@
 
 PdfOut stellt den "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dompdf) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
 
-Mit dompdf können Ausgaben in REDAXO als PDF generiert werden und mittels pdf.js angezeigt werden. 
+Mit dompdf können Ausgaben in REDAXO als PDF generiert, gespeichert und mittels mozilla pdf.js angezeigt werden. 
 
 ## Installation
 
@@ -29,16 +29,18 @@ Zusätzlich empfohlen:
 
 Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 
-- Den nachfolgenden Code am Anfang des gewünschten Templates oder als separates Template einsetzen
+- Den nachfolgenden in ein Template oder Modul einsetzen
 - Der Aufruf erfolgt dann über die Variable pdf=1 die über die URL übergeben wird. Der aktuelle Artikel kann so dann als PDF ausgegeben werden.
 
 Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt von REX_ARTICLE[] oder REX_TEMPLATE [] als PDF ausgegeben.
 
-> **Tipp:** [Diese Seite als PDF im REDAXO-Backend aufrufen](index.php?pdftest=1). Der Aufruf klappt nur über das REDAXO Backend. Wenn man hinter die Backend url `?pdftest=1` dranhängt, kommt die README vom Addon.
+ **Tipp:** [Diese Seite als PDF im REDAXO-Backend aufrufen](index.php?pdftest=1). Der Aufruf klappt nur über das REDAXO Backend. Wenn man hinter die Backend url `?pdftest=1` dranhängt, kommt die README vom Addon.
 
 ## Beispiel-Code
 
 ```php
+$print_pdf = rex_request('pdfout', 'int');
+if ($print_pdf) {
 $content = `
 <style>
 body {  
@@ -63,14 +65,60 @@ $pdf->setSaveToPath('/path/to/save/pdf/')->setSaveAndSend(false);
 
 // Generate and send the PDF
 $pdf->send();
+}
 ```
 
 In diesem Beispiel wird überprüft ob pdfout als Parameter übergeben wurde und der Output von REX_ARTICLE wird als PDF ausgegeben. Möchte man eine gestaltete Ausgabe, kann man ein Template erstellen und alle nötigen Styles dort einbauen und anstelle von REX_ARTICLE[] einsetzen, z.B. REX_TEMPLATE[key=pdf]. 
 
 > Die Abfrage nach einem Request ist optional. Der Aufruf kann überall erfolgen, z.B. auch in einem Extensionpoint oder nach dem Ausfüllen eines Formulars. 
 
+## Eigenschaften
+
+- `$name`: Name der PDF Datei (standardmäßig 'pdf_file')
+- `$html`: HTML Inhalt, der zu PDF konvertiert werden soll
+- `$orientation`: Ausrichtung des PDFs ('portrait' oder 'landscape')
+- `$font`: Standard Schriftart für das PDF ('Dejavu Sans')
+- `$attachment`: Ob das PDF als Anhang gesendet werden soll (standardmäßig false)
+- `$remoteFiles`: Ob das Laden von entfernten Dateien im PDF erlaubt ist (standardmäßig true)
+- `$saveToPath`: Pfad, auf den die PDF Datei gespeichert werden soll (standardmäßig '')
+- `$dpi`: DPI der erstellten PDF (standardmäßig 100)
+- `$saveAndSend`: Ob das PDF gespeichert und gesendet werden soll (standardmäßig true)
+
+## Methoden
+
+### `setName(string $name)`
+Setzt den Namen der PDF Datei.
+
+### `setHtml(string $html, bool $outputfiler = false)`
+Setzt den HTML Inhalt, der zu PDF konvertiert werden soll. Wenn $outputfilter auf true gesetzt wird, wird dieser ausgeführt und so z.B. die REDAXO_VARIABLEN verarbeitet.
+
+### `setOrientation(string $orientation)`
+Setzt die Ausrichtung des PDFs. Akzeptiert 'portrait' oder 'landscape'.
+
+### `setFont(string $font)`
+Setzt die Standard Schriftart für das PDF.
+
+### `setAttachment(bool $attachment)`
+Setzt, ob das PDF als Anhang gesendet werden soll.
+
+### `setRemoteFiles(bool $remoteFiles)`
+Setzt, ob das Laden von entfernten Dateien im PDF erlaubt ist.
+
+### `setSaveToPath(string $saveToPath)`
+Setzt den Pfad, auf den die PDF Datei gespeichert werden soll.
+
+### `setDpi(int $dpi)`
+Setzt das DPI der erstellten PDF.
+
+### `setSaveAndSend(bool $saveAndSend)`
+Setzt, ob das PDF gespeichert und gesendet werden soll.
+
+### `send()`
+Rendert das PDF und sendet es an den Browser oder speichert es auf dem angegebenen Pfad.
 
 ## Die Methode sendPdf (deprecated)
+
+> Diese Methode wird mit Version 8.0 entfernt. 
 
 Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stehen zur Verfügung 
 
