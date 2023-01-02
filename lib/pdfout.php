@@ -92,7 +92,7 @@ class PdfOut extends Dompdf
     }
 
  /**
- * @deprecated since 7.0.0, use `rex_mediapool::filename` instead
+ * @deprecated since 7.0.0
  */
     public static function sendPdf(string $name = 'pdf_file', string $html = '', string $orientation = 'portrait', string $defaultFont = 'Courier', bool $attachment = false, bool $remoteFiles = true, string $saveToPath = ''): void
     {
