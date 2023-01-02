@@ -70,7 +70,7 @@ In diesem Beispiel wird überprüft ob pdfout als Parameter übergeben wurde und
 > Die Abfrage nach einem Request ist optional. Der Aufruf kann überall erfolgen, z.B. auch in einem Extensionpoint oder nach dem Ausfüllen eines Formulars. 
 
 
-## Die Methode sendPdf
+## Die Methode sendPdf (deprecated)
 
 Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stehen zur Verfügung 
 
