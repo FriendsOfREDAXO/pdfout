@@ -3,40 +3,94 @@ use Dompdf\Dompdf;
 
 class PdfOut extends Dompdf
 {
-    public static function sendPdf(string $name = 'pdf_file', string $html = '', string $orientation = 'portrait', string $defaultFont = 'Courier', bool $attachment = false, bool $remoteFiles = true, string $saveToPath = ''): void
+    protected $name = 'pdf_filex';
+    protected $html = '';
+    protected $orientation = 'portrait';
+    protected $font = 'Dejavu Sans';
+    protected $attachment = false;
+    protected $remoteFiles = true;
+    protected $saveToPath = '';
+    protected $dpi = 100;
+
+    public function setName(string $name): self
     {
-        rex_response::cleanOutputBuffers(); // OutputBuffer leeren
-        $pdf = new self();
-        $pdf->loadHtml($html);
-
-        // Optionen festlegen
-        $options = $pdf->getOptions();
-        $options->setChroot(rex_path::frontend());
-        $options->setDefaultFont($defaultFont);
-        $options->setDpi(100);
-        $options->setFontCache(rex_path::addonCache('pdfout', 'fonts'));
-        $options->setIsRemoteEnabled($remoteFiles);
-        $pdf->setOptions($options);
-        $pdf->setPaper('A4', $orientation);
-
-        // Rendern des PDF
-        $pdf->render();
-        // Ausliefern des PDF - entweder anzeigen der File oder auf Server speichern
-        if($saveToPath === '') {
-            header('Content-Type: application/pdf');
-            $pdf->stream(rex_string::normalize($name), array('Attachment' => $attachment));
-            die();
-        } else {
-            $outattach = $pdf->output();  
-            if (!is_null($outattach))
-            {    
-            rex_file::put($saveToPath.rex_string::normalize($name).'.pdf', $outattach);
-            }    
-        }
-
+        $this->name = $name;
+        return $this;
     }
 
-    public static function viewer(string $file = ''): string
+    public function setHtml(string $html): self
+    {
+        $this->html = $html;
+        return $this;
+    }
+
+    public function setOrientation(string $orientation): self
+    {
+        $this->orientation = $orientation;
+        return $this;
+    }
+
+    public function setFont(string $fontt): self
+    {
+        $this->font = $font;
+        return $this;
+    }
+
+    public function setAttachment(bool $attachment): self
+    {
+        $this->attachment = $attachment;
+        return $this;
+    }
+
+    public function setRemoteFiles(bool $remoteFiles): self
+    {
+        $this->remoteFiles = $remoteFiles;
+        return $this;
+    }
+
+    public function setSaveToPath(string $saveToPath): self
+    {
+        $this->saveToPath = $saveToPath;
+        return $this;
+    }
+
+    public function setDpi(int $dpi): self
+    {
+        $this->dpi = $dpi;
+        return $this;
+    }
+
+    public function send(): void
+    {
+        rex_response::cleanOutputBuffers(); // OutputBuffer leeren
+        $this->loadHtml($this->html);
+
+        // Optionen festlegen
+        $options = $this->getOptions();
+        $options->setChroot(rex_path::frontend());
+        $options->setDefaultFont($this->font);
+        $options->setDpi($this->dpi);
+        $options->setFontCache(rex_path::addonCache('pdfout', 'fonts'));
+        $options->setIsRemoteEnabled($this->remoteFiles);
+        $this->setOptions($options);
+        $this->setPaper('A4', $this->orientation);
+
+        // Rendern des PDF
+        $this->render();
+        // Ausliefern des PDF - entweder anzeigen der File oder auf Server speichern
+        if($this->saveToPath === '') {
+            header('Content-Type: application/pdf');
+            $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
+            die();
+        } else {
+            $outattach = $this->output();  
+            if (!is_null($outattach))
+            {    
+                rex_file::put($this->saveToPath.rex_string::normalize($this->name).'.pdf', $outattach);
+            }    
+        }
+    }
+    public function viewer(string $file = ''): string
     {
         if ($file!=='')
         {
@@ -46,6 +100,4 @@ class PdfOut extends Dompdf
             return '#pdf_missing';
         }
     }
-
 }
-
