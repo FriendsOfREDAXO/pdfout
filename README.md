@@ -63,8 +63,8 @@ REX_ARTICLE[]
     // Save File to path and don't send File
     $pdf->setSaveToPath('/path/to/save/pdf/')->setSaveAndSend(false);
 
-    // Generate and send the PDF
-    $pdf->send();
+    // execute and generate
+    $pdf->run();
 }
 ```
 
@@ -113,8 +113,8 @@ Setzt das DPI der erstellten PDF.
 ### `setSaveAndSend(bool $saveAndSend)`
 Setzt, ob das PDF gespeichert und gesendet werden soll.
 
-### `send()`
-Rendert das PDF und sendet es an den Browser oder speichert es auf dem angegebenen Pfad.
+### `run()`
+Rendert das PDF und sendet es an den Browser oder speichert es im angegebenen Pfad.
 
 ## Die Methode sendPdf (deprecated)
 
