@@ -98,7 +98,9 @@ class PdfOut extends Dompdf
                 rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $savedata);
             }
         }
-        die();
+        else {
+            die();
+        }
     }
 
     /**
