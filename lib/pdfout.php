@@ -86,19 +86,18 @@ class PdfOut extends Dompdf
         $this->setPaper('A4', $this->orientation);
         // Rendern des PDF
         $this->render();
-        // Ausliefern des PDF - als File und/oder auf Server speichern
-        if ($this->saveToPath === '' || $this->saveAndSend === true) {
-            rex_response::cleanOutputBuffers(); // OutputBuffer leeren
-            header('Content-Type: application/pdf');
-            $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
-        }
+        // Speichern des PDF 
         if ($this->saveToPath !== '') {
             $savedata = $this->output();
             if (!is_null($savedata)) {
                 rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $savedata);
             }
         }
-        else {
+        // Ausliefern des PDF - als File und/oder auf Server speichern
+        if ($this->saveToPath === '' || $this->saveAndSend === true) {
+            rex_response::cleanOutputBuffers(); // OutputBuffer leeren
+            header('Content-Type: application/pdf');
+            $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
             die();
         }
     }
