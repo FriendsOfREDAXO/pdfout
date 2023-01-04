@@ -86,6 +86,7 @@ class PdfOut extends Dompdf
         $this->setPaper('A4', $this->orientation);
         // Rendern des PDF
         $this->render();
+       
         // Speichern des PDF 
         if ($this->saveToPath !== '') {
             $savedata = $this->output();
@@ -93,7 +94,8 @@ class PdfOut extends Dompdf
                 rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $savedata);
             }
         }
-        // Ausliefern des PDF - als File und/oder auf Server speichern
+        
+        // Ausliefern des PDF
         if ($this->saveToPath === '' || $this->saveAndSend === true) {
             rex_response::cleanOutputBuffers(); // OutputBuffer leeren
             header('Content-Type: application/pdf');
