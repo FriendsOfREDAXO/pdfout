@@ -116,24 +116,27 @@ Setzt, ob das PDF gespeichert und gesendet werden soll.
 ### `run()`
 Rendert das PDF und sendet es an den Browser oder speichert es im angegebenen Pfad.
 
-## Die Methode sendPdf (deprecated)
+## Die Methode sendPdf() (deprecated)
 
 > Diese Methode wird mit Version 8.0 entfernt. 
 
-Mit sendPDF kann schnell ein PDF erzeugt werden. Folgende Optionen stehen zur Verfügung 
-
-- $name = 'Dateiname ohne Endung'
-- $html = Das HTML das übergen werden soll 
-- $orientation = 'portrait' oder 'landscape'
-- $defaultFont = 'Courier'
-- $attachment = false 
-- $remoteFiles = true oder false - true wird benötigt wenn MediaManager-Dateien eingebunden werden sollen. Der übergebene HTML-Code sollte ggf. überprüft werden.
-- $saveToPath = Speichere PDF als Datei im angegebenen Pfad
-
-> Die Ausgabe ist immer A4 in 100 dpi.
+Beispiel:
 
 ```php
 PdfOut::sendPdf($name = 'pdf_file', $html = '', $orientation = 'portrait', $defaultFont ='Courier', $attachment = false, $remoteFiles = true)
+```
+
+Die neue Schreibweise wäre für dieses Beispiel also: 
+
+```php
+  $pdf = new PdfOut();
+  $pdf->setName('pdf_file')
+      ->setFont('Courier')
+      ->setHtml($content, true)
+      ->setOrientation('portrait')
+      ->setAttachment(false)
+      ->setRemoteFiles(true);
+      ->run();
 ```
 
 ## Bilder im PDF
@@ -151,7 +154,7 @@ Also: `https://domain.tld/media/media_type/image.png`
 CSS und Fonts sollten möglichst inline im HTML eingebunden sein. Die Pfade externer Assets können vollständige URls oder Pfade relativ zum des Frontpage-Ordners  haben. 
 
 ## Individuelle Einstellung
-Es handelt sich hierbei um das reguläre domPDF das über den Aufruf `new PdfOut()` instanziert werden kann. 
+Es handelt sich hierbei um ein normales domPDF das über den Aufruf `new PdfOut()` instanziert werden kann.  
 
 Mehr dazu bei: [dompdf](http://dompdf.github.io)
 
@@ -165,9 +168,9 @@ Mehr dazu bei: [dompdf](http://dompdf.github.io)
 - Fixierte Divs können zur Anzeige von Fuß und Kopfzeile verwendet werden. Ideal ist es diese direkt nach dem Bodytag zu integrieren. Dann können auch mittels CSS count z.B. Seitenzahlen ausgegegeben werden.
 - Google Fonts zur lokalen Nutzung herunterladen: <https://google-webfonts-helper.herokuapp.com/fonts>
 
-### Medienfiles umschreiben 
+### Medienfiles umschreiben, 
 
-Die direkt aus dem Media-Verzeichnis ausgelesen werden.
+die direkt aus dem Media-Verzeichnis ausgelesen werden.
 
 ```php
 $media = rex_url::media($file); // normal
