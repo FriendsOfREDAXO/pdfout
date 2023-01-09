@@ -20,7 +20,7 @@ class PdfOut extends Dompdf
         return $this;
     }
 
-    public function setHtml(string $html, bool $outputfiler = false): self
+    public function setHtml(string $html, bool $outputfilter = false): self
     {
         if ($outputfilter)
         {    
