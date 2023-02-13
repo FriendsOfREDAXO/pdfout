@@ -119,8 +119,8 @@ class PdfOut extends Dompdf
             ->setRemoteFiles($remoteFiles)
             ->setSaveAndSend(false)
             ->setSaveToPath($saveToPath)
-            ->setDpi(100);
-            ->setRemoteFiles($remoteFiles)
+            ->setDpi(100)
+            ->setRemoteFiles($remoteFiles);
         $pdf->run();
     }
 
