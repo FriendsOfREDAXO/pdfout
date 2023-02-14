@@ -1,5 +1,5 @@
 {
     "require": {
-        "dompdf/dompdf": "^2.0.0"
+        "dompdf/dompdf": "^2.0.2"
     }
 }
