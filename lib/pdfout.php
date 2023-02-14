@@ -128,7 +128,7 @@ class PdfOut extends Dompdf
     public static function viewer(string $file = ''): string
     {
         if ($file !== '') {
-            return rex_url::assets('addons/pdfout/web/viewer.html?file=' . urlencode($file));
+            return rex_url::assets('addons/pdfout/vendor/web/viewer.html?file=' . urlencode($file));
         } else {
             return '#pdf_missing';
         }
