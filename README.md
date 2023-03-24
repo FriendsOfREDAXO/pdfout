@@ -153,11 +153,29 @@ Also: `https://domain.tld/media/media_type/image.png`
 
 CSS und Fonts sollten möglichst inline im HTML eingebunden sein. Die Pfade externer Assets können vollständige URls oder Pfade relativ zum des Frontpage-Ordners  haben. 
 
+
 ## Individuelle Einstellung
+
 Es handelt sich hierbei um ein normales domPDF das über den Aufruf `new PdfOut()` instanziert werden kann.  
 
 Mehr dazu bei: [dompdf](http://dompdf.github.io)
 
+Hier ist ein Beispiel dafür, wie man die Optionen für domPDF nach der Instanziierung definieren kann, um isFontSubsettingEnabled auf false zu setzen:
+
+```php
+   $pdf = new PdfOut();
+   
+   $options = $pdf->getOptions();
+   $options->set('isFontSubsettingEnabled', false);
+    
+   $pdf->setName('pdf_file')
+       ->setFont('Courier')
+       ->setHtml($content, true)
+       ->setOrientation('portrait')
+       ->setAttachment(false)
+       ->setRemoteFiles(true);
+       ->run();
+```
 
 ## Tipps
 
@@ -167,6 +185,7 @@ Mehr dazu bei: [dompdf](http://dompdf.github.io)
 - URLs zu Ressourcen sollten ohne / beginnen und vom Frontpage-Ordner aus definiert sein z.B. media/zyz.jpg oder assets/css/pdf_styles.css. Ein Search & Replace per PHP kann hierbei helfen.
 - Fixierte Divs können zur Anzeige von Fuß und Kopfzeile verwendet werden. Ideal ist es diese direkt nach dem Bodytag zu integrieren. Dann können auch mittels CSS count z.B. Seitenzahlen ausgegegeben werden.
 - Google Fonts zur lokalen Nutzung herunterladen: <https://google-webfonts-helper.herokuapp.com/fonts>
+- Wenn die eingebettete Schrift beim Drucken nicht korrekt dargestellt wird, die Einstellung "isFontSubsettingEnabled" auf "false" zu setzen. 
 
 ### Medienfiles umschreiben, 
 
