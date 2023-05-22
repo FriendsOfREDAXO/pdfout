@@ -57,7 +57,7 @@ REX_ARTICLE[]
         ->setHtml($content, true)
         ->setOrientation('portrait')
         ->setAttachment(true)
-        ->setRemoteFiles(false)
+        ->setRemoteFiles(true)
         ->setDpi(300);
 
     // Save File to path and don't send File
