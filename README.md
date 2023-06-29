@@ -39,7 +39,7 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 ## Beispiel-Code
 
 ```php
-$content = rex_request('pdfout', 'int');
+$print_pdf = rex_request('pdfout', 'int');
 if ($print_pdf) {
     $content = '
 <style>
