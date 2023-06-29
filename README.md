@@ -41,14 +41,14 @@ Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt
 ```php
 $content = rex_request('pdfout', 'int');
 if ($print_pdf) {
-    $content = `
+    $content = '
 <style>
     body {
         font-family: "Helvetica"
     }
 </style>
 REX_ARTICLE[]
-`;
+';
 
     $pdf = new PdfOut();
 
