@@ -135,7 +135,7 @@ Die neue Schreibweise wäre für dieses Beispiel also:
       ->setHtml($content, true)
       ->setOrientation('portrait')
       ->setAttachment(false)
-      ->setRemoteFiles(true);
+      ->setRemoteFiles(true)
       ->run();
 ```
 
