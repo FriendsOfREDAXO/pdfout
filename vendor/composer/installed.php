@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'c57109b77a53b6b586255dc06a58613018f09881',
+        'reference' => 'fe5e35f5aac13ad9f0feea7486a1083ca9a2b234',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'c57109b77a53b6b586255dc06a58613018f09881',
+            'reference' => 'fe5e35f5aac13ad9f0feea7486a1083ca9a2b234',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -29,9 +29,9 @@
             'dev_requirement' => false,
         ),
         'masterminds/html5' => array(
-            'pretty_version' => '2.7.6',
-            'version' => '2.7.6.0',
-            'reference' => '897eb517a343a2281f11bc5556d6548db7d93947',
+            'pretty_version' => '2.8.0',
+            'version' => '2.8.0.0',
+            'reference' => '3c5d5a56d56f48a1ca08a0670f0f80c1dad368f3',
             'type' => 'library',
             'install_path' => __DIR__ . '/../masterminds/html5',
             'aliases' => array(),
@@ -54,6 +54,17 @@
             'install_path' => __DIR__ . '/../phenx/php-svg-lib',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'roave/security-advisories' => array(
+            'pretty_version' => 'dev-latest',
+            'version' => 'dev-latest',
+            'reference' => '69dafab8a5dffa4d6a4d6dab1ebadf48aca449c7',
+            'type' => 'metapackage',
+            'install_path' => NULL,
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'dev_requirement' => true,
         ),
         'sabberworm/php-css-parser' => array(
             'pretty_version' => '8.4.0',

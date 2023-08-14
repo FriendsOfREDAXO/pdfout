@@ -1,5 +1,13 @@
 {
+    "autoload": {
+        "psr-4": {
+            "ahoi\\Pdf\\": "lib/"
+        }
+    },
     "require": {
         "dompdf/dompdf": "^2.0.3"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
     }
 }
