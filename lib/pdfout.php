@@ -104,24 +104,6 @@ class PdfOut extends Dompdf
         }
     }
 
-    /**
-     * @deprecated since 7.0.0
-     */
-    public static function sendPdf(string $name = 'pdf_file', string $html = '', string $orientation = 'portrait', string $defaultFont = 'Courier', bool $attachment = false, bool $remoteFiles = true, string $saveToPath = ''): void
-    {
-        $pdf = new PdfOut();
-        // Set the PDF properties
-        $pdf->setName($name)
-            ->setFont($defaultFont)
-            ->setHtml($html)
-            ->setOrientation($orientation)
-            ->setAttachment($attachment)
-            ->setRemoteFiles($remoteFiles)
-            ->setDpi(100);
-        $pdf->run();
-    }
-
-
     public static function viewer(string $file = ''): string
     {
         if ($file !== '') {
