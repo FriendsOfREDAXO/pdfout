@@ -116,28 +116,6 @@ Setzt, ob das PDF gespeichert und gesendet werden soll.
 ### `run()`
 Rendert das PDF und sendet es an den Browser oder speichert es im angegebenen Pfad.
 
-## Die Methode sendPdf() (deprecated)
-
-> Diese Methode wird mit Version 8.0 entfernt. 
-
-Beispiel:
-
-```php
-PdfOut::sendPdf($name = 'pdf_file', $html = '', $orientation = 'portrait', $defaultFont ='Courier', $attachment = false, $remoteFiles = true)
-```
-
-Die neue Schreibweise wäre für dieses Beispiel also: 
-
-```php
-  $pdf = new PdfOut();
-  $pdf->setName('pdf_file')
-      ->setFont('Courier')
-      ->setHtml($content, true)
-      ->setOrientation('portrait')
-      ->setAttachment(false)
-      ->setRemoteFiles(true)
-      ->run();
-```
 
 ## Bilder im PDF
 
