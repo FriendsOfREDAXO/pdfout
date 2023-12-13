@@ -1,5 +1,5 @@
 package: pdfout
-version: '8.0.2'
+version: '8.1.0'
 vendor: '2.0.4'
 pdfjs: '4.0.269'
 author: Friends Of REDAXO
