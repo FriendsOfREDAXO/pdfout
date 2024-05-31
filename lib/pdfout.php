@@ -14,6 +14,19 @@ class PdfOut extends Dompdf
     protected $dpi = 100;
     protected $saveAndSend = true;
 
+    private function injectPageCount(Dompdf $dompdf): void
+    {
+        /** @var CPDF $canvas */
+        $canvas = $dompdf->getCanvas();
+        $pdf = $canvas->get_cpdf();
+
+        foreach ($pdf->objects as &$o) {
+            if ($o['t'] === 'contents') {
+                $o['c'] = str_replace('DOMPDF_PAGE_COUNT_PLACEHOLDER', $canvas->get_page_count(), $o['c']);
+            }
+        }
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -86,6 +99,8 @@ class PdfOut extends Dompdf
         $this->setPaper('A4', $this->orientation);
         // Rendern des PDF
         $this->render();
+        // Pagecounter Placeholder esetzen, wenn vorhanden
+        $this->injectPageCount($this);
        
         // Speichern des PDF 
         if ($this->saveToPath !== '') {
