@@ -35,9 +35,8 @@ class PdfOut extends Dompdf
 
     public function setHtml(string $html, bool $outputfilter = false): self
     {
-        if ($outputfilter)
-        {    
-        $html = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $html));
+        if ($outputfilter) {
+            $html = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $html));
         }
         $this->html = $html;
         return $this;
@@ -78,7 +77,7 @@ class PdfOut extends Dompdf
         $this->dpi = $dpi;
         return $this;
     }
-    
+
     public function setSaveAndSend(bool $saveAndSend): self
     {
         $this->saveAndSend = $saveAndSend;
@@ -101,7 +100,7 @@ class PdfOut extends Dompdf
         $this->render();
         // Pagecounter Placeholder esetzen, wenn vorhanden
         $this->injectPageCount($this);
-       
+
         // Speichern des PDF 
         if ($this->saveToPath !== '') {
             $savedata = $this->output();
@@ -109,7 +108,7 @@ class PdfOut extends Dompdf
                 rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $savedata);
             }
         }
-        
+
         // Ausliefern des PDF
         if ($this->saveToPath === '' || $this->saveAndSend === true) {
             rex_response::cleanOutputBuffers(); // OutputBuffer leeren
@@ -117,6 +116,16 @@ class PdfOut extends Dompdf
             $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
             die();
         }
+    }
+
+    public static function mediaUrl(string $type, string $file): string
+    {
+        $paddon = rex_addon::get('pdfout');
+        $url = rex_media_manager::getUrl($type, $file);
+        if ($addon->getProperty('aspdf', false) || rex_request('pdfout', 'int', 0) === 1) {
+            return rex::getServer() . $url;
+        }
+        return $url;
     }
 
     public static function viewer(string $file = ''): string
