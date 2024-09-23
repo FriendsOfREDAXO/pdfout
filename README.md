@@ -30,9 +30,9 @@ Zusätzlich empfohlen:
 Nach der Installation und Aktivierung kann ein PDF wie folgt erzeugt werden:
 
 - Den nachfolgenden in ein Template oder Modul einsetzen
-- Der Aufruf erfolgt dann über die Variable pdf=1 die über die URL übergeben wird. Der aktuelle Artikel kann so dann als PDF ausgegeben werden.
+- Der Aufruf erfolgt dann über die Variable pdfout=1 die über die URL übergeben wird. Der aktuelle Artikel kann so dann als PDF ausgegeben werden.
 
-Sofern dann an eine aufgerufenen URL **?pdf=1** angehängt wird, wird der Inhalt von REX_ARTICLE[] oder REX_TEMPLATE [] als PDF ausgegeben.
+Sofern dann an eine aufgerufenen URL **?pdfout=1** angehängt wird, wird der Inhalt von REX_ARTICLE[] oder REX_TEMPLATE [] als PDF ausgegeben.
 
  **Tipp:** [Diese Seite als PDF im REDAXO-Backend aufrufen](index.php?pdftest=1). Der Aufruf klappt nur über das REDAXO Backend. Wenn man hinter die Backend url `?pdftest=1` dranhängt, kommt die README vom Addon.
 
