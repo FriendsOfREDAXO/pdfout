@@ -212,8 +212,6 @@ Wir bedanken uns bei...
 - [dompdf](http://dompdf.github.io)
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
 - [First release: Oliver Kreischer](https://github.com/olien)
-- [Simon Krull](https://github.com/crydotsnake)
-- [Alexander Walther](https://github.com/alexplusde)
 
 ### Lizenz
 
