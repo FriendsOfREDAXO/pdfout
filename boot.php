@@ -19,7 +19,31 @@ if (rex::isBackend() && rex::getUser() !== null) {
                 ->setOrientation('portrait')
                 ->setAttachment(false)
                 ->setRemoteFiles(false);
-            // execute and generate
+// Setze ein Grundtemplate
+$pdf->setBaseTemplate('
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mein PDF</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { background-color: #f0f0f0; padding: 10px; }
+        .footer { text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PDFOut</h1>
+    </div>
+    {{CONTENT}}
+    <div class="footer">
+        <p>Seite 1 von DOMPDF_PAGE_COUNT_PLACEHOLDER</p>
+    </div>
+</body>
+</html>
+');
+            
+// execute and generate
             $pdf->run();
         }
     }
