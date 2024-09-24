@@ -116,6 +116,61 @@ Setzt, ob das PDF gespeichert und gesendet werden soll.
 ### `run()`
 Rendert das PDF und sendet es an den Browser, oder speichert es im angegebenen Pfad.
 
+### `setBaseTemplate(string $template, string $placeholder = '{{CONTENT}}')`
+Setzt ein optionales Grundtemplate für das PDF. Der Platzhalter wird durch den Inhalt ersetzt.
+
+Beispiel:
+```php
+$baseTemplate = '
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { text-align: center; }
+        .footer { position: fixed; bottom: 0; width: 100%; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">Mein Unternehmen</div>
+    {{CONTENT}}
+    <div class="footer">Seite {PAGENO} von DOMPDF_PAGE_COUNT_PLACEHOLDER</div>
+</body>
+</html>';
+
+$pdf->setBaseTemplate($baseTemplate);
+```
+
+### `addArticle(int $articleId, ?int $ctype = null, bool $applyOutputFilter = true)`
+Fügt den Inhalt eines REDAXO-Artikels zum PDF hinzu.
+
+Beispiel:
+```php
+$pdf = new PdfOut();
+$pdf->addArticle(1); // Fügt den gesamten Inhalt von Artikel mit ID 1 hinzu
+$pdf->addArticle(2, 1, false); // Fügt nur den Inhalt von ctype 1 aus Artikel 2 hinzu, ohne OUTPUT_FILTER
+```
+
+### `mediaUrl(string $type, string $file)`
+Generiert eine URL für ein Media-Element. Diese statische Methode ist besonders nützlich für die korrekte Einbindung von Bildern in PDFs.
+
+Beispiel:
+```php
+$imageUrl = PdfOut::mediaUrl('media_type', 'image.jpg');
+$html = '<img src="' . $imageUrl . '" alt="Mein Bild">';
+$pdf->setHtml($html);
+```
+
+### `viewer(string $file = '')`
+Generiert eine URL für den PDF-Viewer. Diese statische Methode ist nützlich, um PDFs im Browser anzuzeigen.
+
+Beispiel:
+```php
+$viewerUrl = PdfOut::viewer('/media/document.pdf');
+echo '<a href="' . $viewerUrl . '">PDF anzeigen</a>';
+```
+
+
 
 ## Bilder im PDF
 
