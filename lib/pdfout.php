@@ -190,15 +190,30 @@ class PdfOut extends Dompdf
      *
      * @param int $articleId Die ID des Artikels
      * @param int|null $ctype Optional: Die ID des Inhaltstyps (ctype)
+     * @param bool $applyOutputFilter Optional: Ob der OUTPUT_FILTER angewendet werden soll
      * @return self
      */
-    public function addArticle(int $articleId, ?int $ctype = null): self
+    public function addArticle(int $articleId, ?int $ctype = null, bool $applyOutputFilter = true): self
     {
+        // Artikel ermitteln
         $article = rex_article::get($articleId);
+
         if ($article) {
-            $content = $ctype !== null ? $article->getArticle($ctype) : $article->getArticle();
+            // Instanz von rex_article_content erstellen, um den Inhalt mit Clang zu laden
+            $articleContent = new rex_article_content($article->getId(), $article->getClang());
+
+            // Wenn ein ctype angegeben wurde, nur diesen ausgeben, sonst den gesamten Artikelinhalt
+            $content = $ctype !== null ? $articleContent->getArticle($ctype) : $articleContent->getArticle();
+
+            // OUTPUT_FILTER anwenden, wenn gewünscht
+            if ($applyOutputFilter) {
+                $content = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $content));
+            }
+
+            // Inhalt zur HTML-Ausgabe hinzufügen
             $this->html .= $content;
         }
+
         return $this;
     }
 
