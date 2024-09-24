@@ -84,6 +84,23 @@ class PdfOut extends Dompdf
         return $this;
     }
 
+    /**
+    * Fügt den Inhalt eines REDAXO-Artikels zum PDF hinzu
+    *
+    * @param int $articleId Die ID des Artikels
+    * @param int|null $ctype Optional: Die ID des Inhaltstyps (ctype)
+    * @return self
+    */
+    public function addArticle(int $articleId, ?int $ctype = null): self
+    {
+        $article = rex_article::get($articleId);
+        if ($article) {
+            $content = $ctype !== null ? $article->getArticle($ctype) : $article->getArticle();
+            $this->html .= $content;
+        }
+        return $this;
+    }
+
     public function run(): void
     {
         $this->loadHtml($this->html);
