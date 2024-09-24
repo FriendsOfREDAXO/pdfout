@@ -1,12 +1,86 @@
-# PdfOut – PDF Generator(dompdf)  & Viewer (pdf.js) 
+
+# PdfOut für REDAXO!
 
 PdfOut stellt den "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dompdf) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
-
-Mit dompdf können Ausgaben in REDAXO als PDF generiert, gespeichert und mittels Mozilla `pdf.js` angezeigt werden. 
 
 ## Installation
 
 Die Installation erfolgt über den REDAXO-Installer, alternativ gibt es die aktuellste Beta-Version auf [GitHub](https://github.com/FriendsOfREDAXO/pdfout).
+
+
+## Was kann PdfOut?
+
+Stellt euch vor, ihr könntet mit ein paar Zeilen Code aus euren REDAXO-Inhalten wunderschöne PDFs zaubern. Genau das ermöglicht euch PdfOut!
+
+- 🌈 Wandelt HTML in PDFs um
+- 🎨 Passt Ausrichtung, Schriftart und mehr nach Herzenslust an
+- 🖼 Integriert Bilder direkt aus dem REDAXO Media Manager
+- 💾 Speichert PDFs ab oder streamt sie direkt an den Browser
+- 🔢 Fügt sogar automatisch Seitenzahlen ein
+- 🔍 Mit dem integrieren Viewer kann man sich alles ansehem
+
+## Lass uns loslegen!
+
+### Das erste PDF in 3... 2... 1...
+
+```php
+$pdf = new PdfOut();
+$pdf->setName('mein_erstes_pdf')
+    ->setHtml('<h1>Hallo REDAXO-Welt!</h1><p>Mein erstes PDF mit PdfOut. Wie cool ist das denn?</p>')
+    ->run();
+```
+
+Tadaa! 🎉 Das erste PDF ist erstellt. Einfach oder?
+
+### Artikel-Inhalte als PDF? Kein Problem!
+
+```php
+$pdf = new PdfOut();
+$pdf->setName('artikel_als_pdf')
+    ->addArticle(1)  // Hier die ID eures Artikels einsetzen
+    ->run();
+```
+
+### Schicke Vorlagen PDFs
+
+```php
+$meineVorlage = '
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: "Comic Sans MS", cursive; }
+        .kopf { background-color: #ff9900; padding: 10px; }
+        .inhalt { margin: 20px; }
+    </style>
+</head>
+<body>
+    <div class="kopf">Mein supercooler PDF-Kopf</div>
+    <div class="inhalt">{{CONTENT}}</div>
+</body>
+</html>';
+
+$pdf = new PdfOut();
+$pdf->setName('stylisches_pdf')
+    ->setBaseTemplate($meineVorlage)
+    ->setHtml('<h1>Wow!</h1><p>Dieses PDF sieht ja mal richtig schick aus!</p>')
+    ->run();
+```
+
+### PDFs speichern und verschicken
+
+PDF speichern und gleichzeitig an den Browser senden? So geht's:
+
+```php
+$pdf = new PdfOut();
+$pdf->setName('mein_meisterwerk')
+    ->setHtml('<h1>PDF-Kunst</h1>')
+    ->setSaveToPath(rex_path::addonCache('pdfout'))
+    ->setSaveAndSend(true)  // Speichert und sendet in einem Rutsch
+    ->run();
+```
+
+### Jetzt wird's ein wenig technischer 
 
 ### Systemvoraussetzungen
 
