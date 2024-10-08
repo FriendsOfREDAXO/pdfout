@@ -1,5 +1,20 @@
 <?php
+namespace FriendsOfRedaxo\PdfOut;
+
 use Dompdf\Dompdf;
+use Dompdf\Options;
+use rex;
+use rex_addon;
+use rex_article;
+use rex_article_content;
+use rex_extension;
+use rex_extension_point;
+use rex_file;
+use rex_media_manager;
+use rex_path;
+use rex_response;
+use rex_string;
+use rex_url;
 
 /**
  * PdfOut-Klasse zur Erstellung von PDF-Dokumenten in REDAXO
@@ -8,7 +23,7 @@ use Dompdf\Dompdf;
  * zur einfachen Erstellung von PDF-Dokumenten im REDAXO-Kontext.
  */
 class PdfOut extends Dompdf
-{
+{   
     /** @var string Name der PDF-Datei */
     protected $name = 'pdf_file';
 

@@ -35,6 +35,7 @@ Tadaa! 🎉 Das erste PDF ist erstellt. Einfach oder?
 ### Artikel-Inhalte als PDF? Kein Problem!
 
 ```php
+use FriendsOfRedaxo\PDFOut\PdfOut;
 $pdf = new PdfOut();
 $pdf->setName('artikel_als_pdf')
     ->addArticle(1)  // Hier die ID eures Artikels einsetzen
@@ -60,6 +61,7 @@ $meineVorlage = '
 </body>
 </html>';
 
+use FriendsOfRedaxo\PDFOut\PdfOut;
 $pdf = new PdfOut();
 $pdf->setName('stylisches_pdf')
     ->setBaseTemplate($meineVorlage)
@@ -72,6 +74,7 @@ $pdf->setName('stylisches_pdf')
 PDF speichern und gleichzeitig an den Browser senden? So geht's:
 
 ```php
+use FriendsOfRedaxo\PDFOut\PdfOut;
 $pdf = new PdfOut();
 $pdf->setName('mein_meisterwerk')
     ->setHtml('<h1>PDF-Kunst</h1>')
@@ -113,6 +116,7 @@ Sofern dann an eine aufgerufenen URL `?pdfout=1` angehängt wird, wird der Inhal
 ## Beispiel-Code
 
 ```php
+use FriendsOfRedaxo\PDFOut\PdfOut;
 $print_pdf = rex_request('pdfout', 'int');
 if ($print_pdf) {
     $content = '
@@ -220,6 +224,7 @@ Fügt den Inhalt eines REDAXO-Artikels zum PDF hinzu.
 
 Beispiel:
 ```php
+use FriendsOfRedaxo\PDFOut\PdfOut;
 $pdf = new PdfOut();
 $pdf->addArticle(1); // Fügt den gesamten Inhalt von Artikel mit ID 1 hinzu
 $pdf->addArticle(2, 1, false); // Fügt nur den Inhalt von ctype 1 aus Artikel 2 hinzu, ohne OUTPUT_FILTER
@@ -240,6 +245,7 @@ Generiert eine URL für den PDF-Viewer. Diese statische Methode ist nützlich, u
 
 Beispiel:
 ```php
+use FriendsOfRedaxo\PDFOut\PdfOut;
 $viewerUrl = PdfOut::viewer('/media/document.pdf');
 echo '<a href="' . $viewerUrl . '">PDF anzeigen</a>';
 ```
@@ -270,6 +276,7 @@ Mehr dazu bei: [dompdf](http://dompdf.github.io)
 Hier ist ein Beispiel dafür, wie man die Optionen für domPDF nach der Instanziierung definieren kann, um isFontSubsettingEnabled auf false zu setzen:
 
 ```php
+   use FriendsOfRedaxo\PDFOut\PdfOut;
    $pdf = new PdfOut();
    
    $options = $pdf->getOptions();
