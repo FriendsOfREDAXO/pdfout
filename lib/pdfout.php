@@ -57,6 +57,9 @@ class PdfOut extends Dompdf
     /** @var string Platzhalter für den Inhalt im Grundtemplate */
     protected $contentPlaceholder = '{{CONTENT}}';
 
+    /** @var string Papierformat für das PDF */
+    protected $paperSize = 'A4';
+
     /**
      * Ersetzt den Platzhalter für die Seitenzahl im PDF
      *
@@ -72,6 +75,20 @@ class PdfOut extends Dompdf
                 $o['c'] = str_replace('DOMPDF_PAGE_COUNT_PLACEHOLDER', $canvas->get_page_count(), $o['c']);
             }
         }
+    }
+
+    /**
+     * Setzt das Papierformat und die Ausrichtung für das PDF
+     *
+     * @param string $size Das Papierformat (z.B. 'A4', 'letter', oder [width, height] in points)
+     * @param string $orientation Die Ausrichtung (portrait/landscape)
+     * @return self
+     */
+    public function setPaperSize(string|array $size = 'A4', string $orientation = 'portrait'): self
+    {
+        $this->paperSize = $size;
+        $this->orientation = $orientation;
+        return $this;
     }
 
     /**
@@ -255,7 +272,8 @@ class PdfOut extends Dompdf
         $options->setIsRemoteEnabled($this->remoteFiles);
         $this->setOptions($options);
 
-        $this->setPaper('A4', $this->orientation);
+        // Papierformat und Ausrichtung setzen
+        $this->setPaper($this->paperSize, $this->orientation);
 
         // Rendern des PDFs
         $this->render();
