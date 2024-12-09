@@ -310,7 +310,7 @@ class PdfOut extends Dompdf
         $addon = rex_addon::get('pdfout');
         $url = rex_media_manager::getUrl($type, $file);
         if ($addon->getProperty('aspdf', false) || rex_request('pdfout', 'int', 0) === 1) {
-            return rex::getServer() . $url;
+            return rtrim(rex::getServer(),'/') . $url;
         }
         return $url;
     }
