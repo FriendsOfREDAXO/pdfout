@@ -579,7 +579,7 @@ class Helpers
     public static function record_warnings($errno, $errstr, $errfile, $errline)
     {
         // Not a warning or notice
-        if (!($errno & (E_WARNING | E_NOTICE | E_USER_NOTICE | E_USER_WARNING | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED))) {
+        if (!($errno & (E_WARNING | E_NOTICE | E_USER_NOTICE | E_USER_WARNING | E_DEPRECATED | E_USER_DEPRECATED))) {
             throw new Exception($errstr . " $errno");
         }
 
@@ -599,10 +599,10 @@ class Helpers
      * Shim for use on systems running PHP < 7.2
      *
      * @param string $c
-     * @param string $encoding
+     * @param string|null $encoding
      * @return int|false
      */
-    public static function uniord(string $c, string $encoding = null)
+    public static function uniord(string $c, ?string $encoding = null)
     {
         if (function_exists("mb_ord")) {
             if (PHP_VERSION_ID < 80000 && $encoding === null) {
@@ -675,10 +675,10 @@ class Helpers
      * Shim for use on systems running PHP < 7.2
      *
      * @param int    $c
-     * @param string $encoding
+     * @param string|null $encoding
      * @return string|false
      */
-    public static function unichr(int $c, string $encoding = null)
+    public static function unichr(int $c, ?string $encoding = null)
     {
         if (function_exists("mb_chr")) {
             if (PHP_VERSION_ID < 80000 && $encoding === null) {
