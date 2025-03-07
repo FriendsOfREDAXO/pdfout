@@ -16,6 +16,8 @@ use rex_response;
 use rex_string;
 use rex_url;
 use Dompdf\Frame\Frame; // Benötigt für die Seitenzahl-Implementierung
+use Dompdf\Canvas; // Neue Importe
+use Dompdf\Frame\Text; // Neue Importe
 
 /**
  * PdfOut-Klasse zur Erstellung von PDF-Dokumenten in REDAXO
@@ -76,13 +78,27 @@ class PdfOut extends Dompdf
         $pageCount = $canvas->get_page_count();
 
         for ($page = 1; $page <= $pageCount; $page++) {
-            $pageContent = $canvas->getPageText($page);
-            $pageContent = str_replace($this->pageNumberPlaceholder, $page, $pageContent);
-            $canvas->setPageText($page, $pageContent);
+           $this->replacePageNumberInCanvas($canvas, $page);
         }
     }
 
+    private function replacePageNumberInCanvas(Canvas $canvas, int $pageNumber): void
+    {
+        $frames = $canvas->get_frames();
+        $pageText = [];
 
+        if($frames) {
+            foreach ($frames as $frame) {
+                if ($frame instanceof Text) {
+                    $text = $frame->get_text();
+                    if (str_contains($text, $this->pageNumberPlaceholder)) {
+                        $newText = str_replace($this->pageNumberPlaceholder, $pageNumber, $text);
+                        $frame->set_text($newText);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Setzt das Papierformat und die Ausrichtung für das PDF
