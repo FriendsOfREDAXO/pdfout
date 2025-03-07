@@ -84,10 +84,9 @@ class PdfOut extends Dompdf
 
     private function replacePageNumberInCanvas(Canvas $canvas, int $pageNumber): void
     {
-        $frames = $canvas->get_frames();
-        $pageText = [];
+        $frames = $canvas->get_frames(); // Direkt auf dem Canvas-Objekt
 
-        if($frames) {
+        if ($frames) {
             foreach ($frames as $frame) {
                 if ($frame instanceof Text) {
                     $text = $frame->get_text();
