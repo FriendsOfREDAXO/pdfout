@@ -15,15 +15,16 @@ use rex_path;
 use rex_response;
 use rex_string;
 use rex_url;
+use Dompdf\Frame\Frame; // Benötigt für die Seitenzahl-Implementierung
 
 /**
  * PdfOut-Klasse zur Erstellung von PDF-Dokumenten in REDAXO
- * 
+ *
  * Diese Klasse erweitert Dompdf und bietet zusätzliche Funktionen
  * zur einfachen Erstellung von PDF-Dokumenten im REDAXO-Kontext.
  */
 class PdfOut extends Dompdf
-{   
+{
     /** @var string Name der PDF-Datei */
     protected $name = 'pdf_file';
 
@@ -60,22 +61,28 @@ class PdfOut extends Dompdf
     /** @var string Papierformat für das PDF */
     protected $paperSize = 'A4';
 
+    /** @var string Platzhalter für die Seitenzahl */
+    protected $pageNumberPlaceholder = '{PAGENO}';
+
+
     /**
      * Ersetzt den Platzhalter für die Seitenzahl im PDF
      *
      * @param Dompdf $dompdf Das Dompdf-Objekt
      */
-    private function injectPageCount(Dompdf $dompdf): void
+    private function replacePageNumberPlaceholder(Dompdf $dompdf): void
     {
-        /** @var CPDF $canvas */
         $canvas = $dompdf->getCanvas();
-        $pdf = $canvas->get_cpdf();
-        foreach ($pdf->objects as &$o) {
-            if ($o['t'] === 'contents') {
-                $o['c'] = str_replace('DOMPDF_PAGE_COUNT_PLACEHOLDER', $canvas->get_page_count(), $o['c']);
-            }
+        $pageCount = $canvas->get_page_count();
+
+        for ($page = 1; $page <= $pageCount; $page++) {
+            $pageContent = $canvas->getPageText($page);
+            $pageContent = str_replace($this->pageNumberPlaceholder, $page, $pageContent);
+            $canvas->setPageText($page, $pageContent);
         }
     }
+
+
 
     /**
      * Setzt das Papierformat und die Ausrichtung für das PDF
@@ -278,10 +285,10 @@ class PdfOut extends Dompdf
         // Rendern des PDFs
         $this->render();
 
-        // Pagecounter Placeholder ersetzen, wenn vorhanden
-        $this->injectPageCount($this);
+        // Seitenzahl-Platzhalter ersetzen
+        $this->replacePageNumberPlaceholder($this);
 
-        // Speichern des PDFs 
+        // Speichern des PDFs
         if ($this->saveToPath !== '') {
             $savedata = $this->output();
             if (!is_null($savedata)) {
@@ -310,7 +317,7 @@ class PdfOut extends Dompdf
         $addon = rex_addon::get('pdfout');
         $url = rex_media_manager::getUrl($type, $file);
         if ($addon->getProperty('aspdf', false) || rex_request('pdfout', 'int', 0) === 1) {
-            return rtrim(rex::getServer(),'/') . $url;
+            return rtrim(rex::getServer(), '/') . $url;
         }
         return $url;
     }
