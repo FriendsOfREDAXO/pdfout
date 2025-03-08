@@ -12,7 +12,7 @@ Die Installation erfolgt über den REDAXO-Installer, alternativ gibt es die aktu
 - 🎨 Passt Ausrichtung, Schriftart und mehr nach Herzenslust an
 - 🖼 Integriert Bilder direkt aus dem REDAXO Media Manager
 - 💾 Speichert PDFs ab oder streamt sie direkt an den Browser
-- 🔢 Fügt sogar automatisch Seitenzahlen ein
+- 🔢 Fügt sogar automatisch die Gesamt-Seitenzahlen ein
 - 🔍 Mit dem integrieren Viewer kann man sich alles ansehen
 
 ## Lass uns loslegen!
@@ -60,21 +60,22 @@ $meineVorlage = '
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mein PDF</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .header { background-color: #f0f0f0; padding: 10px; }
-        .footer { text-align: center; margin-top: 20px; }
-    </style>
+        body { font-family: Arial, sans-serif;}
+        .kopf { background-color: #ff9900; padding: 10px; }
+        .inhalt { margin: 20px; }
+        .footer { position: fixed; bottom: 0; width: 100%; text-align: center; }
+        .pagenum:before {
+		content: counter(page);
+        }
+</style>
+
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>PDFOut</h1>
-    </div>
-    {{CONTENT}}
-    <div class="footer">
-        Seitenanzahl: DOMPDF_PAGE_COUNT_PLACEHOLDER
-    </div>
+    <div class="kopf">Mein supercooler PDF-Kopf</div>
+    <div class="inhalt">{{CONTENT}}</div>
+    <div class="footer">Seite <span class="pagenum"></span> von: DOMPDF_PAGE_COUNT_PLACEHOLDER</div>
 </body>
 </html>';
 
