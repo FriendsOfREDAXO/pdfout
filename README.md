@@ -73,7 +73,7 @@ $meineVorlage = '
     </div>
     {{CONTENT}}
     <div class="footer">
-        Seite DOMPDF_PAGE_NUM_PLACEHOLDER von DOMPDF_PAGE_COUNT_PLACEHOLDER
+        Seitenanzahl: DOMPDF_PAGE_COUNT_PLACEHOLDER
     </div>
 </body>
 </html>';
