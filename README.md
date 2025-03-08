@@ -60,17 +60,21 @@ $meineVorlage = '
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Mein PDF</title>
     <style>
         body { font-family: Arial, sans-serif; }
-        .kopf { background-color: #ff9900; padding: 10px; }
-        .inhalt { margin: 20px; }
-        .footer { position: fixed; bottom: 0; width: 100%; text-align: center; }
+        .header { background-color: #f0f0f0; padding: 10px; }
+        .footer { text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="kopf">Mein supercooler PDF-Kopf</div>
-    <div class="inhalt">{{CONTENT}}</div>
-    <div class="footer">Seite {PAGENO} von DOMPDF_PAGE_COUNT_PLACEHOLDER</div>
+    <div class="header">
+        <h1>PDFOut</h1>
+    </div>
+    {{CONTENT}}
+    <div class="footer">
+        Seite DOMPDF_PAGE_NUM_PLACEHOLDER von DOMPDF_PAGE_COUNT_PLACEHOLDER
+    </div>
 </body>
 </html>';
 
