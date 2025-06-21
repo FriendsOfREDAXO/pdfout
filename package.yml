@@ -9,3 +9,24 @@ requires:
     php:
         version: '>=8.1'
         extensions: [gd]
+
+page:
+    title: 'translate:title'
+    perm: pdfout[]
+    icon: rex-icon fa-file-pdf-o
+    subpages:
+        overview: 
+            title: 'translate:pdfout_overview'
+            perm: pdfout[]
+        config: 
+            title: 'translate:pdfout_config'
+            perm: pdfout[config]
+        demo: 
+            title: 'translate:pdfout_demo'
+            perm: pdfout[demo]
+        test: 
+            title: 'translate:pdfout_test'
+            perm: pdfout[demo]
+        docs: 
+            title: 'translate:pdfout_docs'
+            perm: pdfout[]

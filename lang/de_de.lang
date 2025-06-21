@@ -1,0 +1,9 @@
+title = PDFOut
+pdfout_overview = Übersicht
+pdfout_config = Konfiguration
+pdfout_demo = Demo
+pdfout_test = Signatur-Tests
+pdfout_docs = Dokumentation
+pdfout_title = PDFOut - PDF-Erstellung
+pdfout_config_title = TCPDF Konfiguration
+pdfout_demo_title = PDFOut Demo mit TCPDF-Features
