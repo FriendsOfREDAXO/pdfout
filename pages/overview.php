@@ -145,7 +145,7 @@ $pdf->setName(\'dokument\')
 </div>';
 
 $fragment = new rex_fragment();
-$fragment->setVar('title', '<i class="fa fa-home"></i> PDFOut Übersicht');
+$fragment->setVar('title', 'PDFOut Übersicht');
 $fragment->setVar('body', $content, false);
 echo $fragment->parse('core/page/section.php');
 
