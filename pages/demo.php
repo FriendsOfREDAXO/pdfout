@@ -9,6 +9,28 @@ $addon = rex_addon::get('pdfout');
 $message = '';
 $error = '';
 
+// Gemeinsame Signatur-Konfiguration für alle Demos
+$defaultSignatureConfig = [
+    'cert_path' => '', // Standard-Zertifikat verwenden
+    'password' => 'redaxo123', // Test-Zertifikatspasswort
+    'name' => 'REDAXO Demo',
+    'location' => 'Demo-Umgebung',
+    'reason' => 'Demo-Signierung',
+    'contact' => 'demo@redaxo.org'
+];
+
+// Hilfsfunktion zum Anwenden der Signatur-Konfiguration
+function applySignatureConfig($pdf, $config, $reason = null) {
+    return $pdf->enableDigitalSignature(
+        $config['cert_path'],
+        $config['password'],
+        $config['name'],
+        $config['location'],
+        $reason ?? $config['reason'],
+        $config['contact']
+    );
+}
+
 if (rex_post('demo-action')) {
     $action = rex_post('demo-action', 'string');
     
@@ -26,18 +48,19 @@ if (rex_post('demo-action')) {
             
         case 'signed_pdf':
             try {
+                // Berechtigungsprüfung für Signatur-Demo
+                if (!rex::getUser() || !rex::getUser()->hasPerm('pdfout[signature]')) {
+                    $error = 'Keine Berechtigung für digitale Signaturen. Bitte wenden Sie sich an den Administrator.';
+                    break;
+                }
+                
                 $pdf = new PdfOut();
                 $pdf->setName('demo_signed')
-                    ->setHtml('<h1>Signiertes PDF Demo</h1><p>Dies ist ein digital signiertes PDF.</p><p>Signatur-Informationen finden Sie in den PDF-Eigenschaften.</p><p style="margin-top: 50mm;">Die sichtbare Signatur sollte rechts unten auf dieser Seite erscheinen.</p>')
-                    ->enableDigitalSignature(
-                        '', // Verwendet Standard-Zertifikat
-                        'redaxo123', // Korrektes Passwort für Test-Zertifikat
-                        'REDAXO Demo',
-                        'Demo-Umgebung',
-                        'Demo-Signierung',
-                        'demo@redaxo.org'
-                    )
-                    ->setVisibleSignature(120, 200, 70, 30, -1)
+                    ->setHtml('<h1>Signiertes PDF Demo</h1><p>Dies ist ein digital signiertes PDF.</p><p>Signatur-Informationen finden Sie in den PDF-Eigenschaften.</p><p style="margin-top: 50mm;">Die sichtbare Signatur sollte rechts unten auf dieser Seite erscheinen.</p>');
+                
+                applySignatureConfig($pdf, $defaultSignatureConfig);
+                
+                $pdf->setVisibleSignature(120, 200, 70, 30, -1)
                     ->run();
             } catch (Exception $e) {
                 $error = 'Fehler beim Erstellen des signierten PDFs: ' . $e->getMessage();
@@ -58,18 +81,19 @@ if (rex_post('demo-action')) {
             
         case 'full_featured_pdf':
             try {
+                // Berechtigungsprüfung für Signatur-Demo
+                if (!rex::getUser() || !rex::getUser()->hasPerm('pdfout[signature]')) {
+                    $error = 'Keine Berechtigung für digitale Signaturen. Bitte wenden Sie sich an den Administrator.';
+                    break;
+                }
+                
                 $pdf = new PdfOut();
                 $pdf->setName('demo_full_featured')
-                    ->setHtml('<h1>Vollständig ausgestattetes PDF Demo</h1><p>Dieses PDF kombiniert alle Features:</p><ul><li>Digitale Signierung</li><li>Passwortschutz</li><li>Sichtbare Signatur</li></ul><p><strong>Passwort:</strong> demo123</p><p style="margin-top: 30mm;">Die sichtbare Signatur ist rechts unten positioniert.</p>')
-                    ->enableDigitalSignature(
-                        '',
-                        'redaxo123',
-                        'REDAXO Demo',
-                        'Demo-Umgebung',
-                        'Full-Feature Demo',
-                        'demo@redaxo.org'
-                    )
-                    ->setVisibleSignature(120, 220, 70, 30, -1)
+                    ->setHtml('<h1>Vollständig ausgestattetes PDF Demo</h1><p>Dieses PDF kombiniert alle Features:</p><ul><li>Digitale Signierung</li><li>Passwortschutz</li><li>Sichtbare Signatur</li></ul><p><strong>Passwort:</strong> demo123</p><p style="margin-top: 30mm;">Die sichtbare Signatur ist rechts unten positioniert.</p>');
+                
+                applySignatureConfig($pdf, $defaultSignatureConfig, 'Full-Feature Demo');
+                
+                $pdf->setVisibleSignature(120, 220, 70, 30, -1)
                     ->enablePasswordProtection('demo123', 'owner456', ['print'])
                     ->run();
             } catch (Exception $e) {
@@ -179,16 +203,18 @@ if (rex_post('demo-action')) {
                 
                 $pdf = new PdfOut();
                 $pdf->setName('demo_event_ticket')
-                    ->setHtml($html)
-                    ->enableDigitalSignature(
-                        '',
-                        'redaxo123',
-                        'REDAXO Events',
-                        'Event Management',
-                        'Ticket-Validierung',
-                        'events@redaxo.org'
-                    )
-                    ->setVisibleSignature(20, 260, 60, 20, -1)
+                    ->setHtml($html);
+                
+                applySignatureConfig($pdf, [
+                    'cert_path' => '',
+                    'password' => 'redaxo123',
+                    'name' => 'REDAXO Events',
+                    'location' => 'Event Management',
+                    'reason' => 'Ticket-Validierung',
+                    'contact' => 'events@redaxo.org'
+                ]);
+                
+                $pdf->setVisibleSignature(20, 260, 60, 20, -1)
                     ->run();
             } catch (Exception $e) {
                 $error = 'Fehler beim Erstellen des Event-Tickets: ' . $e->getMessage();
@@ -273,12 +299,16 @@ $pdf->setName(\'demo_full_featured\')
 // Demo-Kästen generieren
 $content = '<div class="row">';
 $col_count = 0;
+$userCanSign = rex::getUser() && rex::getUser()->hasPerm('pdfout[signature]');
+
 foreach ($demos as $demo_key => $demo) {
     if ($col_count % 2 == 0 && $col_count > 0) {
         $content .= '</div><div class="row">';
     }
     
     $modal_id = 'modal-code-' . $demo_key;
+    $needsSignature = in_array($demo_key, ['signed_pdf', 'full_featured_pdf']);
+    $isDisabled = $needsSignature && !$userCanSign;
     
     $content .= '
     <div class="col-md-6">
@@ -287,17 +317,38 @@ foreach ($demos as $demo_key => $demo) {
                 <h3 class="panel-title"><i class="fa ' . $demo['icon'] . '"></i> ' . $demo['title'] . '</h3>
             </div>
             <div class="panel-body">
-                <p>' . $demo['description'] . '</p>
+                <p>' . $demo['description'] . '</p>';
+                
+    if ($isDisabled) {
+        $content .= '
+                <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i> Keine Berechtigung für Signatur-Features. 
+                    <a href="' . rex_url::currentBackendPage(['page' => 'users/users']) . '" class="btn btn-xs btn-warning">
+                        <i class="fa fa-user"></i> Berechtigung anfordern
+                    </a>
+                </div>';
+    }
+    
+    $content .= '
                 <div class="btn-group">
                     <form method="post" style="display:inline;" target="_blank">
                         <input type="hidden" name="demo-action" value="' . $demo_key . '">
-                        <button type="submit" class="btn ' . $demo['btn_class'] . '">
+                        <button type="submit" class="btn ' . $demo['btn_class'] . '"' . ($isDisabled ? ' disabled' : '') . '>
                             <i class="fa fa-download"></i> PDF erstellen
                         </button>
                     </form>
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $modal_id . '">
                         <i class="fa fa-code"></i> Quellcode
-                    </button>
+                    </button>';
+                    
+    if ($needsSignature && $userCanSign) {
+        $content .= '
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-signature-config">
+                        <i class="fa fa-cog"></i> Signatur prüfen
+                    </button>';
+    }
+    
+    $content .= '
                 </div>
             </div>
         </div>
@@ -306,6 +357,126 @@ foreach ($demos as $demo_key => $demo) {
     $col_count++;
 }
 $content .= '</div>';
+
+// Modal für Signatur-Konfiguration
+$certPath = rex_path::addonData('pdfout', 'certificates/default.p12');
+$certExists = file_exists($certPath);
+
+// Dateirechte prüfen
+$filePerms = '';
+$permissionStatus = '';
+if ($certExists) {
+    $perms = fileperms($certPath);
+    $filePerms = substr(sprintf('%o', $perms), -4);
+    $permissionStatus = ($filePerms === '0600' || $filePerms === '0644') ? 
+        '<span class="text-success"><i class="fa fa-check"></i> Sicher (' . $filePerms . ')</span>' : 
+        '<span class="text-warning"><i class="fa fa-exclamation-triangle"></i> Unsicher (' . $filePerms . ')</span>';
+}
+
+// Zertifikatsdetails laden
+$certDetails = '';
+if ($certExists && function_exists('openssl_pkcs12_read')) {
+    $certData = file_get_contents($certPath);
+    $certs = [];
+    if (openssl_pkcs12_read($certData, $certs, 'redaxo123')) {
+        $certInfo = openssl_x509_parse($certs['cert']);
+        if ($certInfo) {
+            $validFrom = date('d.m.Y H:i', $certInfo['validFrom_time_t']);
+            $validTo = date('d.m.Y H:i', $certInfo['validTo_time_t']);
+            $isExpired = time() > $certInfo['validTo_time_t'];
+            $issuer = $certInfo['issuer']['CN'] ?? 'Unbekannt';
+            $subject = $certInfo['subject']['CN'] ?? 'Unbekannt';
+            
+            $certDetails = '
+            <h5>Zertifikatsdetails:</h5>
+            <table class="table table-striped">
+                <tr>
+                    <td><strong>Aussteller:</strong></td>
+                    <td>' . rex_escape($issuer) . '</td>
+                </tr>
+                <tr>
+                    <td><strong>Subject:</strong></td>
+                    <td>' . rex_escape($subject) . '</td>
+                </tr>
+                <tr>
+                    <td><strong>Gültig von:</strong></td>
+                    <td>' . $validFrom . '</td>
+                </tr>
+                <tr>
+                    <td><strong>Gültig bis:</strong></td>
+                    <td>' . ($isExpired ? 
+                        '<span class="text-danger">' . $validTo . ' (Abgelaufen)</span>' : 
+                        '<span class="text-success">' . $validTo . '</span>') . '</td>
+                </tr>
+            </table>';
+        }
+    }
+}
+
+$permissionWarning = '';
+if ($certExists && ($filePerms !== '0600' && $filePerms !== '0644')) {
+    $permissionWarning = '
+    <div class="alert alert-warning">
+        <strong><i class="fa fa-exclamation-triangle"></i> Sicherheitswarnung:</strong> 
+        Die Zertifikatsdatei hat unsichere Dateirechte (' . $filePerms . '). 
+        Empfohlen: 600 (nur Owner lesbar/schreibbar) oder 644 (Owner lesbar/schreibbar, Gruppe/Andere nur lesbar).
+    </div>';
+}
+
+$content .= '
+<div class="modal fade" id="modal-signature-config" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">
+                    <i class="fa fa-certificate"></i> Signatur-Konfiguration prüfen
+                </h4>
+            </div>
+            <div class="modal-body">
+                <h5>System-Status:</h5>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Zertifikat:</strong></td>
+                        <td>' . ($certExists ? 
+                            '<span class="text-success"><i class="fa fa-check"></i> Vorhanden</span>' : 
+                            '<span class="text-danger"><i class="fa fa-times"></i> Fehlt</span>') . '</td>
+                    </tr>' .
+                    ($certExists ? '<tr>
+                        <td><strong>Dateirechte:</strong></td>
+                        <td>' . $permissionStatus . '</td>
+                    </tr>' : '') . '
+                    <tr>
+                        <td><strong>OpenSSL:</strong></td>
+                        <td>' . (function_exists('openssl_pkcs12_export') ? 
+                            '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : 
+                            '<span class="text-danger"><i class="fa fa-times"></i> Nicht verfügbar</span>') . '</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Berechtigung:</strong></td>
+                        <td><span class="text-success"><i class="fa fa-check"></i> Signatur erlaubt</span></td>
+                    </tr>
+                </table>
+                
+                ' . $certDetails . '
+                ' . $permissionWarning . '
+                
+                <div class="alert alert-success">
+                    <strong>Hinweis:</strong> Diese Demo verwendet ein Test-Zertifikat mit dem Passwort <code>redaxo123</code>. 
+                    Für produktive Systeme sollten Sie ein gültiges Zertifikat einer vertrauenswürdigen CA verwenden.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/config']) . '" class="btn btn-primary">
+                    <i class="fa fa-cog"></i> Konfiguration öffnen
+                </a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+            </div>
+        </div>
+    </div>
+</div>';
 
 // Modals für Quellcode generieren
 foreach ($demos as $demo_key => $demo) {
@@ -340,7 +511,7 @@ echo $fragment->parse('core/page/section.php');
 
 // Wichtige Hinweise
 $notes = '
-<div class="alert alert-info">
+<div class="alert alert-success">
     <h4>Wichtige Hinweise</h4>
     <ul>
         <li>Die Position der sichtbaren Signatur wird in Punkten (pt) angegeben</li>
@@ -452,7 +623,7 @@ if (fileperms($certPath) & 0044) {
                     </div>
                 </div>
                 
-                <div class="alert alert-info" style="margin-top: 15px;">
+                <div class="alert alert-success" style="margin-top: 15px;">
                     <strong>Tipp:</strong> Erstellen Sie ein separates Config-Addon für produktive Credentials oder verwenden Sie 
                     <code>.env</code>-Dateien mit dem <strong>vlucas/phpdotenv</strong> Package.
                 </div>
@@ -465,6 +636,4 @@ if (fileperms($certPath) & 0044) {
 $fragment = new rex_fragment();
 $fragment->setVar('title', 'Sicherheit & Best Practices');
 $fragment->setVar('body', $security, false);
-$fragment->setVar('collapse', true);
-$fragment->setVar('collapsed', true);
 echo $fragment->parse('core/page/section.php');

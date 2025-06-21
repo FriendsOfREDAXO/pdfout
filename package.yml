@@ -24,9 +24,6 @@ page:
         demo: 
             title: 'translate:pdfout_demo'
             perm: pdfout[demo]
-        test: 
-            title: 'translate:pdfout_test'
-            perm: pdfout[demo]
         docs: 
             title: 'translate:pdfout_docs'
             perm: pdfout[]

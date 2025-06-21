@@ -16,6 +16,9 @@ if (rex_post('config-submit', 'bool')) {
         'default_signature_position_y' => rex_post('default_signature_position_y', 'int', 60),
         'default_signature_width' => rex_post('default_signature_width', 'int', 15),
         'default_signature_height' => rex_post('default_signature_height', 'int', 15),
+        'enable_debug_mode' => rex_post('enable_debug_mode', 'bool', false),
+        'log_pdf_generation' => rex_post('log_pdf_generation', 'bool', false),
+        'temp_file_cleanup' => rex_post('temp_file_cleanup', 'bool', true),
     ]);
     
     echo rex_view::success('Konfiguration wurde gespeichert!');
@@ -92,193 +95,292 @@ if (rex_post('generate-test-certificate', 'bool')) {
     }
 }
 
+// Test-PDF generieren
+if (rex_post('generate-test-pdf', 'bool')) {
+    try {
+        $pdf = new PdfOut();
+        $pdf->setName('config_test_pdf')
+            ->setHtml('<h1>Konfiguration Test PDF</h1><p>Dieses PDF wurde von der Konfigurationsseite generiert.</p><p>Erstellungszeit: ' . date('d.m.Y H:i:s') . '</p>')
+            ->run();
+    } catch (Exception $e) {
+        echo rex_view::error('Fehler beim Generieren des Test-PDFs: ' . $e->getMessage());
+    }
+}
+
 // Aktuelle Konfiguration laden
 $config = $this->getConfig();
 
-// Formular erstellen
-$content = '';
+// ========================================
+// ALLGEMEINE KONFIGURATION
+// ========================================
 
-// Certificate Configuration Section
+$form = '<form action="' . rex_url::currentBackendPage() . '" method="post">';
+
+// Standard-Einstellungen für PDF-Generierung
 $formElements = [];
 
 $n = [];
-$n['label'] = '<label for="default_certificate_path">Standard-Zertifikatspfad (.p12)</label>';
-$n['field'] = '<input class="form-control" type="text" id="default_certificate_path" name="default_certificate_path" value="' . rex_escape($config['default_certificate_path'] ?? '') . '" placeholder="' . rex_escape($addon->getDataPath('certificates/default.p12')) . '"/>';
-$n['note'] = 'Vollständiger Pfad zum Standard-Zertifikat für die digitale Signierung. Leer lassen für Standardpfad: ' . $addon->getDataPath('certificates/default.p12');
-$formElements[] = $n;
-
-$n = [];
-$n['label'] = '<label for="default_certificate_password">Standard-Zertifikatspasswort</label>';
-$n['field'] = '<input class="form-control" type="password" id="default_certificate_password" name="default_certificate_password" value="' . rex_escape($config['default_certificate_password'] ?? '') . '"/>';
-$n['note'] = 'Passwort für das Standard-Zertifikat';
-$formElements[] = $n;
-
-$n = [];
-$n['label'] = '<label for="enable_signature_by_default">Digitale Signierung standardmäßig aktivieren</label>';
+$n['label'] = '<label for="enable_signature_by_default"><i class="fa fa-edit"></i> Digitale Signierung standardmäßig aktivieren</label>';
 $n['field'] = '<input type="checkbox" id="enable_signature_by_default" name="enable_signature_by_default" value="1"' . (($config['enable_signature_by_default'] ?? false) ? ' checked="checked"' : '') . '/>';
-$n['note'] = 'Wenn aktiviert, werden alle PDFs standardmäßig digital signiert';
+$n['note'] = 'Wenn aktiviert, werden alle PDFs standardmäßig digital signiert (sofern Berechtigung und Zertifikat vorhanden).';
 $formElements[] = $n;
 
 $n = [];
-$n['label'] = '<label for="enable_password_protection_by_default">Passwortschutz standardmäßig aktivieren</label>';
+$n['label'] = '<label for="enable_password_protection_by_default"><i class="fa fa-shield"></i> Passwortschutz standardmäßig aktivieren</label>';
 $n['field'] = '<input type="checkbox" id="enable_password_protection_by_default" name="enable_password_protection_by_default" value="1"' . (($config['enable_password_protection_by_default'] ?? false) ? ' checked="checked"' : '') . '/>';
-$n['note'] = 'Wenn aktiviert, sind alle PDFs standardmäßig passwortgeschützt';
+$n['note'] = 'Wenn aktiviert, sind alle PDFs standardmäßig passwortgeschützt.';
 $formElements[] = $n;
 
 $fragment = new rex_fragment();
 $fragment->setVar('elements', $formElements, false);
-$content .= $fragment->parse('core/form/form.php');
+$defaultSettings = $fragment->parse('core/form/form.php');
 
-// Test-Zertifikat Generator Sektion
-$testCertContent = '
-<div class="alert alert-info">
-    <h4>Test-Zertifikat Generator</h4>
-    <p>Für Demo- und Testzwecke können Sie hier automatisch ein Test-Zertifikat generieren lassen.</p>
-    <p><strong>Hinweis:</strong> Dieses Zertifikat ist nur für Testzwecke geeignet und sollte nicht in Produktionsumgebungen verwendet werden!</p>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <h5>Aktueller Status</h5>
-        <table class="table table-striped">
-            <tr>
-                <td><strong>Test-Zertifikat vorhanden:</strong></td>
-                <td>' . (file_exists($addon->getDataPath('certificates/default.p12')) ? '<span class="text-success">✓ Ja</span>' : '<span class="text-danger">✗ Nein</span>') . '</td>
-            </tr>
-            <tr>
-                <td><strong>OpenSSL verfügbar:</strong></td>
-                <td>' . (exec('which openssl') ? '<span class="text-success">✓ Ja</span>' : '<span class="text-danger">✗ Nein</span>') . '</td>
-            </tr>
-        </table>
-    </div>
-    <div class="col-md-6">
-        <h5>Test-Zertifikat erstellen</h5>
-        <form method="post">
-            <input type="hidden" name="generate-test-certificate" value="1">
-            <button type="submit" class="btn btn-primary" onclick="return confirm(\'Möchten Sie ein neues Test-Zertifikat generieren? Ein vorhandenes Zertifikat wird überschrieben.\')">
-                <i class="rex-icon fa-certificate"></i> Test-Zertifikat generieren
-            </button>
-        </form>
-        <p class="help-block">
-            <strong>Parameter:</strong><br>
-            - Passwort: redaxo123<br>
-            - Gültigkeitsdauer: 365 Tage<br>
-            - Algorithmus: RSA 2048 Bit
-        </p>
-    </div>
-</div>
-';
-
-$content .= $testCertContent;
-
-// Signature Position Section
+// Signatur-Position Standard-Einstellungen
 $formElements = [];
 
 $n = [];
-$n['label'] = '<label for="default_signature_position_x">Standard Signatur Position X</label>';
-$n['field'] = '<input class="form-control" type="number" id="default_signature_position_x" name="default_signature_position_x" value="' . rex_escape($config['default_signature_position_x'] ?? 180) . '"/>';
-$n['note'] = 'X-Position der sichtbaren Signatur (in mm)';
+$n['label'] = '<label for="default_signature_position_x"><i class="fa fa-arrows-h"></i> Standard Signatur Position X (mm)</label>';
+$n['field'] = '<input class="form-control" type="number" id="default_signature_position_x" name="default_signature_position_x" value="' . rex_escape($config['default_signature_position_x'] ?? 180) . '" min="0" max="300"/>';
+$n['note'] = 'X-Position der sichtbaren Signatur vom linken Rand (in Millimetern).';
 $formElements[] = $n;
 
 $n = [];
-$n['label'] = '<label for="default_signature_position_y">Standard Signatur Position Y</label>';
-$n['field'] = '<input class="form-control" type="number" id="default_signature_position_y" name="default_signature_position_y" value="' . rex_escape($config['default_signature_position_y'] ?? 60) . '"/>';
-$n['note'] = 'Y-Position der sichtbaren Signatur (in mm)';
+$n['label'] = '<label for="default_signature_position_y"><i class="fa fa-arrows-v"></i> Standard Signatur Position Y (mm)</label>';
+$n['field'] = '<input class="form-control" type="number" id="default_signature_position_y" name="default_signature_position_y" value="' . rex_escape($config['default_signature_position_y'] ?? 60) . '" min="0" max="400"/>';
+$n['note'] = 'Y-Position der sichtbaren Signatur vom oberen Rand (in Millimetern).';
 $formElements[] = $n;
 
 $n = [];
-$n['label'] = '<label for="default_signature_width">Standard Signatur Breite</label>';
-$n['field'] = '<input class="form-control" type="number" id="default_signature_width" name="default_signature_width" value="' . rex_escape($config['default_signature_width'] ?? 15) . '"/>';
-$n['note'] = 'Breite der sichtbaren Signatur (in mm)';
+$n['label'] = '<label for="default_signature_width"><i class="fa fa-resize-horizontal"></i> Standard Signatur Breite (mm)</label>';
+$n['field'] = '<input class="form-control" type="number" id="default_signature_width" name="default_signature_width" value="' . rex_escape($config['default_signature_width'] ?? 15) . '" min="5" max="100"/>';
+$n['note'] = 'Breite der sichtbaren Signatur (in Millimetern).';
 $formElements[] = $n;
 
 $n = [];
-$n['label'] = '<label for="default_signature_height">Standard Signatur Höhe</label>';
-$n['field'] = '<input class="form-control" type="number" id="default_signature_height" name="default_signature_height" value="' . rex_escape($config['default_signature_height'] ?? 15) . '"/>';
-$n['note'] = 'Höhe der sichtbaren Signatur (in mm)';
+$n['label'] = '<label for="default_signature_height"><i class="fa fa-resize-vertical"></i> Standard Signatur Höhe (mm)</label>';
+$n['field'] = '<input class="form-control" type="number" id="default_signature_height" name="default_signature_height" value="' . rex_escape($config['default_signature_height'] ?? 15) . '" min="5" max="50"/>';
+$n['note'] = 'Höhe der sichtbaren Signatur (in Millimetern).';
 $formElements[] = $n;
 
 $fragment = new rex_fragment();
 $fragment->setVar('elements', $formElements, false);
-$content .= $fragment->parse('core/form/form.php');
+$signatureSettings = $fragment->parse('core/form/form.php');
+
+// System-Einstellungen
+$formElements = [];
+
+$n = [];
+$n['label'] = '<label for="enable_debug_mode"><i class="fa fa-bug"></i> Debug-Modus aktivieren</label>';
+$n['field'] = '<input type="checkbox" id="enable_debug_mode" name="enable_debug_mode" value="1"' . (($config['enable_debug_mode'] ?? false) ? ' checked="checked"' : '') . '/>';
+$n['note'] = 'Aktiviert erweiterte Fehlerausgaben und Logging für Debugging-Zwecke.';
+$formElements[] = $n;
+
+$n = [];
+$n['label'] = '<label for="log_pdf_generation"><i class="fa fa-list-alt"></i> PDF-Generierung protokollieren</label>';
+$n['field'] = '<input type="checkbox" id="log_pdf_generation" name="log_pdf_generation" value="1"' . (($config['log_pdf_generation'] ?? false) ? ' checked="checked"' : '') . '/>';
+$n['note'] = 'Protokolliert alle PDF-Generierungen im REDAXO-Log.';
+$formElements[] = $n;
+
+$n = [];
+$n['label'] = '<label for="temp_file_cleanup"><i class="fa fa-trash"></i> Temporäre Dateien automatisch löschen</label>';
+$n['field'] = '<input type="checkbox" id="temp_file_cleanup" name="temp_file_cleanup" value="1"' . (($config['temp_file_cleanup'] ?? true) ? ' checked="checked"' : '') . '/>';
+$n['note'] = 'Löscht temporäre Dateien automatisch nach der PDF-Generierung.';
+$formElements[] = $n;
+
+$fragment = new rex_fragment();
+$fragment->setVar('elements', $formElements, false);
+$systemSettings = $fragment->parse('core/form/form.php');
 
 // Submit Button
 $formElements = [];
 $n = [];
-$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="config-submit" value="1">Konfiguration speichern</button>';
+$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="config-submit" value="1"><i class="fa fa-save"></i> Konfiguration speichern</button>';
 $formElements[] = $n;
 
 $fragment = new rex_fragment();
 $fragment->setVar('elements', $formElements, false);
-$content .= $fragment->parse('core/form/submit.php');
+$submitButton = $fragment->parse('core/form/submit.php');
 
-// Formular-Wrapper
-$form = '
-<form action="' . rex_url::currentBackendPage() . '" method="post">
-    ' . $content . '
-</form>';
-
-// Ausgabe der Seite
-$fragment = new rex_fragment();
-$fragment->setVar('title', 'TCPDF Konfiguration');
-$fragment->setVar('body', $form, false);
-echo $fragment->parse('core/page/section.php');
-
-// Information Section
-$info = '
-<h3>Digitale Signierung</h3>
-<p>Für die digitale Signierung benötigen Sie ein gültiges .p12-Zertifikat. Dieses können Sie:</p>
-<ul>
-    <li>Von einer Zertifizierungsstelle (CA) erwerben</li>
-    <li>Selbst erstellen (nur für Testzwecke geeignet)</li>
-</ul>
-
-<p><strong>Zertifikat-Ordner:</strong> <code>' . rex_escape($addon->getDataPath('certificates/')) . '</code></p>
-
-<h3>Verwendung in der PDFOut-Klasse</h3>
-<pre><code>// Digitale Signierung aktivieren
-$pdf->enableDigitalSignature(
-    \'/path/to/certificate.p12\',  // Zertifikatspfad (optional, verwendet Standard)
-    \'password\',                    // Zertifikatspasswort
-    \'Max Mustermann\',             // Name des Signierers
-    \'Musterstadt\',                // Ort
-    \'Dokument-Freigabe\',          // Grund
-    \'max@example.com\'             // Kontakt
-);
-
-// Sichtbare Signatur positionieren
-$pdf->setVisibleSignature(180, 60, 15, 15, -1);
-
-// Passwortschutz aktivieren
-$pdf->enablePasswordProtection(\'user_password\', \'owner_password\', [\'print\', \'copy\']);
-
-// PDF erstellen
-$pdf->run();</code></pre>
-
-<h3>Nachträgliche Signierung</h3>
-<pre><code>// Existierendes PDF signieren
-$pdf = new PdfOut();
-$success = $pdf->signExistingPdf(
-    \'/path/to/input.pdf\',
-    \'/path/to/output_signed.pdf\',
-    \'/path/to/certificate.p12\',
-    \'password\',
-    [
-        \'Name\' => \'Max Mustermann\',
-        \'Location\' => \'Musterstadt\',
-        \'Reason\' => \'Nachträgliche Signierung\',
-        \'visible\' => true,
-        \'x\' => 180,
-        \'y\' => 60,
-        \'width\' => 15,
-        \'height\' => 15
-    ]
-);</code></pre>
+// Tabs für bessere Übersicht
+$generalConfigContent = '
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#defaults" aria-controls="defaults" role="tab" data-toggle="tab">
+                    <i class="fa fa-cog"></i> Standard-Einstellungen
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="#signature" aria-controls="signature" role="tab" data-toggle="tab">
+                    <i class="fa fa-edit"></i> Signatur-Position
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="#system" aria-controls="system" role="tab" data-toggle="tab">
+                    <i class="fa fa-server"></i> System
+                </a>
+            </li>
+        </ul>
+        
+        <div class="tab-content" style="padding-top: 20px;">
+            <div role="tabpanel" class="tab-pane active" id="defaults">
+                ' . $defaultSettings . '
+                <div class="alert alert-success">
+                    <strong><i class="fa fa-info-circle"></i> Hinweis:</strong>
+                    Diese Einstellungen gelten als Standard für neue PDF-Generierungen. 
+                    Sie können in der jeweiligen Implementierung überschrieben werden.
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="signature">
+                ' . $signatureSettings . '
+                <div class="alert alert-success">
+                    <strong><i class="fa fa-info-circle"></i> Positionierungs-Hilfe:</strong>
+                    Die Signatur wird relativ zur linken oberen Ecke des Dokuments positioniert. 
+                    Übliche Werte: X=180mm, Y=60mm für eine Signatur rechts unten.
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="system">
+                ' . $systemSettings . '
+                <div class="alert alert-warning">
+                    <strong><i class="fa fa-exclamation-triangle"></i> Debug-Modus:</strong>
+                    Aktivieren Sie den Debug-Modus nur in Entwicklungsumgebungen, da sensible Informationen 
+                    ausgegeben werden können.
+                </div>
+            </div>
+        </div>
+        
+        ' . $submitButton . '
+    </div>
+</div>
 ';
 
 $fragment = new rex_fragment();
-$fragment->setVar('title', 'Dokumentation');
-$fragment->setVar('body', $info, false);
-$fragment->setVar('collapse', true);
-$fragment->setVar('collapsed', true);
+$fragment->setVar('title', 'Allgemeine Konfiguration');
+$fragment->setVar('body', '<form action="' . rex_url::currentBackendPage() . '" method="post">' . $generalConfigContent . '</form>', false);
+echo $fragment->parse('core/page/section.php');
+
+// ========================================
+// DEMO & TEST EINSTELLUNGEN
+// ========================================
+
+$demoTestContent = '
+<div class="alert alert-warning">
+    <h4><i class="fa fa-flask"></i> Demo & Test Bereich</h4>
+    <p><strong>Wichtig:</strong> Dieser Bereich dient ausschließlich Demo- und Testzwecken. 
+    Die hier generierten Zertifikate und Einstellungen sind <strong>nicht für produktive Systeme geeignet!</strong></p>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-certificate"></i> Test-Zertifikat Generator</h3>
+            </div>
+            <div class="panel-body">
+                <h5>Aktueller Status:</h5>
+                <table class="table table-condensed">
+                    <tr>
+                        <td><strong>Test-Zertifikat:</strong></td>
+                        <td>' . (file_exists($addon->getDataPath('certificates/default.p12')) ? 
+                            '<span class="text-success"><i class="fa fa-check"></i> Vorhanden</span>' : 
+                            '<span class="text-danger"><i class="fa fa-times"></i> Fehlt</span>') . '</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OpenSSL:</strong></td>
+                        <td>' . (exec('which openssl') ? 
+                            '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : 
+                            '<span class="text-danger"><i class="fa fa-times"></i> Nicht verfügbar</span>') . '</td>
+                    </tr>
+                </table>
+                
+                <form method="post" style="margin-top: 15px;">
+                    <input type="hidden" name="generate-test-certificate" value="1">
+                    <button type="submit" class="btn btn-primary btn-block" onclick="return confirm(\'Möchten Sie ein neues Test-Zertifikat generieren? Ein vorhandenes wird überschrieben.\')">
+                        <i class="fa fa-certificate"></i> Test-Zertifikat generieren
+                    </button>
+                </form>
+                
+                <div class="alert alert-warning" style="margin-top: 15px; margin-bottom: 0;">
+                    <small>
+                        <strong>Parameter:</strong><br>
+                        • Passwort: redaxo123<br>
+                        • Gültigkeit: 365 Tage<br>
+                        • Algorithmus: RSA 2048 Bit<br>
+                        <strong>⚠️ Nur für Testzwecke!</strong>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-file-pdf-o"></i> Test-PDF Generator</h3>
+            </div>
+            <div class="panel-body">
+                <p>Erstellen Sie ein einfaches Test-PDF, um die Grundfunktionalität zu prüfen.</p>
+                
+                <form method="post" target="_blank" style="margin-bottom: 15px;">
+                    <input type="hidden" name="generate-test-pdf" value="1">
+                    <button type="submit" class="btn btn-success btn-block">
+                        <i class="fa fa-download"></i> Test-PDF erstellen
+                    </button>
+                </form>
+                
+                <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-info btn-block">
+                    <i class="fa fa-play"></i> Zur Demo-Seite
+                </a>
+                
+                <div class="alert alert-success" style="margin-top: 15px; margin-bottom: 0;">
+                    <small>
+                        <strong>Hinweis:</strong> Das Test-PDF wird direkt heruntergeladen und enthält grundlegende Informationen zur Funktionsprüfung.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-wrench"></i> Demo-Zertifikat Konfiguration</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Aktueller Zertifikatspfad:</h5>
+                        <code>' . rex_escape($addon->getDataPath('certificates/default.p12')) . '</code>
+                        
+                        <h5 style="margin-top: 20px;">Für Demo/Test-Zwecke:</h5>
+                        <ul>
+                            <li><strong>Pfad:</strong> <code>' . rex_escape($config['default_certificate_path'] ?? $addon->getDataPath('certificates/default.p12')) . '</code></li>
+                            <li><strong>Passwort:</strong> <code>redaxo123</code> (Standard für Test-Zertifikat)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-danger">
+                            <h5><i class="fa fa-exclamation-triangle"></i> Produktive Nutzung</h5>
+                            <p>Für produktive Systeme:</p>
+                            <ul>
+                                <li>Verwenden Sie echte CA-Zertifikate</li>
+                                <li>Speichern Sie Passwörter in Umgebungsvariablen</li>
+                                <li>Setzen Sie sichere Dateiberechtigungen (600)</li>
+                                <li>Nutzen Sie Key-Management-Systeme</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+';
+
+$fragment = new rex_fragment();
+$fragment->setVar('title', 'Demo & Test Einstellungen');
+$fragment->setVar('body', $demoTestContent, false);
 echo $fragment->parse('core/page/section.php');
