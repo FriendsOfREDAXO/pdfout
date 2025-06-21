@@ -177,126 +177,6 @@ if (rex_post('demo-action')) {
                 $error = 'Fehler beim Erstellen des vollausgestatteten PDFs: ' . $e->getMessage();
             }
             break;
-            
-        case 'ticket_pdf':
-            try {
-                $eventDate = date('d.m.Y', strtotime('+2 weeks'));
-                $eventTime = '20:00';
-                $ticketNumber = 'TCK-' . str_pad(rand(1000, 9999), 4, '0', STR_PAD_LEFT);
-                
-                // QR-Code Inhalt (in echten Anwendungen würde hier eine Verifikations-URL stehen)
-                $qrContent = 'https://redaxo.org/verify/' . $ticketNumber;
-                $qrCodePlaceholder = '<div style="width: 80px; height: 80px; border: 2px solid #000; display: inline-block; text-align: center; line-height: 76px; font-size: 10px; float: right; margin-left: 20px;">QR-Code<br>' . $ticketNumber . '</div>';
-                
-                $html = '<style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; }
-    .ticket-container { background: white; border: 3px solid #2c3e50; border-radius: 15px; padding: 0; overflow: hidden; max-width: 600px; margin: 0 auto; }
-    .ticket-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
-    .event-title { font-size: 28px; font-weight: bold; margin: 0 0 10px 0; }
-    .event-subtitle { font-size: 16px; opacity: 0.9; margin: 0; }
-    .ticket-body { padding: 30px; }
-    .event-details { display: table; width: 100%; margin: 20px 0; }
-    .detail-row { display: table-row; }
-    .detail-label { display: table-cell; font-weight: bold; padding: 8px 20px 8px 0; color: #2c3e50; width: 120px; }
-    .detail-value { display: table-cell; padding: 8px 0; color: #495057; }
-    .ticket-info { background: #e9ecef; padding: 20px; margin: 20px 0; border-radius: 8px; }
-    .ticket-footer { background: #2c3e50; color: white; padding: 20px; text-align: center; }
-    .seat-info { font-size: 24px; font-weight: bold; color: #e74c3c; text-align: center; margin: 20px 0; }
-    .terms { font-size: 12px; color: #6c757d; margin-top: 20px; line-height: 1.4; }
-</style>
-
-<div class="ticket-container">
-    <div class="ticket-header">
-        <h1 class="event-title">REDAXO Conference 2024</h1>
-        <p class="event-subtitle">The Future of Content Management</p>
-    </div>
-    
-    <div class="ticket-body">
-        <div style="overflow: hidden;">
-            ' . $qrCodePlaceholder . '
-            <div style="margin-right: 100px;">
-                <div class="event-details">
-                    <div class="detail-row">
-                        <div class="detail-label">Ticket-Nr.:</div>
-                        <div class="detail-value"><strong>' . $ticketNumber . '</strong></div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Datum:</div>
-                        <div class="detail-value">' . $eventDate . '</div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Uhrzeit:</div>
-                        <div class="detail-value">' . $eventTime . ' Uhr</div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Veranstaltungsort:</div>
-                        <div class="detail-value">REDAXO Convention Center<br>Musterstraße 123, 12345 Musterstadt</div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Ticketinhaber:</div>
-                        <div class="detail-value">Max Mustermann</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="seat-info">
-            PLATZ: BLOCK A - REIHE 5 - SITZ 12
-        </div>
-        
-        <div class="ticket-info">
-            <h3 style="margin-top: 0; color: #2c3e50;">Programm-Highlights</h3>
-            <ul style="margin: 10px 0; padding-left: 20px;">
-                <li><strong>09:00 - 10:30:</strong> Keynote: "REDAXO 6.0 - Die Zukunft beginnt jetzt"</li>
-                <li><strong>11:00 - 12:30:</strong> Workshop: "AddOn-Entwicklung für Profis"</li>
-                <li><strong>14:00 - 15:30:</strong> Panel: "Performance-Optimierung in großen REDAXO-Projekten"</li>
-                <li><strong>16:00 - 17:30:</strong> Best Practices: "REDAXO in der Enterprise-Umgebung"</li>
-            </ul>
-        </div>
-        
-        <div style="background: #fff3cd; padding: 15px; margin: 20px 0; border-left: 4px solid #ffc107; border-radius: 4px;">
-            <h4 style="margin-top: 0; color: #856404;">Wichtige Hinweise</h4>
-            <ul style="margin: 0; padding-left: 20px; color: #856404;">
-                <li>Bitte bringen Sie einen gültigen Lichtbildausweis mit</li>
-                <li>Einlass ab 08:30 Uhr</li>
-                <li>Dieses Ticket ist nicht übertragbar</li>
-                <li>Bei Verlust wenden Sie sich an den Veranstalter</li>
-            </ul>
-        </div>
-        
-        <div class="terms">
-            <p><strong>Allgemeine Geschäftsbedingungen:</strong> Mit dem Kauf dieses Tickets akzeptieren Sie unsere AGB. 
-            Das Ticket berechtigt zum einmaligen Besuch der Veranstaltung. Foto- und Videoaufnahmen sind gestattet. 
-            Der Veranstalter haftet nicht für Diebstahl oder Verlust persönlicher Gegenstände.</p>
-            
-            <p><strong>Kontakt:</strong> REDAXO Events GmbH • info@redaxo-conference.org • +49 123 456789</p>
-        </div>
-    </div>
-    
-    <div class="ticket-footer">
-        <p style="margin: 0; font-size: 14px;">Wir freuen uns auf Sie! • #REDAXOConf2024</p>
-    </div>
-</div>';
-                
-                $pdf = new PdfOut();
-                $pdf->setName('demo_event_ticket')
-                    ->setHtml($html);
-                
-                applySignatureConfig($pdf, [
-                    'cert_path' => '',
-                    'password' => 'redaxo123',
-                    'name' => 'REDAXO Events',
-                    'location' => 'Event Management',
-                    'reason' => 'Ticket-Validierung',
-                    'contact' => 'events@redaxo.org'
-                ]);
-                
-                $pdf->setVisibleSignature(20, 260, 60, 20, -1)
-                    ->run();
-            } catch (Exception $e) {
-                $error = 'Fehler beim Erstellen des Event-Tickets: ' . $e->getMessage();
-            }
-            break;
     }
 }
 
@@ -458,26 +338,6 @@ $pdf->setName(\'demo_full_featured\')
     ->setVisibleSignature(120, 220, 70, 30, -1)
     ->enablePasswordProtection(\'demo123\', \'owner456\', [\'print\'])
     ->run();'
-    ],
-    'ticket_pdf' => [
-        'title' => 'Event-Ticket Demo',
-        'description' => 'Erstellt ein professionell gestaltetes Event-Ticket mit komplexem Layout und Styling.',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-ticket',
-        'code' => '// Event-Ticket mit professionellem Design
-$html = \'<style>/* CSS Styles für Ticket */</style>
-<div class="ticket-container">
-    <h1>REDAXO Conference 2024</h1>
-    <!-- Ticket-Inhalt -->
-</div>\';
-
-$pdf = new PdfOut();
-$pdf->setName(\'demo_event_ticket\')
-    ->setHtml($html)
-    ->enableDigitalSignature(\'\', \'redaxo123\', \'REDAXO Events\', \'Event Management\', \'Ticket-Validierung\', \'events@redaxo.org\')
-    ->setVisibleSignature(20, 260, 60, 20, -1)
-    ->run();'
     ]
 ];
 
@@ -492,7 +352,7 @@ foreach ($demos as $demo_key => $demo) {
     }
     
     $modal_id = 'modal-code-' . $demo_key;
-    $needsSignature = in_array($demo_key, ['signed_pdf', 'full_featured_pdf', 'ticket_pdf']);
+    $needsSignature = in_array($demo_key, ['signed_pdf', 'full_featured_pdf']);
     $isDisabled = $needsSignature && !$userCanSign;
     
     $content .= '
