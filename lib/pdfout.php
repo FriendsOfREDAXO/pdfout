@@ -12,6 +12,7 @@ use rex_article_content;
 use rex_extension;
 use rex_extension_point;
 use rex_file;
+use rex_logger;
 use rex_media_manager;
 use rex_path;
 use rex_response;
@@ -108,6 +109,15 @@ class PdfOut extends Dompdf
         // Lade Standardkonfiguration aus dem AddOn
         $addon = rex_addon::get('pdfout');
         
+        // PDF Grundeinstellungen aus Config laden
+        $this->paperSize = $addon->getConfig('default_paper_size', 'A4');
+        $this->orientation = $addon->getConfig('default_orientation', 'portrait');
+        $this->font = $addon->getConfig('default_font', 'Dejavu Sans');
+        $this->dpi = $addon->getConfig('default_dpi', 100);
+        $this->attachment = $addon->getConfig('default_attachment', false);
+        $this->remoteFiles = $addon->getConfig('default_remote_files', true);
+        
+        // Erweiterte Features aus Config laden
         if ($addon->getConfig('enable_signature_by_default', false)) {
             $this->enableSigning = true;
             $this->certificatePath = $addon->getConfig('default_certificate_path', '') 
@@ -319,6 +329,9 @@ class PdfOut extends Dompdf
      */
     public function run(): void
     {
+        $startTime = microtime(true);
+        $addon = rex_addon::get('pdfout');
+        
         $finalHtml = $this->html;
 
         // Wenn ein Grundtemplate gesetzt wurde, füge den Inhalt ein
@@ -326,46 +339,73 @@ class PdfOut extends Dompdf
             $finalHtml = str_replace($this->contentPlaceholder, $this->html, $this->baseTemplate);
         }
 
-        // Prüfen ob TCPDF-Features benötigt werden
-        if ($this->enableSigning || $this->enablePasswordProtection) {
-            $this->runWithTcpdf($finalHtml);
-            return;
+        // Logging, wenn aktiviert
+        if ($addon->getConfig('log_pdf_generation', false)) {
+            rex_logger::factory()->info('PDFOut: Starte PDF-Generierung für "' . $this->name . '"', 
+                ['paperSize' => $this->paperSize, 'orientation' => $this->orientation, 'dpi' => $this->dpi]);
         }
 
-        $this->loadHtml($finalHtml);
-
-        // Optionen festlegen
-        $options = $this->getOptions();
-        $options->setChroot(rex_path::frontend());
-        $options->setDefaultFont($this->font);
-        $options->setDpi($this->dpi);
-        $options->setFontCache(rex_path::addonCache('pdfout', 'fonts'));
-        $options->setIsRemoteEnabled($this->remoteFiles);
-        $this->setOptions($options);
-
-        // Papierformat und Ausrichtung setzen
-        $this->setPaper($this->paperSize, $this->orientation);
-
-        // Rendern des PDFs
-        $this->render();
-
-        // Pagecounter Placeholder ersetzen, wenn vorhanden
-        $this->injectPageCount($this);
-
-        // Speichern des PDFs 
-        if ($this->saveToPath !== '') {
-            $savedata = $this->output();
-            if (!is_null($savedata)) {
-                rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $savedata);
+        try {
+            // Prüfen ob TCPDF-Features benötigt werden
+            if ($this->enableSigning || $this->enablePasswordProtection) {
+                $this->runWithTcpdf($finalHtml);
+                return;
             }
-        }
 
-        // Ausliefern des PDFs
-        if ($this->saveToPath === '' || $this->saveAndSend === true) {
-            rex_response::cleanOutputBuffers(); // OutputBuffer leeren
-            header('Content-Type: application/pdf');
-            $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
-            exit();
+            $this->loadHtml($finalHtml);
+
+            // Optionen festlegen
+            $options = $this->getOptions();
+            $options->setChroot(rex_path::frontend());
+            $options->setDefaultFont($this->font);
+            $options->setDpi($this->dpi);
+            $options->setFontCache(rex_path::addonCache('pdfout', 'fonts'));
+            $options->setIsRemoteEnabled($this->remoteFiles);
+            $this->setOptions($options);
+
+            // Papierformat und Ausrichtung setzen
+            $this->setPaper($this->paperSize, $this->orientation);
+
+            // Rendern des PDFs
+            $this->render();
+
+            // Pagecounter Placeholder ersetzen, wenn vorhanden
+            $this->injectPageCount($this);
+
+            // Speichern des PDFs 
+            if ($this->saveToPath !== '') {
+                $savedata = $this->output();
+                if (!is_null($savedata)) {
+                    rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $savedata);
+                }
+            }
+
+            // Ausliefern des PDFs
+            if ($this->saveToPath === '' || $this->saveAndSend === true) {
+                rex_response::cleanOutputBuffers(); // OutputBuffer leeren
+                header('Content-Type: application/pdf');
+                $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
+                exit();
+            }
+            
+            // Erfolgreiche Generierung loggen
+            if ($addon->getConfig('log_pdf_generation', false)) {
+                $executionTime = round((microtime(true) - $startTime) * 1000, 2);
+                rex_logger::factory()->info('PDFOut: PDF-Generierung erfolgreich abgeschlossen für "' . $this->name . '" in ' . $executionTime . 'ms');
+            }
+            
+        } catch (Exception $e) {
+            // Fehler loggen, wenn aktiviert
+            if ($addon->getConfig('log_pdf_generation', false)) {
+                rex_logger::factory()->error('PDFOut: Fehler bei PDF-Generierung für "' . $this->name . '": ' . $e->getMessage());
+            }
+            
+            // Debug-Modus: Detaillierte Fehlerausgabe
+            if ($addon->getConfig('enable_debug_mode', false)) {
+                throw $e;
+            } else {
+                throw new Exception('PDF-Generierung fehlgeschlagen. Aktivieren Sie den Debug-Modus für weitere Details.');
+            }
         }
     }
 
@@ -573,6 +613,9 @@ class PdfOut extends Dompdf
      */
     protected function runWithTcpdf(string $finalHtml): void
     {
+        $startTime = microtime(true);
+        $addon = rex_addon::get('pdfout');
+        
         // Erstelle zunächst ein normales PDF mit DomPDF
         $this->loadHtml($finalHtml);
 
@@ -626,10 +669,29 @@ class PdfOut extends Dompdf
 
             // Ausgabe verarbeiten
             $this->processTcpdfOutput($tcpdf);
+            
+            // Erfolgreiche Generierung loggen
+            if ($addon->getConfig('log_pdf_generation', false)) {
+                $executionTime = round((microtime(true) - $startTime) * 1000, 2);
+                rex_logger::factory()->info('PDFOut: TCPDF-Generierung erfolgreich abgeschlossen für "' . $this->name . '" in ' . $executionTime . 'ms');
+            }
 
+        } catch (Exception $e) {
+            // Fehler loggen, wenn aktiviert
+            if ($addon->getConfig('log_pdf_generation', false)) {
+                rex_logger::factory()->error('PDFOut: Fehler bei TCPDF-Generierung für "' . $this->name . '": ' . $e->getMessage());
+            }
+            
+            // Debug-Modus: Detaillierte Fehlerausgabe
+            if ($addon->getConfig('enable_debug_mode', false)) {
+                throw $e;
+            } else {
+                throw new Exception('PDF-Generierung mit erweiterten Features fehlgeschlagen. Aktivieren Sie den Debug-Modus für weitere Details.');
+            }
+            
         } finally {
             // Temporäre Datei löschen
-            if (file_exists($tempFile)) {
+            if (file_exists($tempFile) && $addon->getConfig('temp_file_cleanup', true)) {
                 unlink($tempFile);
             }
         }

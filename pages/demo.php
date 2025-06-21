@@ -5,9 +5,86 @@
 
 $addon = rex_addon::get('pdfout');
 
-// Demo-Aktionen verarbeiten
+// Demo-Aktionen und Test-Tools verarbeiten
 $message = '';
 $error = '';
+
+// Test-Zertifikat generieren
+if (rex_post('generate-test-certificate', 'bool')) {
+    try {
+        $certDir = $addon->getDataPath('certificates/');
+        $certPath = $certDir . 'default.p12';
+        
+        // Verzeichnis erstellen falls es nicht existiert
+        if (!is_dir($certDir)) {
+            rex_dir::create($certDir);
+        }
+        
+        // OpenSSL-Befehle für Zertifikatserstellung
+        $privateKeyFile = $certDir . 'temp_private.key';
+        $certFile = $certDir . 'temp_cert.crt';
+        $password = 'redaxo123';
+        
+        // 1. Private Key erstellen
+        $privateKeyCmd = sprintf(
+            'openssl genrsa -out %s 2048',
+            escapeshellarg($privateKeyFile)
+        );
+        
+        // 2. Zertifikat erstellen
+        $certCmd = sprintf(
+            'openssl req -new -x509 -key %s -out %s -days 365 -subj "/C=DE/ST=Test/L=Test/O=REDAXO/OU=PDFOut/CN=Test Certificate/emailAddress=test@redaxo.demo"',
+            escapeshellarg($privateKeyFile),
+            escapeshellarg($certFile)
+        );
+        
+        // 3. P12 erstellen
+        $p12Cmd = sprintf(
+            'openssl pkcs12 -export -out %s -inkey %s -in %s -password pass:%s',
+            escapeshellarg($certPath),
+            escapeshellarg($privateKeyFile),
+            escapeshellarg($certFile),
+            $password
+        );
+        
+        // Befehle ausführen
+        exec($privateKeyCmd, $output1, $return1);
+        if ($return1 !== 0) {
+            throw new Exception('Fehler beim Erstellen des Private Keys');
+        }
+        
+        exec($certCmd, $output2, $return2);
+        if ($return2 !== 0) {
+            throw new Exception('Fehler beim Erstellen des Zertifikats');
+        }
+        
+        exec($p12Cmd, $output3, $return3);
+        if ($return3 !== 0) {
+            throw new Exception('Fehler beim Erstellen der P12-Datei');
+        }
+        
+        // Temporäre Dateien löschen
+        if (file_exists($privateKeyFile)) unlink($privateKeyFile);
+        if (file_exists($certFile)) unlink($certFile);
+        
+        $message = 'Test-Zertifikat wurde erfolgreich generiert!<br>Pfad: ' . $certPath . '<br>Passwort: ' . $password;
+        
+    } catch (Exception $e) {
+        $error = 'Fehler beim Generieren des Test-Zertifikats: ' . $e->getMessage() . '<br><br>Stellen Sie sicher, dass OpenSSL auf dem Server installiert und verfügbar ist.';
+    }
+}
+
+// Test-PDF generieren
+if (rex_post('generate-test-pdf', 'bool')) {
+    try {
+        $pdf = new PdfOut();
+        $pdf->setName('demo_test_pdf')
+            ->setHtml('<h1>Demo Test PDF</h1><p>Dieses PDF wurde von der Demo-Seite generiert.</p><p>Erstellungszeit: ' . date('d.m.Y H:i:s') . '</p>')
+            ->run();
+    } catch (Exception $e) {
+        $error = 'Fehler beim Generieren des Test-PDFs: ' . $e->getMessage();
+    }
+}
 
 // Gemeinsame Signatur-Konfiguration für alle Demos
 $defaultSignatureConfig = [
@@ -231,13 +308,101 @@ if ($message) {
     echo rex_view::success($message);
 }
 
+// Demo & Test Einstellungen Sektion (am Anfang)
+$testSettings = '
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4><i class="fa fa-certificate"></i> Test-Zertifikat generieren</h4>
+            </div>
+            <div class="panel-body">
+                <p>Generiert ein selbstsigniertes Test-Zertifikat für Demo-Zwecke.</p>
+                
+                <div class="alert alert-info">
+                    <small><strong>Details:</strong> Passwort: <code>redaxo123</code>, Gültigkeit: 365 Tage</small>
+                </div>
+                
+                <form method="post">
+                    <input type="hidden" name="generate-test-certificate" value="1">
+                    <button type="submit" class="btn btn-default" onclick="return confirm(\'Test-Zertifikat generieren?\')">
+                        <i class="fa fa-plus-circle"></i> Zertifikat erstellen
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4><i class="fa fa-file-pdf-o"></i> Test-PDF generieren</h4>
+            </div>
+            <div class="panel-body">
+                <p>Erstellt ein einfaches Test-PDF zur Überprüfung der Grundfunktionalität.</p>
+                
+                <form method="post" target="_blank">
+                    <input type="hidden" name="generate-test-pdf" value="1">
+                    <button type="submit" class="btn btn-default">
+                        <i class="fa fa-download"></i> Test-PDF erstellen
+                    </button>
+                </form>
+                
+                <div class="alert alert-success" style="margin-top: 15px;">
+                    <small><strong>Inhalt:</strong> Demo-PDF mit Zeitstempel</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4><i class="fa fa-info-circle"></i> System-Status</h4>
+            </div>
+            <div class="panel-body">
+                <table class="table table-condensed">
+                    <tr>
+                        <td><strong>Zertifikat:</strong></td>
+                        <td>' . (file_exists(rex_path::addonData('pdfout', 'certificates/default.p12')) ? 
+                            '<span class="text-success"><i class="fa fa-check"></i></span>' : 
+                            '<span class="text-danger"><i class="fa fa-times"></i></span>') . '</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OpenSSL:</strong></td>
+                        <td>' . (function_exists('openssl_pkcs12_export') ? 
+                            '<span class="text-success"><i class="fa fa-check"></i></span>' : 
+                            '<span class="text-danger"><i class="fa fa-times"></i></span>') . '</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Schreibrechte:</strong></td>
+                        <td>' . (is_writable(rex_path::addonData('pdfout')) ? 
+                            '<span class="text-success"><i class="fa fa-check"></i></span>' : 
+                            '<span class="text-danger"><i class="fa fa-times"></i></span>') . '</td>
+                    </tr>
+                </table>
+                
+                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-system-details">
+                    <i class="fa fa-info"></i> Details anzeigen
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+';
+
+$fragment = new rex_fragment();
+$fragment->setVar('title', 'Demo & Test Einstellungen');
+$fragment->setVar('body', $testSettings, false);
+echo $fragment->parse('core/page/section.php');
+
 // Demo-Definitionen für bessere Pflege
 $demos = [
     'simple_pdf' => [
         'title' => 'Einfaches PDF',
         'description' => 'Erstellt ein einfaches PDF ohne erweiterte Features. Ideal für schnelle Dokumente oder erste Tests.',
         'panel_class' => 'panel-default',
-        'btn_class' => 'btn-primary',
+        'btn_class' => 'btn-default',
         'icon' => 'fa-file-pdf-o',
         'code' => '$pdf = new PdfOut();
 $pdf->setName(\'demo_simple\')
@@ -247,8 +412,8 @@ $pdf->setName(\'demo_simple\')
     'signed_pdf' => [
         'title' => 'Digital signiertes PDF',
         'description' => 'Erstellt ein digital signiertes PDF mit sichtbarer Signatur. Verwendet das Standard-Testzertifikat.',
-        'panel_class' => 'panel-success',
-        'btn_class' => 'btn-success',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-default',
         'icon' => 'fa-certificate',
         'code' => '$pdf = new PdfOut();
 $pdf->setName(\'demo_signed\')
@@ -267,8 +432,8 @@ $pdf->setName(\'demo_signed\')
     'password_pdf' => [
         'title' => 'Passwortgeschütztes PDF',
         'description' => 'Erstellt ein passwortgeschütztes PDF mit Benutzer- und Besitzer-Passwort.<br><strong>Passwort:</strong> demo123',
-        'panel_class' => 'panel-warning',
-        'btn_class' => 'btn-warning',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-default',
         'icon' => 'fa-lock',
         'code' => '$pdf = new PdfOut();
 $pdf->setName(\'demo_password\')
@@ -283,8 +448,8 @@ $pdf->setName(\'demo_password\')
     'full_featured_pdf' => [
         'title' => 'Vollausgestattetes PDF',
         'description' => 'Kombiniert alle Features: Digitale Signierung und Passwortschutz in einem PDF.<br><strong>Passwort:</strong> demo123',
-        'panel_class' => 'panel-danger',
-        'btn_class' => 'btn-danger',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-default',
         'icon' => 'fa-star',
         'code' => '$pdf = new PdfOut();
 $pdf->setName(\'demo_full_featured\')
@@ -292,6 +457,26 @@ $pdf->setName(\'demo_full_featured\')
     ->enableDigitalSignature(\'\', \'redaxo123\', \'REDAXO Demo\', \'Demo-Umgebung\', \'Full-Feature Demo\', \'demo@redaxo.org\')
     ->setVisibleSignature(120, 220, 70, 30, -1)
     ->enablePasswordProtection(\'demo123\', \'owner456\', [\'print\'])
+    ->run();'
+    ],
+    'ticket_pdf' => [
+        'title' => 'Event-Ticket Demo',
+        'description' => 'Erstellt ein professionell gestaltetes Event-Ticket mit komplexem Layout und Styling.',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-default',
+        'icon' => 'fa-ticket',
+        'code' => '// Event-Ticket mit professionellem Design
+$html = \'<style>/* CSS Styles für Ticket */</style>
+<div class="ticket-container">
+    <h1>REDAXO Conference 2024</h1>
+    <!-- Ticket-Inhalt -->
+</div>\';
+
+$pdf = new PdfOut();
+$pdf->setName(\'demo_event_ticket\')
+    ->setHtml($html)
+    ->enableDigitalSignature(\'\', \'redaxo123\', \'REDAXO Events\', \'Event Management\', \'Ticket-Validierung\', \'events@redaxo.org\')
+    ->setVisibleSignature(20, 260, 60, 20, -1)
     ->run();'
     ]
 ];
@@ -307,7 +492,7 @@ foreach ($demos as $demo_key => $demo) {
     }
     
     $modal_id = 'modal-code-' . $demo_key;
-    $needsSignature = in_array($demo_key, ['signed_pdf', 'full_featured_pdf']);
+    $needsSignature = in_array($demo_key, ['signed_pdf', 'full_featured_pdf', 'ticket_pdf']);
     $isDisabled = $needsSignature && !$userCanSign;
     
     $content .= '
@@ -463,7 +648,7 @@ $content .= '
                 ' . $certDetails . '
                 ' . $permissionWarning . '
                 
-                <div class="alert alert-success">
+                <div class="alert alert-info">
                     <strong>Hinweis:</strong> Diese Demo verwendet ein Test-Zertifikat mit dem Passwort <code>redaxo123</code>. 
                     Für produktive Systeme sollten Sie ein gültiges Zertifikat einer vertrauenswürdigen CA verwenden.
                 </div>
@@ -477,6 +662,142 @@ $content .= '
         </div>
     </div>
 </div>';
+
+// Modal für System-Details
+$systemDetailsModal = '
+<div class="modal fade" id="modal-system-details" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">
+                    <i class="fa fa-info-circle"></i> Detaillierter System-Status
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Zertifikat-Status:</h5>
+                        <table class="table table-striped">
+                            <tr>
+                                <td><strong>Standard-Zertifikat:</strong></td>
+                                <td>' . (file_exists(rex_path::addonData('pdfout', 'certificates/default.p12')) ? 
+                                    '<span class="text-success"><i class="fa fa-check"></i> Vorhanden</span>' : 
+                                    '<span class="text-danger"><i class="fa fa-times"></i> Nicht vorhanden</span>') . '</td>
+                            </tr>';
+
+if (file_exists(rex_path::addonData('pdfout', 'certificates/default.p12'))) {
+    $certPath = rex_path::addonData('pdfout', 'certificates/default.p12');
+    $certSize = filesize($certPath);
+    $certModified = date('d.m.Y H:i:s', filemtime($certPath));
+    $perms = fileperms($certPath);
+    $filePerms = substr(sprintf('%o', $perms), -4);
+    
+    $systemDetailsModal .= '
+                            <tr>
+                                <td><strong>Dateigröße:</strong></td>
+                                <td>' . number_format($certSize) . ' Bytes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Letzte Änderung:</strong></td>
+                                <td>' . $certModified . '</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dateirechte:</strong></td>
+                                <td>' . (($filePerms === '0600' || $filePerms === '0644') ? 
+                                    '<span class="text-success">' . $filePerms . ' (Sicher)</span>' : 
+                                    '<span class="text-warning">' . $filePerms . ' (Überprüfen)</span>') . '</td>
+                            </tr>';
+                            
+    // Zertifikatsdetails laden wenn möglich
+    if (function_exists('openssl_pkcs12_read')) {
+        $certData = file_get_contents($certPath);
+        $certs = [];
+        if (openssl_pkcs12_read($certData, $certs, 'redaxo123')) {
+            $certInfo = openssl_x509_parse($certs['cert']);
+            if ($certInfo) {
+                $validTo = date('d.m.Y H:i', $certInfo['validTo_time_t']);
+                $isExpired = time() > $certInfo['validTo_time_t'];
+                $daysLeft = ceil(($certInfo['validTo_time_t'] - time()) / 86400);
+                
+                $systemDetailsModal .= '
+                            <tr>
+                                <td><strong>Gültig bis:</strong></td>
+                                <td>' . ($isExpired ? 
+                                    '<span class="text-danger">' . $validTo . ' (Abgelaufen)</span>' : 
+                                    '<span class="text-success">' . $validTo . ' (' . $daysLeft . ' Tage)</span>') . '</td>
+                            </tr>';
+            }
+        }
+    }
+}
+
+$systemDetailsModal .= '
+                        </table>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h5>System-Voraussetzungen:</h5>
+                        <table class="table table-striped">
+                            <tr>
+                                <td><strong>OpenSSL (PHP):</strong></td>
+                                <td>' . (function_exists('openssl_pkcs12_export') ? 
+                                    '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : 
+                                    '<span class="text-danger"><i class="fa fa-times"></i> Nicht verfügbar</span>') . '</td>
+                            </tr>
+                            <tr>
+                                <td><strong>OpenSSL (System):</strong></td>
+                                <td>';
+
+// System OpenSSL prüfen
+$opensslCheck = shell_exec('which openssl 2>/dev/null');
+if ($opensslCheck) {
+    $systemDetailsModal .= '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>';
+} else {
+    $systemDetailsModal .= '<span class="text-warning"><i class="fa fa-exclamation-triangle"></i> Nicht gefunden</span>';
+}
+
+$systemDetailsModal .= '</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Schreibrechte:</strong></td>
+                                <td>' . (is_writable(rex_path::addonData('pdfout')) ? 
+                                    '<span class="text-success"><i class="fa fa-check"></i> Data-Ordner beschreibbar</span>' : 
+                                    '<span class="text-danger"><i class="fa fa-times"></i> Keine Schreibrechte</span>') . '</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Temp-Verzeichnis:</strong></td>
+                                <td>' . (is_writable(sys_get_temp_dir()) ? 
+                                    '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : 
+                                    '<span class="text-warning"><i class="fa fa-exclamation-triangle"></i> Nicht beschreibbar</span>') . '</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fa fa-info-circle"></i> Informationen</h5>
+                    <ul class="mb-0">
+                        <li><strong>Test-Zertifikate</strong> sind selbstsigniert und nur für Entwicklung geeignet</li>
+                        <li><strong>Produktive Systeme</strong> sollten Zertifikate von vertrauenswürdigen CAs verwenden</li>
+                        <li><strong>Passwörter</strong> sollten über sichere Methoden (Umgebungsvariablen, verschlüsselte Config) geladen werden</li>
+                        <li><strong>REDAXO Properties</strong> können für sichere Speicherung von Secrets verwendet werden</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/config']) . '" class="btn btn-primary">
+                    <i class="fa fa-cog"></i> Konfiguration
+                </a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+            </div>
+        </div>
+    </div>
+</div>';
+
+$content .= $systemDetailsModal;
 
 // Modals für Quellcode generieren
 foreach ($demos as $demo_key => $demo) {
@@ -511,7 +832,7 @@ echo $fragment->parse('core/page/section.php');
 
 // Wichtige Hinweise
 $notes = '
-<div class="alert alert-success">
+<div class="alert alert-info">
     <h4>Wichtige Hinweise</h4>
     <ul>
         <li>Die Position der sichtbaren Signatur wird in Punkten (pt) angegeben</li>
@@ -547,14 +868,18 @@ $security = '
 $pdf->enableDigitalSignature(\'\', \'redaxo123\', ...);</code></pre>
                 
                 <h5>✅ Sicher für Produktion:</h5>
-                <pre><code>// Umgebungsvariablen verwenden
-$certPassword = $_ENV[\'CERT_PASSWORD\'];
+                <pre><code>// REDAXO Properties verwenden (empfohlen)
+$certPassword = rex_property::get(\'cert_password\');
 $pdf->enableDigitalSignature(\'\', $certPassword, ...);</code></pre>
                 
                 <pre><code>// Oder REDAXO Config mit Verschlüsselung
 $encryptedPassword = rex_config::get(\'pdfout\', \'cert_password\');
 $password = my_decrypt($encryptedPassword);
 $pdf->enableDigitalSignature(\'\', $password, ...);</code></pre>
+                
+                <pre><code>// Alternativ: Umgebungsvariablen
+$certPassword = $_ENV[\'CERT_PASSWORD\'];
+$pdf->enableDigitalSignature(\'\', $certPassword, ...);</code></pre>
             </div>
         </div>
     </div>
@@ -623,7 +948,7 @@ if (fileperms($certPath) & 0044) {
                     </div>
                 </div>
                 
-                <div class="alert alert-success" style="margin-top: 15px;">
+                <div class="alert alert-info" style="margin-top: 15px;">
                     <strong>Tipp:</strong> Erstellen Sie ein separates Config-Addon für produktive Credentials oder verwenden Sie 
                     <code>.env</code>-Dateien mit dem <strong>vlucas/phpdotenv</strong> Package.
                 </div>

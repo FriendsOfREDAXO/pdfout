@@ -154,6 +154,42 @@ $pdf->setName('signiertes_dokument')
     ->setVisibleSignature(150, 250, 40, 20, -1)  // Position und Größe der sichtbaren Signatur (x, y, width, height, page: -1 = letzte Seite)
     ->run();
 ```
+
+#### ⚠️ Sicherheitshinweise für produktive Umgebungen
+
+**Hardcoded Passwörter vermeiden:**
+```php
+// ❌ NICHT in produktiven Systemen verwenden
+$pdf->enableDigitalSignature('', 'hardcoded_password', ...);
+
+// ✅ Empfohlene sichere Methoden:
+
+// REDAXO Properties verwenden (empfohlen für REDAXO)
+$certPassword = rex_property::get('cert_password');
+$pdf->enableDigitalSignature('', $certPassword, ...);
+
+// REDAXO Config mit Verschlüsselung
+$encryptedPassword = rex_config::get('pdfout', 'cert_password');
+$password = my_decrypt($encryptedPassword);
+$pdf->enableDigitalSignature('', $password, ...);
+
+// Umgebungsvariablen (alternative Lösung)
+$certPassword = $_ENV['CERT_PASSWORD'];
+$pdf->enableDigitalSignature('', $certPassword, ...);
+```
+
+**Best Practices für Zertifikate:**
+- **Produktive Zertifikate:** Nur von vertrauenswürdigen CAs verwenden
+- **Dateiberechtigungen:** 600 (nur Webserver lesbar) setzen
+- **Pfad-Sicherheit:** Zertifikate außerhalb des Web-Root speichern
+- **Ablaufmonitoring:** Rechtzeitige Erneuerung vor Ablauf
+- **Backup:** Sichere Aufbewahrung von Zertifikaten und Passwörtern
+        'Dokument-Freigabe',         // Grund der Signierung
+        'max@example.com'            // Kontaktinformationen (optional)
+    )
+    ->setVisibleSignature(150, 250, 40, 20, -1)  // Position und Größe der sichtbaren Signatur (x, y, width, height, page: -1 = letzte Seite)
+    ->run();
+```
 **Nachträgliche Signierung:** Signieren Sie eine bereits vorhandene PDF-Datei.
 
 ```php
