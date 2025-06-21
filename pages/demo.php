@@ -205,93 +205,137 @@ if ($message) {
     echo rex_view::success($message);
 }
 
-// Demo-Buttons
-$content = '
-<div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Einfaches PDF</h3>
-            </div>
-            <div class="panel-body">
-                <p>Erstellt ein einfaches PDF ohne erweiterte Features.</p>
-                <form method="post" style="display:inline;" target="_blank">
-                    <input type="hidden" name="demo-action" value="simple_pdf">
-                    <button type="submit" class="btn btn-primary">PDF erstellen</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-        <div class="panel panel-success">
-            <div class="panel-heading">
-                <h3 class="panel-title">Digital signiertes PDF</h3>
-            </div>
-            <div class="panel-body">
-                <p>Erstellt ein digital signiertes PDF mit sichtbarer Signatur.</p>
-                <form method="post" style="display:inline;" target="_blank">
-                    <input type="hidden" name="demo-action" value="signed_pdf">
-                    <button type="submit" class="btn btn-success">PDF erstellen</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+// Demo-Definitionen für bessere Pflege
+$demos = [
+    'simple_pdf' => [
+        'title' => 'Einfaches PDF',
+        'description' => 'Erstellt ein einfaches PDF ohne erweiterte Features. Ideal für schnelle Dokumente oder erste Tests.',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-primary',
+        'icon' => 'fa-file-pdf-o',
+        'code' => '$pdf = new PdfOut();
+$pdf->setName(\'demo_simple\')
+    ->setHtml(\'<h1>Einfaches PDF Demo</h1><p>Dies ist ein einfaches PDF.</p>\')
+    ->run();'
+    ],
+    'signed_pdf' => [
+        'title' => 'Digital signiertes PDF',
+        'description' => 'Erstellt ein digital signiertes PDF mit sichtbarer Signatur. Verwendet das Standard-Testzertifikat.',
+        'panel_class' => 'panel-success',
+        'btn_class' => 'btn-success',
+        'icon' => 'fa-certificate',
+        'code' => '$pdf = new PdfOut();
+$pdf->setName(\'demo_signed\')
+    ->setHtml(\'<h1>Signiertes PDF Demo</h1><p>Dies ist ein digital signiertes PDF.</p>\')
+    ->enableDigitalSignature(
+        \'\',                // Standard-Zertifikat verwenden
+        \'redaxo123\',       // Zertifikatspasswort
+        \'REDAXO Demo\',     // Name
+        \'Demo-Umgebung\',   // Ort
+        \'Demo-Signierung\', // Grund
+        \'demo@redaxo.org\'  // Kontakt
+    )
+    ->setVisibleSignature(120, 200, 70, 30, -1) // X, Y, Breite, Höhe, Seite
+    ->run();'
+    ],
+    'password_pdf' => [
+        'title' => 'Passwortgeschütztes PDF',
+        'description' => 'Erstellt ein passwortgeschütztes PDF mit Benutzer- und Besitzer-Passwort.<br><strong>Passwort:</strong> demo123',
+        'panel_class' => 'panel-warning',
+        'btn_class' => 'btn-warning',
+        'icon' => 'fa-lock',
+        'code' => '$pdf = new PdfOut();
+$pdf->setName(\'demo_password\')
+    ->setHtml(\'<h1>Passwortgeschütztes PDF</h1><p>Passwort: demo123</p>\')
+    ->enablePasswordProtection(
+        \'demo123\',    // Benutzer-Passwort
+        \'owner456\',   // Besitzer-Passwort
+        [\'print\', \'copy\'] // Erlaubte Aktionen
+    )
+    ->run();'
+    ],
+    'full_featured_pdf' => [
+        'title' => 'Vollausgestattetes PDF',
+        'description' => 'Kombiniert alle Features: Digitale Signierung und Passwortschutz in einem PDF.<br><strong>Passwort:</strong> demo123',
+        'panel_class' => 'panel-danger',
+        'btn_class' => 'btn-danger',
+        'icon' => 'fa-star',
+        'code' => '$pdf = new PdfOut();
+$pdf->setName(\'demo_full_featured\')
+    ->setHtml(\'<h1>Vollausgestattetes PDF</h1><p>Alle Features kombiniert.</p>\')
+    ->enableDigitalSignature(\'\', \'redaxo123\', \'REDAXO Demo\', \'Demo-Umgebung\', \'Full-Feature Demo\', \'demo@redaxo.org\')
+    ->setVisibleSignature(120, 220, 70, 30, -1)
+    ->enablePasswordProtection(\'demo123\', \'owner456\', [\'print\'])
+    ->run();'
+    ]
+];
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-warning">
-            <div class="panel-heading">
-                <h3 class="panel-title">Passwortgeschütztes PDF</h3>
-            </div>
-            <div class="panel-body">
-                <p>Erstellt ein passwortgeschütztes PDF.<br><strong>Passwort:</strong> demo123</p>
-                <form method="post" style="display:inline;" target="_blank">
-                    <input type="hidden" name="demo-action" value="password_pdf">
-                    <button type="submit" class="btn btn-warning">PDF erstellen</button>
-                </form>
-            </div>
-        </div>
-    </div>
+// Demo-Kästen generieren
+$content = '<div class="row">';
+$col_count = 0;
+foreach ($demos as $demo_key => $demo) {
+    if ($col_count % 2 == 0 && $col_count > 0) {
+        $content .= '</div><div class="row">';
+    }
     
+    $modal_id = 'modal-code-' . $demo_key;
+    
+    $content .= '
     <div class="col-md-6">
-        <div class="panel panel-danger">
+        <div class="panel ' . $demo['panel_class'] . '">
             <div class="panel-heading">
-                <h3 class="panel-title">Vollausgestattetes PDF</h3>
+                <h3 class="panel-title"><i class="fa ' . $demo['icon'] . '"></i> ' . $demo['title'] . '</h3>
             </div>
             <div class="panel-body">
-                <p>Kombiniert alle Features: Signierung + Passwortschutz.<br><strong>Passwort:</strong> demo123</p>
-                <form method="post" style="display:inline;" target="_blank">
-                    <input type="hidden" name="demo-action" value="full_featured_pdf">
-                    <button type="submit" class="btn btn-danger">PDF erstellen</button>
-                </form>
+                <p>' . $demo['description'] . '</p>
+                <div class="btn-group">
+                    <form method="post" style="display:inline;" target="_blank">
+                        <input type="hidden" name="demo-action" value="' . $demo_key . '">
+                        <button type="submit" class="btn ' . $demo['btn_class'] . '">
+                            <i class="fa fa-download"></i> PDF erstellen
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $modal_id . '">
+                        <i class="fa fa-code"></i> Quellcode
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-</div>';
+    </div>';
+    
+    $col_count++;
+}
+$content .= '</div>';
+
+// Modals für Quellcode generieren
+foreach ($demos as $demo_key => $demo) {
+    $modal_id = 'modal-code-' . $demo_key;
+    $content .= '
+    <div class="modal fade" id="' . $modal_id . '" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">
+                        <i class="fa ' . $demo['icon'] . '"></i> ' . $demo['title'] . ' - Quellcode
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <pre><code class="language-php">' . htmlspecialchars($demo['code']) . '</code></pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>';
+}
 
 $fragment = new rex_fragment();
 $fragment->setVar('title', 'PDF-Demos');
 $fragment->setVar('body', $content, false);
-echo $fragment->parse('core/page/section.php');
-
-// Code-Beispiele
-$examples = '<h3>Code-Beispiele</h3>'
-    . '<h4>1. Einfaches PDF</h4>'
-    . '<pre><code>' . htmlspecialchars("\$pdf = new PdfOut();\n\$pdf->setName('demo_simple')\n    ->setHtml('<h1>Einfaches PDF Demo</h1><p>Dies ist ein einfaches PDF.</p>')\n    ->run();") . '</code></pre>'
-    . '<h4>2. Digital signiertes PDF</h4>'
-    . '<pre><code>' . htmlspecialchars("\$pdf = new PdfOut();\n\$pdf->setName('demo_signed')\n    ->setHtml('<h1>Signiertes PDF Demo</h1><p>Dies ist ein digital signiertes PDF.</p>')\n    ->enableDigitalSignature(\n        '',                // Standard-Zertifikat verwenden\n        'redaxo123',       // Zertifikatspasswort\n        'REDAXO Demo',     // Name\n        'Demo-Umgebung',   // Ort\n        'Demo-Signierung', // Grund\n        'demo@redaxo.org'  // Kontakt\n    )\n    ->setVisibleSignature(120, 200, 70, 30, -1) // X, Y, Breite, Höhe, Seite\n    ->run();") . '</code></pre>'
-    . '<h4>3. Passwortgeschütztes PDF</h4>'
-    . '<pre><code>' . htmlspecialchars("\$pdf = new PdfOut();\n\$pdf->setName('demo_password')\n    ->setHtml('<h1>Passwortgeschütztes PDF</h1><p>Passwort: demo123</p>')\n    ->enablePasswordProtection(\n        'demo123',    // Benutzer-Passwort\n        'owner456',   // Besitzer-Passwort\n        ['print', 'copy'] // Erlaubte Aktionen\n    )\n    ->run();") . '</code></pre>'
-    . '<h4>4. Vollausgestattetes PDF</h4>'
-    . '<pre><code>' . htmlspecialchars("\$pdf = new PdfOut();\n\$pdf->setName('demo_full_featured')\n    ->setHtml('<h1>Vollausgestattetes PDF</h1><p>Alle Features kombiniert.</p>')\n    ->enableDigitalSignature('', 'redaxo123', 'REDAXO Demo', 'Demo-Umgebung', 'Full-Feature Demo', 'demo@redaxo.org')\n    ->setVisibleSignature(120, 220, 70, 30, -1)\n    ->enablePasswordProtection('demo123', 'owner456', ['print'])\n    ->run();") . '</code></pre>';
-
-$fragment = new rex_fragment();
-$fragment->setVar('title', 'Code-Beispiele');
-$fragment->setVar('body', $examples, false);
-$fragment->setVar('collapse', true);
-$fragment->setVar('collapsed', true);
 echo $fragment->parse('core/page/section.php');
 
 // Wichtige Hinweise
@@ -311,4 +355,116 @@ $notes = '
 $fragment = new rex_fragment();
 $fragment->setVar('title', 'Wichtige Hinweise');
 $fragment->setVar('body', $notes, false);
+echo $fragment->parse('core/page/section.php');
+
+// Sicherheitshinweise und Best Practices
+$security = '
+<div class="alert alert-warning">
+    <h4><i class="fa fa-shield"></i> Sicherheitshinweise für produktive Nutzung</h4>
+    <p><strong>Die obigen Demos verwenden Testwerte!</strong> Für produktive Systeme beachten Sie folgende Sicherheitsaspekte:</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4><i class="fa fa-exclamation-triangle"></i> Passwort-Sicherheit</h4>
+            </div>
+            <div class="panel-body">
+                <h5>❌ Nicht in produktiven Systemen:</h5>
+                <pre><code>// Hardcoded Passwörter vermeiden!
+$pdf->enableDigitalSignature(\'\', \'redaxo123\', ...);</code></pre>
+                
+                <h5>✅ Sicher für Produktion:</h5>
+                <pre><code>// Umgebungsvariablen verwenden
+$certPassword = $_ENV[\'CERT_PASSWORD\'];
+$pdf->enableDigitalSignature(\'\', $certPassword, ...);</code></pre>
+                
+                <pre><code>// Oder REDAXO Config mit Verschlüsselung
+$encryptedPassword = rex_config::get(\'pdfout\', \'cert_password\');
+$password = my_decrypt($encryptedPassword);
+$pdf->enableDigitalSignature(\'\', $password, ...);</code></pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4><i class="fa fa-certificate"></i> Zertifikat-Management</h4>
+            </div>
+            <div class="panel-body">
+                <h5>Best Practices:</h5>
+                <ul>
+                    <li><strong>Produktive Zertifikate:</strong> Von vertrauenswürdiger CA</li>
+                    <li><strong>Dateiberechtigungen:</strong> 600 (nur Webserver lesbar)</li>
+                    <li><strong>Pfad-Validierung:</strong> Existenz vor Verwendung prüfen</li>
+                    <li><strong>Ablaufdatum:</strong> Monitoring und rechtzeitige Erneuerung</li>
+                </ul>
+                
+                <pre><code>// Zertifikat-Validierung
+$certPath = rex_path::addonData(\'pdfout\', \'certificates/prod.p12\');
+if (!file_exists($certPath)) {
+    throw new Exception(\'Zertifikat nicht gefunden\');
+}
+if (fileperms($certPath) & 0044) {
+    throw new Exception(\'Zertifikat unsicher (zu offen)\');
+}</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h4><i class="fa fa-check-circle"></i> Empfohlene Sicherheitsmaßnahmen</h4>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5><i class="fa fa-key"></i> Key Management</h5>
+                        <ul>
+                            <li>Azure Key Vault</li>
+                            <li>AWS Secrets Manager</li>
+                            <li>HashiCorp Vault</li>
+                            <li>REDAXO Addon: crypto</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5><i class="fa fa-server"></i> Server-Konfiguration</h5>
+                        <ul>
+                            <li>Umgebungsvariablen für Secrets</li>
+                            <li>Restricted Dateiberechtigungen</li>
+                            <li>SSL/TLS für Backend-Zugriff</li>
+                            <li>Audit-Logging aktivieren</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5><i class="fa fa-shield"></i> Code-Sicherheit</h5>
+                        <ul>
+                            <li>Input-Validierung</li>
+                            <li>Fehlerbehandlung ohne Preisgabe</li>
+                            <li>Sichere Temp-Datei-Erstellung</li>
+                            <li>Regular Security Reviews</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info" style="margin-top: 15px;">
+                    <strong>Tipp:</strong> Erstellen Sie ein separates Config-Addon für produktive Credentials oder verwenden Sie 
+                    <code>.env</code>-Dateien mit dem <strong>vlucas/phpdotenv</strong> Package.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+';
+
+$fragment = new rex_fragment();
+$fragment->setVar('title', 'Sicherheit & Best Practices');
+$fragment->setVar('body', $security, false);
+$fragment->setVar('collapse', true);
+$fragment->setVar('collapsed', true);
 echo $fragment->parse('core/page/section.php');
