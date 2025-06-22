@@ -2,7 +2,7 @@
 /**
  * PDFOut Demo-Seite
  */
-
+use FriendsOfRedaxo\PdfOut\PdfOut;
 $addon = rex_addon::get('pdfout');
 
 // Demo-Aktionen und Test-Tools verarbeiten
