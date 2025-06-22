@@ -1183,15 +1183,12 @@ class PdfOut extends Dompdf
             // Bankverbindung des Verkäufers hinzufügen (wichtig für e-Rechnung)
             if (!empty($seller['bank'])) {
                 $bank = $seller['bank'];
-                $documentBuilder->addDocumentPaymentMean(
-                    \horstoeko\zugferd\codelists\ZugferdPaymentMeans::UNTDID_4461_58, // SEPA credit transfer
-                    null, // Zahlungsreferenz
-                    null, // Kartennummer
-                    null, // Kontoinhaber
+                $documentBuilder->addDocumentPaymentMeanToCreditTransfer(
                     $bank['iban'] ?? '', // IBAN
-                    null, // Kontonummer
-                    null, // Bankleitzahl
-                    $bank['bic'] ?? '' // BIC
+                    null, // Kontoname
+                    null, // Zusätzliche Kontoreferenz
+                    $bank['bic'] ?? '', // BIC
+                    null // Zahlungsreferenz
                 );
             }
             
