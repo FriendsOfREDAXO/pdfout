@@ -3,6 +3,9 @@
  * PDFOut Demo-Seite
  */
 
+use FriendsOfRedaxo\PdfOut\PdfOut;
+use FriendsOfRedaxo\PdfOut\ZugferdDataHelper;
+
 $addon = rex_addon::get('pdfout');
 
 // Demo-Aktionen und Test-Tools verarbeiten
@@ -181,7 +184,7 @@ if (rex_post('demo-action')) {
         case 'zugferd_pdf':
             try {
                 // ZUGFeRD-Demo-Rechnung erstellen
-                $invoiceData = PdfOut::getExampleZugferdData();
+                $invoiceData = ZugferdDataHelper::getExampleZugferdData();
 
                 // HTML-Vorlage laden
                 $templatePath = $addon->getPath('pages/zugferd.html');
@@ -425,117 +428,51 @@ $fragment->setVar('title', 'Demo & Test Einstellungen');
 $fragment->setVar('body', $testSettings, false);
 echo $fragment->parse('core/page/section.php');
 
-// Demo-Definitionen für bessere Pflege
-$demos = [
-    'simple_pdf' => [
-        'title' => 'Einfaches PDF',
-        'description' => 'Erstellt ein einfaches PDF ohne erweiterte Features. Ideal für schnelle Dokumente oder erste Tests.',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-file-pdf-o',
-        'code' => '$pdf = new PdfOut();
-$pdf->setName(\'demo_simple\')
-    ->setHtml(\'<h1>Einfaches PDF Demo</h1><p>Dies ist ein einfaches PDF.</p>\')
-    ->run();'
-    ],
-    'signed_pdf' => [
-        'title' => 'Digital signiertes PDF',
-        'description' => 'Erstellt ein digital signiertes PDF mit sichtbarer Signatur. Verwendet das Standard-Testzertifikat.',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-certificate',
-        'code' => '$pdf = new PdfOut();
-$pdf->setName(\'demo_signed\')
-    ->setHtml(\'<h1>Signiertes PDF Demo</h1><p>Dies ist ein digital signiertes PDF.</p>\')
-    ->enableDigitalSignature(
-        \'\',                // Standard-Zertifikat verwenden
-        \'redaxo123\',       // Zertifikatspasswort
-        \'REDAXO Demo\',     // Name
-        \'Demo-Umgebung\',   // Ort
-        \'Demo-Signierung\', // Grund
-        \'demo@redaxo.org\'  // Kontakt
-    )
-    ->setVisibleSignature(120, 200, 70, 30, -1) // X, Y, Breite, Höhe, Seite
-    ->run();'
-    ],
-    'password_pdf' => [
-        'title' => 'Passwortgeschütztes PDF',
-        'description' => 'Erstellt ein passwortgeschütztes PDF mit Benutzer- und Besitzer-Passwort.<br><strong>Passwort:</strong> demo123',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-lock',
-        'code' => '$pdf = new PdfOut();
-$pdf->setName(\'demo_password\')
-    ->setHtml(\'<h1>Passwortgeschütztes PDF</h1><p>Passwort: demo123</p>\')
-    ->enablePasswordProtection(
-        \'demo123\',    // Benutzer-Passwort
-        \'owner456\',   // Besitzer-Passwort
-        [\'print\', \'copy\'] // Erlaubte Aktionen
-    )
-    ->run();'
-    ],
-    'full_featured_pdf' => [
-        'title' => 'Vollausgestattetes PDF',
-        'description' => 'Kombiniert alle Features: Digitale Signierung und Passwortschutz in einem PDF.<br><strong>Passwort:</strong> demo123',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-star',
-        'code' => '$pdf = new PdfOut();
-$pdf->setName(\'demo_full_featured\')
-    ->setHtml(\'<h1>Vollausgestattetes PDF</h1><p>Alle Features kombiniert.</p>\')
-    ->enableDigitalSignature(\'\', \'redaxo123\', \'REDAXO Demo\', \'Demo-Umgebung\', \'Full-Feature Demo\', \'demo@redaxo.org\')
-    ->setVisibleSignature(120, 220, 70, 30, -1)
-    ->enablePasswordProtection(\'demo123\', \'owner456\', [\'print\'])
-    ->run();'
-    ],
-    'zugferd_pdf' => [
-        'title' => 'ZUGFeRD/Factur-X Rechnung',
-        'description' => 'Erstellt eine ZUGFeRD-konforme Rechnung mit eingebetteter XML für die automatische Verarbeitung in der Buchhaltung.',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-file-code-o',
-        'code' => '// Rechnungsdaten vorbereiten
-$invoiceData = PdfOut::getExampleZugferdData();
+// Demo-Definitionen laden (modular)
+function loadDemos() {
+    $demos = [];
+    $demoDir = __DIR__ . '/demos/';
+    
+    // Standard-Demos in gewünschter Reihenfolge
+    $defaultDemos = [
+        'simple_pdf',
+        'signed_pdf', 
+        'password_pdf',
+        'full_featured_pdf',
+        'zugferd_pdf',
+        'pdf_import_demo'
+    ];
+    
+    // Lade Standard-Demos in korrekter Reihenfolge
+    foreach ($defaultDemos as $demoKey) {
+        $demoFile = $demoDir . $demoKey . '.php';
+        if (file_exists($demoFile)) {
+            $demoConfig = include $demoFile;
+            if (is_array($demoConfig)) {
+                $demos[$demoKey] = $demoConfig;
+            }
+        }
+    }
+    
+    // Zusätzliche Demos aus dem Verzeichnis laden (falls vorhanden)
+    if (is_dir($demoDir)) {
+        $files = glob($demoDir . '*.php');
+        foreach ($files as $file) {
+            $demoKey = basename($file, '.php');
+            // Nur laden wenn nicht bereits geladen
+            if (!isset($demos[$demoKey])) {
+                $demoConfig = include $file;
+                if (is_array($demoConfig)) {
+                    $demos[$demoKey] = $demoConfig;
+                }
+            }
+        }
+    }
+    
+    return $demos;
+}
 
-$pdf = new PdfOut();
-$pdf->setName(\'demo_zugferd_rechnung\')
-    ->setHtml($rechnungsHtml)  // Ihr Rechnungs-HTML
-    ->enableZugferd($invoiceData, \'BASIC\', \'factur-x.xml\')
-    ->run();
-
-// Die Rechnung enthält jetzt strukturierte Daten
-// die automatisch von Buchhaltungssoftware 
-// verarbeitet werden können!'
-    ],
-    'pdf_import_demo' => [
-        'title' => 'PDF-Import & Erweiterung',
-        'description' => 'Demonstriert echte PDF-Import-Funktionalität mit FPDI. Importiert ein bestehendes PDF und fügt neue Inhalte hinzu.',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-copy',
-        'availability_check' => '!class_exists(\'setasign\\Fpdi\\Tcpdf\\Fpdi\')',
-        'availability_message' => 'FPDI ist nicht installiert. PDF-Import nicht verfügbar.',
-        'code' => '// Existierendes PDF importieren und erweitern
-$pdf = new PdfOut();
-$pdf->setName(\'imported_document\')
-    ->importAndExtendPdf(
-        \'/path/to/existing.pdf\',
-        \'<h1>Neuer Inhalt</h1><p>Hinzugefügt per FPDI</p>\',
-        true  // Als neue Seite hinzufügen
-    )
-    ->run();
-
-// Alternativ: Mehrere PDFs zusammenführen
-$pdf = new PdfOut();
-$pdf->setName(\'merged_document\')
-    ->mergePdfs([
-        \'/path/to/first.pdf\',
-        \'/path/to/second.pdf\',
-        \'/path/to/third.pdf\'
-    ])
-    ->run();'
-    ]
-];
+$demos = loadDemos();
 
 // Demo-Kästen generieren
 $content = '<div class="row">';
