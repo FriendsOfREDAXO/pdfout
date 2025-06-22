@@ -10,7 +10,7 @@ return [
     'btn_class' => 'btn-default',
     'icon' => 'fa-file-code-o',
     'code' => '// Rechnungsdaten vorbereiten
-$invoiceData = PdfOut::getExampleZugferdData();
+$invoiceData = ZugferdDataHelper::getExampleZugferdData();
 
 $pdf = new PdfOut();
 $pdf->setName(\'demo_zugferd_rechnung\')

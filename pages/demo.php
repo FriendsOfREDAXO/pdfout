@@ -3,6 +3,9 @@
  * PDFOut Demo-Seite
  */
 
+use FriendsOfRedaxo\PdfOut\PdfOut;
+use FriendsOfRedaxo\PdfOut\ZugferdDataHelper;
+
 $addon = rex_addon::get('pdfout');
 
 // Demo-Aktionen und Test-Tools verarbeiten
@@ -181,7 +184,7 @@ if (rex_post('demo-action')) {
         case 'zugferd_pdf':
             try {
                 // ZUGFeRD-Demo-Rechnung erstellen
-                $invoiceData = PdfOut::getExampleZugferdData();
+                $invoiceData = ZugferdDataHelper::getExampleZugferdData();
 
                 // HTML-Vorlage laden
                 $templatePath = $addon->getPath('pages/zugferd.html');
