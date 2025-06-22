@@ -39,6 +39,15 @@ if (rex_post('config-submit', 'bool')) {
         $errors[] = 'ZUGFeRD XML-Dateiname muss ein gültiger .xml Dateiname sein';
     }
     
+    // Validiere Performance-Limits
+    $maxHtmlSizeMb = rex_post('max_html_size_mb', 'int', 10);
+    $maxExecutionTime = rex_post('max_execution_time', 'int', 300);
+    $maxCertSizeKb = rex_post('max_certificate_size_kb', 'int', 1024);
+    
+    if ($maxHtmlSizeMb < 1 || $maxHtmlSizeMb > 100) $errors[] = 'Maximale HTML-Größe muss zwischen 1 und 100 MB liegen';
+    if ($maxExecutionTime < 30 || $maxExecutionTime > 1800) $errors[] = 'Maximale Ausführungszeit muss zwischen 30 und 1800 Sekunden liegen';
+    if ($maxCertSizeKb < 10 || $maxCertSizeKb > 10240) $errors[] = 'Maximale Zertifikatsgröße muss zwischen 10 KB und 10 MB liegen';
+    
     if (empty($errors)) {
         $addon->setConfig([
             // PDF Grundeinstellungen
@@ -68,6 +77,11 @@ if (rex_post('config-submit', 'bool')) {
             'enable_debug_mode' => rex_post('enable_debug_mode', 'bool', false),
             'log_pdf_generation' => rex_post('log_pdf_generation', 'bool', false),
             'temp_file_cleanup' => rex_post('temp_file_cleanup', 'bool', true),
+            
+            // Performance/Sicherheits-Limits
+            'max_html_size_mb' => $maxHtmlSizeMb,
+            'max_execution_time' => $maxExecutionTime,
+            'max_certificate_size_kb' => $maxCertSizeKb,
         ]);
         
         echo rex_view::success('Konfiguration wurde gespeichert!');
@@ -271,6 +285,24 @@ $n = [];
 $n['label'] = '<label for="temp_file_cleanup"><i class="fa fa-trash"></i> Temporäre Dateien automatisch löschen</label>';
 $n['field'] = '<input type="checkbox" id="temp_file_cleanup" name="temp_file_cleanup" value="1"' . (($config['temp_file_cleanup'] ?? true) ? ' checked="checked"' : '') . '/>';
 $n['note'] = 'Löscht temporäre Dateien automatisch nach der PDF-Generierung.';
+$formElements[] = $n;
+
+$n = [];
+$n['label'] = '<label for="max_html_size_mb"><i class="fa fa-database"></i> Maximale HTML-Größe (MB)</label>';
+$n['field'] = '<input class="form-control" type="number" id="max_html_size_mb" name="max_html_size_mb" value="' . rex_escape($config['max_html_size_mb'] ?? 10) . '" min="1" max="100"/>';
+$n['note'] = 'Maximale Größe des HTML-Inhalts in Megabytes zur Vermeidung von Speicherproblemen.';
+$formElements[] = $n;
+
+$n = [];
+$n['label'] = '<label for="max_execution_time"><i class="fa fa-clock-o"></i> Maximale Ausführungszeit (Sekunden)</label>';
+$n['field'] = '<input class="form-control" type="number" id="max_execution_time" name="max_execution_time" value="' . rex_escape($config['max_execution_time'] ?? 300) . '" min="30" max="1800"/>';
+$n['note'] = 'Maximale Zeit für die PDF-Generierung zur Vermeidung von Timeouts.';
+$formElements[] = $n;
+
+$n = [];
+$n['label'] = '<label for="max_certificate_size_kb"><i class="fa fa-certificate"></i> Maximale Zertifikatsgröße (KB)</label>';
+$n['field'] = '<input class="form-control" type="number" id="max_certificate_size_kb" name="max_certificate_size_kb" value="' . rex_escape($config['max_certificate_size_kb'] ?? 1024) . '" min="10" max="10240"/>';
+$n['note'] = 'Maximale Größe von Zertifikatsdateien in Kilobytes.';
 $formElements[] = $n;
 
 $fragment = new rex_fragment();

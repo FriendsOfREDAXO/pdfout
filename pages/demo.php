@@ -37,8 +37,15 @@ if (rex_post('generate-test-certificate', 'bool')) {
         $certPath = $realCertDir . DIRECTORY_SEPARATOR . 'default.p12';
         
         // Prüfe ob OpenSSL verfügbar ist
-        $opensslPath = shell_exec('which openssl 2>/dev/null');
-        if (empty(trim($opensslPath))) {
+        $opensslAvailable = false;
+        if (function_exists('exec')) {
+            $output = [];
+            $returnCode = 0;
+            @exec('which openssl 2>/dev/null', $output, $returnCode);
+            $opensslAvailable = ($returnCode === 0 && !empty($output));
+        }
+        
+        if (!$opensslAvailable) {
             throw new Exception('OpenSSL nicht verfügbar auf diesem System');
         }
         
@@ -780,9 +787,16 @@ $systemDetailsModal .= '
                                 <td><strong>OpenSSL (System):</strong></td>
                                 <td>';
 
-// System OpenSSL prüfen
-$opensslCheck = shell_exec('which openssl 2>/dev/null');
-if ($opensslCheck) {
+// System OpenSSL prüfen (sicherer Ansatz)
+$opensslAvailable = false;
+if (function_exists('exec')) {
+    $output = [];
+    $returnCode = 0;
+    @exec('which openssl 2>/dev/null', $output, $returnCode);
+    $opensslAvailable = ($returnCode === 0 && !empty($output));
+}
+
+if ($opensslAvailable) {
     $systemDetailsModal .= '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>';
 } else {
     $systemDetailsModal .= '<span class="text-warning"><i class="fa fa-exclamation-triangle"></i> Nicht gefunden</span>';

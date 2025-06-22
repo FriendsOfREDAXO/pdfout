@@ -182,6 +182,11 @@ class PdfOut extends Dompdf
             $this->zugferdProfile = $addon->getConfig('default_zugferd_profile', 'BASIC');
             $this->zugferdXmlFilename = $addon->getConfig('zugferd_xml_filename', 'factur-x.xml');
         }
+        
+        // Performance-Limits aus Config laden
+        $this->maxHtmlSize = ($addon->getConfig('max_html_size_mb', 10) * 1024 * 1024);
+        $this->maxExecutionTime = $addon->getConfig('max_execution_time', 300);
+        $this->maxCertificateSize = ($addon->getConfig('max_certificate_size_kb', 1024) * 1024);
     }
 
     /**
