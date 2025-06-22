@@ -3,11 +3,11 @@
         'name' => 'friends-of-redaxo/pdfout',
         'pretty_version' => '9.x-dev',
         'version' => '9.9999999.9999999.9999999-dev',
-        'reference' => '73e3d7a5eefccc58aebeee980f100e9f9162bd58',
+        'reference' => 'fa9814a34a1637490469a4a304ea2198a3e294c6',
         'type' => 'redaxo-addon',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => false,
+        'dev' => true,
     ),
     'versions' => array(
         'doctrine/instantiator' => array(
@@ -82,7 +82,7 @@
         'friends-of-redaxo/pdfout' => array(
             'pretty_version' => '9.x-dev',
             'version' => '9.9999999.9999999.9999999-dev',
-            'reference' => '73e3d7a5eefccc58aebeee980f100e9f9162bd58',
+            'reference' => 'fa9814a34a1637490469a4a304ea2198a3e294c6',
             'type' => 'redaxo-addon',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -182,189 +182,58 @@ if (rex_post('demo-action')) {
             try {
                 // ZUGFeRD-Demo-Rechnung erstellen
                 $invoiceData = PdfOut::getExampleZugferdData();
-                
-                // HTML für die professionelle Rechnung in Teilen zusammenbauen
-                $invoiceHtml = '';
-                
-                // Basis-Container
-                $invoiceHtml .= '<div style="max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4;">';
-                
-                // Firmenkopf
-                $invoiceHtml .= '<div style="border-bottom: 2px solid #d63333; padding-bottom: 20px; margin-bottom: 30px;">';
-                $invoiceHtml .= '<div style="float: left; width: 50%;">';
-                $invoiceHtml .= '<h1 style="color: #d63333; margin: 0; font-size: 28px;">' . htmlspecialchars($invoiceData['seller']['name']) . '</h1>';
-                $invoiceHtml .= '<p style="margin: 5px 0 15px 0; color: #666; font-size: 16px;">';
-                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['line1']) . '<br>';
-                if (!empty($invoiceData['seller']['address']['line2'])) {
-                    $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['line2']) . '<br>';
+
+                // HTML-Vorlage laden
+                $templatePath = $addon->getPath('pages/zugferd.html');
+                if (!file_exists($templatePath)) {
+                    throw new Exception('HTML-Vorlage nicht gefunden: ' . $templatePath);
                 }
-                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['postcode']) . ' ' . htmlspecialchars($invoiceData['seller']['address']['city']);
-                $invoiceHtml .= '</p>';
-                $invoiceHtml .= '<div style="font-size: 11px; color: #888; margin-top: 10px;">';
-                $invoiceHtml .= '<strong>Handelsregister:</strong> ' . htmlspecialchars($invoiceData['seller']['company_register']) . '<br>';
-                $invoiceHtml .= '<strong>USt-IdNr.:</strong> ' . htmlspecialchars($invoiceData['seller']['vat_id']) . '<br>';
-                $invoiceHtml .= '<strong>Steuernummer:</strong> ' . htmlspecialchars($invoiceData['seller']['tax_number']);
-                $invoiceHtml .= '</div>';
-                $invoiceHtml .= '</div>';
-                
-                // Kontakt und Bank rechts
-                $invoiceHtml .= '<div style="float: right; width: 45%; text-align: right; font-size: 12px;">';
-                $invoiceHtml .= '<div style="margin-bottom: 15px;">';
-                $invoiceHtml .= '<strong>Kontakt:</strong><br>';
-                $invoiceHtml .= 'Tel: ' . htmlspecialchars($invoiceData['seller']['contact']['phone']) . '<br>';
-                $invoiceHtml .= 'E-Mail: ' . htmlspecialchars($invoiceData['seller']['contact']['email']) . '<br>';
-                $invoiceHtml .= 'Web: ' . htmlspecialchars($invoiceData['seller']['contact']['web']);
-                $invoiceHtml .= '</div>';
-                $invoiceHtml .= '<div style="background: #f8f9fa; padding: 10px; border-radius: 4px; font-size: 11px; text-align: left;">';
-                $invoiceHtml .= '<strong>Bankverbindung:</strong><br>';
-                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['bank']['name']) . '<br>';
-                $invoiceHtml .= 'IBAN: ' . htmlspecialchars($invoiceData['seller']['bank']['iban']) . '<br>';
-                $invoiceHtml .= 'BIC: ' . htmlspecialchars($invoiceData['seller']['bank']['bic']);
-                $invoiceHtml .= '</div>';
-                $invoiceHtml .= '</div>';
-                $invoiceHtml .= '<div style="clear: both;"></div>';
-                // Rechnungsdetails
-                $invoiceHtml .= '<div style="margin-bottom: 30px;">';
-                $invoiceHtml .= '<div style="float: left; width: 50%;">';
-                $invoiceHtml .= '<h3 style="color: #333; margin-bottom: 10px;">Rechnungsempfänger:</h3>';
-                $invoiceHtml .= '<div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #d63333;">';
-                $invoiceHtml .= '<strong>' . htmlspecialchars($invoiceData['buyer']['name']) . '</strong><br>';
-                $invoiceHtml .= htmlspecialchars($invoiceData['buyer']['address']['line1']) . '<br>';
-                if (!empty($invoiceData['buyer']['address']['line2'])) {
-                    $invoiceHtml .= htmlspecialchars($invoiceData['buyer']['address']['line2']) . '<br>';
+                $invoiceHtml = file_get_contents($templatePath);
+
+        // Platzhalter ersetzen
+        $placeholders = [
+            '{{seller_name}}' => htmlspecialchars($invoiceData['seller']['name']),
+            '{{seller_address}}' => htmlspecialchars($invoiceData['seller']['address']['line1']),
+            '{{seller_postcode}}' => htmlspecialchars($invoiceData['seller']['address']['postcode']),
+            '{{seller_city}}' => htmlspecialchars($invoiceData['seller']['address']['city']),
+            '{{seller_phone}}' => htmlspecialchars($invoiceData['seller']['contact']['phone']),
+            '{{seller_email}}' => htmlspecialchars($invoiceData['seller']['contact']['email']),
+            '{{buyer_name}}' => htmlspecialchars($invoiceData['buyer']['name']),
+            '{{buyer_address}}' => htmlspecialchars($invoiceData['buyer']['address']['line1']),
+            '{{buyer_postcode}}' => htmlspecialchars($invoiceData['buyer']['address']['postcode']),
+            '{{buyer_city}}' => htmlspecialchars($invoiceData['buyer']['address']['city']),
+            '{{invoice_number}}' => htmlspecialchars($invoiceData['invoice_number']),
+            '{{issue_date}}' => date('d.m.Y', strtotime($invoiceData['issue_date'])),
+            '{{due_date}}' => date('d.m.Y', strtotime($invoiceData['payment_terms']['due_date'])),
+            '{{net_amount}}' => number_format($invoiceData['totals']['net_amount'], 2, ',', '.') . ' €',
+            '{{tax_amount}}' => number_format($invoiceData['totals']['tax_amount'], 2, ',', '.') . ' €',
+            '{{gross_amount}}' => number_format($invoiceData['totals']['gross_amount'], 2, ',', '.') . ' €',
+            '{{bank_name}}' => htmlspecialchars($invoiceData['seller']['bank']['name']),
+            '{{bank_iban}}' => htmlspecialchars($invoiceData['seller']['bank']['iban']),
+            '{{bank_bic}}' => htmlspecialchars($invoiceData['seller']['bank']['bic']),
+            '{{company_register}}' => htmlspecialchars($invoiceData['seller']['company_register']),
+            '{{vat_id}}' => htmlspecialchars($invoiceData['seller']['vat_id']),
+            '{{tax_number}}' => htmlspecialchars($invoiceData['seller']['tax_number']),
+        ];
+
+                foreach ($placeholders as $key => $value) {
+                    $invoiceHtml = str_replace($key, $value, $invoiceHtml);
                 }
-                $invoiceHtml .= htmlspecialchars($invoiceData['buyer']['address']['postcode']) . ' ' . htmlspecialchars($invoiceData['buyer']['address']['city']) . '<br>';
-                $invoiceHtml .= '<small>Kunden-ID: ' . htmlspecialchars($invoiceData['buyer']['id']) . '</small>';
-                $invoiceHtml .= '</div>';
-                $invoiceHtml .= '</div>';
-                
-                $invoiceHtml .= '<div style="float: right; width: 45%;">';
-                $invoiceHtml .= '<table style="width: 100%; font-size: 14px;">';
-                $invoiceHtml .= '<tr><td style="padding: 3px 0; font-weight: bold;">Rechnung Nr.:</td>';
-                $invoiceHtml .= '<td style="padding: 3px 0; text-align: right; color: #d63333; font-weight: bold;">' . htmlspecialchars($invoiceData['invoice_number']) . '</td></tr>';
-                $invoiceHtml .= '<tr><td style="padding: 3px 0;">Rechnungsdatum:</td>';
-                $invoiceHtml .= '<td style="padding: 3px 0; text-align: right;">' . date('d.m.Y', strtotime($invoiceData['issue_date'])) . '</td></tr>';
-                $invoiceHtml .= '<tr><td style="padding: 3px 0;">Fälligkeitsdatum:</td>';
-                $invoiceHtml .= '<td style="padding: 3px 0; text-align: right;">' . date('d.m.Y', strtotime($invoiceData['payment_terms']['due_date'])) . '</td></tr>';
-                $invoiceHtml .= '<tr><td style="padding: 3px 0;">Projekt:</td>';
-                $invoiceHtml .= '<td style="padding: 3px 0; text-align: right; font-weight: bold;">' . htmlspecialchars($invoiceData['project_details']['project_number']) . '</td></tr>';
-                $invoiceHtml .= '</table>';
-                $invoiceHtml .= '</div>';
-                $invoiceHtml .= '<div style="clear: both;"></div>';
-                $invoiceHtml .= '</div>';
-                
-                // Projektinformationen
-                $invoiceHtml .= '<div style="margin-bottom: 30px; padding: 15px; background: #f0f8ff; border: 1px solid #b6d7ff; border-radius: 4px;">';
-                $invoiceHtml .= '<h4 style="margin: 0 0 10px 0; color: #1e3a8a;">' . htmlspecialchars($invoiceData['project_details']['project_name']) . '</h4>';
-                $invoiceHtml .= '<p style="margin: 0; font-size: 13px; color: #555;">';
-                $invoiceHtml .= '<strong>Lieferzeit:</strong> ' . htmlspecialchars($invoiceData['project_details']['delivery_time']) . ' | ';
-                $invoiceHtml .= '<strong>Gewährleistung:</strong> ' . htmlspecialchars($invoiceData['project_details']['warranty']);
-                $invoiceHtml .= '</p>';
-                $invoiceHtml .= '</div>';
-                
-                // Rechnungspositionen
-                $invoiceHtml .= '<table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; table-layout: fixed;">';
-                $invoiceHtml .= '<colgroup>';
-                $invoiceHtml .= '<col style="width: 4%;">'; // Pos. - noch kleiner
-                $invoiceHtml .= '<col style="width: 58%;">'; // Beschreibung - noch größer
-                $invoiceHtml .= '<col style="width: 10%;">'; // Menge - kleiner
-                $invoiceHtml .= '<col style="width: 14%;">'; // Einzelpreis
-                $invoiceHtml .= '<col style="width: 14%;">'; // Gesamt
-                $invoiceHtml .= '</colgroup>';
-                $invoiceHtml .= '<thead>';
-                $invoiceHtml .= '<tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">';
-                $invoiceHtml .= '<th style="padding: 12px 4px; text-align: left; border: none; white-space: nowrap; font-size: 10px;">Pos.</th>';
-                $invoiceHtml .= '<th style="padding: 12px 8px; text-align: left; border: none; font-size: 11px;">Beschreibung</th>';
-                $invoiceHtml .= '<th style="padding: 12px 4px; text-align: center; border: none; white-space: nowrap; font-size: 10px;">Menge</th>';
-                $invoiceHtml .= '<th style="padding: 12px 6px; text-align: right; border: none; white-space: nowrap; font-size: 11px;">Einzelpreis</th>';
-                $invoiceHtml .= '<th style="padding: 12px 6px; text-align: right; border: none; white-space: nowrap; font-size: 11px;">Gesamt</th>';
-                $invoiceHtml .= '</tr>';
-                $invoiceHtml .= '</thead>';
-                $invoiceHtml .= '<tbody>';
-                
-                // Rechnungspositionen durchlaufen
-                $position = 1;
-                foreach ($invoiceData['line_items'] as $item) {
-                    $total = $item['net_unit_price'] * $item['quantity'];
-                    $bgColor = ($position % 2 == 0) ? '#f8f9fa' : '#ffffff';
-                    
-                    $invoiceHtml .= '<tr style="background: ' . $bgColor . ';">';
-                    $invoiceHtml .= '<td style="padding: 8px 4px; border-bottom: 1px solid #e9ecef; text-align: center; font-weight: bold; font-size: 10px;">' . $position . '</td>';
-                    $invoiceHtml .= '<td style="padding: 8px; border-bottom: 1px solid #e9ecef; font-size: 11px;">';
-                    $invoiceHtml .= '<strong style="color: #333; font-size: 12px;">' . htmlspecialchars($item['name']) . '</strong><br>';
-                    $invoiceHtml .= '<span style="color: #666; font-size: 10px; line-height: 1.3;">' . htmlspecialchars($item['description']) . '</span><br>';
-                    $invoiceHtml .= '<small style="color: #999; font-size: 9px;">Art.-Nr.: ' . htmlspecialchars($item['seller_assigned_id']) . '</small>';
-                    $invoiceHtml .= '</td>';
-                    $invoiceHtml .= '<td style="padding: 8px 4px; text-align: center; border-bottom: 1px solid #e9ecef; white-space: nowrap; font-size: 10px;">' . $item['quantity'] . ' ' . $item['unit'] . '</td>';
-                    $invoiceHtml .= '<td style="padding: 8px 6px; text-align: right; border-bottom: 1px solid #e9ecef; white-space: nowrap; font-size: 11px;">' . number_format($item['net_unit_price'], 2, ',', '.') . '&nbsp;€</td>';
-                    $invoiceHtml .= '<td style="padding: 8px 6px; text-align: right; border-bottom: 1px solid #e9ecef; font-weight: bold; white-space: nowrap; font-size: 11px;">' . number_format($total, 2, ',', '.') . '&nbsp;€</td>';
-                    $invoiceHtml .= '</tr>';
-                    $position++;
-                }
-                
-                $invoiceHtml .= '</tbody>';
-                $invoiceHtml .= '</table>';
-                
-                // Rechnungssumme
-                $invoiceHtml .= '<div style="float: right; width: 380px; margin-top: 20px;">';
-                $invoiceHtml .= '<table style="width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed;">';
-                $invoiceHtml .= '<colgroup>';
-                $invoiceHtml .= '<col style="width: 70%;">';
-                $invoiceHtml .= '<col style="width: 30%;">';
-                $invoiceHtml .= '</colgroup>';
-                $invoiceHtml .= '<tr style="background: #f8f9fa;">';
-                $invoiceHtml .= '<td style="padding: 8px; text-align: right; border: 1px solid #dee2e6;">Nettobetrag:</td>';
-                $invoiceHtml .= '<td style="padding: 8px; text-align: right; font-weight: bold; border: 1px solid #dee2e6; white-space: nowrap;">' . number_format($invoiceData['totals']['net_amount'], 2, ',', '.') . '&nbsp;€</td>';
-                $invoiceHtml .= '</tr>';
-                $invoiceHtml .= '<tr style="background: #f8f9fa;">';
-                $invoiceHtml .= '<td style="padding: 8px; text-align: right; border: 1px solid #dee2e6;">zzgl. ' . $invoiceData['default_tax_rate'] . '% MwSt.:</td>';
-                $invoiceHtml .= '<td style="padding: 8px; text-align: right; border: 1px solid #dee2e6; white-space: nowrap;">' . number_format($invoiceData['totals']['tax_amount'], 2, ',', '.') . '&nbsp;€</td>';
-                $invoiceHtml .= '</tr>';
-                $invoiceHtml .= '<tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">';
-                $invoiceHtml .= '<td style="padding: 12px 8px; text-align: right; font-weight: bold; font-size: 16px; border: none;">Rechnungsbetrag:</td>';
-                $invoiceHtml .= '<td style="padding: 12px 8px; text-align: right; font-weight: bold; font-size: 16px; border: none; white-space: nowrap;">' . number_format($invoiceData['totals']['gross_amount'], 2, ',', '.') . '&nbsp;€</td>';
-                $invoiceHtml .= '</tr>';
-                $invoiceHtml .= '</table>';
-                $invoiceHtml .= '</div>';
-                
-                $invoiceHtml .= '<div style="clear: both; margin-top: 40px;">';
-                
-                // Zahlungsinformationen
-                $invoiceHtml .= '<div style="margin-bottom: 25px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px;">';
-                $invoiceHtml .= '<h4 style="margin: 0 0 10px 0; color: #856404;">Zahlungsinformationen</h4>';
-                $invoiceHtml .= '<p style="margin: 0; font-size: 13px;"><strong>Zahlungsbedingungen:</strong> ' . htmlspecialchars($invoiceData['payment_terms']['description']) . '</p>';
-                $invoiceHtml .= '<div style="margin-top: 10px; font-size: 12px;">';
-                $invoiceHtml .= '<strong>Fällig am:</strong> ' . date('d.m.Y', strtotime($invoiceData['payment_terms']['due_date']));
-                $invoiceHtml .= '</div>';
-                $invoiceHtml .= '</div>';
-                
-                // ZUGFeRD Info
-                $invoiceHtml .= '<div style="margin-bottom: 25px; padding: 15px; background: #e8f4f8; border-left: 4px solid #2196F3;">';
-                $invoiceHtml .= '<h4 style="margin: 0 0 10px 0; color: #1976D2;">ZUGFeRD/Factur-X Rechnung</h4>';
-                $invoiceHtml .= '<p style="margin: 0; font-size: 12px;">';
-                $invoiceHtml .= 'Diese Rechnung enthält strukturierte Rechnungsdaten im ZUGFeRD-Format (EN 16931) ';
-                $invoiceHtml .= 'und kann automatisch von Buchhaltungssoftware verarbeitet werden.';
-                $invoiceHtml .= '</p>';
-                $invoiceHtml .= '</div>';
-                
-                // Firmendetails Fußzeile
-                $invoiceHtml .= '<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 10px; color: #666;">';
-                $invoiceHtml .= '<div style="text-align: center;">';
-                $invoiceHtml .= '<strong>' . htmlspecialchars($invoiceData['seller']['name']) . '</strong><br>';
-                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['management']) . '<br>';
-                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['company_register']) . ' | ';
-                $invoiceHtml .= 'Steuernummer: ' . htmlspecialchars($invoiceData['seller']['tax_number']) . ' | ';
-                $invoiceHtml .= 'USt-IdNr.: ' . htmlspecialchars($invoiceData['seller']['vat_id']) . '<br>';
-                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['line1']) . ', ';
-                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['postcode']) . ' ' . htmlspecialchars($invoiceData['seller']['address']['city']) . ' | ';
-                $invoiceHtml .= 'Tel: ' . htmlspecialchars($invoiceData['seller']['contact']['phone']) . ' | ';
-                $invoiceHtml .= 'E-Mail: ' . htmlspecialchars($invoiceData['seller']['contact']['email']);
-                $invoiceHtml .= '</div>';
-                $invoiceHtml .= '</div>';
-                
-                $invoiceHtml .= '</div>'; // Ende clear div
-                $invoiceHtml .= '</div>'; // Ende Basis-Container
-                
+
+        // Rechnungspositionen einfügen
+        $lineItemsHtml = '';
+        foreach ($invoiceData['line_items'] as $index => $item) {
+            $total = $item['net_unit_price'] * $item['quantity'];
+            $lineItemsHtml .= "<tr>\n" .
+                "<td style='text-align: left; padding: 8px; border: 1px solid #ddd;'><strong>" . ($index + 1) . ". " . htmlspecialchars($item['name']) . "</strong><br><span style='font-size: 9px; color: #666;'>" . htmlspecialchars($item['description']) . "</span></td>\n" .
+                "<td style='text-align: center; padding: 8px; border: 1px solid #ddd;'>" . $item['quantity'] . " " . $item['unit'] . "</td>\n" .
+                "<td style='text-align: right; padding: 8px; border: 1px solid #ddd;'>" . number_format($item['net_unit_price'], 2, ',', '.') . " €</td>\n" .
+                "<td style='text-align: right; padding: 8px; border: 1px solid #ddd;'>" . number_format($total, 2, ',', '.') . " €</td>\n" .
+                "</tr>\n";
+        }
+                $invoiceHtml = str_replace('{{line_items}}', $lineItemsHtml, $invoiceHtml);
+
+                // PDF generieren
                 $pdf = new PdfOut();
                 $pdf->setName('demo_zugferd_rechnung')
                     ->setHtml($invoiceHtml)
@@ -372,6 +241,89 @@ if (rex_post('demo-action')) {
                     ->run();
             } catch (Exception $e) {
                 $error = 'Fehler beim Erstellen der ZUGFeRD-Rechnung: ' . $e->getMessage();
+            }
+            break;
+            
+        case 'pdf_import_demo':
+            try {
+                // Prüfe ob FPDI verfügbar ist
+                if (!class_exists('setasign\Fpdi\Tcpdf\Fpdi')) {
+                    $error = 'FPDI ist nicht installiert. PDF-Import-Funktionalität ist nicht verfügbar.';
+                    break;
+                }
+                
+                // Verwende die vorhandene Test-PDF-Datei
+                $sourcePdfPath = rex_addon::get('pdfout')->getAssetsPath('vendor/web/compressed.tracemonkey-pldi-09.pdf');
+                
+                // Prüfe ob die Datei existiert
+                if (!file_exists($sourcePdfPath)) {
+                    $error = 'Test-PDF-Datei nicht gefunden: ' . $sourcePdfPath;
+                    break;
+                }
+                
+                // Verwende PdfOut's importAndExtendPdf mit der echten PDF-Datei
+                $pdf = new PdfOut();
+                $pdf->setName('imported_tracemonkey_extended')
+                    ->importAndExtendPdf(
+                        $sourcePdfPath,
+                        '<div style="margin: 20px; font-family: Arial, sans-serif;">
+                            <h1 style="color: #d63534; border-bottom: 2px solid #d63534; padding-bottom: 10px;">
+                                Durch PDFOut erweitert!
+                            </h1>
+                            <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0;">
+                                <h3 style="color: #007bff; margin-top: 0;">PDF-Import Demo erfolgreich</h3>
+                                <p><strong>Original-Dokument:</strong> TracemonKey Research Paper (komprimiert)</p>
+                                <p><strong>Import-Methode:</strong> FPDI + TCPDF Integration</p>
+                                <p><strong>Erweitert am:</strong> ' . date('d.m.Y H:i:s') . '</p>
+                            </div>
+                            <h3>Features dieser Demo:</h3>
+                            <ul style="line-height: 1.6;">
+                                <li>✅ <strong>Echte PDF importiert:</strong> Alle Original-Seiten bleiben erhalten</li>
+                                <li>✅ <strong>Neue Inhalte hinzugefügt:</strong> Diese Seite wurde nahtlos angefügt</li>
+                                <li>✅ <strong>FPDI-Integration:</strong> Professionelle PDF-Verarbeitung</li>
+                                <li>✅ <strong>Flexibel einsetzbar:</strong> Funktioniert mit jeder PDF-Datei</li>
+                            </ul>
+                            <div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border: 1px solid #b3d9ff;">
+                                <h4 style="color: #0066cc; margin-top: 0;">Praktische Anwendungen:</h4>
+                                <ul>
+                                    <li>Anhängen von Deckblättern an bestehende Dokumente</li>
+                                    <li>Hinzufügen von Unterschriftsseiten</li>
+                                    <li>Zusammenführung mehrerer PDF-Dokumente</li>
+                                    <li>Erweitern von Verträgen um neue Klauseln</li>
+                                </ul>
+                            </div>
+                        </div>',
+                        true  // Als neue Seite hinzufügen
+                    );
+                
+                
+                // Optional: Digitale Signatur hinzufügen
+                if (rex::getUser() && rex::getUser()->hasPerm('pdfout[signature]')) {
+                    // Signatur-Konfiguration anwenden
+                    $certificatePath = $defaultSignatureConfig['cert_path'];
+                    if (empty($certificatePath)) {
+                        $certificatePath = rex_addon::get('pdfout')->getDataPath('certificates/default.p12');
+                    }
+                    
+                    if (file_exists($certificatePath)) {
+                        $info = [
+                            'Name' => $defaultSignatureConfig['name'],
+                            'Location' => $defaultSignatureConfig['location'],
+                            'Reason' => 'PDF-Import Demo',
+                            'ContactInfo' => $defaultSignatureConfig['contact']
+                        ];
+                        
+                        $certificateContent = file_get_contents($certificatePath);
+                        $pdf->enableDigitalSignature($certificatePath, $defaultSignatureConfig['password'])
+                            ->setVisibleSignature(180, 60, 15, 15, -1, $info['Name'], $info['Location'], $info['Reason'], $info['ContactInfo']);
+                    }
+                }
+                
+                // PDF ausgeben
+                $pdf->run();
+                
+            } catch (Exception $e) {
+                $error = 'Fehler beim PDF-Import-Demo: ' . $e->getMessage();
             }
             break;
     }
@@ -554,6 +506,34 @@ $pdf->setName(\'demo_zugferd_rechnung\')
 // Die Rechnung enthält jetzt strukturierte Daten
 // die automatisch von Buchhaltungssoftware 
 // verarbeitet werden können!'
+    ],
+    'pdf_import_demo' => [
+        'title' => 'PDF-Import & Erweiterung',
+        'description' => 'Demonstriert echte PDF-Import-Funktionalität mit FPDI. Importiert ein bestehendes PDF und fügt neue Inhalte hinzu.',
+        'panel_class' => 'panel-info',
+        'btn_class' => 'btn-info',
+        'icon' => 'fa-copy',
+        'availability_check' => '!class_exists(\'setasign\\Fpdi\\Tcpdf\\Fpdi\')',
+        'availability_message' => 'FPDI ist nicht installiert. PDF-Import nicht verfügbar.',
+        'code' => '// Existierendes PDF importieren und erweitern
+$pdf = new PdfOut();
+$pdf->setName(\'imported_document\')
+    ->importAndExtendPdf(
+        \'/path/to/existing.pdf\',
+        \'<h1>Neuer Inhalt</h1><p>Hinzugefügt per FPDI</p>\',
+        true  // Als neue Seite hinzufügen
+    )
+    ->run();
+
+// Alternativ: Mehrere PDFs zusammenführen
+$pdf = new PdfOut();
+$pdf->setName(\'merged_document\')
+    ->mergePdfs([
+        \'/path/to/first.pdf\',
+        \'/path/to/second.pdf\',
+        \'/path/to/third.pdf\'
+    ])
+    ->run();'
     ]
 ];
 
@@ -571,6 +551,11 @@ foreach ($demos as $demo_key => $demo) {
     $needsSignature = in_array($demo_key, ['signed_pdf', 'full_featured_pdf']);
     $isDisabled = $needsSignature && !$userCanSign;
     
+    // Prüfe FPDI-Verfügbarkeit für PDF-Import-Demo
+    $needsFpdi = isset($demo['availability_check']);
+    $fpdiNotAvailable = $needsFpdi && eval('return ' . $demo['availability_check'] . ';');
+    $isDisabled = $isDisabled || $fpdiNotAvailable;
+    
     $content .= '
     <div class="col-md-6">
         <div class="panel ' . $demo['panel_class'] . '">
@@ -581,13 +566,27 @@ foreach ($demos as $demo_key => $demo) {
                 <p>' . $demo['description'] . '</p>';
                 
     if ($isDisabled) {
-        $content .= '
+        if ($needsSignature && !$userCanSign) {
+            $content .= '
                 <div class="alert alert-warning">
                     <i class="fa fa-exclamation-triangle"></i> Keine Berechtigung für Signatur-Features. 
                     <a href="' . rex_url::currentBackendPage(['page' => 'users/users']) . '" class="btn btn-xs btn-warning">
                         <i class="fa fa-user"></i> Berechtigung anfordern
                     </a>
                 </div>';
+        }
+        
+        if ($fpdiNotAvailable) {
+            $content .= '
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i> ' . ($demo['availability_message'] ?? 'Feature nicht verfügbar') . '
+                    <div style="margin-top: 10px;">
+                        <code style="background: #f8f9fa; padding: 5px; border-radius: 3px;">
+                            composer require setasign/fpdi
+                        </code>
+                    </div>
+                </div>';
+        }
     }
     
     $content .= '

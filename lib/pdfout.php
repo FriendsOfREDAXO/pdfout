@@ -112,6 +112,9 @@ class PdfOut extends Dompdf
     /** @var string Optionaler XML-Dateiname für ZUGFeRD */
     protected $zugferdXmlFilename = 'ZUGFeRD-invoice.xml';
 
+    /** @var TCPDF|null TCPDF/FPDI-Instanz für erweiterte PDF-Operationen */
+    protected $pdf = null;
+
     /**
      * Konstruktor - lädt Standardkonfiguration
      */
@@ -366,8 +369,14 @@ class PdfOut extends Dompdf
         }
 
         try {
+            // Prüfen ob bereits ein FPDI/TCPDF-PDF-Objekt vorhanden ist (z.B. von importAndExtendPdf)
+            if ($this->pdf !== null) {
+                $this->runWithExistingPdf();
+                return;
+            }
+            
             // Prüfen ob TCPDF-Features benötigt werden
-            if ($this->enableSigning || $this->enablePasswordProtection) {
+            if ($this->enableSigning || $this->enablePasswordProtection || $this->enableZugferd) {
                 $this->runWithTcpdf($finalHtml);
                 return;
             }
@@ -576,21 +585,53 @@ class PdfOut extends Dompdf
         }
 
         try {
-            // Erstelle eine neue TCPDF-Instanz
-            $pdf = new TCPDF();
-            
-            // Lese das existierende PDF als String
-            $pdfContent = file_get_contents($inputPdfPath);
-            if ($pdfContent === false) {
-                return false;
+            // Prüfe ob FPDI verfügbar ist für echten PDF-Import
+            if (class_exists('setasign\Fpdi\Tcpdf\Fpdi')) {
+                // FPDI ist verfügbar - verwende echten PDF-Import
+                $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
+                $pagecount = $pdf->setSourceFile($inputPdfPath);
+                
+                // Importiere alle Seiten des Original-PDFs
+                for ($i = 1; $i <= $pagecount; $i++) {
+                    $template = $pdf->importPage($i);
+                    $size = $pdf->getTemplateSize($template);
+                    $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                    $pdf->useTemplate($template);
+                    
+                    // Optional: Füge Signatur-Hinweis zur letzten Seite hinzu
+                    if ($i === $pagecount) {
+                        $pdf->SetFont('helvetica', '', 8);
+                        $pdf->SetTextColor(128, 128, 128);
+                        $pdf->setXY(10, $size['height'] - 20);
+                        $pdf->Write(0, 'Dieses Dokument wurde digital signiert.');
+                    }
+                }
+            } else {
+                // Fallback: FPDI nicht verfügbar - erstelle neues PDF mit Hinweis
+                $pdf = new TCPDF();
+                $pdf->AddPage();
+                $pdf->SetFont('helvetica', 'B', 14);
+                $pdf->SetTextColor(255, 0, 0);
+                $pdf->Write(0, 'WARNUNG: PDF-Import-Limitation');
+                $pdf->Ln(10);
+                
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(0, 0, 0);
+                $pdf->Write(0, 'Das Original-PDF konnte nicht importiert werden. ');
+                $pdf->Write(0, 'Für vollständige PDF-Import-Funktionalität installieren Sie FPDI:');
+                $pdf->Ln(8);
+                
+                $pdf->SetFont('helvetica', '', 10);
+                $pdf->SetTextColor(0, 0, 255);
+                $pdf->Write(0, 'composer require setasign/fpdi');
+                $pdf->Ln(10);
+                
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(0, 0, 0);
+                $pdf->Write(0, 'Original-Datei: ' . basename($inputPdfPath));
+                $pdf->Ln(5);
+                $pdf->Write(0, 'Signiert am: ' . date('d.m.Y H:i:s'));
             }
-            
-            // Versuche das PDF mit TCPDF zu bearbeiten
-            // Diese Implementierung ist vereinfacht - für vollständige PDF-Import-Funktionalität
-            // wird ein zusätzliches Plugin wie TCPDI benötigt
-            $pdf->AddPage();
-            $pdf->SetFont('helvetica', '', 12);
-            $pdf->Write(0, 'Signiertes Dokument - Original-Inhalt wurde beibehalten');
             
             // Digitale Signatur konfigurieren
             $certificateContent = file_get_contents($certificatePath);
@@ -843,6 +884,55 @@ class PdfOut extends Dompdf
             rex_response::cleanOutputBuffers(); // OutputBuffer leeren
             $pdf->Output(rex_string::normalize($this->name) . '.pdf', $this->attachment ? 'D' : 'I');
             exit();
+        }
+    }
+
+    /**
+     * Verarbeitet bereits vorhandenes PDF-Objekt (z.B. von FPDI import)
+     */
+    protected function runWithExistingPdf(): void
+    {
+        $startTime = microtime(true);
+        $addon = rex_addon::get('pdfout');
+        
+        if ($this->pdf === null) {
+            throw new Exception('No PDF object available for processing');
+        }
+
+        try {
+            // Erweiterte Features anwenden falls aktiviert
+            if ($this->enableSigning && file_exists($this->certificatePath)) {
+                $this->addDigitalSignature($this->pdf);
+            }
+
+            if ($this->enablePasswordProtection) {
+                $this->addPasswordProtection($this->pdf);
+            }
+
+            // ZUGFeRD verarbeiten, falls aktiviert
+            $this->processZugferd($this->pdf);
+
+            // Ausgabe verarbeiten
+            $this->processTcpdfOutput($this->pdf);
+            
+            // Erfolgreiche Generierung loggen
+            if ($addon->getConfig('log_pdf_generation', false)) {
+                $executionTime = round((microtime(true) - $startTime) * 1000, 2);
+                rex_logger::factory()->info('PDFOut: FPDI-PDF erfolgreich verarbeitet für "' . $this->name . '" in ' . $executionTime . 'ms');
+            }
+
+        } catch (Exception $e) {
+            // Fehler loggen, wenn aktiviert
+            if ($addon->getConfig('log_pdf_generation', false)) {
+                rex_logger::factory()->error('PDFOut: Fehler bei FPDI-PDF-Verarbeitung für "' . $this->name . '": ' . $e->getMessage());
+            }
+            
+            // Debug-Modus: Detaillierte Fehlerausgabe
+            if ($addon->getConfig('enable_debug_mode', false)) {
+                throw $e;
+            } else {
+                throw new Exception('FPDI-PDF-Verarbeitung fehlgeschlagen. Aktivieren Sie den Debug-Modus für weitere Details.');
+            }
         }
     }
 
@@ -1158,5 +1248,126 @@ class PdfOut extends Dompdf
                 'warranty' => '24 Monate Gewährleistung auf alle Entwicklungsarbeiten'
             ]
         ];
+    }
+
+    /**
+     * Importiert ein bestehendes PDF und fügt neuen Inhalt hinzu
+     * Echte PDF-Import-Funktionalität mit FPDI
+     *
+     * @param string $sourcePdfPath Pfad zum zu importierenden PDF
+     * @param string $newHtml HTML-Inhalt der hinzugefügt werden soll
+     * @param bool $addAsNewPage Ob der neue Inhalt als neue Seite hinzugefügt werden soll
+     * @return self
+     * @throws Exception
+     */
+    public function importAndExtendPdf(string $sourcePdfPath, string $newHtml = '', bool $addAsNewPage = true): self
+    {
+        if (!file_exists($sourcePdfPath)) {
+            throw new Exception("Source PDF file not found: $sourcePdfPath");
+        }
+
+        // Prüfe ob FPDI verfügbar ist
+        if (!class_exists('setasign\Fpdi\Tcpdf\Fpdi')) {
+            throw new Exception('FPDI library is required for PDF import. Install with: composer require setasign/fpdi');
+        }
+
+        // Erstelle FPDI-Instanz für PDF-Import
+        $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
+        
+        try {
+            // Lade das Quell-PDF
+            $pageCount = $pdf->setSourceFile($sourcePdfPath);
+            
+            // Importiere alle Seiten vom Original-PDF
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $templateId = $pdf->importPage($pageNo);
+                $size = $pdf->getTemplateSize($templateId);
+                
+                // Füge Seite mit Original-Größe hinzu
+                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $pdf->useTemplate($templateId);
+            }
+            
+            // Füge neuen Inhalt hinzu (falls angegeben)
+            if (!empty($newHtml)) {
+                if ($addAsNewPage) {
+                    // Als neue Seite hinzufügen
+                    $pdf->AddPage($this->orientation, $this->paperSize);
+                    $pdf->writeHTML($newHtml, true, false, true, false, '');
+                } else {
+                    // Auf letzte Seite hinzufügen (vereinfacht)
+                    $pdf->SetFont('helvetica', '', 10);
+                    $pdf->SetY(-30);
+                    $pdf->writeHTML($newHtml, true, false, true, false, '');
+                }
+            }
+            
+            // Setze das PDF-Objekt für weitere Verarbeitung
+            $this->pdf = $pdf;
+            
+        } catch (Exception $e) {
+            throw new Exception("Error importing PDF: " . $e->getMessage());
+        }
+
+        return $this;
+    }
+
+    /**
+     * Führt PDF-Seiten zusammen (PDF Merge)
+     *
+     * @param array $pdfFiles Array von PDF-Dateipfaden
+     * @return self
+     * @throws Exception
+     */
+    public function mergePdfs(array $pdfFiles): self
+    {
+        if (empty($pdfFiles)) {
+            throw new Exception('No PDF files provided for merging');
+        }
+
+        // Prüfe ob FPDI verfügbar ist
+        if (!class_exists('setasign\Fpdi\Tcpdf\Fpdi')) {
+            throw new Exception('FPDI library is required for PDF merge. Install with: composer require setasign/fpdi');
+        }
+
+        // Erstelle FPDI-Instanz für PDF-Merge
+        $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
+        
+        try {
+            foreach ($pdfFiles as $pdfFile) {
+                if (!file_exists($pdfFile)) {
+                    throw new Exception("PDF file not found: $pdfFile");
+                }
+                
+                $pageCount = $pdf->setSourceFile($pdfFile);
+                
+                // Alle Seiten des aktuellen PDFs hinzufügen
+                for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                    $templateId = $pdf->importPage($pageNo);
+                    $size = $pdf->getTemplateSize($templateId);
+                    
+                    $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                    $pdf->useTemplate($templateId);
+                }
+            }
+            
+            // Setze das zusammengeführte PDF-Objekt
+            $this->pdf = $pdf;
+            
+        } catch (Exception $e) {
+            throw new Exception("Error merging PDFs: " . $e->getMessage());
+        }
+
+        return $this;
+    }
+
+    /**
+     * Prüft ob FPDI für PDF-Import verfügbar ist
+     *
+     * @return bool
+     */
+    public static function isFpdiAvailable(): bool
+    {
+        return class_exists('setasign\Fpdi\Tcpdf\Fpdi');
     }
 }

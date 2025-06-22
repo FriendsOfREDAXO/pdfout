@@ -16,7 +16,8 @@
     "require": {
         "dompdf/dompdf": "^3.0.2",
         "tecnickcom/tcpdf": "^6.7",
-        "horstoeko/zugferd": "^1.0"
+        "horstoeko/zugferd": "^1.0",
+        "setasign/fpdi": "^2.6"
     },
     "replace": {
         "enshrined/svg-sanitize": "*",
