@@ -1,6 +1,7 @@
 {
     "require": {
         "dompdf/dompdf": "^3.0.2",
-        "tecnickcom/tcpdf": "^6.7"
+        "tecnickcom/tcpdf": "^6.7",
+        "setasign/fpdi": "^2.5"
     }
 }

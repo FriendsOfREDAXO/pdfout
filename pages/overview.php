@@ -5,152 +5,20 @@
 
 $addon = rex_addon::get('pdfout');
 
-// Willkommenstext
-$content = '
+// Feature-Übersicht (Hauptbereich)
+$features = '
 <div class="row">
     <div class="col-md-8">
-        <h2>Willkommen bei PDFOut</h2>
-        <p class="lead">Das umfassende PDF-Addon für REDAXO mit erweiterten Funktionen für professionelle PDF-Erstellung.</p>
-        
-        <div class="row">
-            <div class="col-md-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-certificate"></i> Digitale Signierung</h4>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="list-unstyled">
-                            <li><i class="fa fa-check text-success"></i> Sichtbare und unsichtbare Signaturen</li>
-                            <li><i class="fa fa-check text-success"></i> Standard- und benutzerdefinierte Zertifikate</li>
-                            <li><i class="fa fa-check text-success"></i> Nachträgliche Signierung vorhandener PDFs</li>
-                            <li><i class="fa fa-check text-success"></i> X.509-Zertifikat-Support</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="panel panel-success">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-lock"></i> Passwortschutz</h4>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="list-unstyled">
-                            <li><i class="fa fa-check text-success"></i> Benutzer- und Besitzer-Passwörter</li>
-                            <li><i class="fa fa-check text-success"></i> Granulare Berechtigungskontrolle</li>
-                            <li><i class="fa fa-check text-success"></i> Drucken, Kopieren, Bearbeiten kontrollieren</li>
-                            <li><i class="fa fa-check text-success"></i> 128-Bit RC4 Verschlüsselung</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-md-6">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-file-pdf-o"></i> PDF-Erzeugung</h4>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="list-unstyled">
-                            <li><i class="fa fa-check text-success"></i> HTML zu PDF Konvertierung</li>
-                            <li><i class="fa fa-check text-success"></i> CSS-Unterstützung für Layout</li>
-                            <li><i class="fa fa-check text-success"></i> Responsive Design Support</li>
-                            <li><i class="fa fa-check text-success"></i> Template-basierte Erstellung</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="panel panel-warning">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-cogs"></i> Erweiterte Features</h4>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="list-unstyled">
-                            <li><i class="fa fa-check text-success"></i> Automatische Engine-Auswahl</li>
-                            <li><i class="fa fa-check text-success"></i> Metadaten-Management</li>
-                            <li><i class="fa fa-check text-success"></i> Wasserzeichen und Hintergründe</li>
-                            <li><i class="fa fa-check text-success"></i> Mehrsprachige Unterstützung</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <h3><i class="fa fa-rocket"></i> Erste Schritte</h3>
-        <div class="alert alert-info">
-            <ol>
-                <li><strong>Konfiguration:</strong> Besuchen Sie die <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/config']) . '" class="alert-link">Konfigurationsseite</a> um Ihre Standard-Einstellungen festzulegen.</li>
-                <li><strong>Zertifikat:</strong> Platzieren Sie Ihr .p12-Zertifikat im Ordner <code>' . rex_escape($addon->getDataPath('certificates/')) . '</code></li>
-                <li><strong>Demo:</strong> Testen Sie die Features mit unseren <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="alert-link">Demo-Beispielen</a>.</li>
-                <li><strong>Dokumentation:</strong> Lesen Sie die vollständige <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/docs']) . '" class="alert-link">Dokumentation</a> mit Code-Beispielen.</li>
-            </ol>
-        </div>
+        <h2>PDFOut - Professionelle PDF-Erstellung für REDAXO</h2>
+        <p class="lead">Das umfassende PDF-Addon mit erweiterten Funktionen für digitale Signaturen, Passwortschutz und professionelle PDF-Erstellung.</p>
     </div>
-    
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4><i class="fa fa-code"></i> Schnellstart</h4>
-            </div>
-            <div class="panel-body">
-                <h5>Einfaches PDF:</h5>
-                <pre><code>$pdf = new PdfOut();
-$pdf->setName(\'dokument\')
-    ->setHtml(\'&lt;h1&gt;Hallo Welt!&lt;/h1&gt;\')
-    ->run();</code></pre>
-                
-                <h5>Mit digitaler Signatur:</h5>
-                <pre><code>$pdf->enableDigitalSignature()
-    ->run();</code></pre>
-                
-                <h5>Mit Passwortschutz:</h5>
-                <pre><code>$pdf->enablePasswordProtection(
-    \'user123\', 
-    \'owner456\', 
-    [\'print\']
-);</code></pre>
-                
-                <div class="text-center" style="margin-top: 15px;">
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-primary btn-sm">
-                        <i class="fa fa-play"></i> Live-Demo starten
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h4><i class="fa fa-tachometer"></i> Systemstatus</h4>
-            </div>
-            <div class="panel-body">
-                <ul class="list-unstyled">
-                    <li><i class="fa fa-folder"></i> Zertifikat-Ordner: ' . (is_dir($addon->getDataPath('certificates')) ? '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : '<span class="text-danger"><i class="fa fa-times"></i> Fehlt</span>') . '</li>
-                    <li><i class="fa fa-cog"></i> PDF-Engine: ' . (class_exists('TCPDF') ? '<span class="text-success"><i class="fa fa-check"></i> Erweitert</span>' : '<span class="text-warning"><i class="fa fa-info-circle"></i> Standard</span>') . '</li>
-                    <li><i class="fa fa-database"></i> Cache: ' . (is_dir(rex_path::addonCache('pdfout')) ? '<span class="text-success"><i class="fa fa-check"></i> Bereit</span>' : '<span class="text-danger"><i class="fa fa-times"></i> Fehlt</span>') . '</li>
-                    <li><i class="fa fa-key"></i> OpenSSL: ' . (function_exists('openssl_pkcs12_export') ? '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : '<span class="text-warning"><i class="fa fa-exclamation-triangle"></i> Eingeschränkt</span>') . '</li>
-                </ul>
-                
-                <div class="text-center" style="margin-top: 15px;">
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/config']) . '" class="btn btn-info btn-sm">
-                        <i class="fa fa-wrench"></i> Konfiguration
-                    </a>
-                </div>
-            </div>
-        </div>
+    <div class="col-md-4 text-right">
+        <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-primary btn-lg">
+            <i class="fa fa-play-circle"></i> Live-Demos starten
+        </a>
     </div>
-</div>';
+</div>
 
-$fragment = new rex_fragment();
-$fragment->setVar('title', 'PDFOut Übersicht');
-$fragment->setVar('body', $content, false);
-echo $fragment->parse('core/page/section.php');
-
-// Alle Features Sektion
-$features = '
 <h3><i class="fa fa-star"></i> Alle Features im Überblick</h3>
 
 <div class="row">
@@ -286,4 +154,49 @@ $features = '
 $fragment = new rex_fragment();
 $fragment->setVar('title', 'Feature-Übersicht');
 $fragment->setVar('body', $features, false);
+echo $fragment->parse('core/page/section.php');
+
+// Systemstatus
+$content = '
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4><i class="fa fa-tachometer"></i> Systemstatus</h4>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-folder"></i> Zertifikat-Ordner: ' . (is_dir($addon->getDataPath('certificates')) ? '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : '<span class="text-danger"><i class="fa fa-times"></i> Fehlt</span>') . '</li>
+                            <li><i class="fa fa-cog"></i> PDF-Engine: ' . (class_exists('TCPDF') ? '<span class="text-success"><i class="fa fa-check"></i> Erweitert</span>' : '<span class="text-warning"><i class="fa fa-info-circle"></i> Standard</span>') . '</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-database"></i> Cache: ' . (is_dir(rex_path::addonCache('pdfout')) ? '<span class="text-success"><i class="fa fa-check"></i> Bereit</span>' : '<span class="text-danger"><i class="fa fa-times"></i> Fehlt</span>') . '</li>
+                            <li><i class="fa fa-key"></i> OpenSSL: ' . (function_exists('openssl_pkcs12_export') ? '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : '<span class="text-warning"><i class="fa fa-exclamation-triangle"></i> Eingeschränkt</span>') . '</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="text-center" style="margin-top: 15px;">
+                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/config']) . '" class="btn btn-info btn-sm">
+                        <i class="fa fa-wrench"></i> Konfiguration
+                    </a>
+                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-success btn-sm">
+                        <i class="fa fa-play"></i> Live-Demos
+                    </a>
+                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/docs']) . '" class="btn btn-primary btn-sm">
+                        <i class="fa fa-book"></i> Dokumentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>';
+
+$fragment = new rex_fragment();
+$fragment->setVar('title', 'Systemstatus');
+$fragment->setVar('body', $content, false);
 echo $fragment->parse('core/page/section.php');

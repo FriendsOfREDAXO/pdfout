@@ -1,33 +1,33 @@
-# Demo Fragments
+# REDAXO PdfOut - Demo Fragmente
 
-Dieser Ordner enthält die modularen Demo-Definitionen für PDFOut.
+Dieses Verzeichnis enthält bereinigte Demo-Implementierungen für das PdfOut AddOn.
 
-## Struktur
+## Status: Bereinigt ✅
 
-Jede Demo wird in einer separaten PHP-Datei definiert, die ein Array mit der Demo-Konfiguration zurückgibt.
+Alle Demo-Implementierungen wurden **direkt in den Demo-Controller** (`pages/demo.php`) integriert.
 
-## Demo-Datei Format
+### Verfügbare Demos:
 
-```php
-<?php
-/**
- * Demo Name - Demo Configuration
- */
+1. **Einfaches PDF** - Basis-PDF ohne erweiterte Features
+2. **PDF mit digitaler Signatur** - TCPDF-basierte Signierung (Total document signed)
+3. **Nachträgliche PDF-Signierung** - FPDI+TCPDF für bestehende PDFs
 
-return [
-    'title' => 'Demo Titel',
-    'description' => 'Beschreibung der Demo-Funktionalität',
-    'panel_class' => 'panel-default',  // Bootstrap Panel-Klasse
-    'btn_class' => 'btn-default',      // Bootstrap Button-Klasse
-    'icon' => 'fa-icon-name',          // FontAwesome Icon
-    'code' => '$pdf = new PdfOut();    // PHP-Code für die Demo
-$pdf->setName(\'demo_name\')
-    ->setHtml(\'<h1>Demo</h1>\')
-    ->run();'
-];
-```
+### Architektur-Änderung:
 
-## Neue Demo hinzufügen
+- ❌ **Alt:** Externe Fragment-Dateien mit includes
+- ✅ **Neu:** Direkte Integration im Switch-Case von `pages/demo.php`
+
+### Vorteile der neuen Architektur:
+
+- ✅ Keine kaputten Includes mehr
+- ✅ Bessere Fehlerbehandlung
+- ✅ Zentrale Demo-Logik
+- ✅ Robuste PDF-Ausgabe
+- ✅ Weniger Dateien zu verwalten
+
+---
+
+**Hinweis:** Sollten in der Zukunft Demo-Fragmente benötigt werden, können diese hier wieder erstellt werden. Die aktuelle Implementierung funktioniert jedoch vollständig ohne externe Fragmente.
 
 1. **Erstelle eine neue PHP-Datei** in diesem Verzeichnis (z.B. `meine_demo.php`)
 2. **Verwende das obige Format** für die Demo-Konfiguration

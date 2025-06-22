@@ -23,6 +23,5 @@ page:
         demo: 
             title: 'translate:pdfout_demo'
             perm: pdfout[demo]
-        docs: 
-            title: 'translate:pdfout_docs'
-            perm: pdfout[]
+        docs:  
+             { title: 'translate:pdfout_docs',  icon: rex-icon fa-question-circle, subPath: README.md} 

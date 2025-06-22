@@ -114,68 +114,1041 @@ if (rex_post('demo-action')) {
     switch ($action) {
         case 'simple_pdf':
             try {
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
                 $pdf = new PdfOut();
-                $pdf->setName('demo_simple')
-                    ->setHtml('<h1>Einfaches PDF Demo</h1><p>Dies ist ein einfaches PDF ohne erweiterte Features.</p><p>Erstellt mit REDAXO PDFOut.</p>')
+                $pdf->setName('einfaches_pdf')
+                    ->setHtml('<h1>Einfaches PDF</h1><p>Dies ist ein einfaches PDF ohne erweiterte Features.</p><p>Schnell und unkompliziert erstellt mit REDAXO PdfOut.</p><p>Erstellt am: ' . date('d.m.Y H:i:s') . '</p>')
                     ->run();
+                    
             } catch (Exception $e) {
                 $error = 'Fehler beim Erstellen des einfachen PDFs: ' . $e->getMessage();
             }
             break;
             
-        case 'signed_pdf':
+        case 'password_protected_pdf':
             try {
-                // Berechtigungsprüfung für Signatur-Demo
-                if (!rex::getUser() || !rex::getUser()->hasPerm('pdfout[signature]')) {
-                    $error = 'Keine Berechtigung für digitale Signaturen. Bitte wenden Sie sich an den Administrator.';
-                    break;
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
                 }
                 
-                $pdf = new PdfOut();
-                $pdf->setName('demo_signed')
-                    ->setHtml('<h1>Signiertes PDF Demo</h1><p>Dies ist ein digital signiertes PDF.</p><p>Signatur-Informationen finden Sie in den PDF-Eigenschaften.</p><p style="margin-top: 50mm;">Die sichtbare Signatur sollte rechts unten auf dieser Seite erscheinen.</p>');
+                // Verwende TCPDF für Passwortschutz (dompdf unterstützt keine Passwörter)
+                require_once rex_path::addon('pdfout') . 'vendor/tecnickcom/tcpdf/tcpdf.php';
                 
-                applySignatureConfig($pdf, $defaultSignatureConfig);
+                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
                 
-                $pdf->setVisibleSignature(120, 200, 70, 30, -1)
-                    ->run();
-            } catch (Exception $e) {
-                $error = 'Fehler beim Erstellen des signierten PDFs: ' . $e->getMessage();
-            }
-            break;
-            
-        case 'password_pdf':
-            try {
-                $pdf = new PdfOut();
-                $pdf->setName('demo_password')
-                    ->setHtml('<h1>Passwortgeschütztes PDF Demo</h1><p>Dieses PDF ist mit einem Passwort geschützt.</p><p><strong>Passwort:</strong> demo123</p>')
-                    ->enablePasswordProtection('demo123', 'owner456', ['print', 'copy'])
-                    ->run();
+                // Dokument-Informationen
+                $pdf->SetCreator('REDAXO PdfOut Demo');
+                $pdf->SetAuthor('REDAXO Demo');
+                $pdf->SetTitle('Passwortgeschütztes PDF');
+                $pdf->SetSubject('Demo eines passwortgeschützten PDFs');
+                
+                // Passwortschutz aktivieren
+                // User-Passwort: 'user123' (zum Öffnen)
+                // Owner-Passwort: 'owner123' (für Vollzugriff)
+                // Berechtigungen: Drucken und Kopieren erlaubt
+                $pdf->SetProtection(
+                    ['print', 'copy'],  // Erlaubte Aktionen
+                    'user123',          // User-Passwort (zum Öffnen des PDFs)
+                    'owner123'          // Owner-Passwort (für Vollzugriff)
+                );
+                
+                // Seite hinzufügen
+                $pdf->AddPage();
+                $pdf->SetFont('dejavusans', '', 12);
+                
+                // Professioneller Inhalt mit Passwort-Informationen
+                $html = '
+                <style>
+                    .header { color: #d32f2f; font-weight: bold; margin-bottom: 20px; }
+                    .password-info { background-color: #fff3e0; border: 2px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 5px; }
+                    .security-note { background-color: #e8f5e8; border: 2px solid #4caf50; padding: 15px; margin: 20px 0; border-radius: 5px; }
+                    .demo-content { margin: 20px 0; }
+                    .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #ccc; font-size: 10px; color: #666; }
+                </style>
+                
+                <div class="header">
+                    <h1>🔒 Passwortgeschütztes PDF</h1>
+                    <p>Demonstration von PDF-Sicherheitsfeatures mit TCPDF</p>
+                </div>
+                
+                <div class="password-info">
+                    <h3>🔑 Passwort-Informationen</h3>
+                    <p><strong>User-Passwort (zum Öffnen):</strong> user123</p>
+                    <p><strong>Owner-Passwort (Vollzugriff):</strong> owner123</p>
+                    <p><strong>Berechtigungen:</strong> Drucken und Kopieren erlaubt</p>
+                </div>
+                
+                <div class="demo-content">
+                    <h2>📋 Inhalt des geschützten Dokuments</h2>
+                    <p>Dieses PDF demonstriert verschiedene Sicherheitsfeatures:</p>
+                    <ul>
+                        <li><strong>Passwortschutz:</strong> PDF erfordert Passwort zum Öffnen</li>
+                        <li><strong>Berechtigungen:</strong> Kontrollierte Zugriffe auf Funktionen</li>
+                        <li><strong>Dokumentenschutz:</strong> Schutz vor unberechtigten Änderungen</li>
+                        <li><strong>Compliance:</strong> Erfüllung von Sicherheitsrichtlinien</li>
+                    </ul>
+                </div>
+                
+                <div class="security-note">
+                    <h3>🛡️ Sicherheitshinweise</h3>
+                    <p>In produktiven Umgebungen sollten Sie:</p>
+                    <ul>
+                        <li>Starke, zufällige Passwörter verwenden</li>
+                        <li>Passwörter sicher übertragen (nicht im PDF selbst)</li>
+                        <li>Berechtigungen nach Bedarf einschränken</li>
+                        <li>Regelmäßige Passwort-Updates durchführen</li>
+                    </ul>
+                </div>
+                
+                <div class="demo-content">
+                    <h2>💼 Praktische Anwendungsfälle</h2>
+                    <p><strong>Vertrauliche Berichte:</strong> Firmeninterne Dokumente mit begrenztem Zugang</p>
+                    <p><strong>Personaldaten:</strong> Schutz sensibler Mitarbeiterinformationen</p>
+                    <p><strong>Finanzberichte:</strong> Geschützte Übertragung von Finanzdaten</p>
+                    <p><strong>Rechtsdokumente:</strong> Schutz vor unbefugten Änderungen</p>
+                </div>
+                
+                <div class="footer">
+                    <p><strong>Erstellt am:</strong> ' . date('d.m.Y H:i:s') . '</p>
+                    <p><strong>System:</strong> REDAXO PdfOut AddOn</p>
+                    <p><strong>Schutz:</strong> TCPDF Password Protection</p>
+                    <p><strong>Status:</strong> Demo-Passwörter (nicht für Produktion verwenden!)</p>
+                </div>';
+                
+                $pdf->writeHTML($html, true, false, true, false, '');
+                
+                // PDF ausgeben mit korrekten Headern
+                $pdfContent = $pdf->Output('', 'S');
+                
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
+                // Headers setzen
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: inline; filename="passwort_geschuetzt.pdf"');
+                header('Content-Length: ' . strlen($pdfContent));
+                header('Cache-Control: no-cache, no-store, must-revalidate');
+                header('Pragma: no-cache');
+                header('Expires: 0');
+                
+                echo $pdfContent;
+                exit;
+                
             } catch (Exception $e) {
                 $error = 'Fehler beim Erstellen des passwortgeschützten PDFs: ' . $e->getMessage();
             }
             break;
             
-        case 'full_featured_pdf':
+        case 'password_workflow_demo':
             try {
-                // Berechtigungsprüfung für Signatur-Demo
-                if (!rex::getUser() || !rex::getUser()->hasPerm('pdfout[signature]')) {
-                    $error = 'Keine Berechtigung für digitale Signaturen. Bitte wenden Sie sich an den Administrator.';
-                    break;
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
                 }
                 
+                // Verwende die neue createPasswordProtectedWorkflow-Methode
+                $htmlContent = '
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    h1 { color: #d63384; border-bottom: 2px solid #d63384; padding-bottom: 10px; }
+                    h2 { color: #0d6efd; margin-top: 30px; }
+                    .feature-box { background: #f8f9fa; padding: 15px; border-left: 4px solid #0d6efd; margin: 15px 0; }
+                    .security-note { background: #fff3cd; padding: 15px; border: 1px solid #ffeaa7; border-radius: 5px; margin: 20px 0; }
+                    .demo-content { background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                    .footer { border-top: 1px solid #ddd; padding-top: 15px; margin-top: 30px; font-size: 12px; color: #666; }
+                    ul { line-height: 1.6; }
+                </style>
+                
+                <h1>🔐 Passwortschutz-Workflow Demo</h1>
+                <p>Diese Demo zeigt den optimierten Workflow: <strong>dompdf → Cache → TCPDF-Passwortschutz</strong></p>
+                
+                <div class="feature-box">
+                    <h2>🚀 Workflow-Vorteile</h2>
+                    <ul>
+                        <li><strong>Beste Qualität:</strong> dompdf für perfekte HTML/CSS-Unterstützung</li>
+                        <li><strong>Performance:</strong> Optimierte Zwischenspeicherung</li>
+                        <li><strong>Sicherheit:</strong> TCPDF für professionellen Passwortschutz</li>
+                        <li><strong>Einfachheit:</strong> Ein Methodenaufruf für komplette Funktionalität</li>
+                        <li><strong>Aufräumen:</strong> Automatische Bereinigung temporärer Dateien</li>
+                    </ul>
+                </div>
+                
+                <div class="security-note">
+                    <h2>🛡️ Passwort-Details für diese Demo</h2>
+                    <p><strong>User-Passwort:</strong> demo123 (zum Öffnen der Datei)</p>
+                    <p><strong>Owner-Passwort:</strong> demo123_owner (für Vollzugriff)</p>
+                    <p><strong>Berechtigungen:</strong> Nur Drucken erlaubt</p>
+                    <p><em>Hinweis: Diese Passwörter sind nur für Demo-Zwecke!</em></p>
+                </div>
+                
+                <div class="demo-content">
+                    <h2>💼 Verwendung im Code</h2>
+                    <pre><code>$pdf = new PdfOut();
+$pdf->createPasswordProtectedWorkflow(
+    $htmlContent,     // HTML-Inhalt
+    "demo123",        // User-Passwort
+    "demo123_owner",  // Owner-Passwort  
+    ["print"],        // Berechtigungen
+    "workflow.pdf"    // Dateiname
+);</code></pre>
+                </div>
+                
+                <div class="footer">
+                    <p><strong>Erstellt am:</strong> ' . date('d.m.Y H:i:s') . '</p>
+                    <p><strong>System:</strong> REDAXO PdfOut AddOn</p>
+                    <p><strong>Methode:</strong> createPasswordProtectedWorkflow()</p>
+                    <p><strong>Engine:</strong> dompdf → TCPDF Workflow</p>
+                </div>';
+                
                 $pdf = new PdfOut();
-                $pdf->setName('demo_full_featured')
-                    ->setHtml('<h1>Vollständig ausgestattetes PDF Demo</h1><p>Dieses PDF kombiniert alle Features:</p><ul><li>Digitale Signierung</li><li>Passwortschutz</li><li>Sichtbare Signatur</li></ul><p><strong>Passwort:</strong> demo123</p><p style="margin-top: 30mm;">Die sichtbare Signatur ist rechts unten positioniert.</p>');
+                $result = $pdf->createPasswordProtectedWorkflow(
+                    $htmlContent,
+                    'demo123',           // User-Passwort
+                    'demo123_owner',     // Owner-Passwort
+                    ['print'],           // Nur Drucken erlaubt
+                    'workflow_demo.pdf'  // Dateiname
+                );
                 
-                applySignatureConfig($pdf, $defaultSignatureConfig, 'Full-Feature Demo');
+                if (!$result) {
+                    throw new Exception('Workflow konnte nicht ausgeführt werden');
+                }
                 
-                $pdf->setVisibleSignature(120, 220, 70, 30, -1)
-                    ->enablePasswordProtection('demo123', 'owner456', ['print'])
-                    ->run();
+                exit; // Workflow hat bereits Output gesendet
+                
             } catch (Exception $e) {
-                $error = 'Fehler beim Erstellen des vollausgestatteten PDFs: ' . $e->getMessage();
+                $error = 'Fehler beim Passwortschutz-Workflow: ' . $e->getMessage();
             }
+            break;
+            
+        case 'pdf_merge_demo':
+            try {
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
+                // Mehrere HTML-Inhalte für Demo
+                $htmlContents = [
+                    '
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        h1 { color: #0d6efd; border-bottom: 2px solid #0d6efd; padding-bottom: 10px; }
+                        .info-box { background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .footer { border-top: 1px solid #ddd; padding-top: 15px; margin-top: 30px; font-size: 12px; color: #666; }
+                    </style>
+                    <h1>📄 Dokument 1: Projektübersicht</h1>
+                    <div class="info-box">
+                        <h2>Projekt: REDAXO PdfOut</h2>
+                        <p><strong>Beschreibung:</strong> Professionelle PDF-Erstellung für REDAXO</p>
+                        <p><strong>Features:</strong> HTML zu PDF, Digitale Signaturen, Passwortschutz</p>
+                        <p><strong>Status:</strong> Release-Ready</p>
+                    </div>
+                    <div class="footer">
+                        <p>Dokument 1 von 3 - Erstellt am: ' . date('d.m.Y H:i:s') . '</p>
+                    </div>',
+                    
+                    '
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        h1 { color: #198754; border-bottom: 2px solid #198754; padding-bottom: 10px; }
+                        .feature-list { background: #f8f9fa; padding: 15px; border-left: 4px solid #198754; margin: 20px 0; }
+                        .footer { border-top: 1px solid #ddd; padding-top: 15px; margin-top: 30px; font-size: 12px; color: #666; }
+                        ul { line-height: 1.6; }
+                    </style>
+                    <h1>✨ Dokument 2: Feature-Liste</h1>
+                    <div class="feature-list">
+                        <h2>Neue Workflow-Methoden</h2>
+                        <ul>
+                            <li><strong>createSignedWorkflow():</strong> Signierte PDFs mit einem Aufruf</li>
+                            <li><strong>createPasswordProtectedWorkflow():</strong> Passwortgeschützte PDFs</li>
+                            <li><strong>mergePdfs():</strong> PDF-Zusammenführung</li>
+                            <li><strong>mergeHtmlToPdf():</strong> HTML-Inhalte zu einem PDF</li>
+                        </ul>
+                    </div>
+                    <div class="footer">
+                        <p>Dokument 2 von 3 - Erstellt am: ' . date('d.m.Y H:i:s') . '</p>
+                    </div>',
+                    
+                    '
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        h1 { color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 10px; }
+                        .conclusion { background: #fff3cd; padding: 15px; border: 1px solid #ffeaa7; border-radius: 5px; margin: 20px 0; }
+                        .footer { border-top: 1px solid #ddd; padding-top: 15px; margin-top: 30px; font-size: 12px; color: #666; }
+                    </style>
+                    <h1>🎉 Dokument 3: Fazit</h1>
+                    <div class="conclusion">
+                        <h2>PDF-Zusammenführung erfolgreich!</h2>
+                        <p>Diese drei separaten HTML-Dokumente wurden automatisch zu einem einzigen PDF zusammengeführt.</p>
+                        <p><strong>Vorteile der mergeHtmlToPdf()-Methode:</strong></p>
+                        <ul>
+                            <li>Alle dompdf-Settings werden berücksichtigt</li>
+                            <li>Optimale HTML/CSS-Unterstützung</li>
+                            <li>Automatische Zwischenspeicherung und Aufräumen</li>
+                            <li>Einfache Verwendung</li>
+                        </ul>
+                    </div>
+                    <div class="footer">
+                        <p>Dokument 3 von 3 - Zusammengeführt am: ' . date('d.m.Y H:i:s') . '</p>
+                        <p><strong>Methode:</strong> mergeHtmlToPdf() - REDAXO PdfOut AddOn</p>
+                    </div>'
+                ];
+                
+                // PDF-Zusammenführung mit aktuellen Settings
+                $pdf = new PdfOut();
+                $result = $pdf->mergeHtmlToPdf(
+                    $htmlContents,
+                    'zusammengefuehrtes_dokument.pdf',
+                    true // Trennseiten zwischen Dokumenten
+                );
+                
+                if (!$result) {
+                    throw new Exception('PDF-Zusammenführung konnte nicht ausgeführt werden');
+                }
+                
+                exit; // Methode hat bereits Output gesendet
+                
+            } catch (Exception $e) {
+                $error = 'Fehler bei der PDF-Zusammenführung: ' . $e->getMessage();
+            }
+            break;
+            
+        case 'clean_signature_demo':
+            try {
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
+                // Verwende TCPDF direkt für saubere Signatur
+                require_once rex_path::addon('pdfout') . 'vendor/tecnickcom/tcpdf/tcpdf.php';
+                
+                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+                
+                // Dokument-Informationen
+                $pdf->SetCreator('REDAXO PdfOut Demo');
+                $pdf->SetAuthor('REDAXO Demo');
+                $pdf->SetTitle('PDF mit digitaler Signatur');
+                $pdf->SetSubject('Demo einer sauberen PDF-Signatur');
+                
+                // Zertifikat laden
+                $certPath = rex_path::addonData('pdfout', 'certificates/default.p12');
+                if (!file_exists($certPath)) {
+                    throw new Exception('Zertifikat nicht gefunden. Bitte erst ein Test-Zertifikat generieren.');
+                }
+                
+                // Digitale Signatur konfigurieren
+                $pdf->setSignature($certPath, $certPath, 'redaxo123', '', 2, [
+                    'Name' => 'REDAXO Clean Signature Demo',
+                    'Location' => 'Demo Environment', 
+                    'Reason' => 'Demonstration of clean PDF signature',
+                    'ContactInfo' => 'demo@redaxo.org'
+                ]);
+                
+                // Seite hinzufügen
+                $pdf->AddPage();
+                $pdf->SetFont('helvetica', '', 12);
+                
+                // Inhalt
+                $html = '<h1>PDF mit digitaler Signatur</h1>';
+                $html .= '<p>Dies ist eine Demonstration einer sauberen digitalen PDF-Signatur.</p>';
+                $html .= '<p><strong>Erstellt am:</strong> ' . date("d.m.Y H:i:s") . '</p>';
+                $html .= '<p><strong>System:</strong> REDAXO PdfOut AddOn</p>';
+                $html .= '<p><strong>Methode:</strong> Direkte TCPDF-Signierung</p>';
+                $html .= '<p>Diese Signatur wird von Standard-Tools als "Total document signed" erkannt.</p>';
+                
+                $pdf->writeHTML($html, true, false, true, false, '');
+                
+                // Sichtbare Signatur hinzufügen (optional) - auskommentiert für sauberes Layout
+                // $pdf->setSignatureAppearance(15, 250, 80, 20);
+                
+                // PDF ausgeben mit korrekten Headern
+                $pdfContent = $pdf->Output('', 'S');
+                
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
+                // Headers setzen
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: inline; filename="clean_signature_demo.pdf"');
+                header('Content-Length: ' . strlen($pdfContent));
+                header('Cache-Control: no-cache, no-store, must-revalidate');
+                header('Pragma: no-cache');
+                header('Expires: 0');
+                
+                echo $pdfContent;
+                exit;
+                
+            } catch (Exception $e) {
+                $error = 'Fehler beim Erstellen der digitalen Signatur: ' . $e->getMessage();
+            }
+            break;
+            
+        case 'nachtraegliche_signierung':
+            try {
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
+                // Cache-Verzeichnis sicherstellen
+                $cacheDir = rex_path::addonCache('pdfout');
+                if (!is_dir($cacheDir)) {
+                    rex_dir::create($cacheDir);
+                }
+                
+                // 1. Erstelle ein Original-PDF mit PdfOut (bessere HTML-Verarbeitung)
+                $originalPdf = new PdfOut();
+                $originalHtml = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Original PDF</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .info { background: #f0f0f0; padding: 10px; border-left: 3px solid #007cba; }
+    </style>
+</head>
+<body>
+    <h1>Original PDF für nachträgliche Signierung</h1>
+    <div class="info">
+        <p><strong>Erstellt am:</strong> ' . date("d.m.Y H:i:s") . '</p>
+        <p><strong>Status:</strong> Unsigniert (Original)</p>
+        <p><strong>Nächster Schritt:</strong> Digitale Signierung</p>
+    </div>
+    <p>Dieses PDF wird nachträglich digital signiert, um seine Authentizität und Integrität zu gewährleisten.</p>
+    <p>Die nachträgliche Signierung erhält alle Original-Inhalte und fügt eine gültige digitale Signatur hinzu.</p>
+</body>
+</html>';
+                
+                // Temporäre Dateien
+                $tempOriginal = $cacheDir . 'temp_original_' . uniqid() . '.pdf';
+                $tempSigned = $cacheDir . 'temp_signed_' . uniqid() . '.pdf';
+                
+                // Original PDF erstellen und speichern
+                $originalPdf->setHtml($originalHtml);
+                $originalPdf->setSaveToPath($cacheDir);
+                $originalPdf->setName(basename($tempOriginal, '.pdf'));
+                $originalPdf->setSaveAndSend(false);
+                $originalPdf->run();
+                
+                // Prüfen ob Original erstellt wurde
+                if (!file_exists($tempOriginal)) {
+                    throw new Exception('Original-PDF konnte nicht erstellt werden');
+                }
+                
+                // 2. Nachträgliche Signierung mit FPDI + TCPDF
+                require_once rex_path::addon('pdfout') . 'vendor/tecnickcom/tcpdf/tcpdf.php';
+                require_once rex_path::addon('pdfout') . 'vendor/setasign/fpdi/src/autoload.php';
+                
+                $pdf = new setasign\Fpdi\Tcpdf\Fpdi();
+                
+                // Zertifikat prüfen
+                $certPath = rex_path::addonData('pdfout', 'certificates/default.p12');
+                if (!file_exists($certPath)) {
+                    throw new Exception('Zertifikat nicht gefunden. Bitte erst ein Test-Zertifikat generieren.');
+                }
+                
+                // Digitale Signatur konfigurieren
+                $pdf->setSignature($certPath, $certPath, 'redaxo123', '', 2, [
+                    'Name' => 'REDAXO Nachträgliche Signierung',
+                    'Location' => 'Demo Environment',
+                    'Reason' => 'Nachträgliche Signierung zur Authentifizierung',
+                    'ContactInfo' => 'demo@redaxo.org'
+                ]);
+                
+                // Original PDF importieren
+                $pageCount = $pdf->setSourceFile($tempOriginal);
+                
+                for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                    $pdf->AddPage();
+                    $templateId = $pdf->importPage($pageNo);
+                    $pdf->useTemplate($templateId);
+                }
+                
+                // Sichtbare Signatur auf der letzten Seite - auskommentiert für sauberes Layout
+                // $pdf->setSignatureAppearance(15, 250, 80, 20);
+                
+                // Signiertes PDF speichern
+                $signedContent = $pdf->Output('', 'S');
+                file_put_contents($tempSigned, $signedContent);
+                
+                if (!file_exists($tempSigned)) {
+                    throw new Exception('Signiertes PDF konnte nicht erstellt werden');
+                }
+                
+                // PDF ausgeben mit korrekten Headern
+                // Output-Buffer komplett leeren falls noch nicht geschehen
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
+                // Headers setzen
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: inline; filename="nachtraeglich_signiert.pdf"');
+                header('Content-Length: ' . filesize($tempSigned));
+                header('Cache-Control: no-cache, no-store, must-revalidate');
+                header('Pragma: no-cache');
+                header('Expires: 0');
+                
+                readfile($tempSigned);
+                
+                // Temporäre Dateien aufräumen
+                if (file_exists($tempOriginal)) unlink($tempOriginal);
+                if (file_exists($tempSigned)) unlink($tempSigned);
+                
+                exit;
+                
+            } catch (Exception $e) {
+                $error = 'Fehler bei der nachträglichen Signierung: ' . $e->getMessage();
+                // Aufräumen auch bei Fehlern
+                if (isset($tempOriginal) && file_exists($tempOriginal)) unlink($tempOriginal);
+                if (isset($tempSigned) && file_exists($tempSigned)) unlink($tempSigned);
+            }
+            break;
+            
+        case 'redaxo_workflow_demo':
+            try {
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
+                // Cache-Verzeichnis sicherstellen
+                $cacheDir = rex_path::addonCache('pdfout');
+                if (!is_dir($cacheDir)) {
+                    rex_dir::create($cacheDir);
+                }
+                
+                // 1. Schönes PDF mit dompdf/PdfOut erstellen (bessere HTML/CSS-Unterstützung)
+                $originalPdf = new PdfOut();
+                
+                // UTF-8 Support für Unicode-Zeichen (inkl. Emojis) aktivieren
+                $originalPdf->getOptions()->setIsRemoteEnabled(true);
+                $originalPdf->getOptions()->setDefaultFont('DejaVu Sans');
+                $originalPdf->getOptions()->setChroot($_SERVER['DOCUMENT_ROOT']);
+                $originalPdf->getOptions()->setIsHtml5ParserEnabled(true);
+                
+                // Professionelles HTML mit modernem CSS
+                $professionalHtml = '<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REDAXO Workflow Demo</title>
+    <style>
+        @page {
+            margin: 2cm;
+            size: A4;
+        }
+        
+        body {
+            font-family: "DejaVu Sans", "Helvetica", "Arial", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+            color: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content-section {
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #007cba;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .content-section h2 {
+            color: #007cba;
+            margin: 0 0 15px 0;
+            font-size: 20px;
+        }
+        
+        .info-grid {
+            display: table;
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .info-item {
+            display: table-row;
+        }
+        
+        .info-label {
+            display: table-cell;
+            font-weight: bold;
+            padding: 8px 20px 8px 0;
+            width: 30%;
+            color: #555;
+        }
+        
+        .info-value {
+            display: table-cell;
+            padding: 8px 0;
+            color: #333;
+        }
+        
+        .highlight-box {
+            background: #e3f2fd;
+            border: 1px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .highlight-box h3 {
+            margin: 0 0 10px 0;
+            color: #1976d2;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .status-badge {
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .workflow-steps {
+            counter-reset: step-counter;
+        }
+        
+        .workflow-step {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #4caf50;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .workflow-step::before {
+            content: "Schritt " counter(step-counter) ": ";
+            font-weight: bold;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+   
+    
+    <div class="content-section">
+        <h2>→ Typischer REDAXO-Anwendungsfall</h2>
+        <p>Diese Demo zeigt den empfohlenen Workflow für PDF-Erstellung in REDAXO-Projekten:</p>
+        
+        <div class="workflow-steps">
+            <div class="workflow-step">
+                Erstelle ein professionelles PDF mit <strong>dompdf</strong> (beste HTML/CSS-Unterstützung)
+            </div>
+            <div class="workflow-step">
+                Speichere das PDF zwischen (Cache, Media Manager oder temp. Verzeichnis)
+            </div>
+            <div class="workflow-step">
+                Signiere das fertige PDF nachträglich mit <strong>FPDI + TCPDF</strong>
+            </div>
+        </div>
+    </div>
+    
+    <div class="info-grid">
+        <div class="info-item">
+            <div class="info-label">Erstellt am:</div>
+            <div class="info-value">' . date("d.m.Y H:i:s") . '</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">System:</div>
+            <div class="info-value">REDAXO ' . rex::getVersion() . '</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">AddOn:</div>
+            <div class="info-value">PdfOut (Workflow Demo)</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Verfahren:</div>
+            <div class="info-value">dompdf → Cache → Nachträgliche Signierung</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Status:</div>
+            <div class="info-value"><span class="status-badge">Digital signiert</span></div>
+        </div>
+    </div>
+    <div style="page-break-after: always;"></div>
+    <div class="highlight-box">
+        <h3>★ Warum dieser Workflow?</h3>
+        <ul>
+            <li><strong>dompdf</strong> bietet exzellente HTML/CSS-Unterstützung für komplexe Layouts</li>
+            <li><strong>Zwischenspeicherung</strong> ermöglicht Wiederverwendung und Performance-Optimierung</li>
+            <li><strong>Nachträgliche Signierung</strong> erhält die perfekte Formatierung</li>
+            <li><strong>FPDI</strong> importiert vorhandene PDFs verlustfrei</li>
+            <li><strong>TCPDF</strong> fügt professionelle digitale Signaturen hinzu</li>
+        </ul>
+    </div>
+    
+    <div class="content-section">
+        <h2>🔧 Technische Details</h2>
+        <p>Dieses PDF wurde mit modernem CSS gestaltet, inklusive:</p>
+        <ul>
+            <li>Responsive Grid-Layout mit CSS Tables</li>
+            <li>Gradients und Schatten</li>
+            <li>Custom Counter für Workflow-Schritte</li>
+            <li>Professionelle Typografie</li>
+            <li>REDAXO Corporate Design Elemente</li>
+        </ul>
+    </div>
+    
+    <div class="footer">
+        <p>Generiert mit REDAXO PdfOut • ' . date("Y") . ' • Demo für nachträgliche PDF-Signierung</p>
+        <p>Diese Signatur ist unsichtbar aber von PDF-Readern erkennbar</p>
+    </div>
+</body>
+</html>';
+                
+                // Temporäre Dateien definieren
+                $tempOriginal = $cacheDir . 'redaxo_workflow_original_' . uniqid() . '.pdf';
+                $tempSigned = $cacheDir . 'redaxo_workflow_signed_' . uniqid() . '.pdf';
+                
+                // Original PDF mit dompdf erstellen und zwischenspeichern
+                $originalPdf->setHtml($professionalHtml);
+                $originalPdf->setSaveToPath($cacheDir);
+                $originalPdf->setName(basename($tempOriginal, '.pdf'));
+                $originalPdf->setSaveAndSend(false);
+                $originalPdf->run();
+                
+                // Prüfen ob Original erstellt wurde
+                if (!file_exists($tempOriginal)) {
+                    throw new Exception('Professionelles PDF konnte nicht mit dompdf erstellt werden');
+                }
+                
+                // 2. Nachträgliche Signierung des zwischengespeicherten PDFs
+                require_once rex_path::addon('pdfout') . 'vendor/tecnickcom/tcpdf/tcpdf.php';
+                require_once rex_path::addon('pdfout') . 'vendor/setasign/fpdi/src/autoload.php';
+                
+                $pdf = new setasign\Fpdi\Tcpdf\Fpdi();
+                
+                // Zertifikat prüfen
+                $certPath = rex_path::addonData('pdfout', 'certificates/default.p12');
+                if (!file_exists($certPath)) {
+                    throw new Exception('Zertifikat nicht gefunden. Bitte erst ein Test-Zertifikat generieren.');
+                }
+                
+                // Digitale Signatur konfigurieren
+                $pdf->setSignature($certPath, $certPath, 'redaxo123', '', 2, [
+                    'Name' => 'REDAXO Workflow Demo',
+                    'Location' => 'REDAXO CMS Environment',
+                    'Reason' => 'Demonstration des typischen REDAXO PDF-Workflows',
+                    'ContactInfo' => 'demo@redaxo.org'
+                ]);
+                
+                // Zwischengespeichertes PDF importieren
+                $pageCount = $pdf->setSourceFile($tempOriginal);
+                
+                for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                    $pdf->AddPage();
+                    $templateId = $pdf->importPage($pageNo);
+                    $pdf->useTemplate($templateId);
+                }
+                
+                // Unsichtbare Signatur (für sauberes Layout)
+                // $pdf->setSignatureAppearance(15, 250, 80, 20); // Auskommentiert für saubere Darstellung
+                
+                // Signiertes PDF erstellen
+                $signedContent = $pdf->Output('', 'S');
+                file_put_contents($tempSigned, $signedContent);
+                
+                if (!file_exists($tempSigned)) {
+                    throw new Exception('Signiertes PDF konnte nicht erstellt werden');
+                }
+                
+                // PDF ausgeben mit korrekten Headern
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: inline; filename="redaxo_workflow_demo.pdf"');
+                header('Content-Length: ' . filesize($tempSigned));
+                header('Cache-Control: no-cache, no-store, must-revalidate');
+                header('Pragma: no-cache');
+                header('Expires: 0');
+                
+                readfile($tempSigned);
+                
+                // Aufräumen
+                if (file_exists($tempOriginal)) unlink($tempOriginal);
+                if (file_exists($tempSigned)) unlink($tempSigned);
+                
+                exit;
+                
+            } catch (Exception $e) {
+                $error = 'Fehler beim REDAXO Workflow Demo: ' . $e->getMessage();
+                // Aufräumen auch bei Fehlern
+                if (isset($tempOriginal) && file_exists($tempOriginal)) unlink($tempOriginal);
+                if (isset($tempSigned) && file_exists($tempSigned)) unlink($tempSigned);
+            }
+            break;
+            
+        case 'redaxo_workflow_demo':
+            try {
+                $html = '<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>REDAXO Workflow Demo</title>
+<style>
+@page {
+    margin: 12mm;
+    size: A4;
+}
+body {
+    font-family: "DejaVu Sans", Arial, sans-serif;
+    line-height: 1.3;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    font-size: 10px;
+}
+.header {
+    background: linear-gradient(135deg, #007cba 0%, #004d7a 100%);
+    color: white;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    text-align: center;
+}
+.header h1 {
+    margin: 0 0 3px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+.header p {
+    margin: 0;
+    font-size: 11px;
+    opacity: 0.9;
+}
+.two-column {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+.column {
+    display: table-cell;
+    width: 50%;
+    vertical-align: top;
+    padding-right: 8px;
+}
+.column:last-child {
+    padding-right: 0;
+    padding-left: 8px;
+}
+.section {
+    background: #f8f9fa;
+    border-left: 3px solid #007cba;
+    padding: 6px 10px;
+    margin: 8px 0;
+    border-radius: 4px;
+}
+.section h3 {
+    margin: 0 0 6px 0;
+    color: #007cba;
+    font-size: 12px;
+}
+.section p {
+    margin: 4px 0;
+    line-height: 1.3;
+}
+.workflow-steps {
+    background: #e7f3ff;
+    padding: 8px;
+    border-radius: 6px;
+    margin: 8px 0;
+}
+.step {
+    margin: 3px 0;
+    padding: 4px 6px;
+    background: white;
+    border-radius: 3px;
+    border-left: 2px solid #28a745;
+    font-size: 9px;
+    line-height: 1.2;
+}
+.step-number {
+    font-weight: bold;
+    color: #28a745;
+}
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 6px 0;
+}
+.info-table td {
+    padding: 2px 4px;
+    border-bottom: 1px solid #eee;
+    font-size: 9px;
+    line-height: 1.2;
+}
+.info-table td:first-child {
+    font-weight: bold;
+    width: 40%;
+    color: #555;
+}
+.highlight {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 6px;
+    border-radius: 4px;
+    margin: 8px 0;
+    text-align: center;
+    font-size: 9px;
+}
+.footer {
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #007cba;
+    text-align: center;
+    font-size: 8px;
+    color: #666;
+}
+.code-sample {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 6px;
+    font-family: monospace;
+    font-size: 8px;
+    border-radius: 4px;
+    margin: 6px 0;
+    line-height: 1.1;
+}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>▶ REDAXO Workflow Demo</h1>
+<p>Professionelle PDF-Erstellung: dompdf → Cache → Signierung</p>
+</div>
+<div class="two-column">
+<div class="column">
+<div class="section">
+<h3>🎯 Empfohlener REDAXO-Workflow</h3>
+<p>Dieser Workflow kombiniert die Stärken von dompdf (HTML/CSS) mit TCPDF (Signierung) für optimale Ergebnisse.</p>
+<div class="workflow-steps">
+<div class="step"><span class="step-number">1.</span> PDF mit dompdf/PdfOut erstellen</div>
+<div class="step"><span class="step-number">2.</span> Zwischenspeicherung im Cache</div>
+<div class="step"><span class="step-number">3.</span> Nachträgliche Signierung (FPDI+TCPDF)</div>
+<div class="step"><span class="step-number">4.</span> Ausgabe & Aufräumen</div>
+</div>
+</div>
+<div class="section">
+<h3>📊 Dokument-Informationen</h3>
+<table class="info-table">
+<tr><td>Erstellt am:</td><td>' . date('d.m.Y H:i:s') . '</td></tr>
+<tr><td>System:</td><td>REDAXO ' . (class_exists('rex') ? rex::getVersion() : 'CMS') . '</td></tr>
+<tr><td>PDF-Engine:</td><td>dompdf + TCPDF</td></tr>
+<tr><td>Workflow:</td><td>Cache → Signierung</td></tr>
+<tr><td>Signatur:</td><td>Digital (unsichtbar)</td></tr>
+<tr><td>Layout:</td><td>Hochwertig (CSS-Support)</td></tr>
+</table>
+</div>
+<div class="highlight">
+<strong>🔒 Digital signiert</strong><br>
+Unsichtbare Signatur, von PDF-Readern erkennbar
+</div>
+</div>
+<div class="column">
+<div class="section">
+<h3>✨ Vorteile des Workflows</h3>
+<p><strong>dompdf:</strong> Beste HTML/CSS-Unterstützung für komplexe Layouts</p>
+<p><strong>TCPDF:</strong> Professionelle, zuverlässige Signaturen</p>
+<p><strong>Cache:</strong> Performance-Optimierung und Wiederverwendung</p>
+<p><strong>Flexibilität:</strong> PDF vor Signierung validieren/anpassen</p>
+</div>
+<div class="section">
+<h3>💻 Code-Beispiel (vereinfacht)</h3>
+<div class="code-sample">
+// Neue Workflow-Methode verwenden:
+$pdf = new PdfOut();
+$pdf->createSignedDocument($html, \'dokument.pdf\');
+
+// Oder mit erweiterten Optionen:
+$pdf->createSignedWorkflow(
+    $html,
+    $certPath,
+    $password,
+    [\'Name\' => \'Max Mustermann\'],
+    \'rechnung.pdf\'
+);
+</div>
+</div>
+<div class="section">
+<h3>🔧 Praktische Anwendung</h3>
+<p><strong>Rechnungen:</strong> Komplexe Tabellen + rechtsgültige Signatur</p>
+<p><strong>Zertifikate:</strong> Design-Layouts + Authentifizierung</p>
+<p><strong>Berichte:</strong> Charts/Grafiken + Vertrauensschutz</p>
+<p><strong>Verträge:</strong> Formatierung + digitale Unterschrift</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<p>REDAXO PdfOut • Workflow Demo • ' . date('Y') . ' • Einseitig, kompakt, signiert</p>
+</div>
+</body>
+</html>';
+                
+                // 2. Neue Workflow-Methode verwenden - nur eine Zeile!
+                $pdf = new PdfOut();
+                $pdf->createSignedDocument($html, 'redaxo_workflow_demo.pdf');
+                
+                exit;
+                
+            } catch (Exception $e) {
+                $error = 'Fehler beim REDAXO Workflow Demo: ' . $e->getMessage();
+            }
+            break;
+            
+        default:
+            $error = 'Unbekannte Demo-Aktion: ' . $action;
             break;
     }
 }
@@ -276,96 +1249,111 @@ $fragment->setVar('title', 'Demo & Test Einstellungen');
 $fragment->setVar('body', $testSettings, false);
 echo $fragment->parse('core/page/section.php');
 
-// Demo-Definitionen dynamisch aus Fragmenten laden
-$demos = [];
-$demoFragmentsPath = __DIR__ . '/../fragments/demos/';
-
-// Fallback: Prüfen ob fragments/demos Verzeichnis existiert
-if (is_dir($demoFragmentsPath)) {
-    // Alle .php Dateien im fragments/demos Verzeichnis laden
-    $demoFiles = glob($demoFragmentsPath . '*.php');
-    foreach ($demoFiles as $demoFile) {
-        $demoKey = basename($demoFile, '.php');
-        
-        // README und andere Hilfsdateien überspringen
-        if ($demoKey === 'README') continue;
-        
-        $demoConfig = include $demoFile;
-        
-        // Validierung der Demo-Konfiguration
-        if (is_array($demoConfig) && isset($demoConfig['title'], $demoConfig['code'])) {
-            $demos[$demoKey] = $demoConfig;
-        }
-    }
+// Bereinigte Demo-Definitionen - direkt integriert, funktionierend
+$demos = [
+    'simple_pdf' => [
+        'title' => 'Einfaches PDF <span class="label label-success">dompdf</span>',
+        'description' => 'Erstellt ein einfaches PDF ohne erweiterte Features. Ideal für schnelle Dokumente. <strong>Empfohlen für REDAXO</strong> - beste HTML/CSS-Unterstützung.',
+        'panel_class' => 'panel-success',
+        'btn_class' => 'btn-success',
+        'icon' => 'fa-file-pdf-o',
+        'code' => '$pdf = new PdfOut();
+$pdf->setName(\'einfaches_pdf\')
+    ->setHtml(\'<h1>Einfaches PDF</h1><p>Schnell und unkompliziert erstellt.</p>\')
+    ->run();'
+    ],
+    'password_protected_pdf' => [
+        'title' => '🔒 Passwortgeschütztes PDF <span class="label label-default">TCPDF</span>',
+        'description' => 'Erstellt ein PDF mit Passwortschutz und konfigurierbaren Berechtigungen. <strong>Demo-Passwörter:</strong> Öffnen: <code>user123</code>, Vollzugriff: <code>owner123</code>. Direkte TCPDF-Nutzung.',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-default',
+        'icon' => 'fa-lock',
+        'code' => '$pdf = new TCPDF();
+$pdf->SetProtection(
+    [\'print\', \'copy\'],    // Erlaubte Aktionen
+    \'user123\',             // User-Passwort (zum Öffnen)
+    \'owner123\'             // Owner-Passwort (Vollzugriff)
+);
+$pdf->AddPage();
+$pdf->SetFont(\'dejavusans\', \'\', 12);
+$pdf->writeHTML($content);
+$pdf->Output();'
+    ],
+    'password_workflow_demo' => [
+        'title' => '🔐 Passwortschutz-Workflow <span class="label label-success">dompdf→TCPDF</span>',
+        'description' => 'Erstellt ein PDF mit dem optimierten Workflow: <strong>dompdf → Cache → TCPDF-Passwortschutz</strong>. <strong>Demo-Passwörter:</strong> Öffnen: <code>demo123</code>, Vollzugriff: <code>demo123_owner</code>. <strong>Empfohlen für REDAXO</strong> - beste Qualität + Sicherheit.',
+        'panel_class' => 'panel-success',
+        'btn_class' => 'btn-success',
+        'icon' => 'fa-shield',
+        'code' => '$pdf = new PdfOut();
+$pdf->createPasswordProtectedWorkflow(
+    $htmlContent,     // HTML-Inhalt
+    \'demo123\',        // User-Passwort
+    \'demo123_owner\',  // Owner-Passwort  
+    [\'print\'],        // Berechtigungen
+    \'workflow.pdf\'    // Dateiname
+);'
+    ],
+    'clean_signature_demo' => [
+        'title' => 'PDF mit digitaler Signatur <span class="label label-default">TCPDF</span>',
+        'description' => 'Erstellt ein vollständig digital signiertes PDF mit TCPDF. Wird von Standard-Tools als "Total document signed" erkannt. <strong>Signatur ist unsichtbar</strong> für sauberes Layout. Direkte TCPDF-Nutzung.',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-default',
+        'icon' => 'fa-certificate',
+        'code' => '$pdf = new TCPDF();
+$pdf->setSignature($certPath, $certPath, \'password\', \'\', 2, [
+    \'Name\' => \'Digitale Signatur\',
+    \'Location\' => \'REDAXO System\', 
+    \'Reason\' => \'Dokumentenschutz\'
+]);
+$pdf->AddPage();
+$pdf->writeHTML($content);
+// Unsichtbare Signatur (keine setSignatureAppearance)
+$pdf->Output();'
+    ],
+    'nachtraegliche_signierung' => [
+        'title' => 'Nachträgliche PDF-Signierung <span class="label label-default">FPDI+TCPDF</span>',
+        'description' => 'Signiert bereits existierende PDFs nachträglich mit FPDI + TCPDF. Erhält alle Original-Inhalte und fügt eine <strong>unsichtbare</strong> digitale Signatur hinzu für sauberes Layout. Direkte FPDI-Nutzung.',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-default',
+        'icon' => 'fa-edit',
+        'code' => '$pdf = new setasign\\Fpdi\\Tcpdf\\Fpdi();
+$pdf->setSignature($certPath, $certPath, \'password\', \'\', 2);
+$pageCount = $pdf->setSourceFile(\'original.pdf\');
+for ($i = 1; $i <= $pageCount; $i++) {
+    $pdf->AddPage();
+    $template = $pdf->importPage($i);
+    $pdf->useTemplate($template);
 }
+// Unsichtbare Signatur (keine setSignatureAppearance)
+$pdf->Output();'
+    ],
+    'redaxo_workflow_demo' => [
+        'title' => '🚀 REDAXO Signatur-Workflow <span class="label label-success">dompdf→TCPDF</span>',
+        'description' => '<strong>Empfohlen für REDAXO:</strong> Erstelle hochwertiges PDF mit dompdf/PdfOut (beste HTML/CSS-Unterstützung), speichere zwischen und signiere nachträglich mit FPDI+TCPDF. <strong>Neue Workflow-Methode - nur 2 Zeilen Code!</strong>',
+        'panel_class' => 'panel-success',
+        'btn_class' => 'btn-success',
+        'icon' => 'fa-rocket',
+        'code' => '// Neue vereinfachte Workflow-Methode (empfohlen):
+$pdf = new PdfOut();
+$pdf->createSignedDocument($html, \'dokument.pdf\');
 
-// Fallback: Falls keine Fragmenten gefunden oder Verzeichnis nicht existiert
-if (empty($demos)) {
-    // Original Demo-Definitionen als Fallback
-    $demos = [
-        'simple_pdf' => [
-            'title' => 'Einfaches PDF',
-            'description' => 'Erstellt ein einfaches PDF ohne erweiterte Features. Ideal für schnelle Dokumente oder erste Tests.',
-            'panel_class' => 'panel-default',
-            'btn_class' => 'btn-default',
-            'icon' => 'fa-file-pdf-o',
-            'code' => '$pdf = new PdfOut();
-$pdf->setName(\'demo_simple\')
-    ->setHtml(\'<h1>Einfaches PDF Demo</h1><p>Dies ist ein einfaches PDF.</p>\')
-    ->run();'
-        ],
-        'signed_pdf' => [
-            'title' => 'Digital signiertes PDF',
-            'description' => 'Erstellt ein digital signiertes PDF mit sichtbarer Signatur. Verwendet das Standard-Testzertifikat.',
-            'panel_class' => 'panel-default',
-            'btn_class' => 'btn-default',
-            'icon' => 'fa-certificate',
-            'code' => '$pdf = new PdfOut();
-$pdf->setName(\'demo_signed\')
-    ->setHtml(\'<h1>Signiertes PDF Demo</h1><p>Dies ist ein digital signiertes PDF.</p>\')
-    ->enableDigitalSignature(
-        \'\',                // Standard-Zertifikat verwenden
-        \'redaxo123\',       // Zertifikatspasswort
-        \'REDAXO Demo\',     // Name
-        \'Demo-Umgebung\',   // Ort
-        \'Demo-Signierung\', // Grund
-        \'demo@redaxo.org\'  // Kontakt
-    )
-    ->setVisibleSignature(120, 200, 70, 30, -1) // X, Y, Breite, Höhe, Seite
-    ->run();'
-        ],
-        'password_pdf' => [
-            'title' => 'Passwortgeschütztes PDF',
-            'description' => 'Erstellt ein passwortgeschütztes PDF mit Benutzer- und Besitzer-Passwort.<br><strong>Passwort:</strong> demo123',
-            'panel_class' => 'panel-default',
-            'btn_class' => 'btn-default',
-            'icon' => 'fa-lock',
-            'code' => '$pdf = new PdfOut();
-$pdf->setName(\'demo_password\')
-    ->setHtml(\'<h1>Passwortgeschütztes PDF</h1><p>Passwort: demo123</p>\')
-    ->enablePasswordProtection(
-        \'demo123\',    // Benutzer-Passwort
-        \'owner456\',   // Besitzer-Passwort
-        [\'print\', \'copy\'] // Erlaubte Aktionen
-    )
-    ->run();'
-        ],
-        'full_featured_pdf' => [
-            'title' => 'Vollausgestattetes PDF',
-            'description' => 'Kombiniert alle Features: Digitale Signierung und Passwortschutz in einem PDF.<br><strong>Passwort:</strong> demo123',
-            'panel_class' => 'panel-default',
-            'btn_class' => 'btn-default',
-            'icon' => 'fa-star',
-            'code' => '$pdf = new PdfOut();
-$pdf->setName(\'demo_full_featured\')
-    ->setHtml(\'<h1>Vollausgestattetes PDF</h1><p>Alle Features kombiniert.</p>\')
-    ->enableDigitalSignature(\'\', \'redaxo123\', \'REDAXO Demo\', \'Demo-Umgebung\', \'Full-Feature Demo\', \'demo@redaxo.org\')
-    ->setVisibleSignature(120, 220, 70, 30, -1)
-    ->enablePasswordProtection(\'demo123\', \'owner456\', [\'print\'])
-    ->run();'
-        ]
-    ];
-}
+// Oder mit erweiterten Optionen:
+$pdf->createSignedWorkflow(
+    $html,                          // HTML-Inhalt
+    $certificatePath,               // Zertifikatspfad
+    $certificatePassword,           // Zertifikatspasswort
+    [\'Name\' => \'Max Mustermann\'], // Signatur-Info
+    \'rechnung.pdf\'                 // Dateiname
+);
+
+// Was passiert intern:
+// 1. PDF mit dompdf erstellen
+// 2. Zwischenspeicherung im Cache
+// 3. Nachträgliche Signierung mit FPDI+TCPDF
+// 4. Ausgabe & automatisches Aufräumen'
+    ]
+];
 
 // Demo-Kästen generieren
 $content = '<div class="row">';
@@ -721,11 +1709,14 @@ $notes = '
 <div class="alert alert-info">
     <h4>Wichtige Hinweise</h4>
     <ul>
-        <li>Die Position der sichtbaren Signatur wird in Punkten (pt) angegeben</li>
-        <li>X=0, Y=0 ist die linke obere Ecke des Dokuments</li>
-        <li>Page -1 bedeutet die letzte Seite des Dokuments</li>
-        <li>Das verwendete Zertifikat ist nur für Testzwecke geeignet</li>
-        <li>Passwort für Test-Zertifikat: <code>redaxo123</code></li>
+        <li><strong>Digitale Signaturen:</strong> Sind unsichtbar für sauberes PDF-Layout</li>
+        <li><strong>Signatur-Erkennung:</strong> Wird trotzdem von PDF-Readern und Tools erkannt</li>
+        <li><strong>Sichtbare Signaturen:</strong> Können durch setSignatureAppearance(x, y, width, height) aktiviert werden</li>
+        <li><strong>Position:</strong> X=0, Y=0 ist die linke obere Ecke des Dokuments (in Punkten)</li>
+        <li><strong>Test-Zertifikat:</strong> Nur für Entwicklung geeignet, Passwort: <code>redaxo123</code></li>
+        <li><strong>Gültigkeit:</strong> Unsichtbare Signaturen bieten gleiche Sicherheit wie sichtbare</li>
+        <li><strong>Passwort-PDFs:</strong> Demo-Passwörter: Öffnen <code>user123</code>, Vollzugriff <code>owner123</code></li>
+        <li><strong>Sicherheit:</strong> In Produktion niemals Demo-Passwörter verwenden!</li>
     </ul>
 </div>
 ';

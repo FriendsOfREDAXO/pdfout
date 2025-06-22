@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInitecd446c0d55531961cf4f51c51253933
 {
     public static $prefixLengthsPsr4 = array (
+        's' => 
+        array (
+            'setasign\\Fpdi\\' => 14,
+        ),
         'S' => 
         array (
             'Svg\\' => 4,
@@ -27,6 +31,10 @@ class ComposerStaticInitecd446c0d55531961cf4f51c51253933
     );
 
     public static $prefixDirsPsr4 = array (
+        'setasign\\Fpdi\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/setasign/fpdi/src',
+        ),
         'Svg\\' => 
         array (
             0 => __DIR__ . '/..' . '/dompdf/php-svg-lib/src/Svg',
