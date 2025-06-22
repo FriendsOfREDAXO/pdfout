@@ -1074,24 +1074,22 @@ class PdfOut extends Dompdf
                 throw new Exception('ZUGFeRD XML konnte nicht generiert werden');
             }
 
-            // PDF/A-3 Metadaten setzen
+            // PDF/A-3 und ZUGFeRD Compliance setzen
             $pdf->SetPDFVersion('1.7');
+            
+            // Korrekte XMP Metadaten für ZUGFeRD/Factur-X setzen
+            $zugferdProfile = $this->getZugferdProfileName($this->zugferdProfile);
             $pdf->setExtraXMP('
-                <rdf:Description rdf:about="" xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/" xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#" xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#" xmlns:zf="urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#">
-                    <zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>
-                    <zf:DocumentFileName>' . $this->zugferdXmlFilename . '</zf:DocumentFileName>
-                    <zf:DocumentType>INVOICE</zf:DocumentType>
-                    <zf:Version>2.0</zf:Version>
+                <rdf:Description rdf:about="" xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/" xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#" xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#" xmlns:fx="urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#">
+                    <fx:ConformanceLevel>' . $zugferdProfile . '</fx:ConformanceLevel>
+                    <fx:DocumentFileName>' . $this->zugferdXmlFilename . '</fx:DocumentFileName>
+                    <fx:DocumentType>INVOICE</fx:DocumentType>
+                    <fx:Version>1.0</fx:Version>
                 </rdf:Description>
             ');
 
-            // XML als Anhang zum PDF hinzufügen
-            $pdf->Annotation(
-                0, 0, 0, 0, // Position (nicht sichtbar)
-                $this->zugferdXmlFilename,
-                ['Subtype' => 'FileAttachment', 'Name' => 'PushPin', 'Contents' => $zugferdXml],
-                0
-            );
+            // XML korrekt als eingebettete Datei hinzufügen (nicht als Annotation)
+            $this->embedZugferdXml($pdf, $zugferdXml, $this->zugferdXmlFilename);
 
             // Logging
             if (rex_addon::get('pdfout')->getConfig('enable_logging', false)) {
@@ -1140,6 +1138,9 @@ class PdfOut extends Dompdf
                 $currency
             );
             
+            // Dokumentnotizen hinzufügen (erforderlich für manche Validatoren)
+            $documentBuilder->addDocumentNote('Erstellt mit REDAXO PDFOut AddOn');
+            
             // Verkäufer (Seller) setzen
             $seller = $this->zugferdInvoiceData['seller'] ?? [];
             $sellerName = $seller['name'] ?? 'REDAXO Demo GmbH';
@@ -1176,6 +1177,21 @@ class PdfOut extends Dompdf
                     $contact['phone'] ?? '',
                     '',
                     $contact['email'] ?? ''
+                );
+            }
+            
+            // Bankverbindung des Verkäufers hinzufügen (wichtig für e-Rechnung)
+            if (!empty($seller['bank'])) {
+                $bank = $seller['bank'];
+                $documentBuilder->addDocumentPaymentMean(
+                    \horstoeko\zugferd\codelists\ZugferdPaymentMeans::UNTDID_4461_58, // SEPA credit transfer
+                    null, // Zahlungsreferenz
+                    null, // Kartennummer
+                    null, // Kontoinhaber
+                    $bank['iban'] ?? '', // IBAN
+                    null, // Kontonummer
+                    null, // Bankleitzahl
+                    $bank['bic'] ?? '' // BIC
                 );
             }
             
@@ -1315,6 +1331,54 @@ class PdfOut extends Dompdf
                 return \horstoeko\zugferd\ZugferdProfiles::PROFILE_EXTENDED;
             default:
                 return \horstoeko\zugferd\ZugferdProfiles::PROFILE_EN16931;
+        }
+    }
+
+    /**
+     * Konvertiert Profil-String zu ZUGFeRD/Factur-X Profil-Name für XMP Metadaten
+     *
+     * @param string $profile Das Profil als String
+     * @return string Der Profil-Name für XMP Metadaten
+     */
+    protected function getZugferdProfileName(string $profile): string
+    {
+        switch (strtoupper($profile)) {
+            case 'MINIMUM':
+                return 'MINIMUM';
+            case 'BASIC':
+                return 'BASIC WL';
+            case 'COMFORT':
+            case 'EN16931':
+                return 'EN 16931';
+            case 'EXTENDED':
+                return 'EXTENDED';
+            default:
+                return 'EN 16931';
+        }
+    }
+
+    /**
+     * Bettet ZUGFeRD XML korrekt als eingebettete Datei in das PDF ein
+     *
+     * @param TCPDF $pdf Das TCPDF-Objekt
+     * @param string $xmlContent Der XML-Inhalt
+     * @param string $filename Der Dateiname für die eingebettete Datei
+     * @throws Exception
+     */
+    protected function embedZugferdXml(TCPDF $pdf, string $xmlContent, string $filename): void
+    {
+        // ZUGFeRD XML als korrekt eingebettete Datei hinzufügen
+        // Wichtig: PDF muss im PDF/A-3 Modus sein für eingebettete Dateien
+        
+        try {
+            // Setze PDF/A-3 Modus (erforderlich für ZUGFeRD)
+            $pdf->setPDFAMode(3, 'PDF/A-3B');
+            
+            // XML-Datei direkt aus String einbetten (korrigierte Signatur)
+            $pdf->EmbedFileFromString($filename, $xmlContent);
+            
+        } catch (Exception $e) {
+            throw new Exception('Fehler beim Einbetten der ZUGFeRD XML-Datei: ' . $e->getMessage());
         }
     }
 
