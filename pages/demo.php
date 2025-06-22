@@ -276,26 +276,51 @@ $fragment->setVar('title', 'Demo & Test Einstellungen');
 $fragment->setVar('body', $testSettings, false);
 echo $fragment->parse('core/page/section.php');
 
-// Demo-Definitionen für bessere Pflege
-$demos = [
-    'simple_pdf' => [
-        'title' => 'Einfaches PDF',
-        'description' => 'Erstellt ein einfaches PDF ohne erweiterte Features. Ideal für schnelle Dokumente oder erste Tests.',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-file-pdf-o',
-        'code' => '$pdf = new PdfOut();
+// Demo-Definitionen dynamisch aus Fragmenten laden
+$demos = [];
+$demoFragmentsPath = __DIR__ . '/../fragments/demos/';
+
+// Fallback: Prüfen ob fragments/demos Verzeichnis existiert
+if (is_dir($demoFragmentsPath)) {
+    // Alle .php Dateien im fragments/demos Verzeichnis laden
+    $demoFiles = glob($demoFragmentsPath . '*.php');
+    foreach ($demoFiles as $demoFile) {
+        $demoKey = basename($demoFile, '.php');
+        
+        // README und andere Hilfsdateien überspringen
+        if ($demoKey === 'README') continue;
+        
+        $demoConfig = include $demoFile;
+        
+        // Validierung der Demo-Konfiguration
+        if (is_array($demoConfig) && isset($demoConfig['title'], $demoConfig['code'])) {
+            $demos[$demoKey] = $demoConfig;
+        }
+    }
+}
+
+// Fallback: Falls keine Fragmenten gefunden oder Verzeichnis nicht existiert
+if (empty($demos)) {
+    // Original Demo-Definitionen als Fallback
+    $demos = [
+        'simple_pdf' => [
+            'title' => 'Einfaches PDF',
+            'description' => 'Erstellt ein einfaches PDF ohne erweiterte Features. Ideal für schnelle Dokumente oder erste Tests.',
+            'panel_class' => 'panel-default',
+            'btn_class' => 'btn-default',
+            'icon' => 'fa-file-pdf-o',
+            'code' => '$pdf = new PdfOut();
 $pdf->setName(\'demo_simple\')
     ->setHtml(\'<h1>Einfaches PDF Demo</h1><p>Dies ist ein einfaches PDF.</p>\')
     ->run();'
-    ],
-    'signed_pdf' => [
-        'title' => 'Digital signiertes PDF',
-        'description' => 'Erstellt ein digital signiertes PDF mit sichtbarer Signatur. Verwendet das Standard-Testzertifikat.',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-certificate',
-        'code' => '$pdf = new PdfOut();
+        ],
+        'signed_pdf' => [
+            'title' => 'Digital signiertes PDF',
+            'description' => 'Erstellt ein digital signiertes PDF mit sichtbarer Signatur. Verwendet das Standard-Testzertifikat.',
+            'panel_class' => 'panel-default',
+            'btn_class' => 'btn-default',
+            'icon' => 'fa-certificate',
+            'code' => '$pdf = new PdfOut();
 $pdf->setName(\'demo_signed\')
     ->setHtml(\'<h1>Signiertes PDF Demo</h1><p>Dies ist ein digital signiertes PDF.</p>\')
     ->enableDigitalSignature(
@@ -308,14 +333,14 @@ $pdf->setName(\'demo_signed\')
     )
     ->setVisibleSignature(120, 200, 70, 30, -1) // X, Y, Breite, Höhe, Seite
     ->run();'
-    ],
-    'password_pdf' => [
-        'title' => 'Passwortgeschütztes PDF',
-        'description' => 'Erstellt ein passwortgeschütztes PDF mit Benutzer- und Besitzer-Passwort.<br><strong>Passwort:</strong> demo123',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-lock',
-        'code' => '$pdf = new PdfOut();
+        ],
+        'password_pdf' => [
+            'title' => 'Passwortgeschütztes PDF',
+            'description' => 'Erstellt ein passwortgeschütztes PDF mit Benutzer- und Besitzer-Passwort.<br><strong>Passwort:</strong> demo123',
+            'panel_class' => 'panel-default',
+            'btn_class' => 'btn-default',
+            'icon' => 'fa-lock',
+            'code' => '$pdf = new PdfOut();
 $pdf->setName(\'demo_password\')
     ->setHtml(\'<h1>Passwortgeschütztes PDF</h1><p>Passwort: demo123</p>\')
     ->enablePasswordProtection(
@@ -324,22 +349,23 @@ $pdf->setName(\'demo_password\')
         [\'print\', \'copy\'] // Erlaubte Aktionen
     )
     ->run();'
-    ],
-    'full_featured_pdf' => [
-        'title' => 'Vollausgestattetes PDF',
-        'description' => 'Kombiniert alle Features: Digitale Signierung und Passwortschutz in einem PDF.<br><strong>Passwort:</strong> demo123',
-        'panel_class' => 'panel-default',
-        'btn_class' => 'btn-default',
-        'icon' => 'fa-star',
-        'code' => '$pdf = new PdfOut();
+        ],
+        'full_featured_pdf' => [
+            'title' => 'Vollausgestattetes PDF',
+            'description' => 'Kombiniert alle Features: Digitale Signierung und Passwortschutz in einem PDF.<br><strong>Passwort:</strong> demo123',
+            'panel_class' => 'panel-default',
+            'btn_class' => 'btn-default',
+            'icon' => 'fa-star',
+            'code' => '$pdf = new PdfOut();
 $pdf->setName(\'demo_full_featured\')
     ->setHtml(\'<h1>Vollausgestattetes PDF</h1><p>Alle Features kombiniert.</p>\')
     ->enableDigitalSignature(\'\', \'redaxo123\', \'REDAXO Demo\', \'Demo-Umgebung\', \'Full-Feature Demo\', \'demo@redaxo.org\')
     ->setVisibleSignature(120, 220, 70, 30, -1)
     ->enablePasswordProtection(\'demo123\', \'owner456\', [\'print\'])
     ->run();'
-    ]
-];
+        ]
+    ];
+}
 
 // Demo-Kästen generieren
 $content = '<div class="row">';
