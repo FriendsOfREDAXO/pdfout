@@ -7,7 +7,7 @@ $addon = rex_addon::get('pdfout');
 
 // Formulardaten verarbeiten
 if (rex_post('config-submit', 'bool')) {
-    $this->setConfig([
+    $addon->setConfig([
         // PDF Grundeinstellungen
         'default_paper_size' => rex_post('default_paper_size', 'string', 'A4'),
         'default_orientation' => rex_post('default_orientation', 'string', 'portrait'),
@@ -41,7 +41,7 @@ if (rex_post('config-submit', 'bool')) {
 }
 
 // Aktuelle Konfiguration laden
-$config = $this->getConfig();
+$config = $addon->getConfig();
 
 // ========================================
 // ALLGEMEINE KONFIGURATION
