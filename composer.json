@@ -1,6 +1,61 @@
 {
+    "name": "friends-of-redaxo/pdfout",
+    "description": "HTML to PDF converter addon for REDAXO with TCPDF features, digital signatures, password protection and ZUGFeRD support",
+    "type": "redaxo-addon",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Thomas Skerbis",
+            "homepage": "https://github.com/skerbis"
+        },
+        {
+            "name": "Friends Of REDAXO",
+            "homepage": "https://github.com/FriendsOfREDAXO"
+        }
+    ],
     "require": {
         "dompdf/dompdf": "^3.0.2",
-        "tecnickcom/tcpdf": "^6.7"
+        "tecnickcom/tcpdf": "^6.7",
+        "horstoeko/zugferd": "^1.0"
+    },
+    "replace": {
+        "enshrined/svg-sanitize": "*",
+        "erusev/parsedown": "*",
+        "erusev/parsedown-extra": "*",
+        "filp/whoops": "*",
+        "lbuchs/webauthn": "*",
+        "phpmailer/phpmailer": "*",
+        "psr/container": "*",
+        "psr/http-message": "*",
+        "psr/log": "*",
+        "ramsey/http-range": "*",
+        "symfony/console": "*",
+        "symfony/http-foundation": "*",
+        "symfony/var-dumper": "*",
+        "symfony/yaml": "*",
+        "symfony/validator": "*",
+        "voku/anti-xss": "*",
+        "voku/portable-utf8": "*",
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-intl-grapheme": "*",
+        "symfony/polyfill-intl-normalizer": "*",
+        "symfony/polyfill-mbstring": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*"
+    },
+    "config": {
+        "platform-check": false,
+        "allow-plugins": {
+            "*": false
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "FriendsOfRedaxo\\PdfOut\\": "lib/"
+        }
     }
 }

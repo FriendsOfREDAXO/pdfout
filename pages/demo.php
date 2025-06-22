@@ -177,6 +177,203 @@ if (rex_post('demo-action')) {
                 $error = 'Fehler beim Erstellen des vollausgestatteten PDFs: ' . $e->getMessage();
             }
             break;
+            
+        case 'zugferd_pdf':
+            try {
+                // ZUGFeRD-Demo-Rechnung erstellen
+                $invoiceData = PdfOut::getExampleZugferdData();
+                
+                // HTML für die professionelle Rechnung in Teilen zusammenbauen
+                $invoiceHtml = '';
+                
+                // Basis-Container
+                $invoiceHtml .= '<div style="max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4;">';
+                
+                // Firmenkopf
+                $invoiceHtml .= '<div style="border-bottom: 2px solid #d63333; padding-bottom: 20px; margin-bottom: 30px;">';
+                $invoiceHtml .= '<div style="float: left; width: 50%;">';
+                $invoiceHtml .= '<h1 style="color: #d63333; margin: 0; font-size: 28px;">' . htmlspecialchars($invoiceData['seller']['name']) . '</h1>';
+                $invoiceHtml .= '<p style="margin: 5px 0 15px 0; color: #666; font-size: 16px;">';
+                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['line1']) . '<br>';
+                if (!empty($invoiceData['seller']['address']['line2'])) {
+                    $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['line2']) . '<br>';
+                }
+                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['postcode']) . ' ' . htmlspecialchars($invoiceData['seller']['address']['city']);
+                $invoiceHtml .= '</p>';
+                $invoiceHtml .= '<div style="font-size: 11px; color: #888; margin-top: 10px;">';
+                $invoiceHtml .= '<strong>Handelsregister:</strong> ' . htmlspecialchars($invoiceData['seller']['company_register']) . '<br>';
+                $invoiceHtml .= '<strong>USt-IdNr.:</strong> ' . htmlspecialchars($invoiceData['seller']['vat_id']) . '<br>';
+                $invoiceHtml .= '<strong>Steuernummer:</strong> ' . htmlspecialchars($invoiceData['seller']['tax_number']);
+                $invoiceHtml .= '</div>';
+                $invoiceHtml .= '</div>';
+                
+                // Kontakt und Bank rechts
+                $invoiceHtml .= '<div style="float: right; width: 45%; text-align: right; font-size: 12px;">';
+                $invoiceHtml .= '<div style="margin-bottom: 15px;">';
+                $invoiceHtml .= '<strong>Kontakt:</strong><br>';
+                $invoiceHtml .= 'Tel: ' . htmlspecialchars($invoiceData['seller']['contact']['phone']) . '<br>';
+                $invoiceHtml .= 'E-Mail: ' . htmlspecialchars($invoiceData['seller']['contact']['email']) . '<br>';
+                $invoiceHtml .= 'Web: ' . htmlspecialchars($invoiceData['seller']['contact']['web']);
+                $invoiceHtml .= '</div>';
+                $invoiceHtml .= '<div style="background: #f8f9fa; padding: 10px; border-radius: 4px; font-size: 11px; text-align: left;">';
+                $invoiceHtml .= '<strong>Bankverbindung:</strong><br>';
+                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['bank']['name']) . '<br>';
+                $invoiceHtml .= 'IBAN: ' . htmlspecialchars($invoiceData['seller']['bank']['iban']) . '<br>';
+                $invoiceHtml .= 'BIC: ' . htmlspecialchars($invoiceData['seller']['bank']['bic']);
+                $invoiceHtml .= '</div>';
+                $invoiceHtml .= '</div>';
+                $invoiceHtml .= '<div style="clear: both;"></div>';
+                // Rechnungsdetails
+                $invoiceHtml .= '<div style="margin-bottom: 30px;">';
+                $invoiceHtml .= '<div style="float: left; width: 50%;">';
+                $invoiceHtml .= '<h3 style="color: #333; margin-bottom: 10px;">Rechnungsempfänger:</h3>';
+                $invoiceHtml .= '<div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #d63333;">';
+                $invoiceHtml .= '<strong>' . htmlspecialchars($invoiceData['buyer']['name']) . '</strong><br>';
+                $invoiceHtml .= htmlspecialchars($invoiceData['buyer']['address']['line1']) . '<br>';
+                if (!empty($invoiceData['buyer']['address']['line2'])) {
+                    $invoiceHtml .= htmlspecialchars($invoiceData['buyer']['address']['line2']) . '<br>';
+                }
+                $invoiceHtml .= htmlspecialchars($invoiceData['buyer']['address']['postcode']) . ' ' . htmlspecialchars($invoiceData['buyer']['address']['city']) . '<br>';
+                $invoiceHtml .= '<small>Kunden-ID: ' . htmlspecialchars($invoiceData['buyer']['id']) . '</small>';
+                $invoiceHtml .= '</div>';
+                $invoiceHtml .= '</div>';
+                
+                $invoiceHtml .= '<div style="float: right; width: 45%;">';
+                $invoiceHtml .= '<table style="width: 100%; font-size: 14px;">';
+                $invoiceHtml .= '<tr><td style="padding: 3px 0; font-weight: bold;">Rechnung Nr.:</td>';
+                $invoiceHtml .= '<td style="padding: 3px 0; text-align: right; color: #d63333; font-weight: bold;">' . htmlspecialchars($invoiceData['invoice_number']) . '</td></tr>';
+                $invoiceHtml .= '<tr><td style="padding: 3px 0;">Rechnungsdatum:</td>';
+                $invoiceHtml .= '<td style="padding: 3px 0; text-align: right;">' . date('d.m.Y', strtotime($invoiceData['issue_date'])) . '</td></tr>';
+                $invoiceHtml .= '<tr><td style="padding: 3px 0;">Fälligkeitsdatum:</td>';
+                $invoiceHtml .= '<td style="padding: 3px 0; text-align: right;">' . date('d.m.Y', strtotime($invoiceData['payment_terms']['due_date'])) . '</td></tr>';
+                $invoiceHtml .= '<tr><td style="padding: 3px 0;">Projekt:</td>';
+                $invoiceHtml .= '<td style="padding: 3px 0; text-align: right; font-weight: bold;">' . htmlspecialchars($invoiceData['project_details']['project_number']) . '</td></tr>';
+                $invoiceHtml .= '</table>';
+                $invoiceHtml .= '</div>';
+                $invoiceHtml .= '<div style="clear: both;"></div>';
+                $invoiceHtml .= '</div>';
+                
+                // Projektinformationen
+                $invoiceHtml .= '<div style="margin-bottom: 30px; padding: 15px; background: #f0f8ff; border: 1px solid #b6d7ff; border-radius: 4px;">';
+                $invoiceHtml .= '<h4 style="margin: 0 0 10px 0; color: #1e3a8a;">' . htmlspecialchars($invoiceData['project_details']['project_name']) . '</h4>';
+                $invoiceHtml .= '<p style="margin: 0; font-size: 13px; color: #555;">';
+                $invoiceHtml .= '<strong>Lieferzeit:</strong> ' . htmlspecialchars($invoiceData['project_details']['delivery_time']) . ' | ';
+                $invoiceHtml .= '<strong>Gewährleistung:</strong> ' . htmlspecialchars($invoiceData['project_details']['warranty']);
+                $invoiceHtml .= '</p>';
+                $invoiceHtml .= '</div>';
+                
+                // Rechnungspositionen
+                $invoiceHtml .= '<table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; table-layout: fixed;">';
+                $invoiceHtml .= '<colgroup>';
+                $invoiceHtml .= '<col style="width: 4%;">'; // Pos. - noch kleiner
+                $invoiceHtml .= '<col style="width: 58%;">'; // Beschreibung - noch größer
+                $invoiceHtml .= '<col style="width: 10%;">'; // Menge - kleiner
+                $invoiceHtml .= '<col style="width: 14%;">'; // Einzelpreis
+                $invoiceHtml .= '<col style="width: 14%;">'; // Gesamt
+                $invoiceHtml .= '</colgroup>';
+                $invoiceHtml .= '<thead>';
+                $invoiceHtml .= '<tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">';
+                $invoiceHtml .= '<th style="padding: 12px 4px; text-align: left; border: none; white-space: nowrap; font-size: 10px;">Pos.</th>';
+                $invoiceHtml .= '<th style="padding: 12px 8px; text-align: left; border: none; font-size: 11px;">Beschreibung</th>';
+                $invoiceHtml .= '<th style="padding: 12px 4px; text-align: center; border: none; white-space: nowrap; font-size: 10px;">Menge</th>';
+                $invoiceHtml .= '<th style="padding: 12px 6px; text-align: right; border: none; white-space: nowrap; font-size: 11px;">Einzelpreis</th>';
+                $invoiceHtml .= '<th style="padding: 12px 6px; text-align: right; border: none; white-space: nowrap; font-size: 11px;">Gesamt</th>';
+                $invoiceHtml .= '</tr>';
+                $invoiceHtml .= '</thead>';
+                $invoiceHtml .= '<tbody>';
+                
+                // Rechnungspositionen durchlaufen
+                $position = 1;
+                foreach ($invoiceData['line_items'] as $item) {
+                    $total = $item['net_unit_price'] * $item['quantity'];
+                    $bgColor = ($position % 2 == 0) ? '#f8f9fa' : '#ffffff';
+                    
+                    $invoiceHtml .= '<tr style="background: ' . $bgColor . ';">';
+                    $invoiceHtml .= '<td style="padding: 8px 4px; border-bottom: 1px solid #e9ecef; text-align: center; font-weight: bold; font-size: 10px;">' . $position . '</td>';
+                    $invoiceHtml .= '<td style="padding: 8px; border-bottom: 1px solid #e9ecef; font-size: 11px;">';
+                    $invoiceHtml .= '<strong style="color: #333; font-size: 12px;">' . htmlspecialchars($item['name']) . '</strong><br>';
+                    $invoiceHtml .= '<span style="color: #666; font-size: 10px; line-height: 1.3;">' . htmlspecialchars($item['description']) . '</span><br>';
+                    $invoiceHtml .= '<small style="color: #999; font-size: 9px;">Art.-Nr.: ' . htmlspecialchars($item['seller_assigned_id']) . '</small>';
+                    $invoiceHtml .= '</td>';
+                    $invoiceHtml .= '<td style="padding: 8px 4px; text-align: center; border-bottom: 1px solid #e9ecef; white-space: nowrap; font-size: 10px;">' . $item['quantity'] . ' ' . $item['unit'] . '</td>';
+                    $invoiceHtml .= '<td style="padding: 8px 6px; text-align: right; border-bottom: 1px solid #e9ecef; white-space: nowrap; font-size: 11px;">' . number_format($item['net_unit_price'], 2, ',', '.') . '&nbsp;€</td>';
+                    $invoiceHtml .= '<td style="padding: 8px 6px; text-align: right; border-bottom: 1px solid #e9ecef; font-weight: bold; white-space: nowrap; font-size: 11px;">' . number_format($total, 2, ',', '.') . '&nbsp;€</td>';
+                    $invoiceHtml .= '</tr>';
+                    $position++;
+                }
+                
+                $invoiceHtml .= '</tbody>';
+                $invoiceHtml .= '</table>';
+                
+                // Rechnungssumme
+                $invoiceHtml .= '<div style="float: right; width: 380px; margin-top: 20px;">';
+                $invoiceHtml .= '<table style="width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed;">';
+                $invoiceHtml .= '<colgroup>';
+                $invoiceHtml .= '<col style="width: 70%;">';
+                $invoiceHtml .= '<col style="width: 30%;">';
+                $invoiceHtml .= '</colgroup>';
+                $invoiceHtml .= '<tr style="background: #f8f9fa;">';
+                $invoiceHtml .= '<td style="padding: 8px; text-align: right; border: 1px solid #dee2e6;">Nettobetrag:</td>';
+                $invoiceHtml .= '<td style="padding: 8px; text-align: right; font-weight: bold; border: 1px solid #dee2e6; white-space: nowrap;">' . number_format($invoiceData['totals']['net_amount'], 2, ',', '.') . '&nbsp;€</td>';
+                $invoiceHtml .= '</tr>';
+                $invoiceHtml .= '<tr style="background: #f8f9fa;">';
+                $invoiceHtml .= '<td style="padding: 8px; text-align: right; border: 1px solid #dee2e6;">zzgl. ' . $invoiceData['default_tax_rate'] . '% MwSt.:</td>';
+                $invoiceHtml .= '<td style="padding: 8px; text-align: right; border: 1px solid #dee2e6; white-space: nowrap;">' . number_format($invoiceData['totals']['tax_amount'], 2, ',', '.') . '&nbsp;€</td>';
+                $invoiceHtml .= '</tr>';
+                $invoiceHtml .= '<tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">';
+                $invoiceHtml .= '<td style="padding: 12px 8px; text-align: right; font-weight: bold; font-size: 16px; border: none;">Rechnungsbetrag:</td>';
+                $invoiceHtml .= '<td style="padding: 12px 8px; text-align: right; font-weight: bold; font-size: 16px; border: none; white-space: nowrap;">' . number_format($invoiceData['totals']['gross_amount'], 2, ',', '.') . '&nbsp;€</td>';
+                $invoiceHtml .= '</tr>';
+                $invoiceHtml .= '</table>';
+                $invoiceHtml .= '</div>';
+                
+                $invoiceHtml .= '<div style="clear: both; margin-top: 40px;">';
+                
+                // Zahlungsinformationen
+                $invoiceHtml .= '<div style="margin-bottom: 25px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px;">';
+                $invoiceHtml .= '<h4 style="margin: 0 0 10px 0; color: #856404;">Zahlungsinformationen</h4>';
+                $invoiceHtml .= '<p style="margin: 0; font-size: 13px;"><strong>Zahlungsbedingungen:</strong> ' . htmlspecialchars($invoiceData['payment_terms']['description']) . '</p>';
+                $invoiceHtml .= '<div style="margin-top: 10px; font-size: 12px;">';
+                $invoiceHtml .= '<strong>Fällig am:</strong> ' . date('d.m.Y', strtotime($invoiceData['payment_terms']['due_date']));
+                $invoiceHtml .= '</div>';
+                $invoiceHtml .= '</div>';
+                
+                // ZUGFeRD Info
+                $invoiceHtml .= '<div style="margin-bottom: 25px; padding: 15px; background: #e8f4f8; border-left: 4px solid #2196F3;">';
+                $invoiceHtml .= '<h4 style="margin: 0 0 10px 0; color: #1976D2;">ZUGFeRD/Factur-X Rechnung</h4>';
+                $invoiceHtml .= '<p style="margin: 0; font-size: 12px;">';
+                $invoiceHtml .= 'Diese Rechnung enthält strukturierte Rechnungsdaten im ZUGFeRD-Format (EN 16931) ';
+                $invoiceHtml .= 'und kann automatisch von Buchhaltungssoftware verarbeitet werden.';
+                $invoiceHtml .= '</p>';
+                $invoiceHtml .= '</div>';
+                
+                // Firmendetails Fußzeile
+                $invoiceHtml .= '<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 10px; color: #666;">';
+                $invoiceHtml .= '<div style="text-align: center;">';
+                $invoiceHtml .= '<strong>' . htmlspecialchars($invoiceData['seller']['name']) . '</strong><br>';
+                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['management']) . '<br>';
+                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['company_register']) . ' | ';
+                $invoiceHtml .= 'Steuernummer: ' . htmlspecialchars($invoiceData['seller']['tax_number']) . ' | ';
+                $invoiceHtml .= 'USt-IdNr.: ' . htmlspecialchars($invoiceData['seller']['vat_id']) . '<br>';
+                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['line1']) . ', ';
+                $invoiceHtml .= htmlspecialchars($invoiceData['seller']['address']['postcode']) . ' ' . htmlspecialchars($invoiceData['seller']['address']['city']) . ' | ';
+                $invoiceHtml .= 'Tel: ' . htmlspecialchars($invoiceData['seller']['contact']['phone']) . ' | ';
+                $invoiceHtml .= 'E-Mail: ' . htmlspecialchars($invoiceData['seller']['contact']['email']);
+                $invoiceHtml .= '</div>';
+                $invoiceHtml .= '</div>';
+                
+                $invoiceHtml .= '</div>'; // Ende clear div
+                $invoiceHtml .= '</div>'; // Ende Basis-Container
+                
+                $pdf = new PdfOut();
+                $pdf->setName('demo_zugferd_rechnung')
+                    ->setHtml($invoiceHtml)
+                    ->enableZugferd($invoiceData, 'BASIC', 'factur-x.xml')
+                    ->run();
+            } catch (Exception $e) {
+                $error = 'Fehler beim Erstellen der ZUGFeRD-Rechnung: ' . $e->getMessage();
+            }
+            break;
     }
 }
 
@@ -338,6 +535,25 @@ $pdf->setName(\'demo_full_featured\')
     ->setVisibleSignature(120, 220, 70, 30, -1)
     ->enablePasswordProtection(\'demo123\', \'owner456\', [\'print\'])
     ->run();'
+    ],
+    'zugferd_pdf' => [
+        'title' => 'ZUGFeRD/Factur-X Rechnung',
+        'description' => 'Erstellt eine ZUGFeRD-konforme Rechnung mit eingebetteter XML für die automatische Verarbeitung in der Buchhaltung.',
+        'panel_class' => 'panel-success',
+        'btn_class' => 'btn-success',
+        'icon' => 'fa-file-code-o',
+        'code' => '// Rechnungsdaten vorbereiten
+$invoiceData = PdfOut::getExampleZugferdData();
+
+$pdf = new PdfOut();
+$pdf->setName(\'demo_zugferd_rechnung\')
+    ->setHtml($rechnungsHtml)  // Ihr Rechnungs-HTML
+    ->enableZugferd($invoiceData, \'BASIC\', \'factur-x.xml\')
+    ->run();
+
+// Die Rechnung enthält jetzt strukturierte Daten
+// die automatisch von Buchhaltungssoftware 
+// verarbeitet werden können!'
     ]
 ];
 

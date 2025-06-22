@@ -7,26 +7,78 @@ namespace Composer\Autoload;
 class ComposerStaticInitecd446c0d55531961cf4f51c51253933
 {
     public static $prefixLengthsPsr4 = array (
+        's' => 
+        array (
+            'setasign\\Fpdi\\' => 14,
+        ),
+        'h' => 
+        array (
+            'horstoeko\\zugferd\\' => 18,
+            'horstoeko\\stringmanagement\\' => 27,
+            'horstoeko\\mimedb\\' => 17,
+        ),
         'S' => 
         array (
+            'Symfony\\Component\\Process\\' => 26,
+            'Symfony\\Component\\Finder\\' => 25,
             'Svg\\' => 4,
             'Sabberworm\\CSS\\' => 15,
         ),
+        'P' => 
+        array (
+            'PHPStan\\PhpDocParser\\' => 21,
+        ),
         'M' => 
         array (
+            'Metadata\\' => 9,
             'Masterminds\\' => 12,
+        ),
+        'J' => 
+        array (
+            'JMS\\Serializer\\' => 15,
+        ),
+        'G' => 
+        array (
+            'GoetasWebservices\\Xsd\\XsdToPhpRuntime\\' => 38,
         ),
         'F' => 
         array (
+            'FriendsOfRedaxo\\PdfOut\\' => 23,
             'FontLib\\' => 8,
         ),
         'D' => 
         array (
             'Dompdf\\' => 7,
+            'Doctrine\\Instantiator\\' => 22,
+            'Doctrine\\Common\\Lexer\\' => 22,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'setasign\\Fpdi\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/setasign/fpdi/src',
+        ),
+        'horstoeko\\zugferd\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/horstoeko/zugferd/src',
+        ),
+        'horstoeko\\stringmanagement\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/horstoeko/stringmanagement/src',
+        ),
+        'horstoeko\\mimedb\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/horstoeko/mimedb/src',
+        ),
+        'Symfony\\Component\\Process\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/process',
+        ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
         'Svg\\' => 
         array (
             0 => __DIR__ . '/..' . '/dompdf/php-svg-lib/src/Svg',
@@ -35,9 +87,29 @@ class ComposerStaticInitecd446c0d55531961cf4f51c51253933
         array (
             0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/src',
         ),
+        'PHPStan\\PhpDocParser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src',
+        ),
+        'Metadata\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jms/metadata/src',
+        ),
         'Masterminds\\' => 
         array (
             0 => __DIR__ . '/..' . '/masterminds/html5/src',
+        ),
+        'JMS\\Serializer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jms/serializer/src',
+        ),
+        'GoetasWebservices\\Xsd\\XsdToPhpRuntime\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/goetas-webservices/xsd2php-runtime/src',
+        ),
+        'FriendsOfRedaxo\\PdfOut\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/lib',
         ),
         'FontLib\\' => 
         array (
@@ -47,12 +119,31 @@ class ComposerStaticInitecd446c0d55531961cf4f51c51253933
         array (
             0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
         ),
+        'Doctrine\\Instantiator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
+        ),
+        'Doctrine\\Common\\Lexer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/lexer/src',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'S' => 
+        array (
+            'Smalot\\PdfParser\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/smalot/pdfparser/src',
+            ),
+        ),
     );
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
         'Dompdf\\Cpdf' => __DIR__ . '/..' . '/dompdf/dompdf/lib/Cpdf.php',
+        'FPDF' => __DIR__ . '/..' . '/setasign/fpdf/fpdf.php',
         'PDF417' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/pdf417.php',
         'QRcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/qrcode.php',
         'TCPDF' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf.php',
@@ -71,6 +162,7 @@ class ComposerStaticInitecd446c0d55531961cf4f51c51253933
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitecd446c0d55531961cf4f51c51253933::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitecd446c0d55531961cf4f51c51253933::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitecd446c0d55531961cf4f51c51253933::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitecd446c0d55531961cf4f51c51253933::$classMap;
 
         }, null, ClassLoader::class);

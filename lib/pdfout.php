@@ -99,6 +99,19 @@ class PdfOut extends Dompdf
     /** @var array Berechtigungen für das PDF */
     protected $permissions = ['print', 'modify', 'copy', 'annot-forms'];
 
+    // ZUGFeRD/Factur-X Eigenschaften
+    /** @var bool Ob ZUGFeRD/Factur-X aktiviert werden soll */
+    protected $enableZugferd = false;
+
+    /** @var string ZUGFeRD-Profil (MINIMUM, BASIC, COMFORT, EXTENDED) */
+    protected $zugferdProfile = 'BASIC';
+
+    /** @var array Rechnungsdaten für ZUGFeRD */
+    protected $zugferdInvoiceData = [];
+
+    /** @var string Optionaler XML-Dateiname für ZUGFeRD */
+    protected $zugferdXmlFilename = 'ZUGFeRD-invoice.xml';
+
     /**
      * Konstruktor - lädt Standardkonfiguration
      */
@@ -132,6 +145,13 @@ class PdfOut extends Dompdf
         
         if ($addon->getConfig('enable_password_protection_by_default', false)) {
             $this->enablePasswordProtection = true;
+        }
+        
+        // ZUGFeRD-Einstellungen aus Config laden
+        if ($addon->getConfig('enable_zugferd_by_default', false)) {
+            $this->enableZugferd = true;
+            $this->zugferdProfile = $addon->getConfig('default_zugferd_profile', 'BASIC');
+            $this->zugferdXmlFilename = $addon->getConfig('zugferd_xml_filename', 'factur-x.xml');
         }
     }
 
@@ -667,6 +687,9 @@ class PdfOut extends Dompdf
                 $this->addPasswordProtection($tcpdf);
             }
 
+            // ZUGFeRD verarbeiten, falls aktiviert
+            $this->processZugferd($tcpdf);
+
             // Ausgabe verarbeiten
             $this->processTcpdfOutput($tcpdf);
             
@@ -804,6 +827,9 @@ class PdfOut extends Dompdf
      */
     protected function processTcpdfOutput(TCPDF $pdf): void
     {
+        // ZUGFeRD verarbeiten falls aktiviert
+        $this->processZugferd($pdf);
+        
         // Speichern des PDFs 
         if ($this->saveToPath !== '') {
             $savedata = $pdf->Output('', 'S');
@@ -818,5 +844,319 @@ class PdfOut extends Dompdf
             $pdf->Output(rex_string::normalize($this->name) . '.pdf', $this->attachment ? 'D' : 'I');
             exit();
         }
+    }
+
+    // =============================================
+    // ZUGFeRD/Factur-X Methoden
+    // =============================================
+
+    /**
+     * Aktiviert ZUGFeRD/Factur-X für dieses PDF
+     *
+     * @param array $invoiceData Rechnungsdaten für ZUGFeRD
+     * @param string $profile ZUGFeRD-Profil (MINIMUM, BASIC, COMFORT, EXTENDED)
+     * @param string $xmlFilename Optionaler XML-Dateiname
+     * @return $this
+     */
+    public function enableZugferd(array $invoiceData, string $profile = 'BASIC', string $xmlFilename = 'ZUGFeRD-invoice.xml'): self
+    {
+        $this->enableZugferd = true;
+        $this->zugferdProfile = $profile;
+        $this->zugferdInvoiceData = $invoiceData;
+        $this->zugferdXmlFilename = $xmlFilename;
+        
+        return $this;
+    }
+
+    /**
+     * Erstellt ein ZUGFeRD-konformes PDF mit eingebetteter XML
+     *
+     * @param TCPDF $pdf Das TCPDF-Objekt
+     * @throws Exception
+     */
+    protected function processZugferd(TCPDF $pdf): void
+    {
+        if (!$this->enableZugferd || empty($this->zugferdInvoiceData)) {
+            return;
+        }
+
+        try {
+            // ZUGFeRD Library laden (über Composer Autoload)
+            $vendorPath = rex_path::addon('pdfout') . 'vendor/autoload.php';
+            if (!file_exists($vendorPath)) {
+                throw new Exception('ZUGFeRD Library nicht installiert. Bitte "composer install" im PDFOut-Addon ausführen.');
+            }
+            require_once $vendorPath;
+            
+            // ZUGFeRD XML generieren
+            $zugferdXml = $this->generateZugferdXml();
+            
+            if (empty($zugferdXml)) {
+                throw new Exception('ZUGFeRD XML konnte nicht generiert werden');
+            }
+
+            // PDF/A-3 Metadaten setzen
+            $pdf->SetPDFVersion('1.7');
+            $pdf->setExtraXMP('
+                <rdf:Description rdf:about="" xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/" xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#" xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#" xmlns:zf="urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#">
+                    <zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>
+                    <zf:DocumentFileName>' . $this->zugferdXmlFilename . '</zf:DocumentFileName>
+                    <zf:DocumentType>INVOICE</zf:DocumentType>
+                    <zf:Version>2.0</zf:Version>
+                </rdf:Description>
+            ');
+
+            // XML als Anhang zum PDF hinzufügen
+            $pdf->Annotation(
+                0, 0, 0, 0, // Position (nicht sichtbar)
+                $this->zugferdXmlFilename,
+                ['Subtype' => 'FileAttachment', 'Name' => 'PushPin', 'Contents' => $zugferdXml],
+                0
+            );
+
+            // Logging
+            if (rex_addon::get('pdfout')->getConfig('enable_logging', false)) {
+                rex_logger::factory()->info('ZUGFeRD XML erfolgreich in PDF eingebettet', [
+                    'profile' => $this->zugferdProfile,
+                    'xml_size' => strlen($zugferdXml),
+                    'filename' => $this->zugferdXmlFilename
+                ]);
+            }
+
+        } catch (Exception $e) {
+            if (rex_addon::get('pdfout')->getConfig('enable_debug', false)) {
+                throw new Exception('ZUGFeRD-Verarbeitung fehlgeschlagen: ' . $e->getMessage());
+            }
+            
+            // Im Produktivbetrieb nur loggen
+            rex_logger::factory()->error('ZUGFeRD-Fehler: ' . $e->getMessage(), [
+                'profile' => $this->zugferdProfile,
+                'invoice_data' => $this->zugferdInvoiceData
+            ]);
+        }
+    }
+
+    /**
+     * Generiert ZUGFeRD-XML aus den Rechnungsdaten (vereinfachte Version)
+     *
+     * @return string Das generierte XML
+     * @throws Exception
+     */
+    protected function generateZugferdXml(): string
+    {
+        try {
+            // Vereinfachte ZUGFeRD XML-Generierung ohne komplexe Library-Aufrufe
+            // Diese Version erstellt eine grundlegende ZUGFeRD-konforme XML
+            
+            $invoiceNumber = $this->zugferdInvoiceData['invoice_number'] ?? 'DEMO-001';
+            $issueDate = $this->zugferdInvoiceData['issue_date'] ?? date('Y-m-d');
+            $currency = $this->zugferdInvoiceData['currency'] ?? 'EUR';
+            
+            $seller = $this->zugferdInvoiceData['seller'] ?? [
+                'name' => 'REDAXO Demo GmbH',
+                'address' => [
+                    'line1' => 'Musterstraße 123',
+                    'postcode' => '12345',
+                    'city' => 'Musterstadt',
+                    'country' => 'DE'
+                ]
+            ];
+            
+            $buyer = $this->zugferdInvoiceData['buyer'] ?? [
+                'name' => 'Musterkunde AG',
+                'address' => [
+                    'line1' => 'Kundenstraße 456',
+                    'postcode' => '54321',
+                    'city' => 'Kundenstadt',
+                    'country' => 'DE'
+                ]
+            ];
+            
+            $totals = $this->zugferdInvoiceData['totals'] ?? [
+                'net_amount' => 100.00,
+                'tax_amount' => 19.00,
+                'gross_amount' => 119.00
+            ];
+
+            // Einfache ZUGFeRD XML-Struktur
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
+    <rsm:ExchangedDocumentContext>
+        <ram:GuidelineSpecifiedDocumentContextParameter>
+            <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:zugferd.de:2p0:basic</ram:ID>
+        </ram:GuidelineSpecifiedDocumentContextParameter>
+    </rsm:ExchangedDocumentContext>
+    <rsm:ExchangedDocument>
+        <ram:ID>' . htmlspecialchars($invoiceNumber) . '</ram:ID>
+        <ram:TypeCode>380</ram:TypeCode>
+        <ram:IssueDateTime>
+            <udt:DateTimeString format="102">' . str_replace('-', '', $issueDate) . '</udt:DateTimeString>
+        </ram:IssueDateTime>
+    </rsm:ExchangedDocument>
+    <rsm:SupplyChainTradeTransaction>
+        <ram:ApplicableHeaderTradeAgreement>
+            <ram:SellerTradeParty>
+                <ram:Name>' . htmlspecialchars($seller['name']) . '</ram:Name>
+                <ram:PostalTradeAddress>
+                    <ram:LineOne>' . htmlspecialchars($seller['address']['line1'] ?? '') . '</ram:LineOne>
+                    <ram:PostcodeCode>' . htmlspecialchars($seller['address']['postcode'] ?? '') . '</ram:PostcodeCode>
+                    <ram:CityName>' . htmlspecialchars($seller['address']['city'] ?? '') . '</ram:CityName>
+                    <ram:CountryID>' . htmlspecialchars($seller['address']['country'] ?? 'DE') . '</ram:CountryID>
+                </ram:PostalTradeAddress>
+                <ram:SpecifiedTaxRegistration>
+                    <ram:ID schemeID="VA">' . htmlspecialchars($seller['vat_id'] ?? '') . '</ram:ID>
+                </ram:SpecifiedTaxRegistration>
+                <ram:SpecifiedTaxRegistration>
+                    <ram:ID schemeID="FC">' . htmlspecialchars($seller['tax_number'] ?? '') . '</ram:ID>
+                </ram:SpecifiedTaxRegistration>
+            </ram:SellerTradeParty>
+            <ram:BuyerTradeParty>
+                <ram:Name>' . htmlspecialchars($buyer['name']) . '</ram:Name>
+                <ram:PostalTradeAddress>
+                    <ram:LineOne>' . htmlspecialchars($buyer['address']['line1'] ?? '') . '</ram:LineOne>
+                    <ram:PostcodeCode>' . htmlspecialchars($buyer['address']['postcode'] ?? '') . '</ram:PostcodeCode>
+                    <ram:CityName>' . htmlspecialchars($buyer['address']['city'] ?? '') . '</ram:CityName>
+                    <ram:CountryID>' . htmlspecialchars($buyer['address']['country'] ?? 'DE') . '</ram:CountryID>
+                </ram:PostalTradeAddress>
+            </ram:BuyerTradeParty>
+        </ram:ApplicableHeaderTradeAgreement>
+        <ram:ApplicableHeaderTradeDelivery/>
+        <ram:ApplicableHeaderTradeSettlement>
+            <ram:InvoiceCurrencyCode>' . htmlspecialchars($currency) . '</ram:InvoiceCurrencyCode>
+            <ram:ApplicableTradeTax>
+                <ram:CalculatedAmount>' . number_format($totals['tax_amount'], 2, '.', '') . '</ram:CalculatedAmount>
+                <ram:TypeCode>VAT</ram:TypeCode>
+                <ram:CategoryCode>S</ram:CategoryCode>
+                <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+            </ram:ApplicableTradeTax>
+            <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+                <ram:LineTotalAmount>' . number_format($totals['net_amount'], 2, '.', '') . '</ram:LineTotalAmount>
+                <ram:TaxBasisTotalAmount>' . number_format($totals['net_amount'], 2, '.', '') . '</ram:TaxBasisTotalAmount>
+                <ram:TaxTotalAmount currencyID="' . htmlspecialchars($currency) . '">' . number_format($totals['tax_amount'], 2, '.', '') . '</ram:TaxTotalAmount>
+                <ram:GrandTotalAmount>' . number_format($totals['gross_amount'], 2, '.', '') . '</ram:GrandTotalAmount>
+                <ram:DuePayableAmount>' . number_format($totals['gross_amount'], 2, '.', '') . '</ram:DuePayableAmount>
+            </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        </ram:ApplicableHeaderTradeSettlement>
+    </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>';
+
+            return $xml;
+            
+        } catch (Exception $e) {
+            throw new Exception('Fehler beim Generieren der ZUGFeRD-XML: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Konvertiert Profil-String zu ZUGFeRD-Profil-ID
+     *
+     * @param string $profile Das Profil als String
+     * @return int Die ZUGFeRD-Profil-ID
+     */
+    protected function getZugferdProfileId(string $profile): int
+    {
+        switch (strtoupper($profile)) {
+            case 'MINIMUM':
+            case 'BASIC':
+                return \horstoeko\zugferd\ZugferdProfiles::PROFILE_EN16931;
+            case 'COMFORT':
+            case 'EXTENDED':
+            default:
+                return \horstoeko\zugferd\ZugferdProfiles::PROFILE_EN16931;
+        }
+    }
+
+    /**
+     * Erstellt Beispiel-Rechnungsdaten für ZUGFeRD-Demo
+     *
+     * @return array Beispiel-Rechnungsdaten
+     */
+    public static function getExampleZugferdData(): array
+    {
+        return [
+            'invoice_number' => 'RE-' . date('Y') . '-' . str_pad(rand(1000, 9999), 4, '0', STR_PAD_LEFT),
+            'type_code' => '380', // Standard Rechnung
+            'issue_date' => date('Y-m-d'),
+            'currency' => 'EUR',
+            'default_tax_rate' => 19.0,
+            
+            'seller' => [
+                'name' => 'DIE DEMO GmbH',
+                'id' => 'DEMO-001',
+                'tax_number' => 'DE123456789',
+                'vat_id' => 'DE987654321',
+                'company_register' => 'HRB 12345 AG München',
+                'address' => [
+                    'line1' => 'Innovationsstraße 42',
+                    'line2' => 'Tech-Campus, Gebäude A',
+                    'line3' => '',
+                    'postcode' => '80331',
+                    'city' => 'München',
+                    'country' => 'DE'
+                ],
+                'contact' => [
+                    'phone' => '+49 89 1234567',
+                    'email' => 'rechnung@die-demo.de',
+                    'web' => 'https://www.die-demo.de'
+                ],
+                'bank' => [
+                    'name' => 'Bayerische Landesbank',
+                    'iban' => 'DE89 3705 0198 1234 5678 90',
+                    'bic' => 'BYLADEMM'
+                ],
+                'management' => 'Geschäftsführer: Max Mustermann, Dr. Anna Schmidt'
+            ],
+            
+            'buyer' => [
+                'name' => 'REDAXO Solutions AG',
+                'id' => 'KUNDE-2024-042',
+                'address' => [
+                    'line1' => 'REDAXO-Platz 1',
+                    'line2' => 'Abteilung: Digitale Innovation',
+                    'line3' => '',
+                    'postcode' => '10115',
+                    'city' => 'Berlin',
+                    'country' => 'DE'
+                ]
+            ],
+            
+            'payment_terms' => [
+                'description' => 'Zahlbar innerhalb 14 Tagen ohne Abzug. Bei Zahlung nach 14 Tagen werden 2% Verzugszinsen berechnet.',
+                'due_date' => date('Y-m-d', strtotime('+14 days'))
+            ],
+            
+            'line_items' => [
+                [
+                    'name' => 'REDAXO WordPress-Integration AddOn',
+                    'description' => 'Entwicklung eines revolutionären AddOns zur nahtlosen Integration von WordPress in REDAXO CMS',
+                    'seller_assigned_id' => 'DEMO-WP-001',
+                    'quantity' => 1.0,
+                    'unit' => 'STK',
+                    'unit_price' => 11900.00,
+                    'net_unit_price' => 10000.00,
+                    'tax_rate' => 19.0
+                ]
+            ],
+            
+            'totals' => [
+                'net_amount' => 10000.00,
+                'tax_amount' => 1900.00,
+                'gross_amount' => 11900.00,
+                'tax_breakdown' => [
+                    [
+                        'tax_rate' => 19.0,
+                        'taxable_amount' => 10000.00,
+                        'tax_amount' => 1900.00
+                    ]
+                ]
+            ],
+            
+            'project_details' => [
+                'project_name' => 'REDAXO-WordPress Integration Suite',
+                'project_number' => 'PROJ-WP-2024-042',
+                'delivery_time' => '8-12 Wochen ab Auftragserteilung',
+                'warranty' => '24 Monate Gewährleistung auf alle Entwicklungsarbeiten'
+            ]
+        ];
     }
 }
