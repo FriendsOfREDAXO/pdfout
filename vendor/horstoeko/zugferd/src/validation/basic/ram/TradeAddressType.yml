@@ -1,7 +1,0 @@
-horstoeko\zugferd\entities\basic\ram\TradeAddressType:
-    properties:
-        countryID:
-            -
-                NotNull:
-                    groups:
-                        - xsd_rules

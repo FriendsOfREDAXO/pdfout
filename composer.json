@@ -1,6 +1,6 @@
 {
     "name": "friends-of-redaxo/pdfout",
-    "description": "HTML to PDF converter addon for REDAXO with TCPDF features, digital signatures, password protection and ZUGFeRD support",
+    "description": "HTML to PDF converter addon for REDAXO with TCPDF features, digital signatures and password protection",
     "type": "redaxo-addon",
     "license": "MIT",
     "authors": [
@@ -16,7 +16,6 @@
     "require": {
         "dompdf/dompdf": "^3.0.2",
         "tecnickcom/tcpdf": "^6.7",
-        "horstoeko/zugferd": "^1.0",
         "setasign/fpdi": "^2.6"
     },
     "replace": {

@@ -33,12 +33,6 @@ if (rex_post('config-submit', 'bool')) {
         }
     }
     
-    // Validiere ZUGFeRD XML-Dateiname
-    $zugferdXmlFilename = rex_post('zugferd_xml_filename', 'string', 'factur-x.xml');
-    if (!preg_match('/^[a-zA-Z0-9_\-]+\.xml$/', $zugferdXmlFilename)) {
-        $errors[] = 'ZUGFeRD XML-Dateiname muss ein gültiger .xml Dateiname sein';
-    }
-    
     // Validiere Performance-Limits
     $maxHtmlSizeMb = rex_post('max_html_size_mb', 'int', 10);
     $maxExecutionTime = rex_post('max_execution_time', 'int', 300);
@@ -67,11 +61,6 @@ if (rex_post('config-submit', 'bool')) {
             'default_signature_position_y' => $sigY,
             'default_signature_width' => $sigWidth,
             'default_signature_height' => $sigHeight,
-            
-            // ZUGFeRD/Factur-X Einstellungen
-            'enable_zugferd_by_default' => rex_post('enable_zugferd_by_default', 'bool', false),
-            'default_zugferd_profile' => rex_post('default_zugferd_profile', 'string', 'BASIC'),
-            'zugferd_xml_filename' => $zugferdXmlFilename,
             
             // System Einstellungen
             'enable_debug_mode' => rex_post('enable_debug_mode', 'bool', false),
@@ -232,40 +221,6 @@ $fragment = new rex_fragment();
 $fragment->setVar('elements', $formElements, false);
 $signatureSettings = $fragment->parse('core/form/form.php');
 
-// ZUGFeRD/Factur-X Einstellungen
-$formElements = [];
-
-$n = [];
-$n['label'] = '<label for="enable_zugferd_by_default"><i class="fa fa-file-code-o"></i> ZUGFeRD standardmäßig aktivieren</label>';
-$n['field'] = '<input type="checkbox" id="enable_zugferd_by_default" name="enable_zugferd_by_default" value="1"' . (($config['enable_zugferd_by_default'] ?? false) ? ' checked="checked"' : '') . '/>';
-$n['note'] = 'Aktiviert ZUGFeRD/Factur-X für alle neuen PDFs standardmäßig.';
-$formElements[] = $n;
-
-$n = [];
-$n['label'] = '<label for="default_zugferd_profile"><i class="fa fa-cogs"></i> Standard ZUGFeRD-Profil</label>';
-$zugferdSelect = new rex_select();
-$zugferdSelect->setId('default_zugferd_profile');
-$zugferdSelect->setName('default_zugferd_profile');
-$zugferdSelect->addOptions([
-    'BASIC' => 'BASIC - Grundlegende Rechnungsdaten',
-    'COMFORT' => 'COMFORT - Erweiterte Funktionen',
-    'EXTENDED' => 'EXTENDED - Vollständige Daten'
-]);
-$zugferdSelect->setSelected($config['default_zugferd_profile'] ?? 'BASIC');
-$n['field'] = $zugferdSelect->get();
-$n['note'] = 'Standard-Profil für ZUGFeRD-Rechnungen. BASIC ist für die meisten Anwendungen ausreichend.';
-$formElements[] = $n;
-
-$n = [];
-$n['label'] = '<label for="zugferd_xml_filename"><i class="fa fa-file-text-o"></i> XML-Dateiname</label>';
-$n['field'] = '<input type="text" id="zugferd_xml_filename" name="zugferd_xml_filename" value="' . rex_escape($config['zugferd_xml_filename'] ?? 'factur-x.xml') . '" placeholder="factur-x.xml"/>';
-$n['note'] = 'Dateiname der eingebetteten XML-Datei im PDF (z.B. "zugferd-invoice.xml" oder "factur-x.xml").';
-$formElements[] = $n;
-
-$fragment = new rex_fragment();
-$fragment->setVar('elements', $formElements, false);
-$zugferdSettings = $fragment->parse('core/form/form.php');
-
 // System-Einstellungen
 $formElements = [];
 
@@ -340,11 +295,6 @@ $generalConfigContent = '
                 </a>
             </li>
             <li role="presentation">
-                <a href="#zugferd" aria-controls="zugferd" role="tab" data-toggle="tab">
-                    <i class="fa fa-file-code-o"></i> ZUGFeRD
-                </a>
-            </li>
-            <li role="presentation">
                 <a href="#system" aria-controls="system" role="tab" data-toggle="tab">
                     <i class="fa fa-server"></i> System
                 </a>
@@ -374,28 +324,6 @@ $generalConfigContent = '
                     <strong><i class="fa fa-info-circle"></i> Positionierungs-Hilfe:</strong>
                     Die Signatur wird relativ zur linken oberen Ecke des Dokuments positioniert. 
                     Übliche Werte: X=180mm, Y=60mm für eine Signatur rechts unten.
-                </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="zugferd">
-                ' . $zugferdSettings . '
-                <div class="alert alert-success">
-                    <h4><strong><i class="fa fa-info-circle"></i> ZUGFeRD/Factur-X</strong></h4>
-                    <p>
-                        ZUGFeRD (Zentraler User Guide des Forums elektronische Rechnung Deutschland) ist ein 
-                        hybrides Rechnungsformat, das sowohl menschen- als auch maschinenlesbar ist.
-                    </p>
-                    <p>
-                        <strong>Vorteile:</strong>
-                    </p>
-                    <ul>
-                        <li>Automatische Verarbeitung in Buchhaltungssoftware</li>
-                        <li>Reduzierung von Eingabefehlern</li>
-                        <li>Beschleunigung des Rechnungsworkflows</li>
-                        <li>Kompatibilität mit EU-Standard EN 16931</li>
-                    </ul>
-                    <p>
-                        <strong>Systemvoraussetzungen:</strong> Die horstoeko/zugferd Library wurde automatisch installiert.
-                    </p>
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="system">

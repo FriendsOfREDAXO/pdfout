@@ -1,7 +1,0 @@
-horstoeko\zugferd\entities\minimum\ram\TaxRegistrationType:
-    properties:
-        iD:
-            -
-                NotNull:
-                    groups:
-                        - xsd_rules

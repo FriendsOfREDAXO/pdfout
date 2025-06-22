@@ -1,9 +1,0 @@
-horstoeko\zugferd\entities\en16931\ram\SupplyChainEventType:
-    properties:
-        occurrenceDateTime:
-            -
-                NotNull:
-                    groups:
-                        - xsd_rules
-            -
-                Valid: null

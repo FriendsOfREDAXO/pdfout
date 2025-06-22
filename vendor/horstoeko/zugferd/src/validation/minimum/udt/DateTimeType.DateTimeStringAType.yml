@@ -1,7 +1,0 @@
-horstoeko\zugferd\entities\minimum\udt\DateTimeType\DateTimeStringAType:
-    properties:
-        format:
-            -
-                NotNull:
-                    groups:
-                        - xsd_rules

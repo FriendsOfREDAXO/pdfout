@@ -1,8 +1,0 @@
-/.buildpath
-/.project
-/.settings
-/.idea
-composer.lock
-vendor/
-/.phpunit.result.cache
-

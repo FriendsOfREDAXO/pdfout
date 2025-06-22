@@ -4,7 +4,6 @@
  */
 
 use FriendsOfRedaxo\PdfOut\PdfOut;
-use FriendsOfRedaxo\PdfOut\ZugferdDataHelper;
 
 $addon = rex_addon::get('pdfout');
 
@@ -205,72 +204,6 @@ if (rex_post('demo-action')) {
             }
             break;
             
-        case 'zugferd_pdf':
-            try {
-                // ZUGFeRD-Demo-Rechnung erstellen
-                $invoiceData = ZugferdDataHelper::getExampleZugferdData();
-
-                // HTML-Vorlage laden
-                $templatePath = $addon->getPath('pages/zugferd.html');
-                if (!file_exists($templatePath)) {
-                    throw new Exception('HTML-Vorlage nicht gefunden: ' . $templatePath);
-                }
-                $invoiceHtml = file_get_contents($templatePath);
-
-        // Platzhalter ersetzen
-        $placeholders = [
-            '{{seller_name}}' => htmlspecialchars($invoiceData['seller']['name']),
-            '{{seller_address}}' => htmlspecialchars($invoiceData['seller']['address']['line1']),
-            '{{seller_postcode}}' => htmlspecialchars($invoiceData['seller']['address']['postcode']),
-            '{{seller_city}}' => htmlspecialchars($invoiceData['seller']['address']['city']),
-            '{{seller_phone}}' => htmlspecialchars($invoiceData['seller']['contact']['phone']),
-            '{{seller_email}}' => htmlspecialchars($invoiceData['seller']['contact']['email']),
-            '{{buyer_name}}' => htmlspecialchars($invoiceData['buyer']['name']),
-            '{{buyer_address}}' => htmlspecialchars($invoiceData['buyer']['address']['line1']),
-            '{{buyer_postcode}}' => htmlspecialchars($invoiceData['buyer']['address']['postcode']),
-            '{{buyer_city}}' => htmlspecialchars($invoiceData['buyer']['address']['city']),
-            '{{invoice_number}}' => htmlspecialchars($invoiceData['invoice_number']),
-            '{{issue_date}}' => date('d.m.Y', strtotime($invoiceData['issue_date'])),
-            '{{due_date}}' => date('d.m.Y', strtotime($invoiceData['payment_terms']['due_date'])),
-            '{{net_amount}}' => number_format($invoiceData['totals']['net_amount'], 2, ',', '.') . ' €',
-            '{{tax_amount}}' => number_format($invoiceData['totals']['tax_amount'], 2, ',', '.') . ' €',
-            '{{gross_amount}}' => number_format($invoiceData['totals']['gross_amount'], 2, ',', '.') . ' €',
-            '{{bank_name}}' => htmlspecialchars($invoiceData['seller']['bank']['name']),
-            '{{bank_iban}}' => htmlspecialchars($invoiceData['seller']['bank']['iban']),
-            '{{bank_bic}}' => htmlspecialchars($invoiceData['seller']['bank']['bic']),
-            '{{company_register}}' => htmlspecialchars($invoiceData['seller']['company_register']),
-            '{{vat_id}}' => htmlspecialchars($invoiceData['seller']['vat_id']),
-            '{{tax_number}}' => htmlspecialchars($invoiceData['seller']['tax_number']),
-        ];
-
-                foreach ($placeholders as $key => $value) {
-                    $invoiceHtml = str_replace($key, $value, $invoiceHtml);
-                }
-
-        // Rechnungspositionen einfügen
-        $lineItemsHtml = '';
-        foreach ($invoiceData['line_items'] as $index => $item) {
-            $total = $item['net_unit_price'] * $item['quantity'];
-            $lineItemsHtml .= "<tr>\n" .
-                "<td style='text-align: left; padding: 8px; border: 1px solid #ddd;'><strong>" . ($index + 1) . ". " . htmlspecialchars($item['name']) . "</strong><br><span style='font-size: 9px; color: #666;'>" . htmlspecialchars($item['description']) . "</span></td>\n" .
-                "<td style='text-align: center; padding: 8px; border: 1px solid #ddd;'>" . $item['quantity'] . " " . $item['unit'] . "</td>\n" .
-                "<td style='text-align: right; padding: 8px; border: 1px solid #ddd;'>" . number_format($item['net_unit_price'], 2, ',', '.') . " €</td>\n" .
-                "<td style='text-align: right; padding: 8px; border: 1px solid #ddd;'>" . number_format($total, 2, ',', '.') . " €</td>\n" .
-                "</tr>\n";
-        }
-                $invoiceHtml = str_replace('{{line_items}}', $lineItemsHtml, $invoiceHtml);
-
-                // PDF generieren
-                $pdf = new PdfOut();
-                $pdf->setName('demo_zugferd_rechnung')
-                    ->setHtml($invoiceHtml)
-                    ->enableZugferd($invoiceData, 'BASIC', 'factur-x.xml')
-                    ->run();
-            } catch (Exception $e) {
-                $error = 'Fehler beim Erstellen der ZUGFeRD-Rechnung: ' . $e->getMessage();
-            }
-            break;
-            
         case 'pdf_import_demo':
             try {
                 // Prüfe ob FPDI verfügbar ist
@@ -463,7 +396,6 @@ function loadDemos() {
         'signed_pdf', 
         'password_pdf',
         'full_featured_pdf',
-        'zugferd_pdf',
         'pdf_import_demo'
     ];
     
