@@ -5,7 +5,7 @@
 
 return [
     'title' => 'ZUGFeRD/Factur-X Rechnung',
-    'description' => 'Erstellt eine ZUGFeRD-konforme Rechnung mit eingebetteter XML für die automatische Verarbeitung in der Buchhaltung.',
+    'description' => 'Erstellt eine ZUGFeRD-konforme Rechnung mit eingebetteter XML für die automatische Verarbeitung in der Buchhaltung. Verwendet die horstoeko/zugferd Library für valide XML-Generierung.',
     'panel_class' => 'panel-default',
     'btn_class' => 'btn-default',
     'icon' => 'fa-file-code-o',

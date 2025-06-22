@@ -1116,7 +1116,7 @@ class PdfOut extends Dompdf
     }
 
     /**
-     * Generiert ZUGFeRD-XML aus den Rechnungsdaten (vereinfachte Version)
+     * Generiert ZUGFeRD-XML aus den Rechnungsdaten mit horstoeko/zugferd Library
      *
      * @return string Das generierte XML
      * @throws Exception
@@ -1124,101 +1124,170 @@ class PdfOut extends Dompdf
     protected function generateZugferdXml(): string
     {
         try {
-            // Vereinfachte ZUGFeRD XML-Generierung ohne komplexe Library-Aufrufe
-            // Diese Version erstellt eine grundlegende ZUGFeRD-konforme XML
+            // horstoeko/zugferd Library verwenden für valide ZUGFeRD XML-Generierung
+            $documentBuilder = \horstoeko\zugferd\ZugferdDocumentBuilder::createNew($this->getZugferdProfileId($this->zugferdProfile));
             
+            // Rechnungsgrundlagen setzen
             $invoiceNumber = $this->zugferdInvoiceData['invoice_number'] ?? 'DEMO-001';
-            $issueDate = $this->zugferdInvoiceData['issue_date'] ?? date('Y-m-d');
+            $issueDate = DateTime::createFromFormat('Y-m-d', $this->zugferdInvoiceData['issue_date'] ?? date('Y-m-d'));
             $currency = $this->zugferdInvoiceData['currency'] ?? 'EUR';
+            $typeCode = (int)($this->zugferdInvoiceData['type_code'] ?? 380); // Standard Rechnung
             
-            $seller = $this->zugferdInvoiceData['seller'] ?? [
-                'name' => 'REDAXO Demo GmbH',
-                'address' => [
-                    'line1' => 'Musterstraße 123',
-                    'postcode' => '12345',
-                    'city' => 'Musterstadt',
-                    'country' => 'DE'
-                ]
-            ];
+            $documentBuilder->setDocumentInformation(
+                $invoiceNumber,
+                $typeCode,
+                $issueDate,
+                $currency
+            );
             
-            $buyer = $this->zugferdInvoiceData['buyer'] ?? [
-                'name' => 'Musterkunde AG',
-                'address' => [
-                    'line1' => 'Kundenstraße 456',
-                    'postcode' => '54321',
-                    'city' => 'Kundenstadt',
-                    'country' => 'DE'
-                ]
-            ];
+            // Verkäufer (Seller) setzen
+            $seller = $this->zugferdInvoiceData['seller'] ?? [];
+            $sellerName = $seller['name'] ?? 'REDAXO Demo GmbH';
+            $sellerAddress = $seller['address'] ?? [];
             
-            $totals = $this->zugferdInvoiceData['totals'] ?? [
-                'net_amount' => 100.00,
-                'tax_amount' => 19.00,
-                'gross_amount' => 119.00
-            ];
-
-            // Einfache ZUGFeRD XML-Struktur
-            $xml = '<?xml version="1.0" encoding="UTF-8"?>
-<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
-    <rsm:ExchangedDocumentContext>
-        <ram:GuidelineSpecifiedDocumentContextParameter>
-            <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:zugferd.de:2p0:basic</ram:ID>
-        </ram:GuidelineSpecifiedDocumentContextParameter>
-    </rsm:ExchangedDocumentContext>
-    <rsm:ExchangedDocument>
-        <ram:ID>' . htmlspecialchars($invoiceNumber) . '</ram:ID>
-        <ram:TypeCode>380</ram:TypeCode>
-        <ram:IssueDateTime>
-            <udt:DateTimeString format="102">' . str_replace('-', '', $issueDate) . '</udt:DateTimeString>
-        </ram:IssueDateTime>
-    </rsm:ExchangedDocument>
-    <rsm:SupplyChainTradeTransaction>
-        <ram:ApplicableHeaderTradeAgreement>
-            <ram:SellerTradeParty>
-                <ram:Name>' . htmlspecialchars($seller['name']) . '</ram:Name>
-                <ram:PostalTradeAddress>
-                    <ram:LineOne>' . htmlspecialchars($seller['address']['line1'] ?? '') . '</ram:LineOne>
-                    <ram:PostcodeCode>' . htmlspecialchars($seller['address']['postcode'] ?? '') . '</ram:PostcodeCode>
-                    <ram:CityName>' . htmlspecialchars($seller['address']['city'] ?? '') . '</ram:CityName>
-                    <ram:CountryID>' . htmlspecialchars($seller['address']['country'] ?? 'DE') . '</ram:CountryID>
-                </ram:PostalTradeAddress>
-                <ram:SpecifiedTaxRegistration>
-                    <ram:ID schemeID="VA">' . htmlspecialchars($seller['vat_id'] ?? '') . '</ram:ID>
-                </ram:SpecifiedTaxRegistration>
-                <ram:SpecifiedTaxRegistration>
-                    <ram:ID schemeID="FC">' . htmlspecialchars($seller['tax_number'] ?? '') . '</ram:ID>
-                </ram:SpecifiedTaxRegistration>
-            </ram:SellerTradeParty>
-            <ram:BuyerTradeParty>
-                <ram:Name>' . htmlspecialchars($buyer['name']) . '</ram:Name>
-                <ram:PostalTradeAddress>
-                    <ram:LineOne>' . htmlspecialchars($buyer['address']['line1'] ?? '') . '</ram:LineOne>
-                    <ram:PostcodeCode>' . htmlspecialchars($buyer['address']['postcode'] ?? '') . '</ram:PostcodeCode>
-                    <ram:CityName>' . htmlspecialchars($buyer['address']['city'] ?? '') . '</ram:CityName>
-                    <ram:CountryID>' . htmlspecialchars($buyer['address']['country'] ?? 'DE') . '</ram:CountryID>
-                </ram:PostalTradeAddress>
-            </ram:BuyerTradeParty>
-        </ram:ApplicableHeaderTradeAgreement>
-        <ram:ApplicableHeaderTradeDelivery/>
-        <ram:ApplicableHeaderTradeSettlement>
-            <ram:InvoiceCurrencyCode>' . htmlspecialchars($currency) . '</ram:InvoiceCurrencyCode>
-            <ram:ApplicableTradeTax>
-                <ram:CalculatedAmount>' . number_format($totals['tax_amount'], 2, '.', '') . '</ram:CalculatedAmount>
-                <ram:TypeCode>VAT</ram:TypeCode>
-                <ram:CategoryCode>S</ram:CategoryCode>
-                <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
-            </ram:ApplicableTradeTax>
-            <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-                <ram:LineTotalAmount>' . number_format($totals['net_amount'], 2, '.', '') . '</ram:LineTotalAmount>
-                <ram:TaxBasisTotalAmount>' . number_format($totals['net_amount'], 2, '.', '') . '</ram:TaxBasisTotalAmount>
-                <ram:TaxTotalAmount currencyID="' . htmlspecialchars($currency) . '">' . number_format($totals['tax_amount'], 2, '.', '') . '</ram:TaxTotalAmount>
-                <ram:GrandTotalAmount>' . number_format($totals['gross_amount'], 2, '.', '') . '</ram:GrandTotalAmount>
-                <ram:DuePayableAmount>' . number_format($totals['gross_amount'], 2, '.', '') . '</ram:DuePayableAmount>
-            </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-        </ram:ApplicableHeaderTradeSettlement>
-    </rsm:SupplyChainTradeTransaction>
-</rsm:CrossIndustryInvoice>';
-
+            $documentBuilder->setDocumentSeller(
+                $sellerName,
+                $seller['id'] ?? ''
+            );
+            
+            $documentBuilder->setDocumentSellerAddress(
+                $sellerAddress['line1'] ?? '',
+                $sellerAddress['line2'] ?? '',
+                $sellerAddress['line3'] ?? '',
+                $sellerAddress['postcode'] ?? '',
+                $sellerAddress['city'] ?? '',
+                $sellerAddress['country'] ?? 'DE'
+            );
+            
+            // Verkäufer Steuernummern setzen - korrekte API verwenden
+            if (!empty($seller['vat_id'])) {
+                $documentBuilder->addDocumentSellerVATRegistrationNumber($seller['vat_id']);
+            }
+            if (!empty($seller['tax_number'])) {
+                $documentBuilder->addDocumentSellerTaxNumber($seller['tax_number']);
+            }
+            
+            // Verkäufer Kontaktdaten setzen (optional)
+            if (!empty($seller['contact'])) {
+                $contact = $seller['contact'];
+                $documentBuilder->setDocumentSellerContact(
+                    $contact['name'] ?? '',
+                    '',
+                    $contact['phone'] ?? '',
+                    '',
+                    $contact['email'] ?? ''
+                );
+            }
+            
+            // Käufer (Buyer) setzen
+            $buyer = $this->zugferdInvoiceData['buyer'] ?? [];
+            $buyerName = $buyer['name'] ?? 'Musterkunde AG';
+            $buyerAddress = $buyer['address'] ?? [];
+            
+            $documentBuilder->setDocumentBuyer(
+                $buyerName,
+                $buyer['id'] ?? ''
+            );
+            
+            $documentBuilder->setDocumentBuyerAddress(
+                $buyerAddress['line1'] ?? '',
+                $buyerAddress['line2'] ?? '',
+                $buyerAddress['line3'] ?? '',
+                $buyerAddress['postcode'] ?? '',
+                $buyerAddress['city'] ?? '',
+                $buyerAddress['country'] ?? 'DE'
+            );
+            
+            // Käufer Kontaktdaten setzen (optional)
+            if (!empty($buyer['contact'])) {
+                $contact = $buyer['contact'];
+                $documentBuilder->setDocumentBuyerContact(
+                    $contact['name'] ?? '',
+                    '',
+                    $contact['phone'] ?? '',
+                    '',
+                    $contact['email'] ?? ''
+                );
+            }
+            
+            // Zahlungsbedingungen setzen (optional)
+            if (!empty($this->zugferdInvoiceData['payment_terms'])) {
+                $paymentTerms = $this->zugferdInvoiceData['payment_terms'];
+                if (!empty($paymentTerms['due_date'])) {
+                    $dueDate = DateTime::createFromFormat('Y-m-d', $paymentTerms['due_date']);
+                    if ($dueDate) {
+                        $documentBuilder->addDocumentPaymentTerm($paymentTerms['description'] ?? '', $dueDate);
+                    }
+                }
+            }
+            
+            // Rechnungspositionen hinzufügen
+            $lineItems = $this->zugferdInvoiceData['line_items'] ?? [];
+            foreach ($lineItems as $index => $item) {
+                $position = ($index + 1);
+                $quantity = (float)($item['quantity'] ?? 1.0);
+                $unitPrice = (float)($item['net_unit_price'] ?? 0.0);
+                $taxRate = (float)($item['tax_rate'] ?? 19.0);
+                $lineTotal = $unitPrice * $quantity;
+                
+                $documentBuilder->addNewPosition((string)$position);
+                
+                $documentBuilder->setDocumentPositionProductDetails(
+                    $item['name'] ?? '',
+                    $item['description'] ?? '',
+                    $item['seller_assigned_id'] ?? ''
+                );
+                
+                $documentBuilder->setDocumentPositionNetPrice($unitPrice);
+                
+                $documentBuilder->setDocumentPositionQuantity(
+                    $quantity,
+                    $item['unit'] ?? \horstoeko\zugferd\codelists\ZugferdUnitCodes::REC20_PIECE
+                );
+                
+                $documentBuilder->addDocumentPositionTax(
+                    \horstoeko\zugferd\codelists\ZugferdVatCategoryCodes::STAN_RATE,
+                    \horstoeko\zugferd\codelists\ZugferdVatTypeCodes::VALUE_ADDED_TAX,
+                    $taxRate
+                );
+                
+                $documentBuilder->setDocumentPositionLineSummation($lineTotal);
+            }
+            
+            // Beträge und Steuern setzen
+            $totals = $this->zugferdInvoiceData['totals'] ?? [];
+            $netAmount = (float)($totals['net_amount'] ?? 0.0);
+            $taxAmount = (float)($totals['tax_amount'] ?? 0.0);
+            $grossAmount = (float)($totals['gross_amount'] ?? 0.0);
+            $defaultTaxRate = (float)($this->zugferdInvoiceData['default_tax_rate'] ?? 19.0);
+            
+            // Steueraufschlüsselung hinzufügen
+            $documentBuilder->addDocumentTax(
+                \horstoeko\zugferd\codelists\ZugferdVatCategoryCodes::STAN_RATE, 
+                \horstoeko\zugferd\codelists\ZugferdVatTypeCodes::VALUE_ADDED_TAX, 
+                $netAmount, 
+                $taxAmount, 
+                $defaultTaxRate
+            );
+            
+            // Monetäre Summen setzen
+            $documentBuilder->setDocumentSummation(
+                $grossAmount, // Gesamtbetrag
+                $grossAmount, // Fälliger Betrag
+                $netAmount,   // Nettobetrag (Zeilensumme)
+                0.0,          // Allowances (Nachlässe)
+                0.0,          // Charges (Zuschläge)
+                $netAmount,   // Steuerbasis
+                $taxAmount    // Steuerbetrag
+            );
+            
+            // XML generieren und zurückgeben
+            $xml = $documentBuilder->getContent();
+            
+            if (empty($xml)) {
+                throw new Exception('ZUGFeRD XML konnte nicht generiert werden - leeres Resultat');
+            }
+            
             return $xml;
             
         } catch (Exception $e) {
@@ -1236,10 +1305,14 @@ class PdfOut extends Dompdf
     {
         switch (strtoupper($profile)) {
             case 'MINIMUM':
+                return \horstoeko\zugferd\ZugferdProfiles::PROFILE_MINIMUM;
             case 'BASIC':
-                return \horstoeko\zugferd\ZugferdProfiles::PROFILE_EN16931;
+                return \horstoeko\zugferd\ZugferdProfiles::PROFILE_BASICWL;
             case 'COMFORT':
+            case 'EN16931':
+                return \horstoeko\zugferd\ZugferdProfiles::PROFILE_EN16931;
             case 'EXTENDED':
+                return \horstoeko\zugferd\ZugferdProfiles::PROFILE_EXTENDED;
             default:
                 return \horstoeko\zugferd\ZugferdProfiles::PROFILE_EN16931;
         }
