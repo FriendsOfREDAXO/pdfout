@@ -1279,14 +1279,5 @@ class PdfOut extends Dompdf
         return class_exists('setasign\Fpdi\Tcpdf\Fpdi');
     }
 
-    /**
-     * Erstellt Beispiel-Rechnungsdaten für ZUGFeRD-Demo
-     * 
-     * @deprecated Diese Methode wurde in ZugferdDataHelper::getExampleZugferdData() ausgelagert
-     * @return array Beispiel-Rechnungsdaten
-     */
-    public static function getExampleZugferdData(): array
-    {
-        return ZugferdDataHelper::getExampleZugferdData();
-    }
+
 }
