@@ -491,8 +491,8 @@ $pdf->setName(\'demo_full_featured\')
     'zugferd_pdf' => [
         'title' => 'ZUGFeRD/Factur-X Rechnung',
         'description' => 'Erstellt eine ZUGFeRD-konforme Rechnung mit eingebetteter XML für die automatische Verarbeitung in der Buchhaltung.',
-        'panel_class' => 'panel-success',
-        'btn_class' => 'btn-success',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-default',
         'icon' => 'fa-file-code-o',
         'code' => '// Rechnungsdaten vorbereiten
 $invoiceData = PdfOut::getExampleZugferdData();
@@ -510,8 +510,8 @@ $pdf->setName(\'demo_zugferd_rechnung\')
     'pdf_import_demo' => [
         'title' => 'PDF-Import & Erweiterung',
         'description' => 'Demonstriert echte PDF-Import-Funktionalität mit FPDI. Importiert ein bestehendes PDF und fügt neue Inhalte hinzu.',
-        'panel_class' => 'panel-info',
-        'btn_class' => 'btn-info',
+        'panel_class' => 'panel-default',
+        'btn_class' => 'btn-default',
         'icon' => 'fa-copy',
         'availability_check' => '!class_exists(\'setasign\\Fpdi\\Tcpdf\\Fpdi\')',
         'availability_message' => 'FPDI ist nicht installiert. PDF-Import nicht verfügbar.',
