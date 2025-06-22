@@ -23,10 +23,24 @@ if (rex_post('generate-test-certificate', 'bool')) {
             rex_dir::create($certDir);
         }
         
+        // Sicherheitsprüfung: Verzeichnis validieren
+        $realCertDir = realpath($certDir);
+        if ($realCertDir === false || !is_writable($realCertDir)) {
+            throw new Exception('Zertifikatsverzeichnis nicht verfügbar oder nicht beschreibbar');
+        }
+        
         // OpenSSL-Befehle für Zertifikatserstellung
-        $privateKeyFile = $certDir . 'temp_private.key';
-        $certFile = $certDir . 'temp_cert.crt';
-        $password = 'redaxo123';
+        $privateKeyFile = $realCertDir . DIRECTORY_SEPARATOR . 'temp_private.key';
+        $certFile = $realCertDir . DIRECTORY_SEPARATOR . 'temp_cert.crt';
+        // Sicherheitswarnung: Für Produktionsumgebungen sollten sichere Passwörter verwendet werden
+        $password = 'demo_' . uniqid();
+        $certPath = $realCertDir . DIRECTORY_SEPARATOR . 'default.p12';
+        
+        // Prüfe ob OpenSSL verfügbar ist
+        $opensslPath = shell_exec('which openssl 2>/dev/null');
+        if (empty(trim($opensslPath))) {
+            throw new Exception('OpenSSL nicht verfügbar auf diesem System');
+        }
         
         // 1. Private Key erstellen
         $privateKeyCmd = sprintf(
@@ -70,7 +84,10 @@ if (rex_post('generate-test-certificate', 'bool')) {
         if (file_exists($privateKeyFile)) unlink($privateKeyFile);
         if (file_exists($certFile)) unlink($certFile);
         
-        $message = 'Test-Zertifikat wurde erfolgreich generiert!<br>Pfad: ' . $certPath . '<br>Passwort: ' . $password;
+        // Passwort für Demo-Zwecke in Config speichern (nur für Demo!)
+        $addon->setConfig('demo_cert_password', $password);
+        
+        $message = 'Test-Zertifikat wurde erfolgreich generiert!<br>Pfad: ' . $certPath . '<br><strong>Wichtig:</strong> Das Passwort wurde in der Konfiguration gespeichert. In Produktionsumgebungen sollten Passwörter sicher verwaltet werden.';
         
     } catch (Exception $e) {
         $error = 'Fehler beim Generieren des Test-Zertifikats: ' . $e->getMessage() . '<br><br>Stellen Sie sicher, dass OpenSSL auf dem Server installiert und verfügbar ist.';
@@ -92,7 +109,7 @@ if (rex_post('generate-test-pdf', 'bool')) {
 // Gemeinsame Signatur-Konfiguration für alle Demos
 $defaultSignatureConfig = [
     'cert_path' => '', // Standard-Zertifikat verwenden
-    'password' => 'redaxo123', // Test-Zertifikatspasswort
+    'password' => rex_config::get('pdfout', 'demo_cert_password', 'demo_changeme'), // Passwort aus Config laden
     'name' => 'REDAXO Demo',
     'location' => 'Demo-Umgebung',
     'reason' => 'Demo-Signierung',

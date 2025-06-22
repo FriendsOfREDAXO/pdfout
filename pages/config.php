@@ -7,37 +7,73 @@ $addon = rex_addon::get('pdfout');
 
 // Formulardaten verarbeiten
 if (rex_post('config-submit', 'bool')) {
-    $addon->setConfig([
-        // PDF Grundeinstellungen
-        'default_paper_size' => rex_post('default_paper_size', 'string', 'A4'),
-        'default_orientation' => rex_post('default_orientation', 'string', 'portrait'),
-        'default_font' => rex_post('default_font', 'string', 'Dejavu Sans'),
-        'default_dpi' => rex_post('default_dpi', 'int', 100),
-        'default_attachment' => rex_post('default_attachment', 'bool', false),
-        'default_remote_files' => rex_post('default_remote_files', 'bool', true),
-        
-        // Digitale Signatur Einstellungen
-        'default_certificate_path' => rex_post('default_certificate_path', 'string', ''),
-        'default_certificate_password' => rex_post('default_certificate_password', 'string', ''),
-        'enable_signature_by_default' => rex_post('enable_signature_by_default', 'bool', false),
-        'enable_password_protection_by_default' => rex_post('enable_password_protection_by_default', 'bool', false),
-        'default_signature_position_x' => rex_post('default_signature_position_x', 'int', 180),
-        'default_signature_position_y' => rex_post('default_signature_position_y', 'int', 60),
-        'default_signature_width' => rex_post('default_signature_width', 'int', 15),
-        'default_signature_height' => rex_post('default_signature_height', 'int', 15),
-        
-        // ZUGFeRD/Factur-X Einstellungen
-        'enable_zugferd_by_default' => rex_post('enable_zugferd_by_default', 'bool', false),
-        'default_zugferd_profile' => rex_post('default_zugferd_profile', 'string', 'BASIC'),
-        'zugferd_xml_filename' => rex_post('zugferd_xml_filename', 'string', 'factur-x.xml'),
-        
-        // System Einstellungen
-        'enable_debug_mode' => rex_post('enable_debug_mode', 'bool', false),
-        'log_pdf_generation' => rex_post('log_pdf_generation', 'bool', false),
-        'temp_file_cleanup' => rex_post('temp_file_cleanup', 'bool', true),
-    ]);
+    // Input validation
+    $errors = [];
     
-    echo rex_view::success('Konfiguration wurde gespeichert!');
+    // Validiere Signatur-Positionen und -Größen
+    $sigX = rex_post('default_signature_position_x', 'int', 180);
+    $sigY = rex_post('default_signature_position_y', 'int', 60);
+    $sigWidth = rex_post('default_signature_width', 'int', 15);
+    $sigHeight = rex_post('default_signature_height', 'int', 15);
+    $dpi = rex_post('default_dpi', 'int', 100);
+    
+    if ($sigX < 0 || $sigX > 300) $errors[] = 'Signatur X-Position muss zwischen 0 und 300 mm liegen';
+    if ($sigY < 0 || $sigY > 400) $errors[] = 'Signatur Y-Position muss zwischen 0 und 400 mm liegen';
+    if ($sigWidth < 5 || $sigWidth > 100) $errors[] = 'Signatur Breite muss zwischen 5 und 100 mm liegen';
+    if ($sigHeight < 5 || $sigHeight > 50) $errors[] = 'Signatur Höhe muss zwischen 5 und 50 mm liegen';
+    if ($dpi < 50 || $dpi > 300) $errors[] = 'DPI muss zwischen 50 und 300 liegen';
+    
+    // Validiere Zertifikatspfad falls angegeben
+    $certPath = rex_post('default_certificate_path', 'string', '');
+    if (!empty($certPath)) {
+        // Pfad-Traversal-Schutz
+        $certPath = str_replace(['../', '..\\'], '', $certPath);
+        if (!preg_match('/^[a-zA-Z0-9\/\\\\_\-\.]+$/', $certPath)) {
+            $errors[] = 'Zertifikatspfad enthält ungültige Zeichen';
+        }
+    }
+    
+    // Validiere ZUGFeRD XML-Dateiname
+    $zugferdXmlFilename = rex_post('zugferd_xml_filename', 'string', 'factur-x.xml');
+    if (!preg_match('/^[a-zA-Z0-9_\-]+\.xml$/', $zugferdXmlFilename)) {
+        $errors[] = 'ZUGFeRD XML-Dateiname muss ein gültiger .xml Dateiname sein';
+    }
+    
+    if (empty($errors)) {
+        $addon->setConfig([
+            // PDF Grundeinstellungen
+            'default_paper_size' => rex_post('default_paper_size', 'string', 'A4'),
+            'default_orientation' => rex_post('default_orientation', 'string', 'portrait'),
+            'default_font' => rex_post('default_font', 'string', 'Dejavu Sans'),
+            'default_dpi' => $dpi,
+            'default_attachment' => rex_post('default_attachment', 'bool', false),
+            'default_remote_files' => rex_post('default_remote_files', 'bool', true),
+            
+            // Digitale Signatur Einstellungen
+            'default_certificate_path' => $certPath,
+            'default_certificate_password' => rex_post('default_certificate_password', 'string', ''),
+            'enable_signature_by_default' => rex_post('enable_signature_by_default', 'bool', false),
+            'enable_password_protection_by_default' => rex_post('enable_password_protection_by_default', 'bool', false),
+            'default_signature_position_x' => $sigX,
+            'default_signature_position_y' => $sigY,
+            'default_signature_width' => $sigWidth,
+            'default_signature_height' => $sigHeight,
+            
+            // ZUGFeRD/Factur-X Einstellungen
+            'enable_zugferd_by_default' => rex_post('enable_zugferd_by_default', 'bool', false),
+            'default_zugferd_profile' => rex_post('default_zugferd_profile', 'string', 'BASIC'),
+            'zugferd_xml_filename' => $zugferdXmlFilename,
+            
+            // System Einstellungen
+            'enable_debug_mode' => rex_post('enable_debug_mode', 'bool', false),
+            'log_pdf_generation' => rex_post('log_pdf_generation', 'bool', false),
+            'temp_file_cleanup' => rex_post('temp_file_cleanup', 'bool', true),
+        ]);
+        
+        echo rex_view::success('Konfiguration wurde gespeichert!');
+    } else {
+        echo rex_view::error('Konfigurationsfehler:<br>' . implode('<br>', $errors));
+    }
 }
 
 // Aktuelle Konfiguration laden
@@ -337,6 +373,20 @@ $generalConfigContent = '
                     Aktivieren Sie den Debug-Modus nur in Entwicklungsumgebungen, da sensible Informationen 
                     ausgegeben werden können.
                 </div>
+                
+                ' . (($config['enable_debug_mode'] ?? false) ? '
+                <div class="alert alert-danger">
+                    <strong><i class="fa fa-exclamation-triangle"></i> Produktionswarnung:</strong>
+                    Der Debug-Modus ist aktiviert! Dies kann in Produktionsumgebungen zu Sicherheitsproblemen führen,
+                    da interne Pfade und Fehlermeldungen ausgegeben werden.
+                </div>' : '') . '
+                
+                ' . (($config['default_remote_files'] ?? true) ? '
+                <div class="alert alert-info">
+                    <strong><i class="fa fa-info-circle"></i> Remote-Dateien:</strong>
+                    Der Zugriff auf externe Dateien ist aktiviert. Stellen Sie sicher, dass nur vertrauenswürdige 
+                    Quellen verwendet werden.
+                </div>' : '') . '
             </div>
         </div>
         
