@@ -164,9 +164,6 @@ $pdf->setPaperSize('A4', 'landscape')     // Alle dompdf-Settings werden verwend
 **Traditionelle TCPDF-Methode** (falls direkter Zugriff benötigt):
 
 ```php
-// Direkte TCPDF-Nutzung für Passwortschutz
-require_once rex_path::addon('pdfout') . 'vendor/tecnickcom/tcpdf/tcpdf.php';
-
 $pdf = new TCPDF();
 $pdf->SetProtection(
     ['print', 'copy'],  // Erlaubte Aktionen
