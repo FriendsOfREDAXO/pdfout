@@ -115,6 +115,32 @@ class PdfOut extends Dompdf
     /** @var TCPDF|null TCPDF/FPDI-Instanz für erweiterte PDF-Operationen */
     protected $pdf = null;
 
+    /** @var int Maximale HTML-Inhaltsgröße in Bytes (Standard: 10MB) */
+    protected $maxHtmlSize = 10485760;
+
+    /** @var int Maximale Verarbeitungszeit in Sekunden (Standard: 300s) */
+    protected $maxExecutionTime = 300;
+
+    /** @var int Maximale Zertifikatsdateigröße in Bytes (Standard: 1MB) */
+    protected $maxCertificateSize = 1048576;
+
+    /**
+     * Setzt die Sicherheitslimits für die PDF-Generierung
+     *
+     * @param int $maxHtmlSize Maximale HTML-Größe in Bytes
+     * @param int $maxExecutionTime Maximale Verarbeitungszeit in Sekunden
+     * @param int $maxCertificateSize Maximale Zertifikatsgröße in Bytes
+     * @return self
+     */
+    public function setSecurityLimits(int $maxHtmlSize = null, int $maxExecutionTime = null, int $maxCertificateSize = null): self
+    {
+        if ($maxHtmlSize !== null) $this->maxHtmlSize = max(1024, $maxHtmlSize); // Minimum 1KB
+        if ($maxExecutionTime !== null) $this->maxExecutionTime = max(30, $maxExecutionTime); // Minimum 30s
+        if ($maxCertificateSize !== null) $this->maxCertificateSize = max(1024, $maxCertificateSize); // Minimum 1KB
+        
+        return $this;
+    }
+
     /**
      * Konstruktor - lädt Standardkonfiguration
      */
@@ -156,6 +182,11 @@ class PdfOut extends Dompdf
             $this->zugferdProfile = $addon->getConfig('default_zugferd_profile', 'BASIC');
             $this->zugferdXmlFilename = $addon->getConfig('zugferd_xml_filename', 'factur-x.xml');
         }
+        
+        // Performance-Limits aus Config laden
+        $this->maxHtmlSize = ($addon->getConfig('max_html_size_mb', 10) * 1024 * 1024);
+        $this->maxExecutionTime = $addon->getConfig('max_execution_time', 300);
+        $this->maxCertificateSize = ($addon->getConfig('max_certificate_size_kb', 1024) * 1024);
     }
 
     /**
@@ -207,9 +238,15 @@ class PdfOut extends Dompdf
      * @param string $html Der HTML-Inhalt
      * @param bool $outputfilter Optional: Ob der Outputfilter angewendet werden soll
      * @return self
+     * @throws Exception Bei zu großem HTML-Inhalt
      */
     public function setHtml(string $html, bool $outputfilter = false): self
     {
+        // Sicherheitsprüfung: HTML-Größe begrenzen
+        if (strlen($html) > $this->maxHtmlSize) {
+            throw new Exception('HTML-Inhalt zu groß. Maximum: ' . number_format($this->maxHtmlSize / 1024 / 1024, 1) . ' MB');
+        }
+        
         if ($outputfilter) {
             $html = rex_extension::registerPoint(new rex_extension_point('OUTPUT_FILTER', $html));
         }
@@ -355,6 +392,12 @@ class PdfOut extends Dompdf
         $startTime = microtime(true);
         $addon = rex_addon::get('pdfout');
         
+        // Ausführungszeit begrenzen
+        $oldLimit = ini_get('max_execution_time');
+        if ($oldLimit < $this->maxExecutionTime) {
+            set_time_limit($this->maxExecutionTime);
+        }
+        
         $finalHtml = $this->html;
 
         // Wenn ein Grundtemplate gesetzt wurde, füge den Inhalt ein
@@ -365,7 +408,7 @@ class PdfOut extends Dompdf
         // Logging, wenn aktiviert
         if ($addon->getConfig('log_pdf_generation', false)) {
             rex_logger::factory()->info('PDFOut: Starte PDF-Generierung für "' . $this->name . '"', 
-                ['paperSize' => $this->paperSize, 'orientation' => $this->orientation, 'dpi' => $this->dpi]);
+                ['paperSize' => $this->paperSize, 'orientation' => $this->orientation, 'dpi' => $this->dpi, 'htmlSize' => strlen($finalHtml)]);
         }
 
         try {
@@ -433,7 +476,19 @@ class PdfOut extends Dompdf
             if ($addon->getConfig('enable_debug_mode', false)) {
                 throw $e;
             } else {
-                throw new Exception('PDF-Generierung fehlgeschlagen. Aktivieren Sie den Debug-Modus für weitere Details.');
+                // Sanitize error message in production
+                $sanitizedMessage = 'PDF-Generierung fehlgeschlagen';
+                if (strpos($e->getMessage(), 'HTML-Inhalt zu groß') !== false) {
+                    $sanitizedMessage = $e->getMessage();
+                } elseif (strpos($e->getMessage(), 'Zertifikatsdatei') !== false) {
+                    $sanitizedMessage = 'Fehler bei der Zertifikatsverarbeitung';
+                }
+                throw new Exception($sanitizedMessage . '. Aktivieren Sie den Debug-Modus für weitere Details.');
+            }
+        } finally {
+            // Ausführungszeit zurücksetzen
+            if ($oldLimit < $this->maxExecutionTime) {
+                set_time_limit($oldLimit);
             }
         }
     }
@@ -480,6 +535,7 @@ class PdfOut extends Dompdf
      * @param string $reason Grund für die Signierung
      * @param string $contactInfo Kontaktinformationen
      * @return self
+     * @throws Exception Bei ungültigen Zertifikatsdateien
      */
     public function enableDigitalSignature(
         string $certificatePath = '',
@@ -494,6 +550,29 @@ class PdfOut extends Dompdf
         // Standardpfad verwenden, wenn keiner angegeben
         if (empty($certificatePath)) {
             $certificatePath = rex_addon::get('pdfout')->getDataPath('certificates/default.p12');
+        }
+        
+        // Sicherheitsprüfungen für Zertifikatsdatei
+        if (!empty($certificatePath)) {
+            // Pfad-Traversal-Schutz
+            $realPath = realpath($certificatePath);
+            if ($realPath === false || !file_exists($realPath)) {
+                throw new Exception('Zertifikatsdatei nicht gefunden: ' . $certificatePath);
+            }
+            
+            // Dateigröße prüfen
+            $fileSize = filesize($realPath);
+            if ($fileSize > $this->maxCertificateSize) {
+                throw new Exception('Zertifikatsdatei zu groß. Maximum: ' . number_format($this->maxCertificateSize / 1024, 0) . ' KB');
+            }
+            
+            // Dateiberechtigungen prüfen (sollten nicht zu offen sein)
+            $perms = fileperms($realPath);
+            if ($perms & 0044) { // Andere haben Lesezugriff
+                rex_logger::factory()->warning('PDFOut: Zertifikatsdatei hat unsichere Berechtigung: ' . $realPath);
+            }
+            
+            $certificatePath = $realPath;
         }
         
         $this->certificatePath = $certificatePath;
@@ -703,6 +782,16 @@ class PdfOut extends Dompdf
 
         // Temporäre Datei für DomPDF-Output erstellen
         $tempFile = rex_path::addonCache('pdfout') . 'temp_' . uniqid() . '.pdf';
+        
+        // Sicherheitsprüfung: Verzeichnis existiert und ist beschreibbar
+        $tempDir = dirname($tempFile);
+        if (!is_dir($tempDir)) {
+            rex_dir::create($tempDir);
+        }
+        if (!is_writable($tempDir)) {
+            throw new Exception('Temporäres Verzeichnis nicht beschreibbar: ' . $tempDir);
+        }
+        
         rex_file::put($tempFile, $pdfData);
 
         try {

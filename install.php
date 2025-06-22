@@ -18,5 +18,15 @@ if (!$addon->hasConfig()) {
         'default_signature_position_y' => 60,
         'default_signature_width' => 15,
         'default_signature_height' => 15,
+        
+        // Performance/Sicherheits-Limits
+        'max_html_size_mb' => 10,
+        'max_execution_time' => 300,
+        'max_certificate_size_kb' => 1024,
+        
+        // System-Einstellungen
+        'enable_debug_mode' => false,
+        'log_pdf_generation' => false,
+        'temp_file_cleanup' => true,
     ]);
 }
