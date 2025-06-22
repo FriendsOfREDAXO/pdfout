@@ -115,6 +115,9 @@ class PdfOut extends Dompdf
     /** @var TCPDF|null TCPDF/FPDI-Instanz für erweiterte PDF-Operationen */
     protected $pdf = null;
 
+    /** @var string|null ZUGFeRD PDF-Inhalt wenn mit ZugferdDocumentPdfMerger erstellt */
+    protected $zugferdPdfContent = null;
+
     /** @var int Maximale HTML-Inhaltsgröße in Bytes (Standard: 10MB) */
     protected $maxHtmlSize = 10485760;
 
@@ -418,8 +421,8 @@ class PdfOut extends Dompdf
                 return;
             }
             
-            // Prüfen ob TCPDF-Features benötigt werden
-            if ($this->enableSigning || $this->enablePasswordProtection || $this->enableZugferd) {
+            // Prüfen ob TCPDF-Features benötigt werden (außer ZUGFeRD - das wird mit dompdf + Merger gemacht)
+            if ($this->enableSigning || $this->enablePasswordProtection) {
                 $this->runWithTcpdf($finalHtml);
                 return;
             }
@@ -444,9 +447,14 @@ class PdfOut extends Dompdf
             // Pagecounter Placeholder ersetzen, wenn vorhanden
             $this->injectPageCount($this);
 
+            // ZUGFeRD mit dompdf + ZugferdDocumentPdfMerger verarbeiten (bessere HTML-Unterstützung)
+            if ($this->enableZugferd && !empty($this->zugferdInvoiceData)) {
+                $this->processZugferdWithMerger();
+            }
+
             // Speichern des PDFs 
             if ($this->saveToPath !== '') {
-                $savedata = $this->output();
+                $savedata = $this->zugferdPdfContent ?? $this->output();
                 if (!is_null($savedata)) {
                     rex_file::put($this->saveToPath . rex_string::normalize($this->name) . '.pdf', $savedata);
                 }
@@ -456,7 +464,21 @@ class PdfOut extends Dompdf
             if ($this->saveToPath === '' || $this->saveAndSend === true) {
                 rex_response::cleanOutputBuffers(); // OutputBuffer leeren
                 header('Content-Type: application/pdf');
-                $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
+                
+                if ($this->zugferdPdfContent !== null) {
+                    // ZUGFeRD PDF direkt ausgeben
+                    header('Content-Length: ' . strlen($this->zugferdPdfContent));
+                    $filename = rex_string::normalize($this->name) . '.pdf';
+                    if ($this->attachment) {
+                        header('Content-Disposition: attachment; filename="' . $filename . '"');
+                    } else {
+                        header('Content-Disposition: inline; filename="' . $filename . '"');
+                    }
+                    echo $this->zugferdPdfContent;
+                } else {
+                    // Normale dompdf-Ausgabe verwenden
+                    $this->stream(rex_string::normalize($this->name), array('Attachment' => $this->attachment));
+                }
                 exit();
             }
             
@@ -1376,6 +1398,60 @@ class PdfOut extends Dompdf
             
         } catch (Exception $e) {
             throw new Exception('Fehler beim Einbetten der ZUGFeRD XML-Datei: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Verarbeitet ZUGFeRD mit dompdf + ZugferdDocumentPdfMerger (bessere HTML-Unterstützung)
+     * @throws Exception
+     */
+    protected function processZugferdWithMerger(): void
+    {
+        try {
+            // ZUGFeRD Library laden (über Composer Autoload)
+            $vendorPath = rex_path::addon('pdfout') . 'vendor/autoload.php';
+            if (!file_exists($vendorPath)) {
+                throw new Exception('ZUGFeRD Library nicht installiert. Bitte "composer install" im PDFOut-Addon ausführen.');
+            }
+            require_once $vendorPath;
+            
+            // ZUGFeRD XML generieren
+            $zugferdXml = $this->generateZugferdXml();
+            
+            if (empty($zugferdXml)) {
+                throw new Exception('ZUGFeRD XML konnte nicht generiert werden');
+            }
+
+            // Aktuelles PDF von dompdf als String holen
+            $pdfContent = $this->output();
+            
+            // ZugferdDocumentPdfMerger verwenden für saubere Integration
+            $pdfMerger = new \horstoeko\zugferd\ZugferdDocumentPdfMerger($zugferdXml, $pdfContent);
+            
+            // ZUGFeRD-konforme PDF-Ausgabe generieren
+            $zugferdPdf = $pdfMerger->downloadString();
+            
+            // Das Dompdf-Objekt mit dem neuen ZUGFeRD-PDF überschreiben
+            // Da Dompdf keinen direkten PDF-Input unterstützt, müssen wir den Output überschreiben
+            $this->zugferdPdfContent = $zugferdPdf;
+
+            // Logging
+            if (rex_addon::get('pdfout')->getConfig('enable_logging', false)) {
+                rex_logger::factory()->info('ZUGFeRD PDF erfolgreich mit dompdf + ZugferdDocumentPdfMerger erstellt', [
+                    'profile' => $this->zugferdProfile,
+                    'xml_size' => strlen($zugferdXml),
+                    'pdf_size' => strlen($zugferdPdf),
+                    'filename' => $this->zugferdXmlFilename
+                ]);
+            }
+
+        } catch (Exception $e) {
+            // Fallback zu TCPDF falls Merger fehlschlägt
+            if (rex_addon::get('pdfout')->getConfig('enable_debug_mode', false)) {
+                throw new Exception('ZUGFeRD Merger Fehler: ' . $e->getMessage() . ' - Verwenden Sie TCPDF als Fallback mit runWithTcpdf()');
+            } else {
+                throw new Exception('ZUGFeRD-Verarbeitung fehlgeschlagen. Aktivieren Sie den Debug-Modus für weitere Details.');
+            }
         }
     }
 
