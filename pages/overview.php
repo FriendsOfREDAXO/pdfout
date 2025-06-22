@@ -226,11 +226,9 @@ $usecases = '
                     <li><i class="fa fa-check text-success"></i> Fälschungsschutz</li>
                     <li><i class="fa fa-check text-success"></i> Automatische Archivierung</li>
                     <li><i class="fa fa-check text-success"></i> Compliance-konform</li>
-                    <li><i class="fa fa-star text-warning"></i> <strong>ZUGFeRD/Factur-X</strong> elektronische Rechnungen</li>
+
                 </ul>
-                <div class="alert alert-success" style="margin-top: 15px; margin-bottom: 0;">
-                    <small><strong><i class="fa fa-file-code-o"></i> ZUGFeRD:</strong> Elektronische Rechnungen mit eingebettetem XML.</small>
-                </div>
+              
             </div>
         </div>
     </div>

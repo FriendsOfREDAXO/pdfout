@@ -48,8 +48,7 @@ Die Standard-Demos werden in einer festen Reihenfolge geladen:
 2. signed_pdf  
 3. password_pdf
 4. full_featured_pdf
-5. zugferd_pdf
-6. pdf_import_demo
+5. pdf_import_demo
 
 Alle zusätzlichen Demos werden danach in alphabetischer Reihenfolge angehängt.
 
