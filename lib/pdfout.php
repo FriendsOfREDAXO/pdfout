@@ -1129,7 +1129,7 @@ class PdfOut extends Dompdf
             
             // Rechnungsgrundlagen setzen
             $invoiceNumber = $this->zugferdInvoiceData['invoice_number'] ?? 'DEMO-001';
-            $issueDate = DateTime::createFromFormat('Y-m-d', $this->zugferdInvoiceData['issue_date'] ?? date('Y-m-d'));
+            $issueDate = \DateTime::createFromFormat('Y-m-d', $this->zugferdInvoiceData['issue_date'] ?? date('Y-m-d'));
             $currency = $this->zugferdInvoiceData['currency'] ?? 'EUR';
             $typeCode = (int)($this->zugferdInvoiceData['type_code'] ?? 380); // Standard Rechnung
             
