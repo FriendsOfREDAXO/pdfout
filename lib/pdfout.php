@@ -1129,7 +1129,7 @@ class PdfOut extends Dompdf
             
             // Rechnungsgrundlagen setzen
             $invoiceNumber = $this->zugferdInvoiceData['invoice_number'] ?? 'DEMO-001';
-            $issueDate = \DateTime::createFromFormat('Y-m-d', $this->zugferdInvoiceData['issue_date'] ?? date('Y-m-d'));
+            $issueDate = new \DateTime($this->zugferdInvoiceData['issue_date'] ?? date('Y-m-d'));
             $currency = $this->zugferdInvoiceData['currency'] ?? 'EUR';
             $typeCode = (int)($this->zugferdInvoiceData['type_code'] ?? 380); // Standard Rechnung
             
@@ -1214,7 +1214,7 @@ class PdfOut extends Dompdf
             if (!empty($this->zugferdInvoiceData['payment_terms'])) {
                 $paymentTerms = $this->zugferdInvoiceData['payment_terms'];
                 if (!empty($paymentTerms['due_date'])) {
-                    $dueDate = DateTime::createFromFormat('Y-m-d', $paymentTerms['due_date']);
+                    $dueDate = new \DateTime($paymentTerms['due_date']);
                     if ($dueDate) {
                         $documentBuilder->addDocumentPaymentTerm($paymentTerms['description'] ?? '', $dueDate);
                     }
