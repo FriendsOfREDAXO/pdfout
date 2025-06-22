@@ -21,8 +21,12 @@ $defaultConfig = [
 ];
 
 // Füge fehlende Konfigurationsoptionen hinzu
+$missingConfig = [];
 foreach ($defaultConfig as $key => $value) {
     if (!isset($currentConfig[$key])) {
-        $addon->setConfig($key, $value);
+        $missingConfig[$key] = $value;
     }
+}
+if (!empty($missingConfig)) {
+    $addon->setConfig($missingConfig);
 }
