@@ -4,6 +4,12 @@ PdfOut stellt die "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dom
 
 Es ermöglicht die einfache Umwandlung von HTML-Inhalten (auch REDAXO-Artikel) in PDF-Dateien, deren Anzeige im Browser, Speicherung oder direkten Download sowie fortgeschrittene Funktionen wie digitale Signierung, Passwortschutz und nachträgliche Bearbeitung.
 
+## Wichtige Änderungen in 10.0
+
+### Entfernte Funktionen
+
+Die Datei `deprecated_pdfout.php` wurde entfernt, da sie veraltet war und seit Version 8.5.0 als `@deprecated` markiert wurde. Bitte verwenden Sie stattdessen die Klasse `FriendsOfRedaxo\PdfOut\PdfOut` direkt.
+
 ## Key Features
 
 ### Standard-Features (basierend auf DomPDF/pdf.js)
@@ -328,4 +334,6 @@ https://github.com/FriendsOfREDAXO
 ### Lizenz
 
 Dieses Addon ist unter der [MIT-Lizenz](https://github.com/FriendsOfREDAXO/pdfout/blob/master/LICENSE.md) lizenziert.
+
+
 
