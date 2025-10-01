@@ -20,7 +20,12 @@ if (rex_post('config-submit', 'bool')) {
         'default_certificate_path' => rex_post('default_certificate_path', 'string', ''),
         'default_certificate_password' => rex_post('default_certificate_password', 'string', ''),
         'enable_signature_by_default' => rex_post('enable_signature_by_default', 'bool', false),
+        'default_certificate_selection' => rex_post('default_certificate_selection', 'string', ''),
+        
+        // Passwortschutz Einstellungen
         'enable_password_protection_by_default' => rex_post('enable_password_protection_by_default', 'bool', false),
+        'default_user_password' => rex_post('default_user_password', 'string', ''),
+        'default_owner_password' => rex_post('default_owner_password', 'string', ''),
         'default_signature_position_x' => rex_post('default_signature_position_x', 'int', 180),
         'default_signature_position_y' => rex_post('default_signature_position_y', 'int', 60),
         'default_signature_width' => rex_post('default_signature_width', 'int', 15),
@@ -31,6 +36,13 @@ if (rex_post('config-submit', 'bool')) {
         'log_pdf_generation' => rex_post('log_pdf_generation', 'bool', false),
         'temp_file_cleanup' => rex_post('temp_file_cleanup', 'bool', true),
     ]);
+    
+    // PDF-Berechtigungen separat setzen (Array-Handling)
+    $permissions = rex_post('default_pdf_permissions', 'array', []);
+    if (empty($permissions)) {
+        $permissions = ['print']; // Standard-Berechtigung
+    }
+    $this->setConfig('default_pdf_permissions', $permissions);
     
     echo rex_view::success('Konfiguration wurde gespeichert!');
 }
@@ -136,10 +148,132 @@ $n['field'] = '<input type="checkbox" id="enable_signature_by_default" name="ena
 $n['note'] = 'Wenn aktiviert, werden alle PDFs standardmäßig digital signiert (sofern Berechtigung und Zertifikat vorhanden).';
 $formElements[] = $n;
 
+// Standard-Zertifikat auswählen
+$n = [];
+$n['label'] = '<label for="default_certificate_selection"><i class="fa fa-certificate"></i> Standard-Zertifikat</label>';
+
+// Verfügbare Zertifikate direkt aus dem Filesystem laden (wie in certificates.php)
+$certificatesDir = $addon->getDataPath('certificates/');
+$availableCerts = [];
+
+if (is_dir($certificatesDir)) {
+    $files = glob($certificatesDir . '*.p12');
+    foreach ($files as $file) {
+        $filename = basename($file);
+        $certName = pathinfo($filename, PATHINFO_FILENAME);
+        
+        // Zertifikat-Informationen auslesen (vereinfacht)
+        $certInfo = [
+            'file' => $filename,
+            'name' => $certName,
+            'path' => $file,
+            'size' => filesize($file),
+            'modified' => date('d.m.Y H:i', filemtime($file))
+        ];
+        
+        // Zusätzliche Informationen aus OpenSSL wenn verfügbar
+        if (function_exists('openssl_x509_read')) {
+            try {
+                $certData = file_get_contents($file);
+                if ($certData !== false) {
+                    $certInfo['valid'] = true;
+                } else {
+                    $certInfo['valid'] = false;
+                }
+            } catch (Exception $e) {
+                $certInfo['valid'] = false;
+            }
+        }
+        
+        $availableCerts[$filename] = $certInfo;
+    }
+}
+
+$select = new rex_select();
+$select->setName('default_certificate_selection');
+$select->setId('default_certificate_selection');
+$select->setAttribute('class', 'form-control');
+$select->addOption('-- Kein Standard-Zertifikat --', '');
+
+foreach ($availableCerts as $filename => $certData) {
+    $sizeKB = round($certData['size'] / 1024, 1);
+    $label = $certData['name'] . ' (' . $sizeKB . ' KB, ' . $certData['modified'] . ')';
+    $select->addOption($label, $filename);
+}
+
+$select->setSelected($config['default_certificate_selection'] ?? '');
+$n['field'] = $select->get();
+$n['note'] = 'Zertifikat für Standard-Signierung. <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '">Zertifikate verwalten</a>';
+$formElements[] = $n;
+
+// Passwort für Standard-Zertifikat
+$n = [];
+$n['label'] = '<label for="default_certificate_password"><i class="fa fa-key"></i> Passwort für Standard-Zertifikat</label>';
+$n['field'] = '<input class="form-control" type="password" id="default_certificate_password" name="default_certificate_password" value="' . rex_escape($config['default_certificate_password'] ?? '') . '" placeholder="Zertifikats-Passwort"/>';
+$n['note'] = 'Passwort für das oben ausgewählte Standard-Zertifikat. Wird verschlüsselt gespeichert.';
+$formElements[] = $n;
+
 $n = [];
 $n['label'] = '<label for="enable_password_protection_by_default"><i class="fa fa-shield"></i> Passwortschutz standardmäßig aktivieren</label>';
 $n['field'] = '<input type="checkbox" id="enable_password_protection_by_default" name="enable_password_protection_by_default" value="1"' . (($config['enable_password_protection_by_default'] ?? false) ? ' checked="checked"' : '') . '/>';
 $n['note'] = 'Wenn aktiviert, sind alle PDFs standardmäßig passwortgeschützt.';
+$formElements[] = $n;
+
+// Standard-Passwörter für Passwortschutz
+$n = [];
+$n['label'] = '<label for="default_user_password"><i class="fa fa-key"></i> Standard User-Passwort</label>';
+$n['field'] = '<input class="form-control" type="password" id="default_user_password" name="default_user_password" value="' . rex_escape($config['default_user_password'] ?? '') . '" placeholder="Passwort zum Öffnen des PDFs"/>';
+$n['note'] = 'Standard-Passwort für Benutzer zum Öffnen des PDFs. Leer lassen für kein Passwort.';
+$formElements[] = $n;
+
+$n = [];
+$n['label'] = '<label for="default_owner_password"><i class="fa fa-key"></i> Standard Owner-Passwort</label>';
+$n['field'] = '<input class="form-control" type="password" id="default_owner_password" name="default_owner_password" value="' . rex_escape($config['default_owner_password'] ?? '') . '" placeholder="Master-Passwort für Vollzugriff"/>';
+$n['note'] = 'Master-Passwort für vollständigen Zugriff auf das PDF (Bearbeitung, Druck, etc.).';
+$formElements[] = $n;
+
+// Standard-Berechtigungen für passwortgeschützte PDFs
+$n = [];
+$n['label'] = '<label><i class="fa fa-lock"></i> Standard PDF-Berechtigungen</label>';
+$currentPermissions = $config['default_pdf_permissions'] ?? ['print'];
+$permissionOptions = [
+    'print' => 'Drucken erlauben',
+    'copy' => 'Text kopieren erlauben',
+    'modify' => 'Dokument bearbeiten',
+    'annot-forms' => 'Kommentare und Formulare',
+    'fill-forms' => 'Formulare ausfüllen',
+    'extract' => 'Seiten extrahieren',
+    'assemble' => 'Seiten zusammenfügen',
+    'print-high' => 'Hochwertiges Drucken'
+];
+
+$permissionFields = '';
+foreach ($permissionOptions as $value => $label) {
+    $checked = in_array($value, $currentPermissions) ? ' checked="checked"' : '';
+    $permissionFields .= '
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="default_pdf_permissions[]" value="' . $value . '"' . $checked . '> ' . $label . '
+        </label>
+    </div>';
+}
+
+$n['field'] = $permissionFields;
+$n['note'] = 'Berechtigungen für passwortgeschützte PDFs (was Benutzer mit dem User-Passwort tun dürfen).';
+$formElements[] = $n;
+
+// Sicherheitshinweis für Passwörter
+$n = [];
+$n['label'] = '';
+$n['field'] = '<div class="alert alert-info">
+    <strong><i class="fa fa-shield"></i> Sicherheitshinweis:</strong>
+    <ul style="margin-top: 5px; margin-bottom: 0;">
+        <li>Verwenden Sie starke, eindeutige Passwörter</li>
+        <li>Das Owner-Passwort sollte sich vom User-Passwort unterscheiden</li>
+        <li>Passwörter werden verschlüsselt in der REDAXO-Konfiguration gespeichert</li>
+        <li>Bei leerem User-Passwort ist das PDF ohne Passwort öffenbar</li>
+    </ul>
+</div>';
 $formElements[] = $n;
 
 $fragment = new rex_fragment();
@@ -253,7 +387,11 @@ $generalConfigContent = '
                 <div class="alert alert-warning">
                     <strong><i class="fa fa-exclamation-triangle"></i> Erweiterte Features:</strong>
                     Diese Einstellungen aktivieren erweiterte PDF-Features standardmäßig. 
-                    Beachten Sie, dass für digitale Signaturen entsprechende Berechtigungen und Zertifikate erforderlich sind.
+                    <ul style="margin-top: 10px; margin-bottom: 0;">
+                        <li><strong>Digitale Signierung:</strong> Benötigt entsprechende Berechtigungen und ein gültiges Zertifikat</li>
+                        <li><strong>Passwortschutz:</strong> Verwendet die hier definierten Standard-Passwörter und Berechtigungen</li>
+                        <li><strong>Hinweis:</strong> Diese Einstellungen können in der jeweiligen PDF-Implementierung überschrieben werden</li>
+                    </ul>
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="signature">
@@ -277,6 +415,28 @@ $generalConfigContent = '
         ' . $submitButton . '
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    // Passwort-Feld nur anzeigen wenn Zertifikat ausgewählt
+    function toggleCertificatePassword() {
+        var certSelected = $("#default_certificate_selection").val();
+        var passwordField = $("#default_certificate_password").closest(".form-group");
+        
+        if (certSelected && certSelected !== "") {
+            passwordField.show();
+        } else {
+            passwordField.hide();
+        }
+    }
+    
+    // Initial ausführen
+    toggleCertificatePassword();
+    
+    // Bei Änderung der Zertifikat-Auswahl
+    $("#default_certificate_selection").change(toggleCertificatePassword);
+});
+</script>
 ';
 
 $fragment = new rex_fragment();
@@ -284,15 +444,29 @@ $fragment->setVar('title', 'Allgemeine Konfiguration');
 $fragment->setVar('body', '<form action="' . rex_url::currentBackendPage() . '" method="post">' . $generalConfigContent . '</form>', false);
 echo $fragment->parse('core/page/section.php');
 
-// Hinweis auf Demo & Test Bereich
+// Hinweis auf Demo & Test Bereich und Verwaltung
 $demoInfo = '
-<div class="alert alert-info">
-    <h4><i class="fa fa-info-circle"></i> Demo & Test Funktionen</h4>
-    <p>Für Demo- und Testzwecke (Test-Zertifikat Generator, Test-PDF etc.) besuchen Sie die 
-    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="alert-link">
-        <i class="fa fa-play"></i> Demo-Seite
-    </a>.</p>
-    <p><small>Dort finden Sie am Ende der Seite alle Tools zum Testen und Entwickeln.</small></p>
+<div class="row">
+    <div class="col-md-6">
+        <div class="alert alert-info">
+            <h4><i class="fa fa-info-circle"></i> Demo & Test Funktionen</h4>
+            <p>Für Demo- und Testzwecke (Test-Zertifikat Generator, Test-PDF etc.) besuchen Sie die 
+            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="alert-link">
+                <i class="fa fa-play"></i> Demo-Seite
+            </a>.</p>
+            <p><small>Dort finden Sie am Ende der Seite alle Tools zum Testen und Entwickeln.</small></p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="alert alert-success">
+            <h4><i class="fa fa-certificate"></i> Zertifikats-Verwaltung</h4> 
+            <p>Zertifikate für digitale Signaturen können hier verwaltet werden:
+            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '" class="alert-link">
+                <i class="fa fa-key"></i> Zertifikate verwalten
+            </a>.</p>
+            <p><small>Hier können Sie Zertifikate hochladen, generieren und als Standard auswählen.</small></p>
+        </div>
+    </div>
 </div>
 ';
 

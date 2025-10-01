@@ -1,5 +1,5 @@
 package: pdfout
-version: '10.0.0-beta1'
+version: '10.0.0'
 pdfjs: '4.6.82'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout
@@ -23,5 +23,12 @@ page:
         demo: 
             title: 'translate:pdfout_demo'
             perm: pdfout[demo]
+        certificates: 
+            title: 'translate:pdfout_certificates'
+            perm: pdfout[certificates]
         docs:  
-             { title: 'translate:pdfout_docs',  icon: "rex-icon fa-question-circle", subPath: README.md} 
+             { title: 'translate:pdfout_docs',  icon: "rex-icon fa-question-circle", subPath: README.md}
+        api:  
+             { title: 'API Referenz',  icon: "rex-icon fa-code", subPath: API.md}
+        bestpractices:  
+             { title: 'Best Practices',  icon: "rex-icon fa-lightbulb-o", subPath: BEST_PRACTICES.md} 

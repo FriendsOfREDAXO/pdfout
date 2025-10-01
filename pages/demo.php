@@ -9,6 +9,53 @@ $addon = rex_addon::get('pdfout');
 $message = '';
 $error = '';
 
+// Verfügbare Zertifikate laden
+function getAvailableCertificates($addon) {
+    $certificates = [];
+    $certificatesDir = $addon->getDataPath('certificates/');
+    
+    if (is_dir($certificatesDir)) {
+        $files = glob($certificatesDir . '*.p12');
+        foreach ($files as $file) {
+            $filename = basename($file);
+            $name = pathinfo($filename, PATHINFO_FILENAME);
+            
+            // Versuche Zertifikatsdetails zu laden
+            $displayName = $name;
+            $isDefault = $filename === 'default.p12';
+            
+            if (function_exists('openssl_pkcs12_read')) {
+                $certData = file_get_contents($file);
+                $certs = [];
+                // Versuche mit häufigen Test-Passwörtern
+                $testPasswords = ['redaxo123', '', 'test', 'password'];
+                foreach ($testPasswords as $testPassword) {
+                    if (openssl_pkcs12_read($certData, $certs, $testPassword)) {
+                        $certInfo = openssl_x509_parse($certs['cert']);
+                        if ($certInfo && isset($certInfo['subject']['CN'])) {
+                            $displayName = $certInfo['subject']['CN'];
+                            if ($isDefault) {
+                                $displayName .= ' (Standard)';
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            
+            $certificates[$filename] = [
+                'filename' => $filename,
+                'name' => $name,
+                'display_name' => $displayName,
+                'path' => $file,
+                'is_default' => $isDefault
+            ];
+        }
+    }
+    
+    return $certificates;
+}
+
 // Test-Zertifikat generieren
 if (rex_post('generate-test-certificate', 'bool')) {
     try {
@@ -106,6 +153,35 @@ function applySignatureConfig($pdf, $config, $reason = null) {
         $reason ?? $config['reason'],
         $config['contact']
     );
+}
+
+// Funktion zum Ermitteln des gewählten Zertifikats
+function getSelectedCertificate($addon) {
+    $certificatesDir = $addon->getDataPath('certificates/');
+    
+    // 1. Priorität: Gespeicherte Demo-Einstellungen
+    $selectedCert = $addon->getConfig('demo_certificate', '');
+    $certificatePassword = $addon->getConfig('demo_certificate_password', 'redaxo123');
+    
+    if (!empty($selectedCert) && file_exists($certificatesDir . $selectedCert)) {
+        $certPath = $certificatesDir . $selectedCert;
+        $certName = pathinfo($selectedCert, PATHINFO_FILENAME);
+    } else {
+        // 2. Fallback: Standard-Zertifikat
+        $certPath = $certificatesDir . 'default.p12';
+        $certName = 'default';
+        $certificatePassword = 'redaxo123'; // Standard-Passwort für default.p12
+    }
+    
+    if (!file_exists($certPath)) {
+        throw new Exception('Kein Zertifikat verfügbar. Bitte erstellen Sie zunächst ein Zertifikat in der Zertifikatsverwaltung oder generieren Sie ein Standard-Zertifikat.');
+    }
+    
+    return [
+        'path' => $certPath,
+        'password' => $certificatePassword,
+        'name' => $certName
+    ];
 }
 
 if (rex_post('demo-action')) {
@@ -427,6 +503,9 @@ $pdf->createPasswordProtectedWorkflow(
                     ob_end_clean();
                 }
                 
+                // Ausgewähltes Zertifikat ermitteln
+                $selectedCert = getSelectedCertificate($addon);
+                
                 // Verwende TCPDF direkt für saubere Signatur
                 require_once rex_path::addon('pdfout') . 'vendor/tecnickcom/tcpdf/tcpdf.php';
                 
@@ -438,15 +517,9 @@ $pdf->createPasswordProtectedWorkflow(
                 $pdf->SetTitle('PDF mit digitaler Signatur');
                 $pdf->SetSubject('Demo einer sauberen PDF-Signatur');
                 
-                // Zertifikat laden
-                $certPath = rex_path::addonData('pdfout', 'certificates/default.p12');
-                if (!file_exists($certPath)) {
-                    throw new Exception('Zertifikat nicht gefunden. Bitte erst ein Test-Zertifikat generieren.');
-                }
-                
-                // Digitale Signatur konfigurieren
-                $pdf->setSignature($certPath, $certPath, 'redaxo123', '', 2, [
-                    'Name' => 'REDAXO Clean Signature Demo',
+                // Digitale Signatur konfigurieren mit ausgewähltem Zertifikat
+                $pdf->setSignature($selectedCert['path'], $selectedCert['path'], $selectedCert['password'], '', 2, [
+                    'Name' => 'REDAXO Clean Signature Demo (' . $selectedCert['name'] . ')',
                     'Location' => 'Demo Environment', 
                     'Reason' => 'Demonstration of clean PDF signature',
                     'ContactInfo' => 'demo@redaxo.org'
@@ -551,17 +624,14 @@ $pdf->createPasswordProtectedWorkflow(
                 require_once rex_path::addon('pdfout') . 'vendor/tecnickcom/tcpdf/tcpdf.php';
                 require_once rex_path::addon('pdfout') . 'vendor/setasign/fpdi/src/autoload.php';
                 
+                // Ausgewähltes Zertifikat ermitteln
+                $selectedCert = getSelectedCertificate($addon);
+                
                 $pdf = new setasign\Fpdi\Tcpdf\Fpdi();
                 
-                // Zertifikat prüfen
-                $certPath = rex_path::addonData('pdfout', 'certificates/default.p12');
-                if (!file_exists($certPath)) {
-                    throw new Exception('Zertifikat nicht gefunden. Bitte erst ein Test-Zertifikat generieren.');
-                }
-                
-                // Digitale Signatur konfigurieren
-                $pdf->setSignature($certPath, $certPath, 'redaxo123', '', 2, [
-                    'Name' => 'REDAXO Nachträgliche Signierung',
+                // Digitale Signatur konfigurieren mit ausgewähltem Zertifikat
+                $pdf->setSignature($selectedCert['path'], $selectedCert['path'], $selectedCert['password'], '', 2, [
+                    'Name' => 'REDAXO Nachträgliche Signierung (' . $selectedCert['name'] . ')',
                     'Location' => 'Demo Environment',
                     'Reason' => 'Nachträgliche Signierung zur Authentifizierung',
                     'ContactInfo' => 'demo@redaxo.org'
@@ -867,15 +937,12 @@ $pdf->createPasswordProtectedWorkflow(
                 
                 $pdf = new setasign\Fpdi\Tcpdf\Fpdi();
                 
-                // Zertifikat prüfen
-                $certPath = rex_path::addonData('pdfout', 'certificates/default.p12');
-                if (!file_exists($certPath)) {
-                    throw new Exception('Zertifikat nicht gefunden. Bitte erst ein Test-Zertifikat generieren.');
-                }
+                // Ausgewähltes Zertifikat ermitteln
+                $selectedCert = getSelectedCertificate($addon);
                 
-                // Digitale Signatur konfigurieren
-                $pdf->setSignature($certPath, $certPath, 'redaxo123', '', 2, [
-                    'Name' => 'REDAXO Workflow Demo',
+                // Digitale Signatur konfigurieren mit ausgewähltem Zertifikat
+                $pdf->setSignature($selectedCert['path'], $selectedCert['path'], $selectedCert['password'], '', 2, [
+                    'Name' => 'REDAXO Workflow Demo (' . $selectedCert['name'] . ')',
                     'Location' => 'REDAXO CMS Environment',
                     'Reason' => 'Demonstration des typischen REDAXO PDF-Workflows',
                     'ContactInfo' => 'demo@redaxo.org'
@@ -1249,6 +1316,62 @@ $fragment->setVar('title', 'Demo & Test Einstellungen');
 $fragment->setVar('body', $testSettings, false);
 echo $fragment->parse('core/page/section.php');
 
+// Zertifikat-Status für Demos anzeigen
+$availableCertificates = getAvailableCertificates($addon);
+$certificateSelection = '';
+
+// Gespeicherte Demo-Einstellungen prüfen
+$savedDemoCert = $addon->getConfig('demo_certificate', '');
+$savedDemoPassword = $addon->getConfig('demo_certificate_password', 'redaxo123');
+
+// Standard-Zertifikat prüfen falls keine Auswahl gespeichert
+$defaultCertExists = file_exists($addon->getDataPath('certificates/default.p12'));
+
+if (!empty($savedDemoCert) && isset($availableCertificates[$savedDemoCert])) {
+    // Gespeichertes Zertifikat ist verfügbar
+    $selectedCert = $availableCertificates[$savedDemoCert];
+    $certificateSelection = '
+    <div class="alert alert-success">
+        <h4><i class="fa fa-certificate"></i> Zertifikat für Signatur-Demos</h4>
+        <p><strong>Aktuell verwendet:</strong> ' . rex_escape($selectedCert['display_name']) . '</p>
+        <p><strong>Passwort:</strong> ' . (strlen($savedDemoPassword) > 0 ? str_repeat('*', strlen($savedDemoPassword)) : 'Nicht gesetzt') . '</p>
+        <p><small class="text-muted">Konfiguriert in der <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '" class="alert-link">Zertifikatsverwaltung</a></small></p>
+    </div>';
+} elseif ($defaultCertExists) {
+    // Fallback auf Standard-Zertifikat
+    $certificateSelection = '
+    <div class="alert alert-info">
+        <h4><i class="fa fa-certificate"></i> Zertifikat für Signatur-Demos</h4>
+        <p><strong>Verwendet:</strong> Standard-Zertifikat (default.p12)</p>
+        <p><strong>Passwort:</strong> redaxo123 (Standard)</p>
+        <p><small class="text-muted">Für eine individuelle Auswahl besuchen Sie die <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '" class="alert-link">Zertifikatsverwaltung</a></small></p>
+    </div>';
+} else {
+    // Keine Zertifikate verfügbar
+    $certificateSelection = '
+    <div class="alert alert-warning">
+        <h4><i class="fa fa-exclamation-triangle"></i> Kein Zertifikat für Signatur-Demos verfügbar</h4>
+        <p>Signatur-Demos benötigen ein Zertifikat. Bitte erstellen oder konfigurieren Sie zunächst ein Zertifikat:</p>
+        <div style="margin-top: 15px;">
+            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '" class="btn btn-primary">
+                <i class="fa fa-certificate"></i> Zur Zertifikatsverwaltung
+            </a>
+            <span style="margin: 0 10px;">oder</span>
+            <form method="post" style="display: inline;">
+                <input type="hidden" name="generate-test-certificate" value="1">
+                <button type="submit" class="btn btn-success" onclick="return confirm(\'Standard-Zertifikat für Demos erstellen?\')">
+                    <i class="fa fa-plus-circle"></i> Standard-Zertifikat erstellen
+                </button>
+            </form>
+        </div>
+    </div>';
+}
+
+$fragment = new rex_fragment();
+$fragment->setVar('title', 'Zertifikat-Status für Signatur-Demos');
+$fragment->setVar('body', $certificateSelection, false);
+echo $fragment->parse('core/page/section.php');
+
 // Bereinigte Demo-Definitionen - direkt integriert, funktionierend
 $demos = [
     'simple_pdf' => [
@@ -1360,14 +1483,23 @@ $content = '<div class="row">';
 $col_count = 0;
 $userCanSign = rex::getUser() && rex::getUser()->hasPerm('pdfout[signature]');
 
+// Prüfen ob Zertifikate für Signatur-Demos verfügbar sind
+$certificateAvailable = false;
+try {
+    $testCert = getSelectedCertificate($addon);
+    $certificateAvailable = !empty($testCert);
+} catch (Exception $e) {
+    $certificateAvailable = false;
+}
+
 foreach ($demos as $demo_key => $demo) {
     if ($col_count % 2 == 0 && $col_count > 0) {
         $content .= '</div><div class="row">';
     }
     
     $modal_id = 'modal-code-' . $demo_key;
-    $needsSignature = in_array($demo_key, ['signed_pdf', 'full_featured_pdf']);
-    $isDisabled = $needsSignature && !$userCanSign;
+    $needsSignature = in_array($demo_key, ['clean_signature_demo', 'nachtraegliche_signierung', 'redaxo_workflow_demo']);
+    $isDisabled = ($needsSignature && !$userCanSign) || ($needsSignature && !$certificateAvailable);
     
     $content .= '
     <div class="col-md-6">
@@ -1379,13 +1511,23 @@ foreach ($demos as $demo_key => $demo) {
                 <p>' . $demo['description'] . '</p>';
                 
     if ($isDisabled) {
-        $content .= '
+        if ($needsSignature && !$userCanSign) {
+            $content .= '
                 <div class="alert alert-warning">
                     <i class="fa fa-exclamation-triangle"></i> Keine Berechtigung für Signatur-Features. 
                     <a href="' . rex_url::currentBackendPage(['page' => 'users/users']) . '" class="btn btn-xs btn-warning">
                         <i class="fa fa-user"></i> Berechtigung anfordern
                     </a>
                 </div>';
+        } elseif ($needsSignature && !$certificateAvailable) {
+            $content .= '
+                <div class="alert alert-warning">
+                    <i class="fa fa-certificate"></i> Kein Zertifikat verfügbar. 
+                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '" class="btn btn-xs btn-primary">
+                        <i class="fa fa-certificate"></i> Zertifikat erstellen
+                    </a>
+                </div>';
+        }
     }
     
     $content .= '

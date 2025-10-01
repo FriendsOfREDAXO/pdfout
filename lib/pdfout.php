@@ -139,14 +139,39 @@ class PdfOut extends Dompdf
         // Erweiterte Features aus Config laden
         if ($addon->getConfig('enable_signature_by_default', false)) {
             $this->enableSigning = true;
-            $this->certificatePath = $addon->getConfig('default_certificate_path', '') 
-                ?: $addon->getDataPath('certificates/default.p12');
-            $this->certificatePassword = $addon->getConfig('default_certificate_password', '');
+            
+            // Standard-Zertifikat aus Auswahl laden
+            $certSelection = $addon->getConfig('default_certificate_selection', '');
+            if (!empty($certSelection)) {
+                $certificatesDir = $addon->getDataPath('certificates/');
+                $certPath = $certificatesDir . $certSelection;
+                
+                if (file_exists($certPath)) {
+                    $this->certificatePath = $certPath;
+                    // Passwort muss separat konfiguriert werden oder aus einer sicheren Quelle kommen
+                    $this->certificatePassword = $addon->getConfig('default_certificate_password', '');
+                }
+            }
+            
+            // Fallback auf alte Konfiguration
+            if (empty($this->certificatePath)) {
+                $this->certificatePath = $addon->getConfig('default_certificate_path', '') 
+                    ?: $addon->getDataPath('certificates/default.p12');
+                $this->certificatePassword = $addon->getConfig('default_certificate_password', '');
+            }
             
             $this->visibleSignature['x'] = $addon->getConfig('default_signature_position_x', 180);
             $this->visibleSignature['y'] = $addon->getConfig('default_signature_position_y', 60);
             $this->visibleSignature['width'] = $addon->getConfig('default_signature_width', 15);
             $this->visibleSignature['height'] = $addon->getConfig('default_signature_height', 15);
+        }
+        
+        // Passwortschutz aus Config laden
+        if ($addon->getConfig('enable_password_protection_by_default', false)) {
+            $this->enablePasswordProtection = true;
+            $this->userPassword = $addon->getConfig('default_user_password', '');
+            $this->ownerPassword = $addon->getConfig('default_owner_password', '');
+            $this->permissions = $addon->getConfig('default_pdf_permissions', ['print']);
         }
         
         if ($addon->getConfig('enable_password_protection_by_default', false)) {
