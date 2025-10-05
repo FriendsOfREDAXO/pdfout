@@ -643,6 +643,12 @@ https://github.com/FriendsOfREDAXO
 - [FriendsOfREDAXO](https://github.com/FriendsOfREDAXO)
 - [First release: Oliver Kreischer](https://github.com/olien)
 
+## Sponsors ##
+Version 10.0.0 
+- [Alexander Walther](https://github.com/alxndr-w)
+- [FVN e.V.](https://fvn.de)
+- [WDFV e.V.](https://wdfv.de)
+
 ### Lizenz
 
 **PdfOut selbst**: [MIT-Lizenz](https://github.com/FriendsOfREDAXO/pdfout/blob/master/LICENSE.md)
