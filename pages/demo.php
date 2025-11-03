@@ -1475,6 +1475,62 @@ $pdf->createSignedWorkflow(
 // 2. Zwischenspeicherung im Cache
 // 3. Nachträgliche Signierung mit FPDI+TCPDF
 // 4. Ausgabe & automatisches Aufräumen'
+    ],
+    'pdfjs_integration' => [
+        'title' => 'PDF.js Integration',
+        'description' => 'PDF.js Viewer in REDAXO einbinden',
+        'icon' => 'fa-file-pdf-o',
+        'type' => 'info',
+        'code' => '// 1. PdfOut eigene Viewer-Methode verwenden (empfohlen!)
+use FriendsOfRedaxo\\PdfOut\\PdfOut;
+
+// PDF-Viewer URL mit eigener Methode generieren
+$viewerUrl = PdfOut::viewer(\'compressed.tracemonkey-pldi-09.pdf\');
+
+// 2. HTML iFrame Integration
+echo \'<iframe src="\' . $viewerUrl . \'" width="100%" height="600"></iframe>\';
+
+// 3. Link zu externem Viewer  
+echo \'<a href="\' . $viewerUrl . \'" target="_blank">PDF im Viewer öffnen</a>\';
+
+// 4. Eigene PDFs einbinden
+$myPdfFile = \'assets/addons/pdfout/vendor/web/mein-dokument.pdf\';
+$myViewerUrl = PdfOut::viewer($myPdfFile);
+
+// 5. Fragment/Template Integration
+$fragment = new rex_fragment();
+$fragment->setVar(\'viewer_url\', $myViewerUrl);
+$fragment->setVar(\'pdf_title\', \'Mein Dokument\');
+echo $fragment->parse(\'pdf_viewer.php\');
+
+// 6. JavaScript API (erweitert)
+?><script>
+// PDF.js JavaScript Integration
+const iframe = document.getElementById(\'pdf-viewer\');
+iframe.onload = function() {
+    // Zugriff auf PDF.js API im iframe
+    const pdfViewer = iframe.contentWindow.PDFViewerApplication;
+    
+    // Zu Seite springen
+    pdfViewer.page = 3;
+    
+    // Zoom setzen
+    pdfViewer.pdfViewer.currentScaleValue = \'page-width\';
+    
+    // Events abfangen
+    iframe.contentWindow.addEventListener(\'pagesinit\', function() {
+        console.log(\'PDF geladen, Seiten:\', pdfViewer.pagesCount);
+    });
+};
+</script><?php
+
+// 7. REDAXO Backend Integration
+class PdfViewerWidget extends rex_form_widget {
+    public function formatElement() {
+        $viewerUrl = PdfOut::viewer($this->getValue());
+        return \'<iframe src="\' . $viewerUrl . \'" style="width:100%;height:400px;border:1px solid #ddd;"></iframe>\';
+    }
+}'
     ]
 ];
 
@@ -1879,7 +1935,7 @@ $pdfJsTest = '
             <div class="panel-body">
                 <p>Testen Sie den integrierten PDF.js Viewer mit einem Beispiel-PDF:</p>
                 <div class="btn-group" style="margin-bottom: 15px;">
-                    <a href="' . rex_url::addonAssets('pdfout', 'vendor/web/viewer.html?file=compressed.tracemonkey-pldi-09.pdf') . '" 
+                    <a href="' . PdfOut::viewer('assets/addons/pdfout/vendor/web/compressed.tracemonkey-pldi-09.pdf') . '" 
                        target="_blank" 
                        class="btn btn-primary">
                         <i class="fa fa-external-link"></i> PDF.js Viewer öffnen
@@ -1889,11 +1945,17 @@ $pdfJsTest = '
                        class="btn btn-default">
                         <i class="fa fa-download"></i> PDF direkt öffnen
                     </a>
+                    <button type="button" 
+                            class="btn btn-info" 
+                            data-toggle="modal" 
+                            data-target="#modal-code-pdfjs_integration">
+                        <i class="fa fa-code"></i> Code anzeigen
+                    </button>
                 </div>
                 
                 <h5>Was wird getestet?</h5>
                 <ul>
-                    <li><strong>PDF.js 5.4.394:</strong> Neueste Version mit verbesserter Performance</li>
+                    <li><strong>PDF.js:</strong> Neueste Version mit verbesserter Performance</li>
                     <li><strong>Viewer-Interface:</strong> Navigation, Zoom, Suche, Download</li>
                     <li><strong>Browser-Kompatibilität:</strong> Funktioniert in allen modernen Browsern</li>
                     <li><strong>WebAssembly:</strong> Schnelle PDF-Verarbeitung ohne Plugins</li>
@@ -1904,6 +1966,27 @@ $pdfJsTest = '
                     <strong>Größe:</strong> ~190 KB (komprimiert)<br>
                     <strong>Seiten:</strong> Mehrseitiges wissenschaftliches Dokument<br>
                     <strong>Features:</strong> Text, Formeln, Grafiken, Hyperlinks
+                </div>
+                
+                <!-- Embedded PDF.js Viewer Demo -->
+                <div style="margin-top: 20px;">
+                    <h5><i class="fa fa-desktop"></i> Eingebetteter Viewer (Live-Demo)</h5>
+                    <div class="alert alert-success" style="padding: 8px 12px;">
+                        <small><i class="fa fa-info-circle"></i> <strong>Tipp:</strong> Nutzen Sie die Viewer-Kontrollen zum Navigieren, Zoomen und Suchen.</small>
+                    </div>
+                    <div style="border: 2px solid #ddd; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <iframe 
+                            src="' . PdfOut::viewer('assets/addons/pdfout/vendor/web/compressed.tracemonkey-pldi-09.pdf') . '" 
+                            width="100%" 
+                            height="500" 
+                            style="border: none; display: block;"
+                            title="PDF.js Viewer Demo">
+                        </iframe>
+                    </div>
+                    <div class="text-muted" style="margin-top: 8px; font-size: 12px;">
+                        <i class="fa fa-code"></i> <strong>Integration:</strong> 
+                        <code>&lt;iframe src="assets/addons/pdfout/vendor/web/viewer.html?file=ihr-dokument.pdf"&gt;&lt;/iframe&gt;</code>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1940,7 +2023,7 @@ $pdfJsTest = '
                 </ul>
                 
                 <div class="alert alert-success" style="margin-top: 10px; margin-bottom: 0;">
-                    <small><strong>Version:</strong> PDF.js 5.4.394<br>
+                    <small><strong>Version:</strong> PDF.js 5.x<br>
                     <strong>Engine:</strong> WebAssembly optimiert</small>
                 </div>
             </div>
