@@ -1,12 +1,22 @@
 #!/usr/bin/env node
 
-const fs = require('fs').promises;
-const path = require('path');
-
 /**
- * Build script to copy PDF.js assets from node_modules to assets/vendor
- * This allows easy updates via NPM while maintaining the REDAXO addon structure
+ * Legacy compatibility wrapper
+ * Redirects to the new GitHub distribution updater
  */
+
+console.log('🔄 Redirecting to new PDF.js GitHub distribution updater...\n');
+
+const PdfJsUpdater = require('./update-pdfjs-dist.js');
+const updater = new PdfJsUpdater();
+
+// Run the update
+updater.installVersion().catch(error => {
+    console.error('Update failed:', error.message);
+    process.exit(1);
+});
+
+// Old build-pdfjs.js content is deprecated - using GitHub releases now
 
 const PDFJS_SOURCE = path.join(__dirname, '..', 'node_modules', 'pdfjs-dist');
 const ASSETS_TARGET = path.join(__dirname, '..', 'assets', 'vendor');
@@ -150,25 +160,37 @@ async function buildPdfjs() {
             }
         }
         
-        // Copy legacy viewer files if they exist (for backward compatibility)
-        const legacyWebFiles = [
-            'debugger.css',
-            'debugger.mjs', 
-            'viewer.css',
-            'viewer.html',
-            'viewer.mjs',
-            'viewer.mjs.map'
-        ];
+        // Copy full legacy viewer from legacy/build if it exists (PDF.js 5.x has legacy support)
+        const legacyBuildDir = path.join(PDFJS_SOURCE, 'legacy', 'build');
+        const legacyWebDir = path.join(PDFJS_SOURCE, 'legacy', 'web');
         
-        for (const file of legacyWebFiles) {
-            const legacySource = path.join(PDFJS_SOURCE, 'legacy', 'web', file);
-            const target = path.join(ASSETS_TARGET, 'web', file);
+        try {
+            await fs.access(legacyBuildDir);
+            console.log('📂 Found legacy build directory, copying legacy viewer...');
             
-            try {
-                await copyFile(legacySource, target);
-            } catch (error) {
-                console.warn(`⚠ Legacy: Could not copy ${file} (may not exist in this version)`);
+            // Copy legacy viewer files 
+            const legacyWebFiles = [
+                'debugger.css',
+                'debugger.mjs', 
+                'viewer.css',
+                'viewer.html',
+                'viewer.mjs',
+                'viewer.mjs.map'
+            ];
+            
+            for (const file of legacyWebFiles) {
+                const legacySource = path.join(legacyWebDir, file);
+                const target = path.join(ASSETS_TARGET, 'web', file);
+                
+                try {
+                    await copyFile(legacySource, target);
+                } catch (error) {
+                    console.warn(`⚠ Legacy: Could not copy ${file} (may not exist in legacy)`);
+                }
             }
+            
+        } catch (error) {
+            console.warn('⚠ No legacy directory found - using new viewer structure only');
         }
         
         // Copy web directories
