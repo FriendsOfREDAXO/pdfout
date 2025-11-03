@@ -1236,7 +1236,14 @@ $viewerUrl = PdfOut::viewer(\'pfad/zu/ihrem/dokument.pdf\');
 echo \'&lt;iframe src="\' . $viewerUrl . \'" width="100%" height="600"&gt;&lt;/iframe&gt;\';
 
 // Als Link verwenden
-echo \'&lt;a href="\' . $viewerUrl . \'" target="_blank"&gt;PDF oeffnen&lt;/a&gt;\';</pre>
+echo \'&lt;a href="\' . $viewerUrl . \'" target="_blank"&gt;PDF oeffnen&lt;/a&gt;\';
+
+// Als Popup oeffnen (JavaScript)
+echo \'&lt;button onclick="window.open(\\\'\' . $viewerUrl . \'\\\', \\\'pdfviewer\\\', \\\'width=1200,height=800\\\')"&gt;Popup&lt;/button&gt;\';
+
+// Dynamisch laden
+echo \'&lt;div id="pdf-container"&gt;&lt;/div&gt;\';
+echo \'&lt;script&gt;document.getElementById("pdf-container").innerHTML = "&lt;iframe src=\\\'\' . $viewerUrl . \'\\\'&gt;&lt;/iframe&gt;";&lt;/script&gt;\';</pre>
 </div>
 
 <h2>Schritt-fuer-Schritt Integration</h2>
@@ -2047,25 +2054,135 @@ $pdfJsTest = '
                     <strong>Features:</strong> Text, Formeln, Grafiken, Hyperlinks
                 </div>
                 
-                <!-- Embedded PDF.js Viewer Demo -->
+                <!-- Multiple PDF.js Integration Methods -->
                 <div style="margin-top: 20px;">
-                    <h5><i class="fa fa-desktop"></i> Eingebetteter Viewer (Live-Demo)</h5>
-                    <div class="alert alert-success" style="padding: 8px 12px;">
-                        <small><i class="fa fa-info-circle"></i> <strong>Tipp:</strong> Nutzen Sie die Viewer-Kontrollen zum Navigieren, Zoomen und Suchen.</small>
+                    <h5><i class="fa fa-desktop"></i> Integration-Methoden</h5>
+                    <div class="alert alert-info" style="padding: 8px 12px;">
+                        <small><i class="fa fa-info-circle"></i> <strong>Verschiedene Wege:</strong> iFrame, direkter Link, Popup oder dynamisches Laden.</small>
                     </div>
-                    <div style="border: 2px solid #ddd; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <iframe 
-                            src="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" 
-                            width="100%" 
-                            height="500" 
-                            style="border: none; display: block;"
-                            title="PDF.js Viewer Demo">
-                        </iframe>
+                    
+                    <!-- Tabbed Interface -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#iframe-demo" aria-controls="iframe-demo" role="tab" data-toggle="tab">
+                                <i class="fa fa-window-maximize"></i> iFrame
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#link-demo" aria-controls="link-demo" role="tab" data-toggle="tab">
+                                <i class="fa fa-external-link"></i> Direkter Link
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#popup-demo" aria-controls="popup-demo" role="tab" data-toggle="tab">
+                                <i class="fa fa-window-restore"></i> Popup
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#embed-demo" aria-controls="embed-demo" role="tab" data-toggle="tab">
+                                <i class="fa fa-code"></i> JavaScript
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" style="border: 1px solid #ddd; border-top: none;">
+                        <!-- iFrame Tab -->
+                        <div role="tabpanel" class="tab-pane active" id="iframe-demo">
+                            <div style="padding: 15px;">
+                                <h6>Eingebetteter Viewer (iFrame)</h6>
+                                <div style="border: 2px solid #ddd; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                    <iframe 
+                                        src="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" 
+                                        width="100%" 
+                                        height="400" 
+                                        style="border: none; display: block;"
+                                        title="PDF.js Viewer Demo">
+                                    </iframe>
+                                </div>
+                                <div class="text-muted" style="margin-top: 8px; font-size: 11px;">
+                                    <i class="fa fa-code"></i> <strong>Code:</strong> 
+                                    <code>&lt;iframe src="&lt;?= PdfOut::viewer(\'dokument.pdf\') ?&gt;" width="100%" height="600"&gt;&lt;/iframe&gt;</code>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Direkter Link Tab -->
+                        <div role="tabpanel" class="tab-pane" id="link-demo">
+                            <div style="padding: 15px;">
+                                <h6>PDF in neuem Tab/Fenster öffnen</h6>
+                                <div class="well">
+                                    <p>Einfachste Methode - PDF öffnet sich in neuem Tab mit vollem Viewer:</p>
+                                    <p>
+                                        <a href="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" 
+                                           target="_blank" 
+                                           class="btn btn-primary">
+                                            <i class="fa fa-external-link"></i> PDF in neuem Tab öffnen
+                                        </a>
+                                    </p>
+                                    <div class="text-muted" style="font-size: 11px;">
+                                        <i class="fa fa-code"></i> <strong>Code:</strong> 
+                                        <code>&lt;a href="&lt;?= PdfOut::viewer(\'dokument.pdf\') ?&gt;" target="_blank"&gt;PDF öffnen&lt;/a&gt;</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Popup Tab -->
+                        <div role="tabpanel" class="tab-pane" id="popup-demo">
+                            <div style="padding: 15px;">
+                                <h6>PDF in Popup-Fenster</h6>
+                                <div class="well">
+                                    <p>Kontrollierte Fenstergröße für bessere UX:</p>
+                                    <p>
+                                        <button onclick="window.open(\'' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '\', \'pdfviewer\', \'width=1200,height=800,scrollbars=yes,resizable=yes\');" 
+                                                class="btn btn-info">
+                                            <i class="fa fa-window-restore"></i> PDF in Popup öffnen
+                                        </button>
+                                    </p>
+                                    <div class="text-muted" style="font-size: 11px;">
+                                        <i class="fa fa-code"></i> <strong>JavaScript:</strong><br>
+                                        <code>window.open(\'&lt;?= PdfOut::viewer("dokument.pdf") ?&gt;\', \'pdfviewer\', \'width=1200,height=800\');</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- JavaScript Embed Tab -->
+                        <div role="tabpanel" class="tab-pane" id="embed-demo">
+                            <div style="padding: 15px;">
+                                <h6>Dynamisches Laden per JavaScript</h6>
+                                <div class="well">
+                                    <p>PDF wird dynamisch in Container geladen:</p>
+                                    <div id="pdf-container" style="min-height: 300px; border: 1px solid #ddd; background: #f9f9f9; display: flex; align-items: center; justify-content: center; color: #666;">
+                                        <span>Klicke "Laden" um das PDF hier einzufügen</span>
+                                    </div>
+                                    <p style="margin-top: 10px;">
+                                        <button onclick="loadPdfDynamically()" class="btn btn-success">
+                                            <i class="fa fa-download"></i> PDF dynamisch laden
+                                        </button>
+                                        <button onclick="clearPdfContainer()" class="btn btn-default">
+                                            <i class="fa fa-times"></i> Leeren
+                                        </button>
+                                    </p>
+                                    <div class="text-muted" style="font-size: 11px;">
+                                        <i class="fa fa-code"></i> <strong>JavaScript:</strong><br>
+                                        <code>document.getElementById(\'container\').innerHTML = \'&lt;iframe src="&lt;?= PdfOut::viewer("dokument.pdf") ?&gt;"&gt;&lt;/iframe&gt;\';</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-muted" style="margin-top: 8px; font-size: 12px;">
-                        <i class="fa fa-code"></i> <strong>Integration:</strong> 
-                        <code>&lt;iframe src="assets/addons/pdfout/vendor/web/viewer.html?file=ihr-dokument.pdf"&gt;&lt;/iframe&gt;</code>
-                    </div>
+                    
+                    <script>
+                    function loadPdfDynamically() {
+                        document.getElementById(\'pdf-container\').innerHTML = 
+                            \'<iframe src="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" width="100%" height="400" style="border: none;"></iframe>\';
+                    }
+                    function clearPdfContainer() {
+                        document.getElementById(\'pdf-container\').innerHTML = 
+                            \'<span style="color: #666;">Container geleert - klicke "Laden" um PDF einzufügen</span>\';
+                    }
+                    </script>
                 </div>
             </div>
         </div>
