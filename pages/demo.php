@@ -1405,13 +1405,32 @@ $viewerUrl = PdfOut::viewer($pdfFile . \'#toolbar=0&navpanes=0\'); // Minimal</d
 </body>
 </html>';
                 
+                // PDF erstellen und im Cache speichern für Viewer-Anzeige
+                $cacheDir = rex_path::addonCache('pdfout');
+                $pdfFileName = 'pdfjs_integration_guide_' . time() . '.pdf';
+                $pdfPath = $cacheDir . $pdfFileName;
+                
                 $pdf = new PdfOut();
                 $pdf->setName('pdfjs_integration_guide')
                     ->setHtml($pdfJsInfoHtml)
                     ->setPaperSize('A4', 'portrait')
                     ->setFont('Dejavu Sans')
-                    ->setAttachment(true)
+                    ->setSaveToPath($cacheDir)
+                    ->setSaveAndSend(false)
                     ->run();
+                
+                // Prüfen ob PDF erstellt wurde
+                if (file_exists($pdfPath)) {
+                    // Relativen Pfad für PDF.js Viewer erstellen
+                    $relativePdfPath = 'cache/addons/pdfout/' . $pdfFileName;
+                    $viewerUrl = PdfOut::viewer($relativePdfPath);
+                    
+                    // Direkt zum PDF.js Viewer weiterleiten
+                    header('Location: ' . $viewerUrl);
+                    exit;
+                } else {
+                    throw new Exception('PDF konnte nicht erstellt werden');
+                }
                     
             } catch (Exception $e) {
                 $error = 'Fehler bei der PDF.js Integration Demo: ' . $e->getMessage();
@@ -1681,8 +1700,8 @@ $pdf->createSignedWorkflow(
 // 4. Ausgabe & automatisches Aufräumen'
     ],
     'pdfjs_integration' => [
-        'title' => 'PDF.js Integration',
-        'description' => 'PDF.js Viewer in REDAXO einbinden',
+        'title' => 'PDF.js Integration Guide',
+        'description' => 'Erstellt Integration-Anleitung und öffnet sie direkt im PDF.js Viewer',
         'icon' => 'fa-file-pdf-o',
         'type' => 'info',
         'panel_class' => 'panel-info',
