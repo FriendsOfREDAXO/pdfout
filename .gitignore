@@ -1,3 +1,4 @@
+# IDE files
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -9,4 +10,19 @@ modules.xml
 .idea/vcs.xml
 .idea/encodings.xml
 *.ipr
+.vscode/
+
+# System files
 .DS_Store
+
+# NPM dependencies and build artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.node_repl_history
+
+# Temporary files
+*.tmp
+*.temp

@@ -1,0 +1,18 @@
+{
+  "name": "redaxo-addon-pdfout",
+  "version": "10.0.2",
+  "description": "PDF.js asset management for REDAXO pdfout addon",
+  "private": true,
+  "scripts": {
+    "update-pdfjs": "npm update pdfjs-dist && npm run build-pdfjs",
+    "build-pdfjs": "node scripts/build-pdfjs.js",
+    "check-updates": "npm outdated pdfjs-dist",
+    "install-pdfjs": "npm install && npm run build-pdfjs"
+  },
+  "devDependencies": {
+    "pdfjs-dist": "^5.4.394"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
