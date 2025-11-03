@@ -1,0 +1,23 @@
+{
+  "name": "redaxo-addon-pdfout",
+  "version": "10.0.2",
+  "description": "PDF.js GitHub Release distribution manager for REDAXO pdfout addon",
+  "private": true,
+  "scripts": {
+    "update-pdfjs": "node scripts/update-pdfjs-dist.js",
+    "build-pdfjs": "node scripts/update-pdfjs-dist.js",
+    "check-updates": "node scripts/check-pdfjs-updates.js",
+    "install-pdfjs": "node scripts/update-pdfjs-dist.js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "pdfjs": {
+    "currentVersion": "5.4.394",
+    "source": "github-releases",
+    "excludeComponents": [
+      "cmaps",
+      "iccs"
+    ]
+  }
+}

@@ -112,14 +112,6 @@ pdfjs-document-properties-size-kb = { NUMBER($kb, maximumSignificantDigits: 3) }
 #   $mb (Number) - the PDF file size in megabytes
 #   $b (Number) - the PDF file size in bytes
 pdfjs-document-properties-size-mb = { NUMBER($mb, maximumSignificantDigits: 3) } MB ({ $b } بائٹاں)
-# Variables:
-#   $size_kb (Number) - the PDF file size in kilobytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-kb = { $size_kb } کے بی ({ $size_b } بائٹس)
-# Variables:
-#   $size_mb (Number) - the PDF file size in megabytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-mb = { $size_mb } ایم بی ({ $size_b } بائٹس)
 pdfjs-document-properties-title = عنوان:
 pdfjs-document-properties-author = تخلیق کار:
 pdfjs-document-properties-subject = موضوع:
@@ -129,10 +121,6 @@ pdfjs-document-properties-modification-date = ترمیم دی تاریخ:
 # Variables:
 #   $dateObj (Date) - the creation/modification date and time of the PDF file
 pdfjs-document-properties-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
-# Variables:
-#   $date (Date) - the creation/modification date of the PDF file
-#   $time (Time) - the creation/modification time of the PDF file
-pdfjs-document-properties-date-string = { $date }, { $time }
 pdfjs-document-properties-creator = تخلیق کار:
 pdfjs-document-properties-producer = PDF پیدا کار:
 pdfjs-document-properties-version = PDF ورژن:
@@ -275,10 +263,6 @@ pdfjs-rendering-error = ورقہ رینڈر کریندے ویلھے ہک خرا�
 
 ## Annotations
 
-# Variables:
-#   $date (Date) - the modification date of the annotation
-#   $time (Time) - the modification time of the annotation
-pdfjs-annotation-date-string = { $date }, { $time }
 # .alt: This is used as a tooltip.
 # Variables:
 #   $type (String) - an annotation type from a list defined in the PDF spec
@@ -343,19 +327,10 @@ pdfjs-editor-stamp-add-image-button-label = تصویر شامل کرو
 pdfjs-editor-free-highlight-thickness-input = مُٹاݨ
 pdfjs-editor-free-highlight-thickness-title =
     .title = متن توں ان٘ج ٻئے شئیں کوں نمایاں کرݨ ویلے مُٹاݨ کوں بدلو
-pdfjs-free-text =
-    .aria-label = ٹیکسٹ ایڈیٹر
-pdfjs-free-text-default-content = ٹائپنگ شروع کرو …
-pdfjs-ink =
-    .aria-label = ڈرا ایڈیٹر
-pdfjs-ink-canvas =
-    .aria-label = صارف دی بݨائی ہوئی تصویر
 
 ## Alt-text dialog
 
-# Alternative text (alt text) helps when people can't see the image.
 pdfjs-editor-alt-text-button-label = Alt متن
-pdfjs-editor-alt-text-edit-button-label = alt متن وِچ ترمیم کرو
 pdfjs-editor-alt-text-dialog-label = ہِک اختیار چُݨو
 pdfjs-editor-alt-text-dialog-description = Alt متن (متبادل متن) اِیں ویلے مَدَت کرین٘دا ہِے جہڑیلے لوک تصویر کوں نِھیں ݙیکھ سڳدے یا جہڑیلے اِیہ لوڈ کائنی تِھین٘دا۔
 pdfjs-editor-alt-text-add-description-label = تفصیل شامل کرو
@@ -368,18 +343,29 @@ pdfjs-editor-alt-text-decorative-tooltip = آرائشی دے طور تے نشا�
 # .placeholder: This is a placeholder for the alt text input area
 pdfjs-editor-alt-text-textarea =
     .placeholder = مثال دے طور تے، "ہِک جؤان کھاݨاں کھاوݨ کِیتے میز اُتّے ٻیٹھا ہِے"
+# Alternative text (alt text) helps when people can't see the image.
+pdfjs-editor-alt-text-button =
+    .aria-label = Alt متن
 
 ## Editor resizers
 ## This is used in an aria label to help to understand the role of the resizer.
 
-pdfjs-editor-resizer-label-top-left = اُتلی کَھٻّی نُکّڑ — سائز بدلو
-pdfjs-editor-resizer-label-top-middle = اُتلا وِچلا — سائز بدلو
-pdfjs-editor-resizer-label-top-right = اُتلی سَڄّی نُکَّڑ — سائز بدلو
-pdfjs-editor-resizer-label-middle-right = وِچلا سڄّا — سائز بدلو
-pdfjs-editor-resizer-label-bottom-right = تلوِیں سَڄّی نُکَّڑ — سائز بدلو
-pdfjs-editor-resizer-label-bottom-middle = تلواں وِچلا — سائز بدلو
-pdfjs-editor-resizer-label-bottom-left = تلوِیں کَھٻّی نُکّڑ — سائز بدلو
-pdfjs-editor-resizer-label-middle-left = وِچلا کَھٻّا — سائز بدلو
+pdfjs-editor-resizer-top-left =
+    .aria-label = اُتلی کَھٻّی نُکّڑ — سائز بدلو
+pdfjs-editor-resizer-top-middle =
+    .aria-label = اُتلا وِچلا — سائز بدلو
+pdfjs-editor-resizer-top-right =
+    .aria-label = اُتلی سَڄّی نُکَّڑ — سائز بدلو
+pdfjs-editor-resizer-middle-right =
+    .aria-label = وِچلا سڄّا — سائز بدلو
+pdfjs-editor-resizer-bottom-right =
+    .aria-label = تلوِیں سَڄّی نُکَّڑ — سائز بدلو
+pdfjs-editor-resizer-bottom-middle =
+    .aria-label = تلواں وِچلا — سائز بدلو
+pdfjs-editor-resizer-bottom-left =
+    .aria-label = تلوِیں کَھٻّی نُکّڑ — سائز بدلو
+pdfjs-editor-resizer-middle-left =
+    .aria-label = وِچلا کَھٻّا — سائز بدلو
 
 ## Color picker
 
@@ -410,18 +396,38 @@ pdfjs-editor-highlight-show-all-button =
 ## New alt-text dialog
 ## Group note for entire feature: Alternative text (alt text) helps when people can't see the image. This feature includes a tool to create alt text automatically using an AI model that works locally on the user's device to preserve privacy.
 
+# Modal header positioned above a text box where users can edit the alt text.
+pdfjs-editor-new-alt-text-dialog-edit-label = آلٹ عبارت وچ تبدیلی کرو (تصویر تفصیل)
+# Modal header positioned above a text box where users can add the alt text.
+pdfjs-editor-new-alt-text-dialog-add-label = آلٹ عبارت شامل کرو (تصویر تفصیل)
 pdfjs-editor-new-alt-text-textarea =
     .placeholder = اتھ آپݨی وضاحت لکھو۔۔۔
+# This text refers to the alt text box above this description. It offers a definition of alt text.
+pdfjs-editor-new-alt-text-description = اُنہاں لوکاں کیتے مختصر تفصیل جہڑے تصویر کائنی ݙیکھ سڳدے یا ڄݙݨ تصویر لوڈ کائبی تھیندی۔
+# This is a required legal disclaimer that refers to the automatically created text inside the alt text box above this text. It disappears if the text is edited by a human.
+pdfjs-editor-new-alt-text-disclaimer1 = آلٹ عبارت خودکار تخلیق تھئی ہے تے غلط تھی سڳدی ہے۔
 pdfjs-editor-new-alt-text-disclaimer-learn-more-url = ٻیا سِکھو
 pdfjs-editor-new-alt-text-create-automatically-button-label = آلٹ عبارت خودکار بݨاؤ
 pdfjs-editor-new-alt-text-not-now-button = ہݨ کائناں
 pdfjs-editor-new-alt-text-error-title = آلٹ عبارت خودکار نہ بݨاؤ
+pdfjs-editor-new-alt-text-error-description = سوہݨا، آپݨی آلٹ عبارت لکھو یا ولدا بعد وچ کوشش کرو۔
 pdfjs-editor-new-alt-text-error-close-button = بند کرو
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+#   $downloadedSize (Number) - the downloaded size (in MB) of the AI model.
+pdfjs-editor-new-alt-text-ai-model-downloading-progress = آلٹ عبارت اے آئی ماڈل({ $totalSize }ایم بی دے { $downloadedSize }) ڈاؤن لوڈ تھیندا پئے
+    .aria-valuetext = آلٹ عبارت اے آئی ماڈل({ $totalSize }ایم بی دے { $downloadedSize }) ڈاؤن لوڈ تھیندا پئے
 # This is a button that users can click to edit the alt text they have already added.
+pdfjs-editor-new-alt-text-added-button =
+    .aria-label = آلٹ عبارت شامل تھی ڳئی
 pdfjs-editor-new-alt-text-added-button-label = آلٹ عبارت شامل تھی ڳئی
 # This is a button that users can click to open the alt text editor and add alt text when it is not present.
+pdfjs-editor-new-alt-text-missing-button =
+    .aria-label = متبادل عبارت غائب ہے
 pdfjs-editor-new-alt-text-missing-button-label = متبادل عبارت غائب ہے
 # This is a button that opens up the alt text modal where users should review the alt text that was automatically generated.
+pdfjs-editor-new-alt-text-to-review-button =
+    .aria-label = alt متن تے نظرثانی کرو
 pdfjs-editor-new-alt-text-to-review-button-label = alt متن تے نظرثانی کرو
 # "Created automatically" is a prefix that will be added to the beginning of any alt text that has been automatically generated. After the colon, the user will see/hear the actual alt text description. If the alt text has been edited by a human, this prefix will not appear.
 # Variables:
@@ -436,8 +442,24 @@ pdfjs-image-alt-text-settings-button-label = تصویر آلٹ عبارت ترت
 pdfjs-editor-alt-text-settings-dialog-label = تصویر آلٹ عبارت ترتیباں
 pdfjs-editor-alt-text-settings-automatic-title = خودکار آلٹ عبارت
 pdfjs-editor-alt-text-settings-create-model-button-label = آلٹ عبارت خودکار بݨاؤ
+pdfjs-editor-alt-text-settings-create-model-description = اُنہاں لوکاں دی مدد کیتے  تفصیل تجویز کرو جہڑے تصویر کائنی ݙیکھ سڳدے یا ڄݙݨ تصویر لوڈ کائبی تھیندی۔
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+pdfjs-editor-alt-text-settings-download-model-label = آلٹ عبارت اے آئی ماڈل ({ $totalSize } ایم بی)
+pdfjs-editor-alt-text-settings-ai-model-description = تہاݙی ڈیوائس تے مقامی طور تے چلدا ہے تاں جو تہاݙا ڈیٹا نجی رہوے۔ خودکار آلٹ عبارت کیتے ضروری ہے۔
 pdfjs-editor-alt-text-settings-delete-model-button = مٹاؤ
 pdfjs-editor-alt-text-settings-download-model-button = ڈاؤن لوڈ
 pdfjs-editor-alt-text-settings-downloading-model-button = ڈاؤن لوڈ تھیندا پئے …
 pdfjs-editor-alt-text-settings-editor-title = متبادل ٹیکسٹ ایڈیٹر
+pdfjs-editor-alt-text-settings-show-dialog-button-label = تصویر شامل کرݨ ویلے فوری طور تے آلٹ ٹیکسٹ ایڈیٹر ݙکھاؤ
+pdfjs-editor-alt-text-settings-show-dialog-description = ایہ تہاکوں یقینی بݨاوݨ وچ مدد کریندے جو تہاݙیاں ساریاں تصویراں وچ آلٹ عبارت ہے۔
 pdfjs-editor-alt-text-settings-close-button = بند کرو
+
+## "Annotations removed" bar
+
+pdfjs-editor-undo-bar-undo-button =
+    .title = کیتا اݨ کیتا
+pdfjs-editor-undo-bar-undo-button-label = کیتا اݨ کیتا
+pdfjs-editor-undo-bar-close-button =
+    .title = بند کرو
+pdfjs-editor-undo-bar-close-button-label = بند کرو

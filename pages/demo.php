@@ -1214,6 +1214,90 @@ $pdf->createSignedWorkflow(
             }
             break;
             
+        case 'pdfjs_integration':
+            try {
+                // Output-Buffer komplett leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
+                $pdfJsInfoHtml = '<div style="font-family: Arial, Helvetica, sans-serif;">
+<h1>PDF.js Integration Guide</h1>
+<h2>Schnellstart mit PdfOut::viewer()</h2>
+<p><strong>Die empfohlene Methode</strong> fuer PDF.js Integration in REDAXO:</p>
+
+<div style="background: #f8f9fa; padding: 10px; border-left: 4px solid #007cba; margin: 10px 0;">
+<pre style="font-family: Courier, monospace; font-size: 10px;">use FriendsOfRedaxo\PdfOut\PdfOut;
+
+// PDF-Viewer URL generieren
+$viewerUrl = PdfOut::viewer(\'pfad/zu/ihrem/dokument.pdf\');
+
+// Als iFrame einbetten  
+echo \'&lt;iframe src="\' . $viewerUrl . \'" width="100%" height="600"&gt;&lt;/iframe&gt;\';
+
+// Als Link verwenden
+echo \'&lt;a href="\' . $viewerUrl . \'" target="_blank"&gt;PDF oeffnen&lt;/a&gt;\';
+
+// Als Popup oeffnen (JavaScript)
+echo \'&lt;button onclick="window.open(\\\'\' . $viewerUrl . \'\\\', \\\'pdfviewer\\\', \\\'width=1200,height=800\\\')"&gt;Popup&lt;/button&gt;\';
+
+// Dynamisch laden
+echo \'&lt;div id="pdf-container"&gt;&lt;/div&gt;\';
+echo \'&lt;script&gt;document.getElementById("pdf-container").innerHTML = "&lt;iframe src=\\\'\' . $viewerUrl . \'\\\'&gt;&lt;/iframe&gt;";&lt;/script&gt;\';</pre>
+</div>
+
+<h2>Schritt-fuer-Schritt Integration</h2>
+<ol>
+<li>PDF-Datei in assets/addons/pdfout/vendor/web/ ablegen</li>
+<li>PdfOut::viewer() Methode mit relativem Pfad aufrufen</li>
+<li>URL in HTML einbetten (iFrame oder Link)</li>
+<li>Viewer automatisch geladen - fertig!</li>
+</ol>
+
+<h2>Praktische Beispiele</h2>
+<p><strong>REDAXO Template Integration:</strong></p>
+
+<div style="background: #f8f9fa; padding: 10px; border-left: 4px solid #007cba; margin: 10px 0;">
+<pre style="font-family: Courier, monospace; font-size: 10px;">// Im Template
+$pdfFile = \'berichte/jahresbericht.pdf\';
+$viewerUrl = PdfOut::viewer($pdfFile);
+?&gt;
+&lt;div class="pdf-container"&gt;
+    &lt;iframe src="&lt;?= $viewerUrl ?&gt;" style="width:100%; height:80vh; border:none;"&gt;&lt;/iframe&gt;
+&lt;/div&gt;</pre>
+</div>
+
+<p><strong>Backend Widget:</strong></p>
+<div style="background: #f8f9fa; padding: 10px; border-left: 4px solid #007cba; margin: 10px 0;">
+<pre style="font-family: Courier, monospace; font-size: 10px;">class PdfViewerWidget extends rex_form_widget {
+    public function formatElement() {
+        $viewerUrl = PdfOut::viewer($this->getValue());
+        return \'&lt;iframe src="\' . $viewerUrl . \'" 
+                style="width:100%; height:400px; border:1px solid #ddd;"&gt;
+                &lt;/iframe&gt;\';
+    }
+}</pre>
+</div>
+
+<div style="background: #d4edda; padding: 10px; border: 1px solid #c3e6cb; margin: 10px 0;">
+<strong>TIPP:</strong> Der PDF.js Viewer unterstuetzt Volltext-Suche, Navigation, Zoom, Drucken und Download - alles automatisch verfuegbar!
+</div>
+
+<p><strong>Erstellt am:</strong> ' . date('d.m.Y H:i:s') . '</p>
+<p><strong>REDAXO PdfOut AddOn:</strong> v10.1.0 mit PDF.js 5.x</p>
+</div>';
+                
+                $pdf = new PdfOut();
+                $pdf->setName('pdfjs_integration_guide')
+                    ->setHtml($pdfJsInfoHtml)
+                    ->setFont('Helvetica')
+                    ->run();
+                    
+            } catch (Exception $e) {
+                $error = 'Fehler bei der PDF.js Integration Demo: ' . $e->getMessage();
+            }
+            break;
+            
         default:
             $error = 'Unbekannte Demo-Aktion: ' . $action;
             break;
@@ -1475,6 +1559,64 @@ $pdf->createSignedWorkflow(
 // 2. Zwischenspeicherung im Cache
 // 3. Nachträgliche Signierung mit FPDI+TCPDF
 // 4. Ausgabe & automatisches Aufräumen'
+    ],
+    'pdfjs_integration' => [
+        'title' => 'PDF.js Integration Guide',
+        'description' => 'Erstellt Integration-Anleitung und öffnet sie direkt im PDF.js Viewer',
+        'icon' => 'fa-file-pdf-o',
+        'type' => 'info',
+        'panel_class' => 'panel-info',
+        'btn_class' => 'btn-info',
+        'code' => '// 1. PdfOut eigene Viewer-Methode verwenden (empfohlen!)
+use FriendsOfRedaxo\\PdfOut\\PdfOut;
+
+// PDF-Viewer URL mit eigener Methode generieren
+$viewerUrl = PdfOut::viewer(\'compressed.tracemonkey-pldi-09.pdf\');
+
+// 2. HTML iFrame Integration
+echo \'<iframe src="\' . $viewerUrl . \'" width="100%" height="600"></iframe>\';
+
+// 3. Link zu externem Viewer  
+echo \'<a href="\' . $viewerUrl . \'" target="_blank">PDF im Viewer öffnen</a>\';
+
+// 4. Eigene PDFs einbinden
+$myPdfFile = \'assets/addons/pdfout/vendor/web/mein-dokument.pdf\';
+$myViewerUrl = PdfOut::viewer($myPdfFile);
+
+// 5. Fragment/Template Integration
+$fragment = new rex_fragment();
+$fragment->setVar(\'viewer_url\', $myViewerUrl);
+$fragment->setVar(\'pdf_title\', \'Mein Dokument\');
+echo $fragment->parse(\'pdf_viewer.php\');
+
+// 6. JavaScript API (erweitert)
+?><script>
+// PDF.js JavaScript Integration
+const iframe = document.getElementById(\'pdf-viewer\');
+iframe.onload = function() {
+    // Zugriff auf PDF.js API im iframe
+    const pdfViewer = iframe.contentWindow.PDFViewerApplication;
+    
+    // Zu Seite springen
+    pdfViewer.page = 3;
+    
+    // Zoom setzen
+    pdfViewer.pdfViewer.currentScaleValue = \'page-width\';
+    
+    // Events abfangen
+    iframe.contentWindow.addEventListener(\'pagesinit\', function() {
+        console.log(\'PDF geladen, Seiten:\', pdfViewer.pagesCount);
+    });
+};
+</script><?php
+
+// 7. REDAXO Backend Integration
+class PdfViewerWidget extends rex_form_widget {
+    public function formatElement() {
+        $viewerUrl = PdfOut::viewer($this->getValue());
+        return \'<iframe src="\' . $viewerUrl . \'" style="width:100%;height:400px;border:1px solid #ddd;"></iframe>\';
+    }
+}'
     ]
 ];
 
@@ -1866,6 +2008,240 @@ $notes = '
 $fragment = new rex_fragment();
 $fragment->setVar('title', 'Wichtige Hinweise');
 $fragment->setVar('body', $notes, false);
+echo $fragment->parse('core/page/section.php');
+
+// PDF.js Viewer Test
+$pdfJsTest = '
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4><i class="fa fa-file-pdf-o"></i> PDF.js Viewer Test</h4>
+            </div>
+            <div class="panel-body">
+                <p>Testen Sie den integrierten PDF.js Viewer mit einem Beispiel-PDF:</p>
+                <div class="btn-group" style="margin-bottom: 15px;">
+                    <a href="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" 
+                       target="_blank" 
+                       class="btn btn-primary">
+                        <i class="fa fa-external-link"></i> PDF.js Viewer öffnen
+                    </a>
+                    <a href="' . rex_url::addonAssets('pdfout', 'vendor/web/compressed.tracemonkey-pldi-09.pdf') . '" 
+                       target="_blank" 
+                       class="btn btn-default">
+                        <i class="fa fa-download"></i> PDF direkt öffnen
+                    </a>
+                    <button type="button" 
+                            class="btn btn-info" 
+                            data-toggle="modal" 
+                            data-target="#modal-code-pdfjs_integration">
+                        <i class="fa fa-code"></i> Code anzeigen
+                    </button>
+                </div>
+                
+                <h5>Was wird getestet?</h5>
+                <ul>
+                    <li><strong>PDF.js:</strong> Neueste Version mit verbesserter Performance</li>
+                    <li><strong>Viewer-Interface:</strong> Navigation, Zoom, Suche, Download</li>
+                    <li><strong>Browser-Kompatibilität:</strong> Funktioniert in allen modernen Browsern</li>
+                    <li><strong>WebAssembly:</strong> Schnelle PDF-Verarbeitung ohne Plugins</li>
+                </ul>
+                
+                <div class="alert alert-info" style="margin-top: 15px;">
+                    <strong>Test-PDF:</strong> "Trace-based Just-in-Time Type Specialization for Dynamic Languages"<br>
+                    <strong>Größe:</strong> ~190 KB (komprimiert)<br>
+                    <strong>Seiten:</strong> Mehrseitiges wissenschaftliches Dokument<br>
+                    <strong>Features:</strong> Text, Formeln, Grafiken, Hyperlinks
+                </div>
+                
+                <!-- Multiple PDF.js Integration Methods -->
+                <div style="margin-top: 20px;">
+                    <h5><i class="fa fa-desktop"></i> Integration-Methoden</h5>
+                    <div class="alert alert-info" style="padding: 8px 12px;">
+                        <small><i class="fa fa-info-circle"></i> <strong>Verschiedene Wege:</strong> iFrame, direkter Link, Popup oder dynamisches Laden.</small>
+                    </div>
+                    
+                    <!-- Tabbed Interface -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#iframe-demo" aria-controls="iframe-demo" role="tab" data-toggle="tab">
+                                <i class="fa fa-window-maximize"></i> iFrame
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#link-demo" aria-controls="link-demo" role="tab" data-toggle="tab">
+                                <i class="fa fa-external-link"></i> Direkter Link
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#popup-demo" aria-controls="popup-demo" role="tab" data-toggle="tab">
+                                <i class="fa fa-window-restore"></i> Popup
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#embed-demo" aria-controls="embed-demo" role="tab" data-toggle="tab">
+                                <i class="fa fa-code"></i> JavaScript
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" style="border: 1px solid #ddd; border-top: none;">
+                        <!-- iFrame Tab -->
+                        <div role="tabpanel" class="tab-pane active" id="iframe-demo">
+                            <div style="padding: 15px;">
+                                <h6>Eingebetteter Viewer (iFrame)</h6>
+                                <div style="border: 2px solid #ddd; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                    <iframe 
+                                        src="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" 
+                                        width="100%" 
+                                        height="400" 
+                                        style="border: none; display: block;"
+                                        title="PDF.js Viewer Demo">
+                                    </iframe>
+                                </div>
+                                <div class="text-muted" style="margin-top: 8px; font-size: 11px;">
+                                    <i class="fa fa-code"></i> <strong>Code:</strong> 
+                                    <code>&lt;iframe src="&lt;?= PdfOut::viewer(\'dokument.pdf\') ?&gt;" width="100%" height="600"&gt;&lt;/iframe&gt;</code>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Direkter Link Tab -->
+                        <div role="tabpanel" class="tab-pane" id="link-demo">
+                            <div style="padding: 15px;">
+                                <h6>PDF in neuem Tab/Fenster öffnen</h6>
+                                <div class="well">
+                                    <p>Einfachste Methode - PDF öffnet sich in neuem Tab mit vollem Viewer:</p>
+                                    <p>
+                                        <a href="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" 
+                                           target="_blank" 
+                                           class="btn btn-primary">
+                                            <i class="fa fa-external-link"></i> PDF in neuem Tab öffnen
+                                        </a>
+                                    </p>
+                                    <div class="text-muted" style="font-size: 11px;">
+                                        <i class="fa fa-code"></i> <strong>Code:</strong> 
+                                        <code>&lt;a href="&lt;?= PdfOut::viewer(\'dokument.pdf\') ?&gt;" target="_blank"&gt;PDF öffnen&lt;/a&gt;</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Popup Tab -->
+                        <div role="tabpanel" class="tab-pane" id="popup-demo">
+                            <div style="padding: 15px;">
+                                <h6>PDF in Popup-Fenster</h6>
+                                <div class="well">
+                                    <p>Kontrollierte Fenstergröße für bessere UX:</p>
+                                    <p>
+                                        <button onclick="window.open(\'' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '\', \'pdfviewer\', \'width=1200,height=800,scrollbars=yes,resizable=yes\');" 
+                                                class="btn btn-info">
+                                            <i class="fa fa-window-restore"></i> PDF in Popup öffnen
+                                        </button>
+                                    </p>
+                                    <div class="text-muted" style="font-size: 11px;">
+                                        <i class="fa fa-code"></i> <strong>JavaScript:</strong><br>
+                                        <code>window.open(\'&lt;?= PdfOut::viewer("dokument.pdf") ?&gt;\', \'pdfviewer\', \'width=1200,height=800\');</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- JavaScript Embed Tab -->
+                        <div role="tabpanel" class="tab-pane" id="embed-demo">
+                            <div style="padding: 15px;">
+                                <h6>Dynamisches Laden per JavaScript</h6>
+                                <div class="well">
+                                    <p>PDF wird dynamisch in Container geladen:</p>
+                                    <div id="pdf-container" style="min-height: 300px; border: 1px solid #ddd; background: #f9f9f9; display: flex; align-items: center; justify-content: center; color: #666;">
+                                        <span>Klicke "Laden" um das PDF hier einzufügen</span>
+                                    </div>
+                                    <p style="margin-top: 10px;">
+                                        <button onclick="loadPdfDynamically()" class="btn btn-success">
+                                            <i class="fa fa-download"></i> PDF dynamisch laden
+                                        </button>
+                                        <button onclick="clearPdfContainer()" class="btn btn-default">
+                                            <i class="fa fa-times"></i> Leeren
+                                        </button>
+                                    </p>
+                                    <div class="text-muted" style="font-size: 11px;">
+                                        <i class="fa fa-code"></i> <strong>JavaScript:</strong><br>
+                                        <code>document.getElementById(\'container\').innerHTML = \'&lt;iframe src="&lt;?= PdfOut::viewer("dokument.pdf") ?&gt;"&gt;&lt;/iframe&gt;\';</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <script>
+                    function loadPdfDynamically() {
+                        document.getElementById(\'pdf-container\').innerHTML = 
+                            \'<iframe src="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" width="100%" height="400" style="border: none;"></iframe>\';
+                    }
+                    function clearPdfContainer() {
+                        document.getElementById(\'pdf-container\').innerHTML = 
+                            \'<span style="color: #666;">Container geleert - klicke "Laden" um PDF einzufügen</span>\';
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h5><i class="fa fa-cogs"></i> PDF.js Features</h5>
+            </div>
+            <div class="panel-body">
+                <h6>Navigation:</h6>
+                <ul class="list-unstyled">
+                    <li>• Seitenweise blättern</li>
+                    <li>• Thumbnail-Übersicht</li>
+                    <li>• Lesezeichen (falls vorhanden)</li>
+                    <li>• Direktsprung zu Seiten</li>
+                </ul>
+                
+                <h6>Darstellung:</h6>
+                <ul class="list-unstyled">
+                    <li>• Zoom (25% - 400%)</li>
+                    <li>• Vollbild-Modus</li>
+                    <li>• Anpassung an Fensterbreite</li>
+                    <li>• Hochauflösende Darstellung</li>
+                </ul>
+                
+                <h6>Tools:</h6>
+                <ul class="list-unstyled">
+                    <li>• Volltext-Suche</li>
+                    <li>• Text-Auswahl & Kopieren</li>
+                    <li>• PDF-Download</li>
+                    <li>• Druckfunktion</li>
+                </ul>
+                
+                <div class="alert alert-success" style="margin-top: 10px; margin-bottom: 0;">
+                    <small><strong>Version:</strong> PDF.js 5.x<br>
+                    <strong>Engine:</strong> WebAssembly optimiert</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-success">
+    <h5><i class="fa fa-check-circle"></i> PDF.js Integration erfolgreich</h5>
+    <p>Der PDF.js Viewer ist vollständig integriert und einsatzbereit. Sie können:</p>
+    <ul style="margin-bottom: 0;">
+        <li><strong>Eigene PDFs anzeigen:</strong> Einfach die URL im Viewer anpassen</li>
+        <li><strong>In REDAXO einbetten:</strong> iFrame oder direkte Verlinkung möglich</li>
+        <li><strong>Anpassen:</strong> CSS und JavaScript bei Bedarf modifizieren</li>
+        <li><strong>Mobile Support:</strong> Responsive Design für alle Geräte</li>
+    </ul>
+</div>
+';
+
+$fragment = new rex_fragment();
+$fragment->setVar('title', 'PDF.js Viewer Test');
+$fragment->setVar('body', $pdfJsTest, false);
 echo $fragment->parse('core/page/section.php');
 
 // Sicherheitshinweise und Best Practices

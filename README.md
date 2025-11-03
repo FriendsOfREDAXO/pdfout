@@ -1,6 +1,6 @@
 # PdfOut für REDAXO!
 
-PdfOut stellt den "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dompdf), [TCPDF](https://tcpdf.org/), [FPDI](https://www.setasign.com/products/fpdi/) und [pdf.js](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
+PdfOut stellt den "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dompdf), [TCPDF](https://tcpdf.org/), [FPDI](https://www.setasign.com/products/fpdi/) und [PDF.js 5.x](https://github.com/mozilla/pdf.js) in REDAXO zur Verfügung.
 
 ## Inhaltsverzeichnis
 
@@ -12,6 +12,7 @@ PdfOut stellt den "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dom
 - [REDAXO Workflow](#redaxo-workflow-dompdf--cache--signierung)
 - [Erweiterte Methoden](#erweiterte-methoden)
 - [Anwendungsfälle](#anwendungsfälle--best-practices)
+- [PDF.js Update-System](#pdfjs-update-system)
 - [Demo-Seite](#demo-seite)
 - [Systemvoraussetzungen](#verwendete-bibliotheken--lizenzen)
 - [Support](#support--credits)
@@ -20,6 +21,8 @@ PdfOut stellt den "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dom
 
 Die Installation erfolgt über den REDAXO-Installer, alternativ gibt es die aktuellste Beta-Version auf [GitHub](https://github.com/FriendsOfREDAXO/pdfout).
 
+> **Neu in Version 10.x**: PDF.js 5.x mit automatischem Update-System! Siehe [PDF.js Update-System](#pdfjs-update-system) für Details.
+
 ## Was kann PdfOut?
 
 - 🌈 **HTML zu PDF**: Wandelt HTML in hochwertige PDFs um
@@ -27,7 +30,7 @@ Die Installation erfolgt über den REDAXO-Installer, alternativ gibt es die aktu
 - 🖼 **Media Integration**: Bilder direkt aus dem REDAXO Media Manager
 - 💾 **Flexibel**: Speichern oder direktes Streaming an Browser
 - 🔢 **Automatik**: Seitenzahlen und -zählung automatisch
-- 🔍 **Viewer**: Integrierter PDF-Viewer mit pdf.js
+- 🔍 **Viewer**: Integrierter PDF-Viewer mit PDF.js 5.x
 - 🔒 **Sicher**: Passwortschutz und Berechtigungen
 - ✍️ **Signiert**: Digitale Signaturen für Authentizität
 - 🚀 **Workflow**: Optimierter REDAXO-Workflow (dompdf → Cache → Signierung)
@@ -534,6 +537,32 @@ Empfohlen:
 - GD oder IMagick/GMagick für Bildverarbeitung
 - OpenSSL für digitale Signaturen
 
+## PDF.js Update-System
+
+PdfOut 10.x enthält ein neues automatisiertes Update-System für PDF.js:
+
+### 🚀 Ein-Befehl Updates
+```bash
+# Update auf neueste PDF.js Version
+./scripts/update-pdfjs.sh
+
+# Update auf spezifische Version  
+./scripts/update-pdfjs.sh 5.4.394
+
+# Verfügbare Updates prüfen
+npm run check-updates
+```
+
+### ✨ Neue Features in PDF.js 5.x
+- **Vollständige Distribution**: Kompletter Viewer mit allen Komponenten
+- **GitHub-Integration**: Direkte Downloads von offiziellen Releases
+- **Optimiert**: Ausschluss von CJK-Character-Maps spart 1.6MB
+- **Automatisiert**: Ein Befehl für komplette Updates
+- **Zukunftssicher**: Unterstützt alle kommenden PDF.js Versionen
+
+### 📖 Ausführliche Anleitung
+Siehe [PDFJS_UPDATE.md](PDFJS_UPDATE.md) für den kompletten Workflow und Konfigurationsmöglichkeiten.
+
 ## Demo-Seite
 
 PdfOut enthält eine umfassende Demo-Seite mit funktionierenden Beispielen:
@@ -595,9 +624,11 @@ PdfOut baut auf bewährten Open-Source-Bibliotheken auf:
 
 #### PDF.js
 - **Homepage**: https://github.com/mozilla/pdf.js
+- **Version**: 5.4.394 (automatisch aktualisiert)
 - **Lizenz**: Apache 2.0
-- **Zweck**: Integrierter PDF-Viewer im Browser
+- **Zweck**: Integrierter PDF-Viewer im Browser mit erweiterten Features
 - **Dokumentation**: https://mozilla.github.io/pdf.js/
+- **Update-System**: GitHub Releases via `./scripts/update-pdfjs.sh`
 
 ## Lizenzen im Detail
 
@@ -657,7 +688,7 @@ Version 10.0.0
 - dompdf: LGPL v2.1
 - TCPDF: LGPL v3+
 - FPDI: MIT
-- PDF.js: Apache 2.0  
+- PDF.js 5.x: Apache 2.0 (automatisch aktualisiert)  
 - php-css-parser: MIT
 - html5-php: MIT
 
