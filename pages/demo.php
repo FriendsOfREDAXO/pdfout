@@ -1221,12 +1221,13 @@ $pdf->createSignedWorkflow(
                     ob_end_clean();
                 }
                 
-                $pdfJsInfoHtml = '<h1>PDF.js Integration Guide</h1>
-<h2>🚀 Schnellstart mit PdfOut::viewer()</h2>
-<p><strong>Die empfohlene Methode</strong> für PDF.js Integration in REDAXO:</p>
+                $pdfJsInfoHtml = '<div style="font-family: Arial, Helvetica, sans-serif;">
+<h1>PDF.js Integration Guide</h1>
+<h2>Schnellstart mit PdfOut::viewer()</h2>
+<p><strong>Die empfohlene Methode</strong> fuer PDF.js Integration in REDAXO:</p>
 
 <div style="background: #f8f9fa; padding: 10px; border-left: 4px solid #007cba; margin: 10px 0;">
-<pre>use FriendsOfRedaxo\PdfOut\PdfOut;
+<pre style="font-family: Courier, monospace; font-size: 10px;">use FriendsOfRedaxo\PdfOut\PdfOut;
 
 // PDF-Viewer URL generieren
 $viewerUrl = PdfOut::viewer(\'pfad/zu/ihrem/dokument.pdf\');
@@ -1235,10 +1236,10 @@ $viewerUrl = PdfOut::viewer(\'pfad/zu/ihrem/dokument.pdf\');
 echo \'&lt;iframe src="\' . $viewerUrl . \'" width="100%" height="600"&gt;&lt;/iframe&gt;\';
 
 // Als Link verwenden
-echo \'&lt;a href="\' . $viewerUrl . \'" target="_blank"&gt;PDF öffnen&lt;/a&gt;\';</pre>
+echo \'&lt;a href="\' . $viewerUrl . \'" target="_blank"&gt;PDF oeffnen&lt;/a&gt;\';</pre>
 </div>
 
-<h2>📋 Schritt-für-Schritt Integration</h2>
+<h2>Schritt-fuer-Schritt Integration</h2>
 <ol>
 <li>PDF-Datei in assets/addons/pdfout/vendor/web/ ablegen</li>
 <li>PdfOut::viewer() Methode mit relativem Pfad aufrufen</li>
@@ -1246,11 +1247,11 @@ echo \'&lt;a href="\' . $viewerUrl . \'" target="_blank"&gt;PDF öffnen&lt;/a&gt
 <li>Viewer automatisch geladen - fertig!</li>
 </ol>
 
-<h2>🎯 Praktische Beispiele</h2>
+<h2>Praktische Beispiele</h2>
 <p><strong>REDAXO Template Integration:</strong></p>
 
 <div style="background: #f8f9fa; padding: 10px; border-left: 4px solid #007cba; margin: 10px 0;">
-<pre>// Im Template
+<pre style="font-family: Courier, monospace; font-size: 10px;">// Im Template
 $pdfFile = \'berichte/jahresbericht.pdf\';
 $viewerUrl = PdfOut::viewer($pdfFile);
 ?&gt;
@@ -1261,7 +1262,7 @@ $viewerUrl = PdfOut::viewer($pdfFile);
 
 <p><strong>Backend Widget:</strong></p>
 <div style="background: #f8f9fa; padding: 10px; border-left: 4px solid #007cba; margin: 10px 0;">
-<pre>class PdfViewerWidget extends rex_form_widget {
+<pre style="font-family: Courier, monospace; font-size: 10px;">class PdfViewerWidget extends rex_form_widget {
     public function formatElement() {
         $viewerUrl = PdfOut::viewer($this->getValue());
         return \'&lt;iframe src="\' . $viewerUrl . \'" 
@@ -1272,15 +1273,17 @@ $viewerUrl = PdfOut::viewer($pdfFile);
 </div>
 
 <div style="background: #d4edda; padding: 10px; border: 1px solid #c3e6cb; margin: 10px 0;">
-<strong>💡 Tipp:</strong> Der PDF.js Viewer unterstützt Volltext-Suche, Navigation, Zoom, Drucken und Download - alles automatisch verfügbar!
+<strong>TIPP:</strong> Der PDF.js Viewer unterstuetzt Volltext-Suche, Navigation, Zoom, Drucken und Download - alles automatisch verfuegbar!
 </div>
 
 <p><strong>Erstellt am:</strong> ' . date('d.m.Y H:i:s') . '</p>
-<p><strong>REDAXO PdfOut AddOn:</strong> v10.1.0 mit PDF.js 5.x</p>';
+<p><strong>REDAXO PdfOut AddOn:</strong> v10.1.0 mit PDF.js 5.x</p>
+</div>';
                 
                 $pdf = new PdfOut();
                 $pdf->setName('pdfjs_integration_guide')
                     ->setHtml($pdfJsInfoHtml)
+                    ->setFont('Helvetica')
                     ->run();
                     
             } catch (Exception $e) {
@@ -2011,7 +2014,7 @@ $pdfJsTest = '
             <div class="panel-body">
                 <p>Testen Sie den integrierten PDF.js Viewer mit einem Beispiel-PDF:</p>
                 <div class="btn-group" style="margin-bottom: 15px;">
-                    <a href="' . PdfOut::viewer('assets/addons/pdfout/vendor/web/compressed.tracemonkey-pldi-09.pdf') . '" 
+                    <a href="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" 
                        target="_blank" 
                        class="btn btn-primary">
                         <i class="fa fa-external-link"></i> PDF.js Viewer öffnen
@@ -2052,7 +2055,7 @@ $pdfJsTest = '
                     </div>
                     <div style="border: 2px solid #ddd; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <iframe 
-                            src="' . PdfOut::viewer('assets/addons/pdfout/vendor/web/compressed.tracemonkey-pldi-09.pdf') . '" 
+                            src="' . PdfOut::viewer('compressed.tracemonkey-pldi-09.pdf') . '" 
                             width="100%" 
                             height="500" 
                             style="border: none; display: block;"
