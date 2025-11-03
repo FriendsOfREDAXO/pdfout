@@ -1216,99 +1216,25 @@ $pdf->createSignedWorkflow(
             
         case 'pdfjs_integration':
             try {
-                // Output-Buffer komplett leeren
-                while (ob_get_level()) {
-                    ob_end_clean();
-                }
-                
+                // JavaScript für Viewer-Weiterleitung ausgeben
                 $pdfJsInfoHtml = '<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <title>PDF.js Integration Guide</title>
     <style>
-        @page {
-            margin: 15mm;
-            size: A4;
-        }
-        body {
-            font-family: "DejaVu Sans", Arial, sans-serif;
-            line-height: 1.4;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            font-size: 11px;
-        }
-        .header {
-            background: linear-gradient(135deg, #007cba 0%, #004d7a 100%);
-            color: white;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .header h1 {
-            margin: 0 0 5px 0;
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .header p {
-            margin: 0;
-            font-size: 12px;
-            opacity: 0.9;
-        }
-        .section {
-            background: #f8f9fa;
-            border-left: 4px solid #007cba;
-            padding: 12px 15px;
-            margin: 15px 0;
-            border-radius: 6px;
-        }
-        .section h2 {
-            margin: 0 0 10px 0;
-            color: #007cba;
-            font-size: 14px;
-        }
-        .code-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            padding: 10px;
-            font-family: "Courier New", monospace;
-            font-size: 9px;
-            border-radius: 4px;
-            margin: 10px 0;
-            line-height: 1.3;
-            overflow-wrap: break-word;
-        }
-        .highlight {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 8px;
-            border-radius: 4px;
-            margin: 10px 0;
-            font-size: 10px;
-        }
-        .step {
-            margin: 8px 0;
-            padding: 6px 10px;
-            background: white;
-            border-radius: 4px;
-            border-left: 3px solid #28a745;
-            font-size: 10px;
-        }
-        .step-number {
-            font-weight: bold;
-            color: #28a745;
-        }
-        .footer {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px solid #007cba;
-            text-align: center;
-            font-size: 9px;
-            color: #666;
-        }
+        @page { margin: 15mm; size: A4; }
+        body { font-family: "DejaVu Sans", Arial, sans-serif; line-height: 1.4; color: #333; margin: 0; padding: 0; font-size: 11px; }
+        .header { background: linear-gradient(135deg, #007cba 0%, #004d7a 100%); color: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center; }
+        .header h1 { margin: 0 0 5px 0; font-size: 20px; font-weight: bold; }
+        .header p { margin: 0; font-size: 12px; opacity: 0.9; }
+        .section { background: #f8f9fa; border-left: 4px solid #007cba; padding: 12px 15px; margin: 15px 0; border-radius: 6px; }
+        .section h2 { margin: 0 0 10px 0; color: #007cba; font-size: 14px; }
+        .code-block { background: #f8f9fa; border: 1px solid #e9ecef; padding: 10px; font-family: "Courier New", monospace; font-size: 9px; border-radius: 4px; margin: 10px 0; line-height: 1.3; overflow-wrap: break-word; }
+        .highlight { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 8px; border-radius: 4px; margin: 10px 0; font-size: 10px; }
+        .step { margin: 8px 0; padding: 6px 10px; background: white; border-radius: 4px; border-left: 3px solid #28a745; font-size: 10px; }
+        .step-number { font-weight: bold; color: #28a745; }
+        .footer { margin-top: 20px; padding-top: 15px; border-top: 2px solid #007cba; text-align: center; font-size: 9px; color: #666; }
     </style>
 </head>
 <body>
@@ -1325,7 +1251,7 @@ $pdf->createSignedWorkflow(
 // PDF-Viewer URL generieren
 $viewerUrl = PdfOut::viewer(\'pfad/zu/ihrem/dokument.pdf\');
 
-// Als iFrame einbetten
+// Als iFrame einbetten  
 echo \'&lt;iframe src="\' . $viewerUrl . \'" width="100%" height="600"&gt;&lt;/iframe&gt;\';
 
 // Als Link verwenden
@@ -1348,89 +1274,45 @@ $pdfFile = \'berichte/jahresbericht.pdf\';
 $viewerUrl = PdfOut::viewer($pdfFile);
 ?&gt;
 &lt;div class="pdf-container"&gt;
-    &lt;iframe src="&lt;?= $viewerUrl ?&gt;" 
-            style="width:100%; height:80vh; border:none;"&gt;
-    &lt;/iframe&gt;
+    &lt;iframe src="&lt;?= $viewerUrl ?&gt;" style="width:100%; height:80vh; border:none;"&gt;&lt;/iframe&gt;
 &lt;/div&gt;</div>
         
         <p><strong>Backend Widget:</strong></p>
         <div class="code-block">class PdfViewerWidget extends rex_form_widget {
     public function formatElement() {
         $viewerUrl = PdfOut::viewer($this->getValue());
-        return \'&lt;iframe src="\' . $viewerUrl . \'"
-                style="width:100%; height:400px; border:1px solid #ddd;"&gt;
-                &lt;/iframe&gt;\';
+        return \'&lt;iframe src="\' . $viewerUrl . \'" style="width:100%; height:400px; border:1px solid #ddd;"&gt;&lt;/iframe&gt;\';
     }
 }</div>
     </div>
     
-    <div class="section">
-        <h2>⚙️ JavaScript API (Erweitert)</h2>
-        <div class="code-block">// Zugriff auf PDF.js API
-const iframe = document.getElementById(\'pdf-viewer\');
-iframe.onload = function() {
-    const pdfApp = iframe.contentWindow.PDFViewerApplication;
-    
-    // Zu Seite springen
-    pdfApp.page = 3;
-    
-    // Zoom setzen  
-    pdfApp.pdfViewer.currentScaleValue = \'page-width\';
-    
-    // Events abfangen
-    iframe.contentWindow.addEventListener(\'pagesinit\', () => {
-        console.log(\'PDF geladen:\', pdfApp.pagesCount, \'Seiten\');
-    });
-};</div>
-    </div>
-    
     <div class="highlight">
-        <strong>💡 Tipp:</strong> Der PDF.js Viewer unterstützt Volltext-Suche, Navigation, 
-        Zoom, Drucken und Download - alles automatisch verfügbar!
-    </div>
-    
-    <div class="section">
-        <h2>🔧 Konfiguration & Anpassung</h2>
-        <p>Der Viewer kann über URL-Parameter angepasst werden:</p>
-        <div class="code-block">// Erweiterte Optionen
-$viewerUrl = PdfOut::viewer($pdfFile . \'#page=3&zoom=150\');
-$viewerUrl = PdfOut::viewer($pdfFile . \'#nameddest=chapter1\');
-$viewerUrl = PdfOut::viewer($pdfFile . \'#toolbar=0&navpanes=0\'); // Minimal</div>
+        <strong>💡 Tipp:</strong> Der PDF.js Viewer unterstützt Volltext-Suche, Navigation, Zoom, Drucken und Download - alles automatisch verfügbar!
     </div>
     
     <div class="footer">
-        <p><strong>REDAXO PdfOut AddOn v10.1.0</strong> • PDF.js ' . (file_exists(rex_path::addonAssets('pdfout', 'vendor/build/pdf.mjs')) ? '5.x' : 'nicht installiert') . ' • ' . date('d.m.Y H:i:s') . '</p>
+        <p><strong>REDAXO PdfOut AddOn v10.1.0</strong> • PDF.js 5.x • ' . date('d.m.Y H:i:s') . '</p>
         <p>Weitere Informationen: <strong>Backend → AddOns → PdfOut → API Referenz</strong></p>
     </div>
 </body>
 </html>';
                 
-                // PDF erstellen und im Cache speichern für Viewer-Anzeige
-                $cacheDir = rex_path::addonCache('pdfout');
-                $pdfFileName = 'pdfjs_integration_guide_' . time() . '.pdf';
-                $pdfPath = $cacheDir . $pdfFileName;
-                
+                // PDF direkt erstellen und an Browser senden, dann JavaScript für Viewer-Weiterleitung
                 $pdf = new PdfOut();
                 $pdf->setName('pdfjs_integration_guide')
                     ->setHtml($pdfJsInfoHtml)
                     ->setPaperSize('A4', 'portrait')
                     ->setFont('Dejavu Sans')
-                    ->setSaveToPath($cacheDir)
-                    ->setSaveAndSend(false)
-                    ->run();
+                    ->setAttachment(false); // Inline anzeigen
                 
-                // Prüfen ob PDF erstellt wurde
-                if (file_exists($pdfPath)) {
-                    // Relativen Pfad für PDF.js Viewer erstellen
-                    $relativePdfPath = 'cache/addons/pdfout/' . $pdfFileName;
-                    $viewerUrl = PdfOut::viewer($relativePdfPath);
-                    
-                    // Direkt zum PDF.js Viewer weiterleiten
-                    header('Location: ' . $viewerUrl);
-                    exit;
-                } else {
-                    throw new Exception('PDF konnte nicht erstellt werden');
+                // Output Buffer leeren
+                while (ob_get_level()) {
+                    ob_end_clean();
                 }
+                
+                // PDF direkt ausgeben - wird vom Browser direkt im PDF.js Viewer geöffnet
+                $pdf->run();
+                exit;
                     
             } catch (Exception $e) {
                 $error = 'Fehler bei der PDF.js Integration Demo: ' . $e->getMessage();
