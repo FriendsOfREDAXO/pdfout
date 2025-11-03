@@ -1879,7 +1879,7 @@ $pdfJsTest = '
             <div class="panel-body">
                 <p>Testen Sie den integrierten PDF.js Viewer mit einem Beispiel-PDF:</p>
                 <div class="btn-group" style="margin-bottom: 15px;">
-                    <a href="' . rex_url::addonAssets('pdfout', 'vendor/web/viewer.html?file=' . urlencode(rex_url::addonAssets('pdfout', 'vendor/web/compressed.tracemonkey-pldi-09.pdf'))) . '" 
+                    <a href="' . rex_url::addonAssets('pdfout', 'vendor/web/viewer.html?file=compressed.tracemonkey-pldi-09.pdf') . '" 
                        target="_blank" 
                        class="btn btn-primary">
                         <i class="fa fa-external-link"></i> PDF.js Viewer öffnen
