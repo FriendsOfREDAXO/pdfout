@@ -1868,6 +1868,103 @@ $fragment->setVar('title', 'Wichtige Hinweise');
 $fragment->setVar('body', $notes, false);
 echo $fragment->parse('core/page/section.php');
 
+// PDF.js Viewer Test
+$pdfJsTest = '
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4><i class="fa fa-file-pdf-o"></i> PDF.js Viewer Test</h4>
+            </div>
+            <div class="panel-body">
+                <p>Testen Sie den integrierten PDF.js Viewer mit einem Beispiel-PDF:</p>
+                <div class="btn-group" style="margin-bottom: 15px;">
+                    <a href="' . rex_url::addonAssets('pdfout', 'vendor/web/viewer.html?file=' . urlencode(rex_url::addonAssets('pdfout', 'vendor/web/compressed.tracemonkey-pldi-09.pdf'))) . '" 
+                       target="_blank" 
+                       class="btn btn-primary">
+                        <i class="fa fa-external-link"></i> PDF.js Viewer öffnen
+                    </a>
+                    <a href="' . rex_url::addonAssets('pdfout', 'vendor/web/compressed.tracemonkey-pldi-09.pdf') . '" 
+                       target="_blank" 
+                       class="btn btn-default">
+                        <i class="fa fa-download"></i> PDF direkt öffnen
+                    </a>
+                </div>
+                
+                <h5>Was wird getestet?</h5>
+                <ul>
+                    <li><strong>PDF.js 5.4.394:</strong> Neueste Version mit verbesserter Performance</li>
+                    <li><strong>Viewer-Interface:</strong> Navigation, Zoom, Suche, Download</li>
+                    <li><strong>Browser-Kompatibilität:</strong> Funktioniert in allen modernen Browsern</li>
+                    <li><strong>WebAssembly:</strong> Schnelle PDF-Verarbeitung ohne Plugins</li>
+                </ul>
+                
+                <div class="alert alert-info" style="margin-top: 15px;">
+                    <strong>Test-PDF:</strong> "Trace-based Just-in-Time Type Specialization for Dynamic Languages"<br>
+                    <strong>Größe:</strong> ~190 KB (komprimiert)<br>
+                    <strong>Seiten:</strong> Mehrseitiges wissenschaftliches Dokument<br>
+                    <strong>Features:</strong> Text, Formeln, Grafiken, Hyperlinks
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h5><i class="fa fa-cogs"></i> PDF.js Features</h5>
+            </div>
+            <div class="panel-body">
+                <h6>Navigation:</h6>
+                <ul class="list-unstyled">
+                    <li>• Seitenweise blättern</li>
+                    <li>• Thumbnail-Übersicht</li>
+                    <li>• Lesezeichen (falls vorhanden)</li>
+                    <li>• Direktsprung zu Seiten</li>
+                </ul>
+                
+                <h6>Darstellung:</h6>
+                <ul class="list-unstyled">
+                    <li>• Zoom (25% - 400%)</li>
+                    <li>• Vollbild-Modus</li>
+                    <li>• Anpassung an Fensterbreite</li>
+                    <li>• Hochauflösende Darstellung</li>
+                </ul>
+                
+                <h6>Tools:</h6>
+                <ul class="list-unstyled">
+                    <li>• Volltext-Suche</li>
+                    <li>• Text-Auswahl & Kopieren</li>
+                    <li>• PDF-Download</li>
+                    <li>• Druckfunktion</li>
+                </ul>
+                
+                <div class="alert alert-success" style="margin-top: 10px; margin-bottom: 0;">
+                    <small><strong>Version:</strong> PDF.js 5.4.394<br>
+                    <strong>Engine:</strong> WebAssembly optimiert</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-success">
+    <h5><i class="fa fa-check-circle"></i> PDF.js Integration erfolgreich</h5>
+    <p>Der PDF.js Viewer ist vollständig integriert und einsatzbereit. Sie können:</p>
+    <ul style="margin-bottom: 0;">
+        <li><strong>Eigene PDFs anzeigen:</strong> Einfach die URL im Viewer anpassen</li>
+        <li><strong>In REDAXO einbetten:</strong> iFrame oder direkte Verlinkung möglich</li>
+        <li><strong>Anpassen:</strong> CSS und JavaScript bei Bedarf modifizieren</li>
+        <li><strong>Mobile Support:</strong> Responsive Design für alle Geräte</li>
+    </ul>
+</div>
+';
+
+$fragment = new rex_fragment();
+$fragment->setVar('title', 'PDF.js Viewer Test');
+$fragment->setVar('body', $pdfJsTest, false);
+echo $fragment->parse('core/page/section.php');
+
 // Sicherheitshinweise und Best Practices
 $security = '
 <div class="alert alert-warning">
