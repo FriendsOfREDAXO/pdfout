@@ -1481,6 +1481,8 @@ $pdf->createSignedWorkflow(
         'description' => 'PDF.js Viewer in REDAXO einbinden',
         'icon' => 'fa-file-pdf-o',
         'type' => 'info',
+        'panel_class' => 'panel-info',
+        'btn_class' => 'btn-info',
         'code' => '// 1. PdfOut eigene Viewer-Methode verwenden (empfohlen!)
 use FriendsOfRedaxo\\PdfOut\\PdfOut;
 
