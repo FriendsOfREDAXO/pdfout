@@ -7,6 +7,7 @@ PdfOut stellt den "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dom
 - [Installation](#installation)
 - [Features](#was-kann-pdfout)
 - [Quick Start](#lass-uns-loslegen)
+- [PDF-Thumbnails](#pdf-thumbnails)
 - [Passwortschutz](#passwortgeschützte-pdfs)
 - [Digitale Signaturen](#digitale-signaturen)
 - [REDAXO Workflow](#redaxo-workflow-dompdf--cache--signierung)
@@ -31,7 +32,8 @@ Die Installation erfolgt über den REDAXO-Installer, alternativ gibt es die aktu
 - 💾 **Flexibel**: Speichern oder direktes Streaming an Browser
 - 🔢 **Automatik**: Seitenzahlen und -zählung automatisch
 - 🔍 **Viewer**: Integrierter PDF-Viewer mit PDF.js 5.x
-- 🔒 **Sicher**: Passwortschutz und Berechtigungen
+- �️ **Thumbnails**: PDF-Vorschaubilder ohne ImageMagick (via poppler-utils)
+- �🔒 **Sicher**: Passwortschutz und Berechtigungen
 - ✍️ **Signiert**: Digitale Signaturen für Authentizität
 - 🚀 **Workflow**: Optimierter REDAXO-Workflow (dompdf → Cache → Signierung)
 
@@ -120,6 +122,132 @@ $pdf->setName('mein_meisterwerk')
     ->setSaveAndSend(true)  // Speichert und sendet in einem Rutsch
     ->run();
 ```
+
+### PDF-Thumbnails
+
+> **Problem**: Ubuntu/Debian blockiert seit 2018 die PDF-zu-Bild-Konvertierung über ImageMagick/Ghostscript (via `/etc/ImageMagick-6/policy.xml`). Der bisherige Media-Manager-Effekt `convert2img` funktioniert dadurch nicht mehr für PDFs.
+
+**Lösung**: PdfOut liefert einen eigenen Media-Manager-Effekt **„PDF-Thumbnail (pdfout)"**, der `pdftoppm` aus poppler-utils verwendet – **nicht von der ImageMagick-Policy betroffen**.
+
+#### Voraussetzung auf dem Server
+
+Für die PDF-Thumbnail-Funktion wird **poppler-utils** benötigt (liefert `pdftoppm` und `pdftocairo`). Diese Tools sind **nicht** von der ImageMagick-Policy betroffen und funktionieren auf allen aktuellen Linux-Distributionen.
+
+**Ubuntu / Debian:**
+```bash
+sudo apt install poppler-utils
+```
+
+**CentOS / RHEL / Fedora / Amazon Linux:**
+```bash
+# CentOS/RHEL 7/8
+sudo yum install poppler-utils
+
+# Fedora / CentOS Stream 9+
+sudo dnf install poppler-utils
+```
+
+**Alpine Linux (z.B. in Docker):**
+```bash
+apk add poppler-utils
+```
+
+**Arch Linux / Manjaro:**
+```bash
+sudo pacman -S poppler
+```
+
+**openSUSE:**
+```bash
+sudo zypper install poppler-tools
+```
+
+**macOS (Homebrew):**
+```bash
+brew install poppler
+```
+
+**macOS (MacPorts):**
+```bash
+sudo port install poppler
+```
+
+**Docker (Debian-basiert):**
+```dockerfile
+RUN apt-get update && apt-get install -y poppler-utils && rm -rf /var/lib/apt/lists/*
+```
+
+**Prüfen ob die Installation erfolgreich war:**
+```bash
+which pdftoppm && pdftoppm -v
+# Erwartete Ausgabe: /usr/bin/pdftoppm  +  Versionsnummer
+```
+
+> **Fallback-Tools** (optional, falls poppler-utils nicht installierbar):
+> - `ghostscript` – Ghostscript direkt, ohne ImageMagick-Umweg: `apt install ghostscript`
+> - `php-imagick` – PHP Imagick-Extension, letzter Fallback (evtl. von Policy blockiert): `apt install php-imagick`
+
+#### Media-Manager-Effekt verwenden
+
+1. Im Backend unter **Media Manager** einen neuen Typ anlegen (z.B. `pdf_thumb`)
+2. Effekt **„PDF-Thumbnail (pdfout)"** hinzufügen
+3. Optional: Anschließend `resize` für einheitliche Größe
+
+Der Effekt zeigt im Backend den Status der verfügbaren Tools an (pdftoppm ✓/✗, gs ✓/✗ usw.).
+
+#### Im Template/Modul verwenden
+
+```php
+// PDF als Thumbnail per Media Manager Typ ausgeben
+$filename = 'mein_dokument.pdf';
+$thumbUrl = rex_media_manager::getUrl('pdf_thumb', $filename);
+echo '<img src="' . $thumbUrl . '" alt="PDF-Vorschau">';
+```
+
+#### PdfThumbnail-Klasse direkt verwenden
+
+Für erweiterte Anwendungsfälle kann die Klasse auch direkt genutzt werden:
+
+```php
+use FriendsOfRedaxo\PdfOut\PdfThumbnail;
+
+$thumb = new PdfThumbnail();
+$thumb->setDpi(200)
+      ->setFormat('jpg')
+      ->setQuality(90)
+      ->setPage(1)
+      ->setMaxWidth(800);
+
+// Als Dateipfad
+$imagePath = $thumb->generate(rex_path::media('dokument.pdf'));
+
+// Als GD-Image
+$gdImage = $thumb->generateAsGdImage(rex_path::media('dokument.pdf'));
+
+// Als Binärstring
+$imageData = $thumb->generateAsString(rex_path::media('dokument.pdf'));
+
+// Status prüfen
+$status = PdfThumbnail::getStatus();
+if (!$status['available']) {
+    echo 'Bitte poppler-utils installieren: apt install poppler-utils';
+}
+
+// Verfügbare Tools prüfen
+$tools = PdfThumbnail::checkAvailableTools();
+// => ['pdftoppm' => true, 'pdftocairo' => true, 'gs' => false, 'imagick' => false]
+```
+
+#### Tool-Priorität
+
+Die Konvertierung probiert folgende Tools in dieser Reihenfolge:
+
+| Priorität | Tool | Paket | Hinweis |
+|-----------|------|-------|---------|
+| 1 | `pdftoppm` | poppler-utils | ⭐ Empfohlen, schnell, hohe Qualität |
+| 2 | `pdftocairo` | poppler-utils | Alternative aus dem gleichen Paket |
+| 3 | `gs` | ghostscript | Ghostscript direkt, ohne ImageMagick-Umweg |
+| 4 | Imagick | php-imagick | Fallback, evtl. von Policy betroffen |
 
 ### Passwortgeschützte PDFs
 

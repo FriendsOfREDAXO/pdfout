@@ -15,3 +15,17 @@ pdfout_certificate_delete = Delete Certificate
 pdfout_certificate_select = Select Certificate
 pdfout_certificate_default = Default Certificate
 pdfout_certificate_custom = Custom Certificate
+
+# PDF Thumbnail Media Manager Effect
+pdfout_effect_pdf_thumbnail = PDF Thumbnail (pdfout)
+pdfout_effect_pdf_thumbnail_status = Status
+pdfout_effect_pdf_thumbnail_convert_to = Output format
+pdfout_effect_pdf_thumbnail_convert_to_notice = Format of the generated thumbnail
+pdfout_effect_pdf_thumbnail_density = Resolution (DPI)
+pdfout_effect_pdf_thumbnail_density_notice = Higher values = better quality but slower. 150 is a good default.
+pdfout_effect_pdf_thumbnail_quality = JPEG quality
+pdfout_effect_pdf_thumbnail_quality_notice = Quality 1-100 (only relevant for JPG). Default: 85
+pdfout_effect_pdf_thumbnail_page = Page number
+pdfout_effect_pdf_thumbnail_page_notice = Which page should be used as thumbnail? (1 = first page)
+pdfout_effect_pdf_thumbnail_color = Background color
+pdfout_effect_pdf_thumbnail_color_notice = Hex color code without # for the background (e.g. ffffff for white)

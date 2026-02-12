@@ -7,6 +7,9 @@ rex_dir::create(rex_path::addonCache('pdfout', 'fonts'));
 // Erstelle Zertifikats-Verzeichnis
 rex_dir::create($addon->getDataPath('certificates'));
 
+// Erstelle Thumbnail-Cache-Verzeichnis
+rex_dir::create($addon->getCachePath('thumbnails'));
+
 // Standard-Konfiguration setzen
 if (!$addon->hasConfig()) {
     $addon->setConfig([
