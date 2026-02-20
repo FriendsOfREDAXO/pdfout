@@ -74,6 +74,9 @@ class rex_effect_pdf_thumbnail extends rex_effect_abstract
             $gamma = self::GAMMA_DEFAULT;
         }
         $iccProfile = (string) ($this->params['icc_profile'] ?? 'none');
+        if (!in_array($iccProfile, self::ICC_PROFILE_OPTIONS, true)) {
+            $iccProfile = 'none';
+        }
 
         // PdfThumbnail verwenden
         $thumbnail = new PdfThumbnail();
