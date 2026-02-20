@@ -29,8 +29,11 @@ class rex_effect_pdf_thumbnail extends rex_effect_abstract
     private const DENSITIES = [72, 100, 150, 200, 300];
     private const DENSITY_DEFAULT = 150;
     private const QUALITY_DEFAULT = 85;
-    private const CONVERT_TOS = ['jpg', 'png'];
-    private const CONVERT_TO_DEFAULT = 'jpg';
+    private const CONVERT_TOS = ['png', 'jpg'];
+    private const CONVERT_TO_DEFAULT = 'png';
+    private const GAMMA_DEFAULT = 1.0;
+    private const GAMMA_OPTIONS = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4];
+    private const ICC_PROFILE_OPTIONS = ['none', 'srgb'];
 
     public function execute(): void
     {
@@ -66,6 +69,11 @@ class rex_effect_pdf_thumbnail extends rex_effect_abstract
 
         $page = max(1, (int) ($this->params['page'] ?? 1));
         $color = (string) ($this->params['color'] ?? 'ffffff');
+        $gamma = (float) ($this->params['gamma'] ?? self::GAMMA_DEFAULT);
+        if (!in_array($gamma, self::GAMMA_OPTIONS, true)) {
+            $gamma = self::GAMMA_DEFAULT;
+        }
+        $iccProfile = (string) ($this->params['icc_profile'] ?? 'none');
 
         // PdfThumbnail verwenden
         $thumbnail = new PdfThumbnail();
@@ -75,6 +83,8 @@ class rex_effect_pdf_thumbnail extends rex_effect_abstract
             ->setQuality($quality)
             ->setPage($page)
             ->setBackgroundColor($color)
+            ->setGamma($gamma)
+            ->setEmbedIccProfile($iccProfile === 'srgb')
             ->setCache(false); // Media Manager cached selbst
 
         // Thumbnail generieren
@@ -180,6 +190,22 @@ class rex_effect_pdf_thumbnail extends rex_effect_abstract
                 'type' => 'string',
                 'default' => 'ffffff',
                 'notice' => rex_i18n::msg('pdfout_effect_pdf_thumbnail_color_notice'),
+            ],
+            [
+                'label' => rex_i18n::msg('pdfout_effect_pdf_thumbnail_gamma'),
+                'name' => 'gamma',
+                'type' => 'select',
+                'options' => self::GAMMA_OPTIONS,
+                'default' => self::GAMMA_DEFAULT,
+                'notice' => rex_i18n::msg('pdfout_effect_pdf_thumbnail_gamma_notice'),
+            ],
+            [
+                'label' => rex_i18n::msg('pdfout_effect_pdf_thumbnail_icc_profile'),
+                'name' => 'icc_profile',
+                'type' => 'select',
+                'options' => self::ICC_PROFILE_OPTIONS,
+                'default' => 'none',
+                'notice' => rex_i18n::msg('pdfout_effect_pdf_thumbnail_icc_profile_notice'),
             ],
         ];
     }

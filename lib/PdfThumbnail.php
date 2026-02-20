@@ -28,8 +28,8 @@ use rex_path;
  */
 class PdfThumbnail
 {
-    /** @var string Ausgabeformat (jpg|png) */
-    private string $format = 'jpg';
+    /** @var string Ausgabeformat (png|jpg) */
+    private string $format = 'png';
 
     /** @var int JPEG-Qualität (1-100) */
     private int $quality = 85;
@@ -48,6 +48,12 @@ class PdfThumbnail
 
     /** @var string Hintergrundfarbe für transparente Bereiche (Hex ohne #) */
     private string $backgroundColor = 'ffffff';
+
+    /** @var float Gamma-Korrektur (1.0 = keine, <1 dunkler, >1 heller) */
+    private float $gamma = 1.0;
+
+    /** @var bool sRGB ICC-Profil in das Ausgabebild einbetten */
+    private bool $embedIccProfile = false;
 
     /** @var string|null Cache-Verzeichnis */
     private ?string $cacheDir = null;
@@ -157,6 +163,40 @@ class PdfThumbnail
     }
 
     /**
+     * Setzt die Gamma-Korrektur
+     *
+     * Werte > 1.0 hellen das Bild auf (empfohlen: 1.1–1.4 für PDF-Thumbnails),
+     * Werte < 1.0 dunkeln ab, 1.0 = keine Korrektur.
+     *
+     * Hintergrund: PDF-Viewer wie macOS Preview nutzen Display-Farbmanagement
+     * (z.B. Display P3), was dunkle Farben satter/heller erscheinen lässt.
+     * Browser zeigen Thumbnails ohne dieses Mapping, daher wirken die Farben dunkler.
+     *
+     * @param float $gamma Gamma-Wert (0.5–2.0)
+     * @return self
+     */
+    public function setGamma(float $gamma): self
+    {
+        $this->gamma = max(0.5, min(2.0, $gamma));
+        return $this;
+    }
+
+    /**
+     * Aktiviert/deaktiviert das Einbetten eines sRGB ICC-Profils
+     *
+     * Mit eingebettetem ICC-Profil können Browser und Bildprogramme
+     * die Farben korrekt interpretieren. Benötigt die PHP-Extension Imagick.
+     *
+     * @param bool $embed true = ICC-Profil einbetten
+     * @return self
+     */
+    public function setEmbedIccProfile(bool $embed): self
+    {
+        $this->embedIccProfile = $embed;
+        return $this;
+    }
+
+    /**
      * Aktiviert oder deaktiviert den Cache
      *
      * @param bool $enabled Cache ein/aus
@@ -222,6 +262,16 @@ class PdfThumbnail
             $outputPath = $this->resizeImage($outputPath);
         }
 
+        // Gamma-Korrektur anwenden
+        if (abs($this->gamma - 1.0) > 0.01) {
+            $outputPath = $this->applyGammaCorrection($outputPath);
+        }
+
+        // ICC-Profil einbetten
+        if ($this->embedIccProfile) {
+            $outputPath = $this->embedSrgbIccProfile($outputPath);
+        }
+
         // In Cache verschieben
         if ($this->cacheEnabled && $outputPath !== $cachePath) {
             if (copy($outputPath, $cachePath)) {
@@ -283,6 +333,7 @@ class PdfThumbnail
             'pdftocairo' => self::isToolAvailable('pdftocairo'),
             'gs' => self::isToolAvailable('gs'),
             'imagick' => class_exists(\Imagick::class),
+            'convert' => self::isToolAvailable('convert'),
         ];
     }
 
@@ -667,6 +718,184 @@ class PdfThumbnail
     }
 
     /**
+     * Wendet Gamma-Korrektur auf ein Bild an
+     *
+     * @param string $imagePath Pfad zum Bild
+     * @return string Pfad zum korrigierten Bild
+     */
+    private function applyGammaCorrection(string $imagePath): string
+    {
+        // 1. Bevorzugt: PHP Imagick Extension
+        if (class_exists(\Imagick::class)) {
+            try {
+                $im = new \Imagick($imagePath);
+                $im->gammaImage($this->gamma);
+                $im->writeImage($imagePath);
+                $im->destroy();
+                return $imagePath;
+            } catch (\ImagickException $e) {
+                rex_logger::factory()->warning('PdfThumbnail: Imagick Gamma fehlgeschlagen: {message}', ['message' => $e->getMessage()]);
+            }
+        }
+
+        // 2. Fallback: convert (ImageMagick CLI)
+        if (self::isToolAvailable('convert')) {
+            $cmd = 'convert'
+                . ' ' . escapeshellarg($imagePath)
+                . ' -gamma ' . escapeshellarg((string) $this->gamma)
+                . ' ' . escapeshellarg($imagePath);
+            exec($cmd, $output, $returnCode);
+            if ($returnCode === 0) {
+                return $imagePath;
+            }
+            rex_logger::factory()->warning('PdfThumbnail: convert Gamma fehlgeschlagen (Code {code})', ['code' => $returnCode]);
+        }
+
+        // 3. Fallback: GD gammaCorrect
+        $imageInfo = @getimagesize($imagePath);
+        if ($imageInfo === false) {
+            return $imagePath;
+        }
+
+        $srcImage = match ($imageInfo['mime']) {
+            'image/png' => @imagecreatefrompng($imagePath),
+            'image/jpeg' => @imagecreatefromjpeg($imagePath),
+            default => null,
+        };
+
+        if ($srcImage === null || $srcImage === false) {
+            return $imagePath;
+        }
+
+        // GD Gamma: input=1.0, output=1/gamma (invertiert, weil GD anders arbeitet)
+        imagegammacorrect($srcImage, 1.0, $this->gamma);
+
+        if ($this->format === 'png') {
+            imagepng($srcImage, $imagePath, 6);
+        } else {
+            imagejpeg($srcImage, $imagePath, $this->quality);
+        }
+
+        imagedestroy($srcImage);
+        return $imagePath;
+    }
+
+    /**
+     * Bettet ein sRGB ICC-Profil in das Bild ein
+     *
+     * Sucht nach verfügbaren ICC-Profilen auf dem System und bettet
+     * das sRGB-Profil via Imagick in das Bild ein.
+     *
+     * @param string $imagePath Pfad zum Bild
+     * @return string Pfad zum Bild (mit oder ohne Profil)
+     */
+    private function embedSrgbIccProfile(string $imagePath): string
+    {
+        // 1. Bevorzugt: PHP Imagick Extension
+        if (class_exists(\Imagick::class)) {
+            $profileData = self::findSrgbIccProfile();
+            if ($profileData === null) {
+                return $imagePath;
+            }
+
+            try {
+                $im = new \Imagick($imagePath);
+                $im->transformImageColorspace(\Imagick::COLORSPACE_SRGB);
+                $im->profileImage('icc', $profileData);
+                $im->writeImage($imagePath);
+                $im->destroy();
+                return $imagePath;
+            } catch (\ImagickException $e) {
+                rex_logger::factory()->warning('PdfThumbnail: Imagick ICC fehlgeschlagen: {message}', ['message' => $e->getMessage()]);
+            }
+        }
+
+        // 2. Fallback: convert (ImageMagick CLI) mit ICC-Profil-Datei
+        if (self::isToolAvailable('convert')) {
+            $profilePath = self::findSrgbIccProfilePath();
+            if ($profilePath !== null) {
+                $cmd = 'convert'
+                    . ' ' . escapeshellarg($imagePath)
+                    . ' -profile ' . escapeshellarg($profilePath)
+                    . ' ' . escapeshellarg($imagePath);
+                exec($cmd, $output, $returnCode);
+                if ($returnCode === 0) {
+                    return $imagePath;
+                }
+                rex_logger::factory()->warning('PdfThumbnail: convert ICC fehlgeschlagen (Code {code})', ['code' => $returnCode]);
+            }
+        }
+
+        return $imagePath;
+    }
+
+    /**
+     * Sucht ein sRGB ICC-Profil auf dem System und gibt den Dateipfad zurück
+     *
+     * Wird für den convert-CLI-Fallback benötigt, der einen Dateipfad statt Binärdaten erwartet.
+     *
+     * @return string|null Pfad zur ICC-Profil-Datei oder null
+     */
+    private static function findSrgbIccProfilePath(): ?string
+    {
+        foreach (self::getIccProfilePaths() as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gibt alle bekannten Pfade zu sRGB ICC-Profilen zurück
+     *
+     * @return list<string> Liste der Pfade
+     */
+    private static function getIccProfilePaths(): array
+    {
+        $paths = [
+            // Mitgeliefertes sRGB-Profil via TCPDF (immer verfügbar)
+            rex_addon::get('pdfout')->getPath('vendor/tecnickcom/tcpdf/include/sRGB.icc'),
+            // Standard Linux-Pfade
+            '/usr/share/color/icc/colord/sRGB.icc',
+            '/usr/share/color/icc/sRGB.icc',
+            // Ghostscript-Symlink (Debian/Ubuntu)
+            '/usr/share/color/icc/ghostscript/srgb.icc',
+        ];
+
+        // Ghostscript versioniertes sRGB-Profil
+        $gsPaths = glob('/usr/share/ghostscript/*/iccprofiles/default_rgb.icc') ?: [];
+        $paths = array_merge($paths, $gsPaths);
+
+        // dompdf mitgeliefertes Profil
+        $paths[] = rex_addon::get('pdfout')->getPath('vendor/dompdf/dompdf/lib/res/sRGB2014.icc');
+
+        // macOS
+        $paths[] = '/System/Library/ColorSync/Profiles/sRGB Profile.icc';
+
+        return $paths;
+    }
+
+    /**
+     * Sucht ein sRGB ICC-Profil auf dem System
+     *
+     * @return string|null Binärer ICC-Profil-Inhalt oder null
+     */
+    private static function findSrgbIccProfile(): ?string
+    {
+        foreach (self::getIccProfilePaths() as $path) {
+            if (file_exists($path)) {
+                $data = file_get_contents($path);
+                if ($data !== false && $data !== '') {
+                    return $data;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Prüft ob ein Kommandozeilen-Tool verfügbar ist
      *
      * @param string $tool Name des Tools
@@ -703,6 +932,8 @@ class PdfThumbnail
             (string) $this->maxWidth,
             (string) $this->maxHeight,
             $this->backgroundColor,
+            (string) $this->gamma,
+            $this->embedIccProfile ? 'icc' : 'no-icc',
         ]));
     }
 

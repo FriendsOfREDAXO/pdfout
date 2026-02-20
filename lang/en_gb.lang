@@ -29,3 +29,7 @@ pdfout_effect_pdf_thumbnail_page = Page number
 pdfout_effect_pdf_thumbnail_page_notice = Which page should be used as thumbnail? (1 = first page)
 pdfout_effect_pdf_thumbnail_color = Background color
 pdfout_effect_pdf_thumbnail_color_notice = Hex color code without # for the background (e.g. ffffff for white)
+pdfout_effect_pdf_thumbnail_gamma = Gamma correction
+pdfout_effect_pdf_thumbnail_gamma_notice = Adjust brightness: 1.0 = original, > 1.0 = brighter (recommended: 1.2 for better color reproduction, as PDF viewers like macOS Preview show brighter colors than browsers)
+pdfout_effect_pdf_thumbnail_icc_profile = ICC color profile
+pdfout_effect_pdf_thumbnail_icc_profile_notice = Embed sRGB ICC profile for accurate color rendering in browsers and image editors (requires Imagick)
