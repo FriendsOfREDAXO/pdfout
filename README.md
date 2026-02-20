@@ -249,6 +249,81 @@ Die Konvertierung probiert folgende Tools in dieser Reihenfolge:
 | 3 | `gs` | ghostscript | Ghostscript direkt, ohne ImageMagick-Umweg |
 | 4 | Imagick | php-imagick | Fallback, evtl. von Policy betroffen |
 
+#### Farbmanagement (Gamma & ICC-Profil)
+
+PDF-Viewer wie macOS Preview nutzen *Display Color Management* (z.B. Display P3), wodurch dunkle Farben satter und heller erscheinen. Browser zeigen Thumbnails ohne dieses Mapping – insbesondere dunkle Grüntöne oder andere gesättigte Farben können dadurch deutlich dunkler wirken als im PDF-Viewer.
+
+**Standardmäßig** werden Thumbnails als **PNG** erzeugt (verlustfrei, bessere Farberhaltung als JPEG). Für die meisten Anwendungsfälle reicht das aus.
+
+##### Optionale Einstellungen im Media-Manager-Effekt
+
+| Parameter | Standard | Beschreibung |
+|-----------|----------|--------------|
+| Gamma-Korrektur | 1.0 | Werte > 1.0 hellen das Bild auf. Empfohlen: **1.2** für eine Darstellung, die der PDF-Vorschau entspricht |
+| ICC-Farbprofil | none | `srgb` bettet ein sRGB-Profil ein, damit Browser die Farben korrekt interpretieren |
+
+##### ICC-Profil: Voraussetzungen
+
+Die ICC-Profil-Einbettung benötigt die **PHP-Extension Imagick** (`php-imagick`).
+
+Ein sRGB-Profil wird automatisch gesucht. **PdfOut liefert bereits ein sRGB-Profil mit** (über TCPDF), daher muss in den meisten Fällen nichts zusätzlich installiert werden.
+
+Falls dennoch Probleme auftreten, kann ein System-Profil installiert werden:
+
+**Ubuntu / Debian:**
+```bash
+# Variante 1: icc-profiles-free (empfohlen)
+sudo apt install icc-profiles-free
+
+# Variante 2: colord (liefert ebenfalls sRGB)
+sudo apt install colord
+```
+
+**CentOS / RHEL / Fedora:**
+```bash
+sudo dnf install colord
+```
+
+**Alpine Linux:**
+```bash
+apk add colord
+```
+
+**openSUSE:**
+```bash
+sudo zypper install colord
+```
+
+**macOS:**
+Kein zusätzliches Paket nötig – das sRGB-Profil ist unter `/System/Library/ColorSync/Profiles/sRGB Profile.icc` bereits vorhanden.
+
+**Docker (Debian-basiert):**
+```dockerfile
+RUN apt-get update && apt-get install -y php-imagick icc-profiles-free && rm -rf /var/lib/apt/lists/*
+```
+
+> **Hinweis**: Wenn Ghostscript installiert ist, liefert es ebenfalls ICC-Profile mit. Die Suchreihenfolge für ICC-Profile ist:
+> 1. TCPDF sRGB.icc (im pdfout-Addon enthalten)
+> 2. `/usr/share/color/icc/colord/sRGB.icc` (icc-profiles-free/colord)
+> 3. `/usr/share/color/icc/ghostscript/srgb.icc` (Ghostscript)
+> 4. Ghostscript versioniertes Profil
+> 5. dompdf sRGB2014.icc (im pdfout-Addon enthalten)
+> 6. macOS ColorSync sRGB Profil
+
+##### Gamma-Korrektur direkt verwenden
+
+```php
+use FriendsOfRedaxo\PdfOut\PdfThumbnail;
+
+$thumb = new PdfThumbnail();
+$thumb->setDpi(150)
+      ->setFormat('png')
+      ->setGamma(1.2)              // Heller für bessere Farbwiedergabe
+      ->setEmbedIccProfile(true);  // sRGB-Profil einbetten
+
+$imagePath = $thumb->generate(rex_path::media('dokument.pdf'));
+```
+
 ### Passwortgeschützte PDFs
 
 **Neuer empfohlener Workflow** mit dompdf → Cache → TCPDF-Passwortschutz:
