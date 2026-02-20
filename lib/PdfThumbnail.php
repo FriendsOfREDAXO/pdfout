@@ -727,14 +727,18 @@ class PdfThumbnail
     {
         // 1. Bevorzugt: PHP Imagick Extension
         if (class_exists(\Imagick::class)) {
+            $im = null;
             try {
                 $im = new \Imagick($imagePath);
                 $im->gammaImage($this->gamma);
                 $im->writeImage($imagePath);
-                $im->destroy();
                 return $imagePath;
             } catch (\ImagickException $e) {
                 rex_logger::factory()->warning('PdfThumbnail: Imagick Gamma fehlgeschlagen: {message}', ['message' => $e->getMessage()]);
+            } finally {
+                if ($im instanceof \Imagick) {
+                    $im->destroy();
+                }
             }
         }
 
@@ -798,15 +802,19 @@ class PdfThumbnail
                 return $imagePath;
             }
 
+            $im = null;
             try {
                 $im = new \Imagick($imagePath);
                 $im->transformImageColorspace(\Imagick::COLORSPACE_SRGB);
                 $im->profileImage('icc', $profileData);
                 $im->writeImage($imagePath);
-                $im->destroy();
                 return $imagePath;
             } catch (\ImagickException $e) {
                 rex_logger::factory()->warning('PdfThumbnail: Imagick ICC fehlgeschlagen: {message}', ['message' => $e->getMessage()]);
+            } finally {
+                if ($im instanceof \Imagick) {
+                    $im->destroy();
+                }
             }
         }
 
