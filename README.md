@@ -305,10 +305,11 @@ RUN apt-get update && apt-get install -y php-imagick icc-profiles-free && rm -rf
 > **Hinweis**: Wenn Ghostscript installiert ist, liefert es ebenfalls ICC-Profile mit. Die Suchreihenfolge für ICC-Profile ist:
 > 1. TCPDF sRGB.icc (im pdfout-Addon enthalten)
 > 2. `/usr/share/color/icc/colord/sRGB.icc` (icc-profiles-free/colord)
-> 3. `/usr/share/color/icc/ghostscript/srgb.icc` (Ghostscript)
-> 4. Ghostscript versioniertes Profil
-> 5. dompdf sRGB2014.icc (im pdfout-Addon enthalten)
-> 6. macOS ColorSync sRGB Profil
+> 3. `/usr/share/color/icc/sRGB.icc` (icc-profiles-free)
+> 4. `/usr/share/color/icc/ghostscript/srgb.icc` (Ghostscript)
+> 5. Ghostscript versioniertes Profil
+> 6. dompdf sRGB2014.icc (im pdfout-Addon enthalten)
+> 7. macOS ColorSync sRGB Profil
 
 ##### Gamma-Korrektur direkt verwenden
 
