@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.3.1 – 02.04.2026
+
+### Update
+
+- Vendor Pakete aktualisiert (dompdf, fpdf, tcpdf, etc.)
+- PDF.js auf Version 5.6.205 aktualisiert
+
 ## 10.3.0 – 20.02.2026
 
 ### Neue Features
