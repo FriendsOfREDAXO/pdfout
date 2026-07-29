@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.3.2 – 29.07.2026
+
+### Update
+
+- Vendor-Pakete aktualisiert: dompdf 3.1.6, masterminds/html5 2.10.1, sabberworm/php-css-parser 9.4.0, setasign/fpdi 2.6.8, tecnickcom/tcpdf 6.11.3
+
 ## 10.3.1 – 02.04.2026
 
 ### Update

@@ -76,4 +76,9 @@ class CrossReferenceException extends PdfParserException
      * @var int
      */
     const ENCRYPTED = 0x010C;
+
+    /**
+     * @var int
+     */
+    const CYCLIC_STRUCTURE = 0x010D;
 }

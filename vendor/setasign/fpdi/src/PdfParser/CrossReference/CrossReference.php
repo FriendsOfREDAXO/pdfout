@@ -64,6 +64,7 @@ class CrossReference
 
         $offset = $this->findStartXref();
         $reader = null;
+        $offsets = [$offset];
         /** @noinspection TypeUnsafeComparisonInspection */
         while ($offset != false) { // By doing an unsafe comparsion we ignore faulty references to byte offset 0
             try {
@@ -84,8 +85,15 @@ class CrossReference
 
             if (isset($trailer->value['Prev'])) {
                 $offset = $trailer->value['Prev']->value;
+                if (\in_array($offset, $offsets, true)) {
+                    throw new CrossReferenceException(
+                        'Cross-references includes cyclic structure.',
+                        CrossReferenceException::CYCLIC_STRUCTURE
+                    );
+                }
+                $offsets[] = $offset;
             } else {
-                $offset = false;
+                break;
             }
         }
 
