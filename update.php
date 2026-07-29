@@ -18,6 +18,18 @@ $defaultConfig = [
     'default_signature_position_y' => 60,
     'default_signature_width' => 15,
     'default_signature_height' => 15,
+    'toolbar_preset' => 'balanced',
+    'toolbar_hidden_groups' => [
+        'open_file',
+        'presentation',
+        'rotation',
+        'cursor_tools',
+        'scroll_mode',
+        'spread_mode',
+        'document_properties',
+    ],
+    'toolbar_profiles' => [],
+    'toolbar_active_profile' => '',
 ];
 
 // Füge fehlende Konfigurationsoptionen hinzu

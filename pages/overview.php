@@ -109,6 +109,9 @@ $features = '
                     <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/config']) . '" class="btn btn-warning btn-sm">
                         <i class="fa fa-cog"></i> Setup
                     </a>
+                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/toolbar']) . '" class="btn btn-info btn-sm">
+                        <i class="fa fa-sliders"></i> Toolbar Builder
+                    </a>
                 </div>
             </div>
         </div>

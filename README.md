@@ -13,6 +13,7 @@ PdfOut stellt den "HTML to PDF"-Converter [dompdf](https://github.com/dompdf/dom
 - [REDAXO Workflow](#redaxo-workflow-dompdf--cache--signierung)
 - [Erweiterte Methoden](#erweiterte-methoden)
 - [Anwendungsfälle](#anwendungsfälle--best-practices)
+- [PDF.js Toolbar Builder & Profile nutzen](#pdfjs-toolbar-builder--profile-nutzen)
 - [PDF.js Update-System](#pdfjs-update-system)
 - [Demo-Seite](#demo-seite)
 - [Systemvoraussetzungen](#verwendete-bibliotheken--lizenzen)
@@ -727,6 +728,61 @@ $pdf->setSignature($archivZertifikat, $archivZertifikat, $password, '', 2, [
     'Location' => 'Deutschland'
 ]);
 ```
+
+## PDF.js Toolbar Builder & Profile nutzen
+
+Mit dem Toolbar Builder kannst du die PDF.js-Oberfläche reduzieren und als Profile speichern.
+
+### 1) Konfiguration im Backend
+
+1. Öffne im Backend die Seite **PdfOut → Toolbar**.
+2. Wähle ein Preset:
+    - **Vollständig**: alle Bedienelemente sichtbar
+    - **Ausgewogen**: sinnvolle Standardreduktion
+    - **Kompakt**: stark reduzierte Oberfläche
+    - **Benutzerdefiniert**: gezielte Auswahl über Checkboxen
+3. Aktiviere bei Bedarf einzelne Ausblendungen (z. B. Download, Druck, Editor-Werkzeuge).
+4. Speichere entweder:
+    - **Toolbar speichern** für globale Standardwerte
+    - **Profil speichern** für benannte Varianten wie `lesemodus`, `redaktion`, `kiosk`
+
+### 2) Profile verwalten
+
+- **Profil aktivieren**: Setzt das ausgewählte Profil als aktiven Standard.
+- **Profil löschen**: Entfernt ein Profil dauerhaft aus der AddOn-Konfiguration.
+- Das aktive Profil wird in der Konfiguration gespeichert und bei der Viewer-URL automatisch berücksichtigt.
+
+### 3) Verwendung im Code
+
+Für die normale Verwendung genügt der Viewer-Aufruf. Das aktive Profil wird automatisch angewendet:
+
+```php
+use FriendsOfRedaxo\PdfOut\PdfOut;
+
+$viewerUrl = PdfOut::viewer('mein_dokument.pdf');
+```
+
+Der Aufruf ergänzt intern `toolbarPreset` und `toolbarHiddenGroups` basierend auf:
+
+1. aktivem Profil (falls gesetzt)
+2. sonst den globalen Toolbar-Defaults
+
+Damit lässt sich die Viewer-Oberfläche zentral im Backend steuern, ohne Template-Code anpassen zu müssen.
+
+### 4) Gezielt ein bestimmtes Profil pro Aufruf nutzen
+
+Wenn du pro Einbindung ein bestimmtes Profil erzwingen willst, ohne das globale aktive Profil umzuschalten, nutze:
+
+```php
+use FriendsOfRedaxo\PdfOut\PdfOut;
+
+$viewerUrl = PdfOut::viewerWithProfile('mein_dokument.pdf', 'lesemodus');
+```
+
+Verhalten:
+
+1. Existiert das Profil, wird genau dieses Profil verwendet.
+2. Existiert das Profil nicht, fällt der Aufruf auf den normalen Viewer-Mechanismus zurück (aktives Profil bzw. globale Defaults).
 
 ## Systemvoraussetzungen
 

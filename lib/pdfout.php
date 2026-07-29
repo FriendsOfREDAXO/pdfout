@@ -479,10 +479,137 @@ class PdfOut extends Dompdf
     public static function viewer(string $file = ''): string
     {
         if ($file !== '') {
-            return rex_url::assets('addons/pdfout/vendor/web/viewer.html?file=' . urlencode($file));
+            $addon = rex_addon::get('pdfout');
+            $params = ['file' => $file];
+
+            $toolbarParams = self::getToolbarViewerParams($addon);
+            if ([] !== $toolbarParams) {
+                $params = array_merge($params, $toolbarParams);
+            }
+
+            $params['viewerVersion'] = '10.4.0';
+
+            return self::buildViewerUrl($params);
         } else {
             return '#pdf_missing';
         }
+    }
+
+    /**
+     * Generiert eine URL für den PDF-Viewer mit einem gezielten Profil.
+     *
+     * @param string $file Die anzuzeigende PDF-Datei
+     * @param string $profileName Der Profilname aus der Toolbar-Konfiguration
+     * @return string Die generierte URL
+     */
+    public static function viewerWithProfile(string $file, string $profileName): string
+    {
+        if ('' === $file) {
+            return '#pdf_missing';
+        }
+
+        $addon = rex_addon::get('pdfout');
+        $params = ['file' => $file];
+
+        $toolbarParams = self::getToolbarViewerParamsForProfile($addon, $profileName);
+        if ([] === $toolbarParams) {
+            $toolbarParams = self::getToolbarViewerParams($addon);
+        }
+
+        if ([] !== $toolbarParams) {
+            $params = array_merge($params, $toolbarParams);
+        }
+
+        $params['viewerVersion'] = '10.4.0';
+
+        return self::buildViewerUrl($params);
+    }
+
+    /**
+     * Baut die finale Viewer-URL aus Query-Parametern.
+     *
+     * @param array<string, string> $params Query-Parameter
+     * @return string
+     */
+    private static function buildViewerUrl(array $params): string
+    {
+        return rex_url::assets('addons/pdfout/vendor/web/viewer.html') . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+    }
+
+    /**
+     * Liefert die Toolbar-Parameter für den PDF-Viewer.
+     *
+     * @param rex_addon $addon AddOn-Instanz.
+     * @return array<string, string>
+     */
+    private static function getToolbarViewerParams(rex_addon $addon): array
+    {
+        $profiles = $addon->getConfig('toolbar_profiles', []);
+        if (!is_array($profiles)) {
+            $profiles = [];
+        }
+
+        $activeProfile = (string) $addon->getConfig('toolbar_active_profile', '');
+        $profileConfig = [];
+
+        if ('' !== $activeProfile && isset($profiles[$activeProfile]) && is_array($profiles[$activeProfile])) {
+            $profileConfig = $profiles[$activeProfile];
+        }
+
+        if ([] === $profileConfig) {
+            $preset = (string) $addon->getConfig('toolbar_preset', 'balanced');
+            $hiddenGroups = $addon->getConfig('toolbar_hidden_groups', []);
+            if (!is_array($hiddenGroups)) {
+                $hiddenGroups = [];
+            }
+
+            return [
+                'toolbarPreset' => $preset,
+                'toolbarHiddenGroups' => implode(',', $hiddenGroups),
+            ];
+        }
+
+        $preset = (string) ($profileConfig['preset'] ?? 'balanced');
+        $hiddenGroups = $profileConfig['hidden_groups'] ?? [];
+        if (!is_array($hiddenGroups)) {
+            $hiddenGroups = [];
+        }
+
+        return [
+            'toolbarPreset' => $preset,
+            'toolbarHiddenGroups' => implode(',', $hiddenGroups),
+        ];
+    }
+
+    /**
+     * Liefert die Toolbar-Parameter für ein konkretes Profil.
+     *
+     * @param rex_addon $addon AddOn-Instanz
+     * @param string $profileName Profilname
+     * @return array<string, string>
+     */
+    private static function getToolbarViewerParamsForProfile(rex_addon $addon, string $profileName): array
+    {
+        $profiles = $addon->getConfig('toolbar_profiles', []);
+        if (!is_array($profiles)) {
+            return [];
+        }
+
+        if (!isset($profiles[$profileName]) || !is_array($profiles[$profileName])) {
+            return [];
+        }
+
+        $profileConfig = $profiles[$profileName];
+        $preset = (string) ($profileConfig['preset'] ?? 'balanced');
+        $hiddenGroups = $profileConfig['hidden_groups'] ?? [];
+        if (!is_array($hiddenGroups)) {
+            $hiddenGroups = [];
+        }
+
+        return [
+            'toolbarPreset' => $preset,
+            'toolbarHiddenGroups' => implode(',', $hiddenGroups),
+        ];
     }
 
     /**

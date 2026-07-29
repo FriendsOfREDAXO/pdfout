@@ -131,6 +131,55 @@ $pdf->setBaseTemplate($baseTemplate)
     ->run();
 ```
 
+### 4. **PDF.js Toolbar-Profile als Betriebsmodi nutzen**
+
+Definiere die Toolbar nicht pro Template, sondern zentral über Profile im Backend.
+
+#### ✅ Empfohlen: Klare Profile pro Einsatzkontext
+
+- `lesemodus`: Fokus auf Lesen, Navigation und Zoom
+- `redaktion`: inkl. Kommentar-/Editor-Werkzeuge
+- `kiosk`: minimal, ohne Druck/Download/sekundäre Leiste
+
+Vorgehen:
+
+1. In **PdfOut → Toolbar** ein Preset wählen oder benutzerdefiniert konfigurieren.
+2. Mit **Profil speichern** als benannten Modus ablegen.
+3. Mit **Profil aktivieren** als globalen Standard setzen.
+4. Im Frontend/Backend weiter normal `PdfOut::viewer(...)` nutzen.
+
+```php
+use FriendsOfRedaxo\PdfOut\PdfOut;
+
+echo '<iframe src="' . PdfOut::viewer('manual.pdf') . '" width="100%" height="900"></iframe>';
+```
+
+#### ✅ Vorteil
+
+- Zentrale Steuerung der Viewer-UX ohne Codeänderungen in Templates
+- Einheitliches Verhalten über alle Einbindungsstellen
+- Schnelles Umschalten zwischen Betriebsmodi über das Backend
+
+#### ❌ Vermeiden: Manuelle URL-Bastelei in Templates
+
+```php
+// 👎 Unnötig fragil: Parameter manuell zusammenbauen
+$url = rex_url::assets('addons/pdfout/vendor/web/viewer.html')
+    . '?file=manual.pdf&toolbarPreset=compact&toolbarHiddenGroups=download,print';
+```
+
+Besser: Profile einmal im Backend pflegen und den Viewer immer über `PdfOut::viewer(...)` beziehen.
+
+Wenn du ausnahmsweise pro Einbindung ein anderes Profil brauchst, nutze gezielt:
+
+```php
+use FriendsOfRedaxo\PdfOut\PdfOut;
+
+echo '<iframe src="' . PdfOut::viewerWithProfile('manual.pdf', 'kiosk') . '" width="100%" height="900"></iframe>';
+```
+
+Damit bleibt das globale aktive Profil unverändert.
+
 ## 🔒 Sicherheits-Best Practices
 
 ### 1. **Zertifikats-Management**

@@ -1,5 +1,28 @@
 # Changelog
 
+## 10.4.0 – 29.07.2026
+
+### Neue Features
+
+- PDF.js Toolbar-Konfigurator um Profilverwaltung erweitert (Profile speichern, aktivieren, löschen)
+- Viewer-Aufruf um gezielten Profilmodus ergänzt: `PdfOut::viewerWithProfile($file, $profileName)`
+
+### Verbesserungen
+
+- `PdfOut::viewer()` nutzt aktive Toolbar-Profile und globale Toolbar-Defaults konsistent
+- Dokumentation für Toolbar-Builder und Profilnutzung in README und BEST_PRACTICES ergänzt
+
+### Fixes
+
+- Cache-Busting für Viewer-Overlay und Viewer-URLs auf Version `10.4.0` angehoben
+
+## 10.3.3 – 29.07.2026
+
+### Neue Features
+
+- PDF.js Toolbar-Konfigurator mit Presets und Live-Demo ergänzt
+- Viewer-Toolbar kann jetzt über eine kleine Overlay-Schicht gezielt reduziert werden
+
 ## 10.3.2 – 29.07.2026
 
 ### Update

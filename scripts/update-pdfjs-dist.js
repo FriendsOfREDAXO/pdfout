@@ -138,6 +138,27 @@ class PdfJsUpdater {
         }
     }
 
+    async patchViewerHtml() {
+        const viewerHtmlPath = path.join(ASSETS_TARGET, 'web', 'viewer.html');
+
+        try {
+            let viewerHtml = await fs.readFile(viewerHtmlPath, 'utf8');
+            const scriptTag = '  <script src="../../viewer-toolbar.js?v=10.4.0"></script>\n';
+
+            if (!viewerHtml.includes('viewer-toolbar.js')) {
+                viewerHtml = viewerHtml.replace(
+                    '  <script src="viewer.mjs" type="module"></script>\n',
+                    '  <script src="viewer.mjs" type="module"></script>\n' + scriptTag,
+                );
+
+                await fs.writeFile(viewerHtmlPath, viewerHtml, 'utf8');
+                console.log('✓ Patched viewer.html with toolbar overlay');
+            }
+        } catch (error) {
+            console.warn('⚠ Could not patch viewer.html:', error.message);
+        }
+    }
+
     async updatePackageVersion(version) {
         const packagePath = path.join(__dirname, '..', 'package.json');
         const packageYmlPath = path.join(__dirname, '..', 'package.yml');
@@ -256,6 +277,8 @@ class PdfJsUpdater {
             } catch (error) {
                 console.warn('⚠ LICENSE file not found or failed to copy');
             }
+
+            await this.patchViewerHtml();
 
             // Update version info
             await this.updatePackageVersion(version);

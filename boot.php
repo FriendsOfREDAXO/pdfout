@@ -10,3 +10,5 @@ require_once $addon->getPath('vendor/' . 'autoload.php');
 if (rex_addon::get('media_manager')->isAvailable()) {
     rex_media_manager::addEffect(rex_effect_pdf_thumbnail::class);
 }
+
+rex_api_function::register('pdfout_toolbar', rex_api_pdfout_toolbar::class);
