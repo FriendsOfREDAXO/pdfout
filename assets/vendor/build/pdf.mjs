@@ -15,45 +15,6054 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  * @licend The above is the entire license notice for the
  * JavaScript code in this page
  */
 
 /**
- * pdfjsVersion = 5.6.205
- * pdfjsBuild = ada343803
+ * pdfjsVersion = 6.4.299
+ * pdfjsBuild = d0991a0d5
  */
-/******/ // The require scope
-/******/ var __webpack_require__ = {};
+/******/ var __webpack_modules__ = ({
+
+/***/ 463
+(module) {
+
+
+var $TypeError = TypeError;
+
+module.exports = function (argument) {
+  if (typeof argument == 'string') return argument;
+  throw new $TypeError('Argument is not a string');
+};
+
+
+/***/ },
+
+/***/ 804
+(module) {
+
+
+var commonAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+var base64Alphabet = commonAlphabet + '+/';
+var base64UrlAlphabet = commonAlphabet + '-_';
+
+var inverse = function (characters) {
+  // TODO: use `Object.create(null)` in `core-js@4`
+  var result = {};
+  var index = 0;
+  for (; index < 64; index++) result[characters.charAt(index)] = index;
+  return result;
+};
+
+module.exports = {
+  i2c: base64Alphabet,
+  c2i: inverse(base64Alphabet),
+  i2cUrl: base64UrlAlphabet,
+  c2iUrl: inverse(base64UrlAlphabet)
+};
+
+
+/***/ },
+
+/***/ 529
+(module) {
+
+
+// `CreateIterResultObject` abstract operation
+// https://tc39.es/ecma262/#sec-createiterresultobject
+module.exports = function (value, done) {
+  return { value: value, done: done };
+};
+
+
+/***/ },
+
+/***/ 837
+(module) {
+
+
+var $TypeError = TypeError;
+var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF; // 2 ** 53 - 1 == 9007199254740991
+
+module.exports = function (it) {
+  if (it > MAX_SAFE_INTEGER) throw new $TypeError('Maximum allowed index exceeded');
+  return it;
+};
+
+
+/***/ },
+
+/***/ 2
+(module) {
+
+
+module.exports = {
+  IndexSizeError: { s: 'INDEX_SIZE_ERR', c: 1, m: 1 },
+  DOMStringSizeError: { s: 'DOMSTRING_SIZE_ERR', c: 2, m: 0 },
+  HierarchyRequestError: { s: 'HIERARCHY_REQUEST_ERR', c: 3, m: 1 },
+  WrongDocumentError: { s: 'WRONG_DOCUMENT_ERR', c: 4, m: 1 },
+  InvalidCharacterError: { s: 'INVALID_CHARACTER_ERR', c: 5, m: 1 },
+  NoDataAllowedError: { s: 'NO_DATA_ALLOWED_ERR', c: 6, m: 0 },
+  NoModificationAllowedError: { s: 'NO_MODIFICATION_ALLOWED_ERR', c: 7, m: 1 },
+  NotFoundError: { s: 'NOT_FOUND_ERR', c: 8, m: 1 },
+  NotSupportedError: { s: 'NOT_SUPPORTED_ERR', c: 9, m: 1 },
+  InUseAttributeError: { s: 'INUSE_ATTRIBUTE_ERR', c: 10, m: 1 },
+  InvalidStateError: { s: 'INVALID_STATE_ERR', c: 11, m: 1 },
+  SyntaxError: { s: 'SYNTAX_ERR', c: 12, m: 1 },
+  InvalidModificationError: { s: 'INVALID_MODIFICATION_ERR', c: 13, m: 1 },
+  NamespaceError: { s: 'NAMESPACE_ERR', c: 14, m: 1 },
+  InvalidAccessError: { s: 'INVALID_ACCESS_ERR', c: 15, m: 1 },
+  ValidationError: { s: 'VALIDATION_ERR', c: 16, m: 0 },
+  TypeMismatchError: { s: 'TYPE_MISMATCH_ERR', c: 17, m: 1 },
+  SecurityError: { s: 'SECURITY_ERR', c: 18, m: 1 },
+  NetworkError: { s: 'NETWORK_ERR', c: 19, m: 1 },
+  AbortError: { s: 'ABORT_ERR', c: 20, m: 1 },
+  URLMismatchError: { s: 'URL_MISMATCH_ERR', c: 21, m: 1 },
+  QuotaExceededError: { s: 'QUOTA_EXCEEDED_ERR', c: 22, m: 1 },
+  TimeoutError: { s: 'TIMEOUT_ERR', c: 23, m: 1 },
+  InvalidNodeTypeError: { s: 'INVALID_NODE_TYPE_ERR', c: 24, m: 1 },
+  DataCloneError: { s: 'DATA_CLONE_ERR', c: 25, m: 1 }
+};
+
+
+/***/ },
+
+/***/ 944
+(module) {
+
+
+var $TypeError = TypeError;
+
+module.exports = function (options) {
+  var alphabet = options && options.alphabet;
+  if (alphabet === undefined || alphabet === 'base64' || alphabet === 'base64url') return alphabet || 'base64';
+  throw new $TypeError('Incorrect `alphabet` option');
+};
+
+
+/***/ },
+
+/***/ 767
+(module) {
+
+
+// `GetIteratorDirect(obj)` abstract operation
+// https://tc39.es/ecma262/#sec-getiteratordirect
+module.exports = function (obj) {
+  return {
+    iterator: obj,
+    next: obj.next,
+    done: false
+  };
+};
+
+
+/***/ },
+
+/***/ 117
+(module) {
+
+
+// we can't use just `it == null` since of `document.all` special case
+// https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-aec
+module.exports = function (it) {
+  return it === null || it === undefined;
+};
+
+
+/***/ },
+
+/***/ 859
+(module) {
+
+
+// release references held by exhausted / closed iterator helpers to allow GC of the source chain
+module.exports = function (state) {
+  state.iterator = state.next = state.nextHandler = state.mapper = state.predicate = state.inner =
+    state.iterables = state.iters = state.openIters = state.padding = state.finishResults = state.buffer = null;
+};
+
+
+/***/ },
+
+/***/ 684
+(module) {
+
+
+// Should throw an error on invalid iterator
+// https://issues.chromium.org/issues/336839115
+module.exports = function (methodName, argument) {
+  // eslint-disable-next-line es/no-iterator -- required for testing
+  var method = typeof Iterator == 'function' && Iterator.prototype[methodName];
+  if (method) try {
+    method.call({ next: null }, argument).next();
+  } catch (error) {
+    return true;
+  }
+};
+
+
+/***/ },
+
+/***/ 269
+(module) {
+
+
+module.exports = Object.create ? Object.create(null) : {};
+
+
+/***/ },
+
+/***/ 741
+(module) {
+
+
+var ceil = Math.ceil;
+var floor = Math.floor;
+
+// `Math.trunc` method
+// https://tc39.es/ecma262/#sec-math.trunc
+// eslint-disable-next-line es/no-math-trunc -- safe
+module.exports = Math.trunc || function trunc(x) {
+  var n = +x;
+  return (n > 0 ? floor : ceil)(n);
+};
+
+
+/***/ },
+
+/***/ 149
+(module) {
+
+
+var $RangeError = RangeError;
+
+module.exports = function (it) {
+  // eslint-disable-next-line no-self-compare -- NaN check
+  if (it === it) return it;
+  throw new $RangeError('NaN is not allowed');
+};
+
+
+/***/ },
+
+/***/ 717
+(__unused_webpack_module, exports) {
+
+
+// eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
+exports.f = Object.getOwnPropertySymbols;
+
+
+/***/ },
+
+/***/ 103
+(module) {
+
+
+module.exports = function (exec) {
+  try {
+    return { error: false, value: exec() };
+  } catch (error) {
+    return { error: true, value: error };
+  }
+};
+
+
+/***/ },
+
+/***/ 750
+(module, __unused_webpack_exports, __webpack_require__) {
+
+
+var isNullOrUndefined = __webpack_require__(117);
+
+var $TypeError = TypeError;
+
+// `RequireObjectCoercible` abstract operation
+// https://tc39.es/ecma262/#sec-requireobjectcoercible
+module.exports = function (it) {
+  if (isNullOrUndefined(it)) throw new $TypeError("Can't call method on " + it);
+  return it;
+};
+
+
+/***/ },
+
+/***/ 835
+(module) {
+
+
+// Should get iterator record of a set-like object before cloning this
+// https://bugs.webkit.org/show_bug.cgi?id=289430
+module.exports = function (METHOD_NAME) {
+  try {
+    // eslint-disable-next-line es/no-set -- needed for test
+    var baseSet = new Set();
+    var setLike = {
+      size: 0,
+      has: function () { return true; },
+      keys: function () {
+        // eslint-disable-next-line es/no-object-defineproperty -- needed for test
+        return Object.defineProperty({}, 'next', {
+          get: function () {
+            baseSet.clear();
+            baseSet.add(4);
+            return function () {
+              return { done: true };
+            };
+          }
+        });
+      }
+    };
+    var result = baseSet[METHOD_NAME](setLike);
+
+    return result.size === 1 && result.values().next().value === 4;
+  } catch (error) {
+    return false;
+  }
+};
+
+
+/***/ },
+
+/***/ 291
+(module, __unused_webpack_exports, __webpack_require__) {
+
+
+var trunc = __webpack_require__(741);
+
+// `ToIntegerOrInfinity` abstract operation
+// https://tc39.es/ecma262/#sec-tointegerorinfinity
+module.exports = function (argument) {
+  var number = +argument;
+  // eslint-disable-next-line no-self-compare -- NaN check
+  return number !== number || number === 0 ? 0 : trunc(number);
+};
+
+
+/***/ },
+
+/***/ 14
+(module, __unused_webpack_exports, __webpack_require__) {
+
+
+var toIntegerOrInfinity = __webpack_require__(291);
+
+var min = Math.min;
+
+// `ToLength` abstract operation
+// https://tc39.es/ecma262/#sec-tolength
+module.exports = function (argument) {
+  var len = toIntegerOrInfinity(argument);
+  return len > 0 ? min(len, 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+};
+
+
+/***/ },
+
+/***/ 981
+(module, __unused_webpack_exports, __webpack_require__) {
+
+
+var requireObjectCoercible = __webpack_require__(750);
+
+var $Object = Object;
+
+// `ToObject` abstract operation
+// https://tc39.es/ecma262/#sec-toobject
+module.exports = function (argument) {
+  return $Object(requireObjectCoercible(argument));
+};
+
+
+/***/ },
+
+/***/ 590
+(module, __unused_webpack_exports, __webpack_require__) {
+
+
+var toIntegerOrInfinity = __webpack_require__(291);
+
+var $RangeError = RangeError;
+
+module.exports = function (it) {
+  var result = toIntegerOrInfinity(it);
+  if (result < 0) throw new $RangeError("The argument can't be less than 0");
+  return result;
+};
+
+
+/***/ },
+
+/***/ 812
+(module) {
+
+
+var $TypeError = TypeError;
+
+module.exports = function (passed, required) {
+  if (passed < required) throw new $TypeError('Not enough arguments');
+  return passed;
+};
+
+
+/***/ }
+
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ const __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __webpack_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	const module = __webpack_module_cache__[moduleId] = {
+/******/ 		// no module.id needed
+/******/ 		// no module.loaded needed
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
 /******/ 
 /************************************************************************/
-/******/ /* webpack/runtime/define property getters */
-/******/ (() => {
-/******/ 	// define getter functions for harmony exports
-/******/ 	__webpack_require__.d = (exports, definition) => {
-/******/ 		for(var key in definition) {
-/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 			}
+/******/ /* webpack/runtime/concatenation wrap */
+/******/ // wrap a concatenated module body as a lazy, memoized accessor; mod is
+/******/ // set before the body runs so re-entrant calls (require cycles) observe
+/******/ // the partial exports like Node.js
+/******/ __webpack_require__.cw = (body) => {
+/******/ 	var mod;
+/******/ 	return () => {
+/******/ 		if (body) {
+/******/ 			var fn = body;
+/******/ 			body = 0;
+/******/ 			mod = { exports: {} };
+/******/ 			fn.call(mod.exports, mod, mod.exports);
 /******/ 		}
+/******/ 		return mod.exports;
 /******/ 	};
-/******/ })();
+/******/ };
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ // define getter/value functions for harmony exports
+/******/ __webpack_require__.d = (exports, definition) => {
+/******/ 	for(var key in definition) {
+/******/ 		if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 			Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 		}
+/******/ 	}
+/******/ };
 /******/ 
 /******/ /* webpack/runtime/hasOwnProperty shorthand */
-/******/ (() => {
-/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ })();
+/******/ __webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop));
 /******/ 
 /************************************************************************/
-var __webpack_exports__ = {};
+
+// MODULE: ./node_modules/core-js/internals/a-callable.js
+var a_callable_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isCallable = (is_callable_namespaceFn());
+var tryToString = (try_to_string_namespaceFn());
+
+var $TypeError = TypeError;
+
+// `Assert: IsCallable(argument) is true`
+module.exports = function (argument) {
+  if (isCallable(argument)) return argument;
+  throw new $TypeError(tryToString(argument) + ' is not a function');
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/a-possible-prototype.js
+var a_possible_prototype_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isPossiblePrototype = (is_possible_prototype_namespaceFn());
+
+var $String = String;
+var $TypeError = TypeError;
+
+module.exports = function (argument) {
+  if (isPossiblePrototype(argument)) return argument;
+  throw new $TypeError("Can't set " + $String(argument) + ' as a prototype');
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/a-set.js
+var a_set_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var has = (set_helpers_namespaceFn().has);
+
+// Perform ? RequireInternalSlot(M, [[SetData]])
+module.exports = function (it) {
+  has(it);
+  return it;
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/a-string.js
+var a_string_namespaceFn = () => {
+	return __webpack_require__(463);
+};
+
+// MODULE: ./node_modules/core-js/internals/a-weak-key.js
+var a_weak_key_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var WeakMapHelpers = (weak_map_helpers_namespaceFn());
+
+var weakmap = new WeakMapHelpers.WeakMap();
+var set = WeakMapHelpers.set;
+var remove = WeakMapHelpers.remove;
+
+module.exports = function (key) {
+  set(weakmap, key, 1);
+  remove(weakmap, key);
+  return key;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/a-weak-map.js
+var a_weak_map_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var has = (weak_map_helpers_namespaceFn().has);
+
+// Perform ? RequireInternalSlot(M, [[WeakMapData]])
+module.exports = function (it) {
+  has(it);
+  return it;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/add-to-unscopables.js
+var add_to_unscopables_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+var create = (object_create_namespaceFn());
+var defineProperty = (object_define_property_namespaceFn().f);
+
+var UNSCOPABLES = wellKnownSymbol('unscopables');
+var ArrayPrototype = Array.prototype;
+
+// Array.prototype[@@unscopables]
+// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
+if (ArrayPrototype[UNSCOPABLES] === undefined) {
+  defineProperty(ArrayPrototype, UNSCOPABLES, {
+    configurable: true,
+    value: create(null)
+  });
+}
+
+// add a key to Array.prototype[@@unscopables]
+module.exports = function (key) {
+  ArrayPrototype[UNSCOPABLES][key] = true;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/an-instance.js
+var an_instance_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isPrototypeOf = (object_is_prototype_of_namespaceFn());
+
+var $TypeError = TypeError;
+
+module.exports = function (it, Prototype) {
+  if (isPrototypeOf(Prototype, it)) return it;
+  throw new $TypeError('Incorrect invocation');
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/an-object-or-undefined.js
+var an_object_or_undefined_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isObject = (is_object_namespaceFn());
+
+var $String = String;
+var $TypeError = TypeError;
+
+module.exports = function (argument) {
+  if (argument === undefined || isObject(argument)) return argument;
+  throw new $TypeError($String(argument) + ' is not an object or undefined');
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/an-object.js
+var an_object_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isObject = (is_object_namespaceFn());
+
+var $String = String;
+var $TypeError = TypeError;
+
+// `Assert: Type(argument) is Object`
+module.exports = function (argument) {
+  if (isObject(argument)) return argument;
+  throw new $TypeError($String(argument) + ' is not an object');
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/an-uint8-array.js
+var an_uint8_array_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var classof = (classof_namespaceFn());
+
+var $TypeError = TypeError;
+
+// Perform ? RequireInternalSlot(argument, [[TypedArrayName]])
+// If argument.[[TypedArrayName]] is not "Uint8Array", throw a TypeError exception
+module.exports = function (argument) {
+  if (classof(argument) === 'Uint8Array') return argument;
+  throw new $TypeError('Argument is not an Uint8Array');
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/array-buffer-basic-detection.js
+var array_buffer_basic_detection_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+// eslint-disable-next-line es/no-typed-arrays -- safe
+module.exports = typeof ArrayBuffer != 'undefined' && typeof DataView != 'undefined';
+
+});
+
+// MODULE: ./node_modules/core-js/internals/array-buffer-byte-length.js
+var array_buffer_byte_length_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var uncurryThisAccessor = (function_uncurry_this_accessor_namespaceFn());
+var classof = (classof_raw_namespaceFn());
+
+var ArrayBuffer = globalThis.ArrayBuffer;
+var TypeError = globalThis.TypeError;
+
+// Includes
+// - Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
+// - If IsSharedArrayBuffer(O) is true, throw a TypeError exception.
+module.exports = ArrayBuffer && uncurryThisAccessor(ArrayBuffer.prototype, 'byteLength', 'get') || function (O) {
+  if (classof(O) !== 'ArrayBuffer') throw new TypeError('ArrayBuffer expected');
+  return O.byteLength;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/array-buffer-is-detached.js
+var array_buffer_is_detached_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var NATIVE_ARRAY_BUFFER = (array_buffer_basic_detection_namespaceFn());
+var arrayBufferByteLength = (array_buffer_byte_length_namespaceFn());
+
+var DataView = globalThis.DataView;
+
+module.exports = function (O) {
+  if (!NATIVE_ARRAY_BUFFER || arrayBufferByteLength(O) !== 0) return false;
+  try {
+    // eslint-disable-next-line no-new -- thrower
+    new DataView(O);
+    return false;
+  } catch (error) {
+    return true;
+  }
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/array-buffer-not-detached.js
+var array_buffer_not_detached_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isDetached = (array_buffer_is_detached_namespaceFn());
+
+var $TypeError = TypeError;
+
+module.exports = function (it) {
+  if (isDetached(it)) throw new $TypeError('ArrayBuffer is detached');
+  return it;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/array-buffer-view-core.js
+var array_buffer_view_core_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var NATIVE_ARRAY_BUFFER = (array_buffer_basic_detection_namespaceFn());
+var DESCRIPTORS = (descriptors_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var isObject = (is_object_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+var classof = (classof_namespaceFn());
+var tryToString = (try_to_string_namespaceFn());
+var createNonEnumerableProperty = (create_non_enumerable_property_namespaceFn());
+var defineBuiltIn = (define_built_in_namespaceFn());
+var defineBuiltInAccessor = (define_built_in_accessor_namespaceFn());
+var isPrototypeOf = (object_is_prototype_of_namespaceFn());
+var getPrototypeOf = (object_get_prototype_of_namespaceFn());
+var setPrototypeOf = (object_set_prototype_of_namespaceFn());
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+var uid = (uid_namespaceFn());
+var InternalStateModule = (internal_state_namespaceFn());
+
+var enforceInternalState = InternalStateModule.enforce;
+var getInternalState = InternalStateModule.get;
+var Int8Array = globalThis.Int8Array;
+var Int8ArrayPrototype = Int8Array && Int8Array.prototype;
+var Uint8ClampedArray = globalThis.Uint8ClampedArray;
+var Uint8ClampedArrayPrototype = Uint8ClampedArray && Uint8ClampedArray.prototype;
+var TypedArray = Int8Array && getPrototypeOf(Int8Array);
+var TypedArrayPrototype = Int8ArrayPrototype && getPrototypeOf(Int8ArrayPrototype);
+var ObjectPrototype = Object.prototype;
+var TypeError = globalThis.TypeError;
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+var TYPED_ARRAY_TAG = uid('TYPED_ARRAY_TAG');
+var TYPED_ARRAY_CONSTRUCTOR = 'TypedArrayConstructor';
+// Fixing native typed arrays in Opera Presto crashes the browser, see #595
+var NATIVE_ARRAY_BUFFER_VIEWS = NATIVE_ARRAY_BUFFER && !!setPrototypeOf && classof(globalThis.opera) !== 'Opera';
+var TYPED_ARRAY_TAG_REQUIRED = false;
+var NAME, Constructor, Prototype;
+
+var TypedArrayConstructorsList = {
+  Int8Array: 1,
+  Uint8Array: 1,
+  Uint8ClampedArray: 1,
+  Int16Array: 2,
+  Uint16Array: 2,
+  Int32Array: 4,
+  Uint32Array: 4,
+  Float32Array: 4,
+  Float64Array: 8
+};
+
+var BigIntArrayConstructorsList = {
+  BigInt64Array: 8,
+  BigUint64Array: 8
+};
+
+var isView = function isView(it) {
+  if (!isObject(it)) return false;
+  var klass = classof(it);
+  return klass === 'DataView'
+    || hasOwn(TypedArrayConstructorsList, klass)
+    || hasOwn(BigIntArrayConstructorsList, klass);
+};
+
+var getTypedArrayConstructor = function (it) {
+  var proto = getPrototypeOf(it);
+  if (!isObject(proto)) return;
+  var state = getInternalState(proto);
+  return (state && hasOwn(state, TYPED_ARRAY_CONSTRUCTOR)) ? state[TYPED_ARRAY_CONSTRUCTOR] : getTypedArrayConstructor(proto);
+};
+
+var isTypedArray = function (it) {
+  if (!isObject(it)) return false;
+  var klass = classof(it);
+  return hasOwn(TypedArrayConstructorsList, klass)
+    || hasOwn(BigIntArrayConstructorsList, klass);
+};
+
+var aTypedArray = function (it) {
+  if (isTypedArray(it)) return it;
+  throw new TypeError('Target is not a typed array');
+};
+
+var aTypedArrayConstructor = function (C) {
+  if (isCallable(C) && (!setPrototypeOf || isPrototypeOf(TypedArray, C))) return C;
+  throw new TypeError(tryToString(C) + ' is not a typed array constructor');
+};
+
+var exportTypedArrayMethod = function (KEY, property, forced, options) {
+  if (!DESCRIPTORS) return;
+  if (forced) for (var ARRAY in TypedArrayConstructorsList) {
+    var TypedArrayConstructor = globalThis[ARRAY];
+    if (TypedArrayConstructor && hasOwn(TypedArrayConstructor.prototype, KEY)) try {
+      delete TypedArrayConstructor.prototype[KEY];
+    } catch (error) {
+      // old WebKit bug - some methods are non-configurable
+      try {
+        TypedArrayConstructor.prototype[KEY] = property;
+      } catch (error2) { /* empty */ }
+    }
+  }
+  if (!TypedArrayPrototype[KEY] || forced) {
+    defineBuiltIn(TypedArrayPrototype, KEY, forced ? property
+      : NATIVE_ARRAY_BUFFER_VIEWS && Int8ArrayPrototype[KEY] || property, options);
+  }
+};
+
+var exportTypedArrayStaticMethod = function (KEY, property, forced) {
+  var ARRAY, TypedArrayConstructor;
+  if (!DESCRIPTORS) return;
+  if (setPrototypeOf) {
+    if (forced) for (ARRAY in TypedArrayConstructorsList) {
+      TypedArrayConstructor = globalThis[ARRAY];
+      if (TypedArrayConstructor && hasOwn(TypedArrayConstructor, KEY)) try {
+        delete TypedArrayConstructor[KEY];
+      } catch (error) { /* empty */ }
+    }
+    if (!TypedArray[KEY] || forced) {
+      // V8 ~ Chrome 49-50 `%TypedArray%` methods are non-writable non-configurable
+      try {
+        return defineBuiltIn(TypedArray, KEY, forced ? property : NATIVE_ARRAY_BUFFER_VIEWS && TypedArray[KEY] || property);
+      } catch (error) { /* empty */ }
+    } else return;
+  }
+  for (ARRAY in TypedArrayConstructorsList) {
+    TypedArrayConstructor = globalThis[ARRAY];
+    if (TypedArrayConstructor && (!TypedArrayConstructor[KEY] || forced)) {
+      defineBuiltIn(TypedArrayConstructor, KEY, property);
+    }
+  }
+};
+
+for (NAME in TypedArrayConstructorsList) {
+  Constructor = globalThis[NAME];
+  Prototype = Constructor && Constructor.prototype;
+  if (Prototype) enforceInternalState(Prototype)[TYPED_ARRAY_CONSTRUCTOR] = Constructor;
+  else NATIVE_ARRAY_BUFFER_VIEWS = false;
+}
+
+for (NAME in BigIntArrayConstructorsList) {
+  Constructor = globalThis[NAME];
+  Prototype = Constructor && Constructor.prototype;
+  if (Prototype) enforceInternalState(Prototype)[TYPED_ARRAY_CONSTRUCTOR] = Constructor;
+}
+
+// WebKit bug - typed arrays constructors prototype is Object.prototype
+if (!NATIVE_ARRAY_BUFFER_VIEWS || !isCallable(TypedArray) || TypedArray === Function.prototype) {
+  // eslint-disable-next-line no-shadow -- safe
+  TypedArray = function TypedArray() {
+    throw new TypeError('Incorrect invocation');
+  };
+  if (NATIVE_ARRAY_BUFFER_VIEWS) for (NAME in TypedArrayConstructorsList) {
+    if (globalThis[NAME]) setPrototypeOf(globalThis[NAME], TypedArray);
+  }
+}
+
+if (!NATIVE_ARRAY_BUFFER_VIEWS || !TypedArrayPrototype || TypedArrayPrototype === ObjectPrototype) {
+  TypedArrayPrototype = TypedArray.prototype;
+  if (NATIVE_ARRAY_BUFFER_VIEWS) for (NAME in TypedArrayConstructorsList) {
+    if (globalThis[NAME]) setPrototypeOf(globalThis[NAME].prototype, TypedArrayPrototype);
+  }
+}
+
+// WebKit bug - one more object in Uint8ClampedArray prototype chain
+if (NATIVE_ARRAY_BUFFER_VIEWS && getPrototypeOf(Uint8ClampedArrayPrototype) !== TypedArrayPrototype) {
+  setPrototypeOf(Uint8ClampedArrayPrototype, TypedArrayPrototype);
+}
+
+if (DESCRIPTORS && !hasOwn(TypedArrayPrototype, TO_STRING_TAG)) {
+  TYPED_ARRAY_TAG_REQUIRED = true;
+  defineBuiltInAccessor(TypedArrayPrototype, TO_STRING_TAG, {
+    configurable: true,
+    get: function () {
+      return isObject(this) ? this[TYPED_ARRAY_TAG] : undefined;
+    }
+  });
+  for (NAME in TypedArrayConstructorsList) if (globalThis[NAME]) {
+    createNonEnumerableProperty(globalThis[NAME].prototype, TYPED_ARRAY_TAG, NAME);
+  }
+}
+
+module.exports = {
+  NATIVE_ARRAY_BUFFER_VIEWS: NATIVE_ARRAY_BUFFER_VIEWS,
+  TYPED_ARRAY_TAG: TYPED_ARRAY_TAG_REQUIRED && TYPED_ARRAY_TAG,
+  aTypedArray: aTypedArray,
+  aTypedArrayConstructor: aTypedArrayConstructor,
+  exportTypedArrayMethod: exportTypedArrayMethod,
+  exportTypedArrayStaticMethod: exportTypedArrayStaticMethod,
+  getTypedArrayConstructor: getTypedArrayConstructor,
+  isView: isView,
+  isTypedArray: isTypedArray,
+  TypedArray: TypedArray,
+  TypedArrayPrototype: TypedArrayPrototype
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/array-from-constructor-and-list.js
+var array_from_constructor_and_list_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var lengthOfArrayLike = (length_of_array_like_namespaceFn());
+
+module.exports = function (Constructor, list, $length) {
+  var index = 0;
+  var length = arguments.length > 2 ? $length : lengthOfArrayLike(list);
+  var result = new Constructor(length);
+  while (length > index) result[index] = list[index++];
+  return result;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/array-includes.js
+var array_includes_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var toIndexedObject = (to_indexed_object_namespaceFn());
+var toAbsoluteIndex = (to_absolute_index_namespaceFn());
+var lengthOfArrayLike = (length_of_array_like_namespaceFn());
+
+// `Array.prototype.{ indexOf, includes }` methods implementation
+var createMethod = function (IS_INCLUDES) {
+  return function ($this, el, fromIndex) {
+    var O = toIndexedObject($this);
+    var length = lengthOfArrayLike(O);
+    if (length === 0) return !IS_INCLUDES && -1;
+    var index = toAbsoluteIndex(fromIndex, length);
+    var value;
+    // Array#includes uses SameValueZero equality algorithm
+    // eslint-disable-next-line no-self-compare -- NaN check
+    if (IS_INCLUDES && el !== el) while (length > index) {
+      value = O[index++];
+      // eslint-disable-next-line no-self-compare -- NaN check
+      if (value !== value) return true;
+    // Array#indexOf ignores holes, Array#includes - not
+    } else for (;length > index; index++) {
+      if ((IS_INCLUDES || index in O) && O[index] === el) return IS_INCLUDES || index || 0;
+    } return !IS_INCLUDES && -1;
+  };
+};
+
+module.exports = {
+  // `Array.prototype.includes` method
+  // https://tc39.es/ecma262/#sec-array.prototype.includes
+  includes: createMethod(true),
+  // `Array.prototype.indexOf` method
+  // https://tc39.es/ecma262/#sec-array.prototype.indexof
+  indexOf: createMethod(false)
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/array-set-length.js
+var array_set_length_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var DESCRIPTORS = (descriptors_namespaceFn());
+var isArray = (is_array_namespaceFn());
+
+var $TypeError = TypeError;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+// Safari < 13 does not throw an error in this case
+var SILENT_ON_NON_WRITABLE_LENGTH_SET = DESCRIPTORS && !function () {
+  // makes no sense without proper strict mode support
+  if (this !== undefined) return true;
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).length = 1;
+  } catch (error) {
+    return error instanceof TypeError;
+  }
+}();
+
+module.exports = SILENT_ON_NON_WRITABLE_LENGTH_SET ? function (O, length) {
+  if (isArray(O) && !getOwnPropertyDescriptor(O, 'length').writable) {
+    throw new $TypeError('Cannot set read only .length');
+  } return O.length = length;
+} : function (O, length) {
+  return O.length = length;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/array-slice.js
+var array_slice_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+module.exports = uncurryThis([].slice);
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/base64-map.js
+var base64_map_namespaceFn = () => {
+	return __webpack_require__(804);
+};
+
+// MODULE: ./node_modules/core-js/internals/call-with-safe-iteration-closing.js
+var call_with_safe_iteration_closing_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var anObject = (an_object_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+
+// call something on iterator step with safe closing on error
+module.exports = function (iterator, fn, value, ENTRIES) {
+  try {
+    return ENTRIES ? fn(anObject(value)[0], value[1]) : fn(value);
+  } catch (error) {
+    iteratorClose(iterator, 'throw', error);
+  }
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/classof-raw.js
+var classof_raw_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+var toString = uncurryThis({}.toString);
+var stringSlice = uncurryThis(''.slice);
+
+module.exports = function (it) {
+  return stringSlice(toString(it), 8, -1);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/classof.js
+var classof_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var TO_STRING_TAG_SUPPORT = (to_string_tag_support_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var classofRaw = (classof_raw_namespaceFn());
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+var $Object = Object;
+
+// ES3 wrong here
+var CORRECT_ARGUMENTS = classofRaw(function () { return arguments; }()) === 'Arguments';
+
+// fallback for IE11 Script Access Denied error
+var tryGet = function (it, key) {
+  try {
+    return it[key];
+  } catch (error) { /* empty */ }
+};
+
+// getting tag from ES6+ `Object.prototype.toString`
+module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
+  var O, tag, result;
+  return it === undefined ? 'Undefined' : it === null ? 'Null'
+    // @@toStringTag case
+    : typeof (tag = tryGet(O = $Object(it), TO_STRING_TAG)) == 'string' ? tag
+    // builtinTag case
+    : CORRECT_ARGUMENTS ? classofRaw(O)
+    // ES3 arguments fallback
+    : (result = classofRaw(O)) === 'Object' && isCallable(O.callee) ? 'Arguments' : result;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/copy-constructor-properties.js
+var copy_constructor_properties_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var hasOwn = (has_own_property_namespaceFn());
+var ownKeys = (own_keys_namespaceFn());
+var getOwnPropertyDescriptorModule = (object_get_own_property_descriptor_namespaceFn());
+var definePropertyModule = (object_define_property_namespaceFn());
+
+module.exports = function (target, source, exceptions) {
+  var keys = ownKeys(source);
+  var defineProperty = definePropertyModule.f;
+  var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    if (!hasOwn(target, key) && !(exceptions && hasOwn(exceptions, key))) {
+      defineProperty(target, key, getOwnPropertyDescriptor(source, key));
+    }
+  }
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/correct-prototype-getter.js
+var correct_prototype_getter_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var fails = (fails_namespaceFn());
+
+module.exports = !fails(function () {
+  function F() { /* empty */ }
+  F.prototype.constructor = null;
+  // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
+  return Object.getPrototypeOf(new F()) !== F.prototype;
+});
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/create-iter-result-object.js
+var create_iter_result_object_namespaceFn = () => {
+	return __webpack_require__(529);
+};
+
+// MODULE: ./node_modules/core-js/internals/create-non-enumerable-property.js
+var create_non_enumerable_property_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var DESCRIPTORS = (descriptors_namespaceFn());
+var definePropertyModule = (object_define_property_namespaceFn());
+var createPropertyDescriptor = (create_property_descriptor_namespaceFn());
+
+module.exports = DESCRIPTORS ? function (object, key, value) {
+  return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
+} : function (object, key, value) {
+  object[key] = value;
+  return object;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/create-property-descriptor.js
+var create_property_descriptor_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+module.exports = function (bitmap, value) {
+  return {
+    enumerable: !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable: !(bitmap & 4),
+    value: value
+  };
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/create-property.js
+var create_property_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var DESCRIPTORS = (descriptors_namespaceFn());
+var definePropertyModule = (object_define_property_namespaceFn());
+var createPropertyDescriptor = (create_property_descriptor_namespaceFn());
+
+module.exports = function (object, key, value) {
+  if (DESCRIPTORS) definePropertyModule.f(object, key, createPropertyDescriptor(0, value));
+  else object[key] = value;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/define-built-in-accessor.js
+var define_built_in_accessor_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var makeBuiltIn = (make_built_in_namespaceFn());
+var defineProperty = (object_define_property_namespaceFn());
+
+module.exports = function (target, name, descriptor) {
+  if (descriptor.get) makeBuiltIn(descriptor.get, name, { getter: true });
+  if (descriptor.set) makeBuiltIn(descriptor.set, name, { setter: true });
+  return defineProperty.f(target, name, descriptor);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/define-built-in.js
+var define_built_in_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isCallable = (is_callable_namespaceFn());
+var definePropertyModule = (object_define_property_namespaceFn());
+var makeBuiltIn = (make_built_in_namespaceFn());
+var defineGlobalProperty = (define_global_property_namespaceFn());
+
+module.exports = function (O, key, value, options) {
+  if (!options) options = {};
+  var simple = options.enumerable;
+  var name = options.name !== undefined ? options.name : key;
+  if (isCallable(value)) makeBuiltIn(value, name, options);
+  if (options.global) {
+    if (simple) O[key] = value;
+    else defineGlobalProperty(key, value);
+  } else {
+    try {
+      if (!options.unsafe) delete O[key];
+      else if (O[key]) simple = true;
+    } catch (error) { /* empty */ }
+    if (simple) O[key] = value;
+    else definePropertyModule.f(O, key, {
+      value: value,
+      enumerable: false,
+      configurable: !options.nonConfigurable,
+      writable: !options.nonWritable
+    });
+  } return O;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/define-built-ins.js
+var define_built_ins_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var defineBuiltIn = (define_built_in_namespaceFn());
+
+module.exports = function (target, src, options) {
+  for (var key in src) defineBuiltIn(target, key, src[key], options);
+  return target;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/define-global-property.js
+var define_global_property_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+
+// eslint-disable-next-line es/no-object-defineproperty -- safe
+var defineProperty = Object.defineProperty;
+
+module.exports = function (key, value) {
+  try {
+    defineProperty(globalThis, key, { value: value, configurable: true, writable: true });
+  } catch (error) {
+    globalThis[key] = value;
+  } return value;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/descriptors.js
+var descriptors_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var fails = (fails_namespaceFn());
+
+// Detect IE8's incomplete defineProperty implementation
+module.exports = !fails(function () {
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
+  return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] !== 7;
+});
+
+});
+
+// MODULE: ./node_modules/core-js/internals/document-create-element.js
+var document_create_element_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var isObject = (is_object_namespaceFn());
+
+var document = globalThis.document;
+// typeof document.createElement is 'object' in old IE
+var EXISTS = isObject(document) && isObject(document.createElement);
+
+module.exports = function (it) {
+  return EXISTS ? document.createElement(it) : {};
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/does-not-exceed-safe-integer.js
+var does_not_exceed_safe_integer_namespaceFn = () => {
+	return __webpack_require__(837);
+};
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/dom-exception-constants.js
+var dom_exception_constants_namespaceFn = () => {
+	return __webpack_require__(2);
+};
+
+// MODULE: ./node_modules/core-js/internals/enum-bug-keys.js
+var enum_bug_keys_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+// IE8- don't enum bug keys
+module.exports = [
+  'constructor',
+  'hasOwnProperty',
+  'isPrototypeOf',
+  'propertyIsEnumerable',
+  'toLocaleString',
+  'toString',
+  'valueOf'
+];
+
+});
+
+// MODULE: ./node_modules/core-js/internals/environment-user-agent.js
+var environment_user_agent_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+
+var navigator = globalThis.navigator;
+var userAgent = navigator && navigator.userAgent;
+
+module.exports = userAgent ? String(userAgent) : '';
+
+});
+
+// MODULE: ./node_modules/core-js/internals/environment-v8-version.js
+var environment_v8_version_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var userAgent = (environment_user_agent_namespaceFn());
+
+var process = globalThis.process;
+var Deno = globalThis.Deno;
+var versions = process && process.versions || Deno && Deno.version;
+var v8 = versions && versions.v8;
+var match, version;
+
+if (v8) {
+  match = v8.split('.');
+  // in old Chrome, versions of V8 isn't V8 = Chrome / 10
+  // but their correct versions are not interesting for us
+  version = match[0] > 0 && match[0] < 4 ? 1 : +(match[0] + match[1]);
+}
+
+// BrowserFS NodeJS `process` polyfill incorrectly set `.v8` to `0.0`
+// so check `userAgent` even if `.v8` exists, but 0
+if (!version && userAgent) {
+  match = userAgent.match(/Edge\/(\d+)/);
+  if (!match || match[1] >= 74) {
+    match = userAgent.match(/Chrome\/(\d+)/);
+    if (match) version = +match[1];
+  }
+}
+
+module.exports = version;
+
+});
+
+// MODULE: ./node_modules/core-js/internals/error-stack-clear.js
+var error_stack_clear_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+var $Error = Error;
+var replace = uncurryThis(''.replace);
+
+var TEST = (function (arg) { return String(new $Error(arg).stack); })('zxcasd');
+// eslint-disable-next-line redos/no-vulnerable -- safe
+var V8_OR_CHAKRA_STACK_ENTRY = /\n\s*at [^:]*:[^\n]*/;
+var IS_V8_OR_CHAKRA_STACK = V8_OR_CHAKRA_STACK_ENTRY.test(TEST);
+
+module.exports = function (stack, dropEntries) {
+  if (IS_V8_OR_CHAKRA_STACK && typeof stack == 'string' && !$Error.prepareStackTrace) {
+    while (dropEntries--) stack = replace(stack, V8_OR_CHAKRA_STACK_ENTRY, '');
+  } return stack;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/export.js
+var export_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var getOwnPropertyDescriptor = (object_get_own_property_descriptor_namespaceFn().f);
+var createNonEnumerableProperty = (create_non_enumerable_property_namespaceFn());
+var defineBuiltIn = (define_built_in_namespaceFn());
+var defineGlobalProperty = (define_global_property_namespaceFn());
+var copyConstructorProperties = (copy_constructor_properties_namespaceFn());
+var isForced = (is_forced_namespaceFn());
+
+/*
+  options.target         - name of the target object
+  options.global         - target is the global object
+  options.stat           - export as static methods of target
+  options.proto          - export as prototype methods of target
+  options.real           - real prototype method for the `pure` version
+  options.forced         - export even if the native feature is available
+  options.bind           - bind methods to the target, required for the `pure` version
+  options.wrap           - wrap constructors to preventing global pollution, required for the `pure` version
+  options.unsafe         - use the simple assignment of property instead of delete + defineProperty
+  options.sham           - add a flag to not completely full polyfills
+  options.enumerable     - export as enumerable property
+  options.dontCallGetSet - prevent calling a getter on target
+  options.name           - the .name of the function if it does not match the key
+*/
+module.exports = function (options, source) {
+  var TARGET = options.target;
+  var GLOBAL = options.global;
+  var STATIC = options.stat;
+  var FORCED, target, key, targetProperty, sourceProperty, descriptor;
+  if (GLOBAL) {
+    target = globalThis;
+  } else if (STATIC) {
+    target = globalThis[TARGET] || defineGlobalProperty(TARGET, {});
+  } else {
+    target = globalThis[TARGET] && globalThis[TARGET].prototype;
+  }
+  if (target) for (key in source) {
+    sourceProperty = source[key];
+    if (options.dontCallGetSet) {
+      descriptor = getOwnPropertyDescriptor(target, key);
+      targetProperty = descriptor && descriptor.value;
+    } else targetProperty = target[key];
+    FORCED = isForced(GLOBAL ? key : TARGET + (STATIC ? '.' : '#') + key, options.forced);
+    // contained in target
+    if (!FORCED && targetProperty !== undefined) {
+      if (typeof sourceProperty == typeof targetProperty) continue;
+      copyConstructorProperties(sourceProperty, targetProperty);
+    }
+    // add a flag to not completely full polyfills
+    if (options.sham || (targetProperty && targetProperty.sham)) {
+      createNonEnumerableProperty(sourceProperty, 'sham', true);
+    }
+    defineBuiltIn(target, key, sourceProperty, options);
+  }
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/fails.js
+var fails_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+module.exports = function (exec) {
+  try {
+    return !!exec();
+  } catch (error) {
+    return true;
+  }
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/function-apply.js
+var function_apply_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var NATIVE_BIND = (function_bind_native_namespaceFn());
+
+var FunctionPrototype = Function.prototype;
+var apply = FunctionPrototype.apply;
+var call = FunctionPrototype.call;
+
+// eslint-disable-next-line es/no-function-prototype-bind, es/no-reflect -- safe
+module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? call.bind(apply) : function () {
+  return call.apply(apply, arguments);
+});
+
+});
+
+// MODULE: ./node_modules/core-js/internals/function-bind-context.js
+var function_bind_context_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_clause_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var NATIVE_BIND = (function_bind_native_namespaceFn());
+
+var bind = uncurryThis(uncurryThis.bind);
+
+// optional / simple context binding
+module.exports = function (fn, that) {
+  aCallable(fn);
+  return that === undefined ? fn : NATIVE_BIND ? bind(fn, that) : function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/function-bind-native.js
+var function_bind_native_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var fails = (fails_namespaceFn());
+
+module.exports = !fails(function () {
+  // eslint-disable-next-line es/no-function-prototype-bind -- safe
+  var test = function () { /* empty */ }.bind();
+  // eslint-disable-next-line no-prototype-builtins -- safe
+  return typeof test != 'function' || test.hasOwnProperty('prototype');
+});
+
+});
+
+// MODULE: ./node_modules/core-js/internals/function-call.js
+var function_call_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var NATIVE_BIND = (function_bind_native_namespaceFn());
+
+var call = Function.prototype.call;
+// eslint-disable-next-line es/no-function-prototype-bind -- safe
+module.exports = NATIVE_BIND ? call.bind(call) : function () {
+  return call.apply(call, arguments);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/function-name.js
+var function_name_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var DESCRIPTORS = (descriptors_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+
+var FunctionPrototype = Function.prototype;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var getDescriptor = DESCRIPTORS && Object.getOwnPropertyDescriptor;
+
+var EXISTS = hasOwn(FunctionPrototype, 'name');
+// additional protection from minified / mangled / dropped function names
+var PROPER = EXISTS && function something() { /* empty */ }.name === 'something';
+var CONFIGURABLE = EXISTS && (!DESCRIPTORS || (DESCRIPTORS && getDescriptor(FunctionPrototype, 'name').configurable));
+
+module.exports = {
+  ...(/* unused pure expression */ null && (EXISTS)),
+  ...(/* unused pure expression */ null && (PROPER)),
+  CONFIGURABLE: CONFIGURABLE
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/function-uncurry-this-accessor.js
+var function_uncurry_this_accessor_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+
+module.exports = function (object, key, method) {
+  try {
+    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+    return uncurryThis(aCallable(Object.getOwnPropertyDescriptor(object, key)[method]));
+  } catch (error) { /* empty */ }
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/function-uncurry-this-clause.js
+var function_uncurry_this_clause_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var classofRaw = (classof_raw_namespaceFn());
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+module.exports = function (fn) {
+  // Nashorn bug:
+  //   https://github.com/zloirock/core-js/issues/1128
+  //   https://github.com/zloirock/core-js/issues/1130
+  if (classofRaw(fn) === 'Function') return uncurryThis(fn);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/function-uncurry-this.js
+var function_uncurry_this_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var NATIVE_BIND = (function_bind_native_namespaceFn());
+
+var FunctionPrototype = Function.prototype;
+var call = FunctionPrototype.call;
+// eslint-disable-next-line es/no-function-prototype-bind -- safe
+var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
+
+module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
+  return function () {
+    return call.apply(fn, arguments);
+  };
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/get-alphabet-option.js
+var get_alphabet_option_namespaceFn = () => {
+	return __webpack_require__(944);
+};
+
+// MODULE: ./node_modules/core-js/internals/get-built-in.js
+var get_built_in_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+
+var aFunction = function (argument) {
+  return isCallable(argument) ? argument : undefined;
+};
+
+module.exports = function (namespace, method) {
+  return arguments.length < 2 ? aFunction(globalThis[namespace]) : globalThis[namespace] && globalThis[namespace][method];
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/get-iterator-direct.js
+var get_iterator_direct_namespaceFn = () => {
+	return __webpack_require__(767);
+};
+
+// MODULE: ./node_modules/core-js/internals/get-iterator-flattenable.js
+var get_iterator_flattenable_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var call = (function_call_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var getIteratorMethod = (get_iterator_method_internal_namespaceFn());
+
+module.exports = function (obj, stringHandling) {
+  if (!stringHandling || typeof obj !== 'string') anObject(obj);
+  var method = getIteratorMethod(obj);
+  return getIteratorDirect(anObject(method !== undefined ? call(method, obj) : obj));
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/get-iterator-internal.js
+var get_iterator_internal_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var call = (function_call_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var tryToString = (try_to_string_namespaceFn());
+var getIteratorMethod = (get_iterator_method_internal_namespaceFn());
+
+var $TypeError = TypeError;
+
+module.exports = function (argument, usingIterator) {
+  var iteratorMethod = arguments.length < 2 ? getIteratorMethod(argument) : usingIterator;
+  if (isCallable(iteratorMethod)) return anObject(call(iteratorMethod, argument));
+  throw new $TypeError(tryToString(argument) + ' is not iterable');
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/get-iterator-method-internal.js
+var get_iterator_method_internal_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var classof = (classof_raw_namespaceFn());
+var isNullOrUndefined = (is_null_or_undefined_namespaceFn());
+var getMethod = (get_method_namespaceFn());
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+
+var ITERATOR = wellKnownSymbol('iterator');
+var ArrayPrototype = Array.prototype;
+
+module.exports = function (it) {
+  if (!isNullOrUndefined(it)) return getMethod(it, ITERATOR)
+    || getMethod(it, '@@iterator')
+    || (classof(it) === 'Arguments' ? ArrayPrototype[ITERATOR] : undefined);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/get-method.js
+var get_method_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aCallable = (a_callable_namespaceFn());
+var isNullOrUndefined = (is_null_or_undefined_namespaceFn());
+
+// `GetMethod` abstract operation
+// https://tc39.es/ecma262/#sec-getmethod
+module.exports = function (V, P) {
+  var func = V[P];
+  return isNullOrUndefined(func) ? undefined : aCallable(func);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/get-set-record.js
+var get_set_record_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aCallable = (a_callable_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var call = (function_call_namespaceFn());
+var toIntegerOrInfinity = (to_integer_or_infinity_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+
+var INVALID_SIZE = 'Invalid size';
+var $RangeError = RangeError;
+var $TypeError = TypeError;
+var max = Math.max;
+
+var SetRecord = function (set, intSize) {
+  this.set = set;
+  this.size = max(intSize, 0);
+  this.has = aCallable(set.has);
+  this.keys = aCallable(set.keys);
+};
+
+SetRecord.prototype = {
+  getIterator: function () {
+    return getIteratorDirect(anObject(call(this.keys, this.set)));
+  },
+  includes: function (it) {
+    return call(this.has, this.set, it);
+  }
+};
+
+// `GetSetRecord` abstract operation
+// https://tc39.es/proposal-set-methods/#sec-getsetrecord
+module.exports = function (obj) {
+  anObject(obj);
+  var numSize = +obj.size;
+  // NOTE: If size is undefined, then numSize will be NaN
+  // eslint-disable-next-line no-self-compare -- NaN check
+  if (numSize !== numSize) throw new $TypeError(INVALID_SIZE);
+  var intSize = toIntegerOrInfinity(numSize);
+  if (intSize < 0) throw new $RangeError(INVALID_SIZE);
+  return new SetRecord(obj, intSize);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/global-this.js
+var global_this_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var check = function (it) {
+  return it && it.Math === Math && it;
+};
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+module.exports =
+  // eslint-disable-next-line es/no-global-this -- safe
+  check(typeof globalThis == 'object' && globalThis) ||
+  check(typeof window == 'object' && window) ||
+  // eslint-disable-next-line no-restricted-globals -- safe
+  check(typeof self == 'object' && self) ||
+  check(typeof global == 'object' && global) ||
+  check(typeof this == 'object' && this) ||
+  // eslint-disable-next-line no-new-func -- fallback
+  (function () { return this; })() || Function('return this')();
+
+});
+
+// MODULE: ./node_modules/core-js/internals/has-own-property.js
+var has_own_property_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var toObject = (to_object_namespaceFn());
+
+var hasOwnProperty = uncurryThis({}.hasOwnProperty);
+
+// `HasOwnProperty` abstract operation
+// https://tc39.es/ecma262/#sec-hasownproperty
+// eslint-disable-next-line es/no-object-hasown -- safe
+module.exports = Object.hasOwn || function hasOwn(it, key) {
+  return hasOwnProperty(toObject(it), key);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/hidden-keys.js
+var hidden_keys_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+module.exports = {};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/html.js
+var html_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var getBuiltIn = (get_built_in_namespaceFn());
+
+module.exports = getBuiltIn('document', 'documentElement');
+
+});
+
+// MODULE: ./node_modules/core-js/internals/ie8-dom-define.js
+var ie8_dom_define_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var DESCRIPTORS = (descriptors_namespaceFn());
+var fails = (fails_namespaceFn());
+var createElement = (document_create_element_namespaceFn());
+
+// Thanks to IE8 for its funny defineProperty
+module.exports = !DESCRIPTORS && !fails(function () {
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
+  return Object.defineProperty(createElement('div'), 'a', {
+    get: function () { return 7; }
+  }).a !== 7;
+});
+
+});
+
+// MODULE: ./node_modules/core-js/internals/indexed-object.js
+var indexed_object_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var fails = (fails_namespaceFn());
+var classof = (classof_raw_namespaceFn());
+
+var $Object = Object;
+var split = uncurryThis(''.split);
+
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+module.exports = fails(function () {
+  // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
+  // eslint-disable-next-line no-prototype-builtins -- safe
+  return !$Object('z').propertyIsEnumerable(0);
+}) ? function (it) {
+  return classof(it) === 'String' ? split(it, '') : $Object(it);
+} : $Object;
+
+});
+
+// MODULE: ./node_modules/core-js/internals/inherit-if-required.js
+var inherit_if_required_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isCallable = (is_callable_namespaceFn());
+var isObject = (is_object_namespaceFn());
+var setPrototypeOf = (object_set_prototype_of_namespaceFn());
+
+// makes subclassing work correct for wrapped built-ins
+module.exports = function ($this, dummy, Wrapper) {
+  var NewTarget, NewTargetPrototype;
+  if (
+    // it can work only with native `setPrototypeOf`
+    setPrototypeOf &&
+    // we haven't completely correct pre-ES6 way for getting `new.target`, so use this
+    isCallable(NewTarget = dummy.constructor) &&
+    NewTarget !== Wrapper &&
+    isObject(NewTargetPrototype = NewTarget.prototype) &&
+    NewTargetPrototype !== Wrapper.prototype
+  ) setPrototypeOf($this, NewTargetPrototype);
+  return $this;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/inspect-source.js
+var inspect_source_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var store = (shared_store_namespaceFn());
+
+var functionToString = uncurryThis(Function.toString);
+
+// this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
+if (!isCallable(store.inspectSource)) {
+  store.inspectSource = function (it) {
+    return functionToString(it);
+  };
+}
+
+module.exports = store.inspectSource;
+
+});
+
+// MODULE: ./node_modules/core-js/internals/internal-state.js
+var internal_state_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var NATIVE_WEAK_MAP = (weak_map_basic_detection_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var isObject = (is_object_namespaceFn());
+var createNonEnumerableProperty = (create_non_enumerable_property_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+var shared = (shared_store_namespaceFn());
+var sharedKey = (shared_key_namespaceFn());
+var hiddenKeys = (hidden_keys_namespaceFn());
+
+var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
+var TypeError = globalThis.TypeError;
+var WeakMap = globalThis.WeakMap;
+var set, get, has;
+
+var enforce = function (it) {
+  return has(it) ? get(it) : set(it, {});
+};
+
+var getterFor = function (TYPE) {
+  return function (it) {
+    var state;
+    if (!isObject(it) || (state = get(it)).type !== TYPE) {
+      throw new TypeError('Incompatible receiver, ' + TYPE + ' required');
+    } return state;
+  };
+};
+
+if (NATIVE_WEAK_MAP || shared.state) {
+  var store = shared.state || (shared.state = new WeakMap());
+  /* eslint-disable no-self-assign -- prototype methods protection */
+  store.get = store.get;
+  store.has = store.has;
+  store.set = store.set;
+  /* eslint-enable no-self-assign -- prototype methods protection */
+  set = function (it, metadata) {
+    if (store.has(it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+    metadata.facade = it;
+    store.set(it, metadata);
+    return metadata;
+  };
+  get = function (it) {
+    return store.get(it) || {};
+  };
+  has = function (it) {
+    return store.has(it);
+  };
+} else {
+  var STATE = sharedKey('state');
+  hiddenKeys[STATE] = true;
+  set = function (it, metadata) {
+    if (hasOwn(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+    metadata.facade = it;
+    createNonEnumerableProperty(it, STATE, metadata);
+    return metadata;
+  };
+  get = function (it) {
+    return hasOwn(it, STATE) ? it[STATE] : {};
+  };
+  has = function (it) {
+    return hasOwn(it, STATE);
+  };
+}
+
+module.exports = {
+  set: set,
+  get: get,
+  has: has,
+  enforce: enforce,
+  getterFor: getterFor
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/is-array-iterator-method.js
+var is_array_iterator_method_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+var Iterators = (iterators_namespaceFn());
+
+var ITERATOR = wellKnownSymbol('iterator');
+var ArrayPrototype = Array.prototype;
+
+// check on default Array iterator
+module.exports = function (it) {
+  return it !== undefined && (Iterators.Array === it || ArrayPrototype[ITERATOR] === it);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/is-array.js
+var is_array_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var classof = (classof_raw_namespaceFn());
+
+// `IsArray` abstract operation
+// https://tc39.es/ecma262/#sec-isarray
+// eslint-disable-next-line es/no-array-isarray -- safe
+module.exports = Array.isArray || function isArray(argument) {
+  return classof(argument) === 'Array';
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/is-big-int-array.js
+var is_big_int_array_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var classof = (classof_namespaceFn());
+
+module.exports = function (it) {
+  var klass = classof(it);
+  return klass === 'BigInt64Array' || klass === 'BigUint64Array';
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/is-callable.js
+var is_callable_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+// https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+var documentAll = typeof document == 'object' && document.all;
+
+// `IsCallable` abstract operation
+// https://tc39.es/ecma262/#sec-iscallable
+// eslint-disable-next-line unicorn/no-typeof-undefined -- required for testing
+module.exports = typeof documentAll == 'undefined' && documentAll !== undefined ? function (argument) {
+  return typeof argument == 'function' || argument === documentAll;
+} : function (argument) {
+  return typeof argument == 'function';
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/is-forced.js
+var is_forced_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var fails = (fails_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+
+var replacement = /#|\.prototype\./;
+
+var isForced = function (feature, detection) {
+  var value = data[normalize(feature)];
+  return value === POLYFILL ? true
+    : value === NATIVE ? false
+    : isCallable(detection) ? fails(detection)
+    : !!detection;
+};
+
+var normalize = isForced.normalize = function (string) {
+  return String(string).replace(replacement, '.').toLowerCase();
+};
+
+var data = isForced.data = {};
+var NATIVE = isForced.NATIVE = 'N';
+var POLYFILL = isForced.POLYFILL = 'P';
+
+module.exports = isForced;
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/is-null-or-undefined.js
+var is_null_or_undefined_namespaceFn = () => {
+	return __webpack_require__(117);
+};
+
+// MODULE: ./node_modules/core-js/internals/is-object.js
+var is_object_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isCallable = (is_callable_namespaceFn());
+
+module.exports = function (it) {
+  return typeof it == 'object' ? it !== null : isCallable(it);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/is-possible-prototype.js
+var is_possible_prototype_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isObject = (is_object_namespaceFn());
+
+module.exports = function (argument) {
+  return isObject(argument) || argument === null;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/is-pure.js
+var is_pure_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+module.exports = false;
+
+});
+
+// MODULE: ./node_modules/core-js/internals/is-raw-json.js
+var is_raw_json_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var isObject = (is_object_namespaceFn());
+var getInternalState = (internal_state_namespaceFn().get);
+
+module.exports = function isRawJSON(O) {
+  if (!isObject(O)) return false;
+  var state = getInternalState(O);
+  return !!state && state.type === 'RawJSON';
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/is-symbol.js
+var is_symbol_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var getBuiltIn = (get_built_in_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var isPrototypeOf = (object_is_prototype_of_namespaceFn());
+var USE_SYMBOL_AS_UID = (use_symbol_as_uid_namespaceFn());
+
+var $Object = Object;
+
+module.exports = USE_SYMBOL_AS_UID ? function (it) {
+  return typeof it == 'symbol';
+} : function (it) {
+  var $Symbol = getBuiltIn('Symbol');
+  return isCallable($Symbol) && isPrototypeOf($Symbol.prototype, $Object(it));
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/iterate-simple.js
+var iterate_simple_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var call = (function_call_namespaceFn());
+
+module.exports = function (record, fn, ITERATOR_INSTEAD_OF_RECORD) {
+  var iterator = ITERATOR_INSTEAD_OF_RECORD ? record : record.iterator;
+  var next = record.next;
+  var step, result;
+  while (!(step = call(next, iterator)).done) {
+    result = fn(step.value);
+    if (result !== undefined) return result;
+  }
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/iterate.js
+var iterate_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var bind = (function_bind_context_namespaceFn());
+var call = (function_call_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var tryToString = (try_to_string_namespaceFn());
+var isArrayIteratorMethod = (is_array_iterator_method_namespaceFn());
+var lengthOfArrayLike = (length_of_array_like_namespaceFn());
+var isPrototypeOf = (object_is_prototype_of_namespaceFn());
+var getIterator = (get_iterator_internal_namespaceFn());
+var getIteratorMethod = (get_iterator_method_internal_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+
+var $TypeError = TypeError;
+
+var Result = function (stopped, result) {
+  this.stopped = stopped;
+  this.result = result;
+};
+
+var ResultPrototype = Result.prototype;
+
+module.exports = function (iterable, unboundFunction, options) {
+  var that = options && options.that;
+  var AS_ENTRIES = !!(options && options.AS_ENTRIES);
+  var IS_RECORD = !!(options && options.IS_RECORD);
+  var IS_ITERATOR = !!(options && options.IS_ITERATOR);
+  var INTERRUPTED = !!(options && options.INTERRUPTED);
+  var fn = bind(unboundFunction, that);
+  var iterator, iterFn, index, length, result, next, step;
+
+  var stop = function (condition) {
+    var $iterator = iterator;
+    iterator = undefined;
+    if ($iterator) iteratorClose($iterator, 'normal');
+    return new Result(true, condition);
+  };
+
+  var callFn = function (value) {
+    if (AS_ENTRIES) {
+      anObject(value);
+      return INTERRUPTED ? fn(value[0], value[1], stop) : fn(value[0], value[1]);
+    } return INTERRUPTED ? fn(value, stop) : fn(value);
+  };
+
+  if (IS_RECORD) {
+    iterator = iterable.iterator;
+  } else if (IS_ITERATOR) {
+    iterator = iterable;
+  } else {
+    iterFn = getIteratorMethod(iterable);
+    if (!iterFn) throw new $TypeError(tryToString(iterable) + ' is not iterable');
+    // optimisation for array iterators
+    if (isArrayIteratorMethod(iterFn)) {
+      for (index = 0, length = lengthOfArrayLike(iterable); length > index; index++) {
+        result = callFn(iterable[index]);
+        if (result && isPrototypeOf(ResultPrototype, result)) return result;
+      } return new Result(false);
+    }
+    iterator = getIterator(iterable, iterFn);
+  }
+
+  next = IS_RECORD ? iterable.next : iterator.next;
+  while (!(step = call(next, iterator)).done) {
+    // `IteratorValue` errors should propagate without closing the iterator
+    var value = step.value;
+    try {
+      result = callFn(value);
+    } catch (error) {
+      if (iterator) iteratorClose(iterator, 'throw', error);
+      else throw error;
+    }
+    if (typeof result == 'object' && result && isPrototypeOf(ResultPrototype, result)) return result;
+  } return new Result(false);
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/iterator-cleanup-state.js
+var iterator_cleanup_state_namespaceFn = () => {
+	return __webpack_require__(859);
+};
+
+// MODULE: ./node_modules/core-js/internals/iterator-close-all.js
+var iterator_close_all_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var iteratorClose = (iterator_close_namespaceFn());
+
+module.exports = function (iters, kind, value) {
+  for (var i = iters.length - 1; i >= 0; i--) {
+    if (iters[i] === undefined) continue;
+    try {
+      value = iteratorClose(iters[i].iterator, kind, value);
+    } catch (error) {
+      kind = 'throw';
+      value = error;
+    }
+  }
+  if (kind === 'throw') throw value;
+  return value;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/iterator-close.js
+var iterator_close_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var call = (function_call_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getMethod = (get_method_namespaceFn());
+
+module.exports = function (iterator, kind, value) {
+  var innerResult, innerError;
+  anObject(iterator);
+  try {
+    innerResult = getMethod(iterator, 'return');
+    if (!innerResult) {
+      if (kind === 'throw') throw value;
+      return value;
+    }
+    innerResult = call(innerResult, iterator);
+  } catch (error) {
+    innerError = true;
+    innerResult = error;
+  }
+  if (kind === 'throw') throw value;
+  if (innerError) throw innerResult;
+  anObject(innerResult);
+  return value;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/iterator-create-proxy.js
+var iterator_create_proxy_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var call = (function_call_namespaceFn());
+var create = (object_create_namespaceFn());
+var createNonEnumerableProperty = (create_non_enumerable_property_namespaceFn());
+var defineBuiltIns = (define_built_ins_namespaceFn());
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+var InternalStateModule = (internal_state_namespaceFn());
+var getMethod = (get_method_namespaceFn());
+var IteratorPrototype = (iterators_core_namespaceFn().IteratorPrototype);
+var createIterResultObject = (create_iter_result_object_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var iteratorCloseAll = (iterator_close_all_namespaceFn());
+var cleanupState = (iterator_cleanup_state_namespaceFn());
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+var ITERATOR_HELPER = 'IteratorHelper';
+var WRAP_FOR_VALID_ITERATOR = 'WrapForValidIterator';
+var NORMAL = 'normal';
+var THROW = 'throw';
+var setInternalState = InternalStateModule.set;
+
+var createIteratorProxyPrototype = function (IS_ITERATOR) {
+  var getInternalState = InternalStateModule.getterFor(IS_ITERATOR ? WRAP_FOR_VALID_ITERATOR : ITERATOR_HELPER);
+
+  return defineBuiltIns(create(IteratorPrototype), {
+    next: function next() {
+      var state = getInternalState(this);
+      // for simplification:
+      //   for `%WrapForValidIteratorPrototype%.next` or with `state.returnHandlerResult` our `nextHandler` returns `IterResultObject`
+      //   for `%IteratorHelperPrototype%.next` - just a value
+      if (IS_ITERATOR) return state.nextHandler();
+      if (state.done) return createIterResultObject(undefined, true);
+      try {
+        var result = state.nextHandler();
+        if (state.done) cleanupState(state);
+        return state.returnHandlerResult ? result : createIterResultObject(result, state.done);
+      } catch (error) {
+        state.done = true;
+        cleanupState(state);
+        throw error;
+      }
+    },
+    'return': function () {
+      var state = getInternalState(this);
+      var iterator = state.iterator;
+      var inner = state.inner;
+      var openIters = state.openIters;
+      var done = state.done;
+      state.done = true;
+      if (IS_ITERATOR) {
+        var returnMethod = getMethod(iterator, 'return');
+        return returnMethod ? call(returnMethod, iterator) : createIterResultObject(undefined, true);
+      }
+      cleanupState(state);
+      if (done) return createIterResultObject(undefined, true);
+      if (inner) try {
+        iteratorClose(inner.iterator, NORMAL);
+      } catch (error) {
+        return iteratorClose(iterator, THROW, error);
+      }
+      if (openIters) try {
+        iteratorCloseAll(openIters, NORMAL);
+      } catch (error) {
+        if (iterator) return iteratorClose(iterator, THROW, error);
+        throw error;
+      }
+      if (iterator) iteratorClose(iterator, NORMAL);
+      return createIterResultObject(undefined, true);
+    }
+  });
+};
+
+var WrapForValidIteratorPrototype = createIteratorProxyPrototype(true);
+var IteratorHelperPrototype = createIteratorProxyPrototype(false);
+
+createNonEnumerableProperty(IteratorHelperPrototype, TO_STRING_TAG, 'Iterator Helper');
+
+module.exports = function (nextHandler, IS_ITERATOR, RETURN_HANDLER_RESULT) {
+  var IteratorProxy = function Iterator(record, state) {
+    if (state) {
+      state.iterator = record.iterator;
+      state.next = record.next;
+    } else state = record;
+    state.type = IS_ITERATOR ? WRAP_FOR_VALID_ITERATOR : ITERATOR_HELPER;
+    state.returnHandlerResult = !!RETURN_HANDLER_RESULT;
+    state.nextHandler = nextHandler;
+    state.counter = 0;
+    state.done = false;
+    setInternalState(this, state);
+  };
+
+  IteratorProxy.prototype = IS_ITERATOR ? WrapForValidIteratorPrototype : IteratorHelperPrototype;
+
+  return IteratorProxy;
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/iterator-helper-throws-on-invalid-iterator.js
+var iterator_helper_throws_on_invalid_iterator_namespaceFn = () => {
+	return __webpack_require__(684);
+};
+
+// MODULE: ./node_modules/core-js/internals/iterator-helper-without-closing-on-early-error.js
+var iterator_helper_without_closing_on_early_error_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+
+// https://github.com/tc39/ecma262/pull/3467
+module.exports = function (METHOD_NAME, ExpectedError) {
+  var Iterator = globalThis.Iterator;
+  var IteratorPrototype = Iterator && Iterator.prototype;
+  var method = IteratorPrototype && IteratorPrototype[METHOD_NAME];
+
+  var CLOSED = false;
+
+  if (method) try {
+    method.call({
+      next: function () { return { done: true }; },
+      'return': function () { CLOSED = true; }
+    }, -1);
+  } catch (error) {
+    // https://bugs.webkit.org/show_bug.cgi?id=291195
+    if (!(error instanceof ExpectedError)) CLOSED = false;
+  }
+
+  if (!CLOSED) return method;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/iterators-core.js
+var iterators_core_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var fails = (fails_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var isObject = (is_object_namespaceFn());
+var create = (object_create_namespaceFn());
+var getPrototypeOf = (object_get_prototype_of_namespaceFn());
+var defineBuiltIn = (define_built_in_namespaceFn());
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var ITERATOR = wellKnownSymbol('iterator');
+var BUGGY_SAFARI_ITERATORS = false;
+
+// `%IteratorPrototype%` object
+// https://tc39.es/ecma262/#sec-%iteratorprototype%-object
+var IteratorPrototype, PrototypeOfArrayIteratorPrototype, arrayIterator;
+
+/* eslint-disable es/no-array-prototype-keys -- safe */
+if ([].keys) {
+  arrayIterator = [].keys();
+  // Safari 8 has buggy iterators w/o `next`
+  if (!('next' in arrayIterator)) BUGGY_SAFARI_ITERATORS = true;
+  else {
+    PrototypeOfArrayIteratorPrototype = getPrototypeOf(getPrototypeOf(arrayIterator));
+    if (PrototypeOfArrayIteratorPrototype !== Object.prototype) IteratorPrototype = PrototypeOfArrayIteratorPrototype;
+  }
+}
+
+var NEW_ITERATOR_PROTOTYPE = !isObject(IteratorPrototype) || fails(function () {
+  var test = {};
+  // FF44- legacy iterators case
+  return IteratorPrototype[ITERATOR].call(test) !== test;
+});
+
+if (NEW_ITERATOR_PROTOTYPE) IteratorPrototype = {};
+else if (IS_PURE) IteratorPrototype = create(IteratorPrototype);
+
+// `%IteratorPrototype%[@@iterator]()` method
+// https://tc39.es/ecma262/#sec-%iteratorprototype%-@@iterator
+if (!isCallable(IteratorPrototype[ITERATOR])) {
+  defineBuiltIn(IteratorPrototype, ITERATOR, function () {
+    return this;
+  });
+}
+
+module.exports = {
+  IteratorPrototype: IteratorPrototype,
+  ...(/* unused pure expression */ null && (BUGGY_SAFARI_ITERATORS))
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/iterators.js
+var iterators_namespaceFn = () => {
+	return __webpack_require__(269);
+};
+
+// MODULE: ./node_modules/core-js/internals/length-of-array-like.js
+var length_of_array_like_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var toLength = (to_length_namespaceFn());
+
+// `LengthOfArrayLike` abstract operation
+// https://tc39.es/ecma262/#sec-lengthofarraylike
+module.exports = function (obj) {
+  return toLength(obj.length);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/make-built-in.js
+var make_built_in_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var fails = (fails_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+var DESCRIPTORS = (descriptors_namespaceFn());
+var CONFIGURABLE_FUNCTION_NAME = (function_name_namespaceFn().CONFIGURABLE);
+var inspectSource = (inspect_source_namespaceFn());
+var InternalStateModule = (internal_state_namespaceFn());
+
+var enforceInternalState = InternalStateModule.enforce;
+var getInternalState = InternalStateModule.get;
+var $String = String;
+// eslint-disable-next-line es/no-object-defineproperty -- safe
+var defineProperty = Object.defineProperty;
+var stringSlice = uncurryThis(''.slice);
+var replace = uncurryThis(''.replace);
+var join = uncurryThis([].join);
+
+var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
+  return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
+});
+
+var TEMPLATE = String(String).split('String');
+
+var makeBuiltIn = module.exports = function (value, name, options) {
+  if (stringSlice($String(name), 0, 7) === 'Symbol(') {
+    name = '[' + replace($String(name), /^Symbol\(([^)]*)\).*$/, '$1') + ']';
+  }
+  if (options && options.getter) name = 'get ' + name;
+  if (options && options.setter) name = 'set ' + name;
+  if (!hasOwn(value, 'name') || (CONFIGURABLE_FUNCTION_NAME && value.name !== name)) {
+    if (DESCRIPTORS) defineProperty(value, 'name', { value: name, configurable: true });
+    else value.name = name;
+  }
+  if (CONFIGURABLE_LENGTH && options && hasOwn(options, 'arity') && value.length !== options.arity) {
+    defineProperty(value, 'length', { value: options.arity });
+  }
+  try {
+    if (options && hasOwn(options, 'constructor') && options.constructor) {
+      if (DESCRIPTORS) defineProperty(value, 'prototype', { writable: false });
+    // in V8 ~ Chrome 53, prototypes of some methods, like `Array.prototype.values`, are non-writable
+    } else if (value.prototype) value.prototype = undefined;
+  } catch (error) { /* empty */ }
+  var state = enforceInternalState(value);
+  if (!hasOwn(state, 'source')) {
+    state.source = join(TEMPLATE, typeof name == 'string' ? name : '');
+  } return value;
+};
+
+// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
+// eslint-disable-next-line no-extend-native -- required
+Function.prototype.toString = makeBuiltIn(function toString() {
+  return isCallable(this) && getInternalState(this).source || inspectSource(this);
+}, 'toString');
+
+});
+
+// MODULE: ./node_modules/core-js/internals/map-helpers.js
+var map_helpers_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+// eslint-disable-next-line es/no-map -- safe
+var MapPrototype = Map.prototype;
+
+module.exports = {
+  // eslint-disable-next-line es/no-map -- safe
+  Map: Map,
+  set: uncurryThis(MapPrototype.set),
+  get: uncurryThis(MapPrototype.get),
+  has: uncurryThis(MapPrototype.has),
+  remove: uncurryThis(MapPrototype['delete']),
+  proto: MapPrototype
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/native-raw-json.js
+var native_raw_json_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+/* eslint-disable es/no-json -- safe */
+var fails = (fails_namespaceFn());
+
+module.exports = !fails(function () {
+  var unsafeInt = '9007199254740993';
+  // eslint-disable-next-line es/no-json-rawjson -- feature detection
+  var raw = JSON.rawJSON(unsafeInt);
+  // eslint-disable-next-line es/no-json-israwjson -- feature detection
+  return !JSON.isRawJSON(raw) || JSON.stringify(raw) !== unsafeInt;
+});
+
+});
+
+// MODULE: ./node_modules/core-js/internals/new-promise-capability.js
+var new_promise_capability_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aCallable = (a_callable_namespaceFn());
+
+var $TypeError = TypeError;
+
+var PromiseCapability = function (C) {
+  var resolve, reject;
+  this.promise = new C(function ($$resolve, $$reject) {
+    if (resolve !== undefined || reject !== undefined) throw new $TypeError('Bad Promise constructor');
+    resolve = $$resolve;
+    reject = $$reject;
+  });
+  this.resolve = aCallable(resolve);
+  this.reject = aCallable(reject);
+};
+
+// `NewPromiseCapability` abstract operation
+// https://tc39.es/ecma262/#sec-newpromisecapability
+module.exports.f = function (C) {
+  return new PromiseCapability(C);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/normalize-string-argument.js
+var normalize_string_argument_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var toString = (to_string_namespaceFn());
+
+module.exports = function (argument, $default) {
+  return argument === undefined ? arguments.length < 2 ? '' : $default : toString(argument);
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/not-a-nan.js
+var not_a_nan_namespaceFn = () => {
+	return __webpack_require__(149);
+};
+
+// MODULE: ./node_modules/core-js/internals/object-create.js
+var object_create_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+/* global ActiveXObject -- old IE, WSH */
+var anObject = (an_object_namespaceFn());
+var definePropertiesModule = (object_define_properties_namespaceFn());
+var enumBugKeys = (enum_bug_keys_namespaceFn());
+var hiddenKeys = (hidden_keys_namespaceFn());
+var html = (html_namespaceFn());
+var documentCreateElement = (document_create_element_namespaceFn());
+var sharedKey = (shared_key_namespaceFn());
+
+var GT = '>';
+var LT = '<';
+var PROTOTYPE = 'prototype';
+var SCRIPT = 'script';
+var IE_PROTO = sharedKey('IE_PROTO');
+
+var EmptyConstructor = function () { /* empty */ };
+
+var scriptTag = function (content) {
+  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+};
+
+// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+var NullProtoObjectViaActiveX = function (activeXDocument) {
+  activeXDocument.write(scriptTag(''));
+  activeXDocument.close();
+  var temp = activeXDocument.parentWindow.Object;
+  // eslint-disable-next-line no-useless-assignment -- avoid memory leak
+  activeXDocument = null;
+  return temp;
+};
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var NullProtoObjectViaIFrame = function () {
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = documentCreateElement('iframe');
+  var JS = 'java' + SCRIPT + ':';
+  var iframeDocument;
+  iframe.style.display = 'none';
+  html.appendChild(iframe);
+  // https://github.com/zloirock/core-js/issues/475
+  iframe.src = String(JS);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(scriptTag('document.F=Object'));
+  iframeDocument.close();
+  return iframeDocument.F;
+};
+
+// Check for document.domain and active x support
+// No need to use active x approach when document.domain is not set
+// see https://github.com/es-shims/es5-shim/issues/150
+// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+// avoid IE GC bug
+var activeXDocument;
+var NullProtoObject = function () {
+  try {
+    activeXDocument = new ActiveXObject('htmlfile');
+  } catch (error) { /* ignore */ }
+  NullProtoObject = typeof document != 'undefined'
+    ? document.domain && activeXDocument
+      ? NullProtoObjectViaActiveX(activeXDocument) // old IE
+      : NullProtoObjectViaIFrame()
+    : NullProtoObjectViaActiveX(activeXDocument); // WSH
+  var length = enumBugKeys.length;
+  while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
+  return NullProtoObject();
+};
+
+hiddenKeys[IE_PROTO] = true;
+
+// `Object.create` method
+// https://tc39.es/ecma262/#sec-object.create
+// eslint-disable-next-line es/no-object-create -- safe
+module.exports = Object.create || function create(O, Properties) {
+  var result;
+  if (O !== null) {
+    EmptyConstructor[PROTOTYPE] = anObject(O);
+    result = new EmptyConstructor();
+    EmptyConstructor[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = NullProtoObject();
+  return Properties === undefined ? result : definePropertiesModule.f(result, Properties);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/object-define-properties.js
+var object_define_properties_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var DESCRIPTORS = (descriptors_namespaceFn());
+var V8_PROTOTYPE_DEFINE_BUG = (v8_prototype_define_bug_namespaceFn());
+var definePropertyModule = (object_define_property_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var toIndexedObject = (to_indexed_object_namespaceFn());
+var objectKeys = (object_keys_namespaceFn());
+
+// `Object.defineProperties` method
+// https://tc39.es/ecma262/#sec-object.defineproperties
+// eslint-disable-next-line es/no-object-defineproperties -- safe
+exports.f = DESCRIPTORS && !V8_PROTOTYPE_DEFINE_BUG ? Object.defineProperties : function defineProperties(O, Properties) {
+  anObject(O);
+  var props = toIndexedObject(Properties);
+  var keys = objectKeys(Properties);
+  var length = keys.length;
+  var index = 0;
+  var key;
+  while (length > index) definePropertyModule.f(O, key = keys[index++], props[key]);
+  return O;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/object-define-property.js
+var object_define_property_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var DESCRIPTORS = (descriptors_namespaceFn());
+var IE8_DOM_DEFINE = (ie8_dom_define_namespaceFn());
+var V8_PROTOTYPE_DEFINE_BUG = (v8_prototype_define_bug_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var toPropertyKey = (to_property_key_namespaceFn());
+
+var $TypeError = TypeError;
+// eslint-disable-next-line es/no-object-defineproperty -- safe
+var $defineProperty = Object.defineProperty;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var ENUMERABLE = 'enumerable';
+var CONFIGURABLE = 'configurable';
+var WRITABLE = 'writable';
+
+// `Object.defineProperty` method
+// https://tc39.es/ecma262/#sec-object.defineproperty
+exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P, Attributes) {
+  anObject(O);
+  P = toPropertyKey(P);
+  anObject(Attributes);
+  if (typeof O === 'function' && P === 'prototype' && 'value' in Attributes && WRITABLE in Attributes && !Attributes[WRITABLE]) {
+    var current = $getOwnPropertyDescriptor(O, P);
+    if (current && current[WRITABLE]) {
+      O[P] = Attributes.value;
+      Attributes = {
+        configurable: CONFIGURABLE in Attributes ? Attributes[CONFIGURABLE] : current[CONFIGURABLE],
+        enumerable: ENUMERABLE in Attributes ? Attributes[ENUMERABLE] : current[ENUMERABLE],
+        writable: false
+      };
+    }
+  } return $defineProperty(O, P, Attributes);
+} : $defineProperty : function defineProperty(O, P, Attributes) {
+  anObject(O);
+  P = toPropertyKey(P);
+  anObject(Attributes);
+  if (IE8_DOM_DEFINE) try {
+    return $defineProperty(O, P, Attributes);
+  } catch (error) { /* empty */ }
+  if ('get' in Attributes || 'set' in Attributes) throw new $TypeError('Accessors not supported');
+  if ('value' in Attributes) O[P] = Attributes.value;
+  return O;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/object-get-own-property-descriptor.js
+var object_get_own_property_descriptor_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var DESCRIPTORS = (descriptors_namespaceFn());
+var call = (function_call_namespaceFn());
+var propertyIsEnumerableModule = (object_property_is_enumerable_namespaceFn());
+var createPropertyDescriptor = (create_property_descriptor_namespaceFn());
+var toIndexedObject = (to_indexed_object_namespaceFn());
+var toPropertyKey = (to_property_key_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+var IE8_DOM_DEFINE = (ie8_dom_define_namespaceFn());
+
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+// `Object.getOwnPropertyDescriptor` method
+// https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
+exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
+  O = toIndexedObject(O);
+  P = toPropertyKey(P);
+  if (IE8_DOM_DEFINE) try {
+    return $getOwnPropertyDescriptor(O, P);
+  } catch (error) { /* empty */ }
+  if (hasOwn(O, P)) return createPropertyDescriptor(!call(propertyIsEnumerableModule.f, O, P), O[P]);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/object-get-own-property-names.js
+var object_get_own_property_names_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var internalObjectKeys = (object_keys_internal_namespaceFn());
+var enumBugKeys = (enum_bug_keys_namespaceFn());
+
+var hiddenKeys = enumBugKeys.concat('length', 'prototype');
+
+// `Object.getOwnPropertyNames` method
+// https://tc39.es/ecma262/#sec-object.getownpropertynames
+// eslint-disable-next-line es/no-object-getownpropertynames -- safe
+exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+  return internalObjectKeys(O, hiddenKeys);
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/object-get-own-property-symbols.js
+var object_get_own_property_symbols_namespaceFn = () => {
+	return __webpack_require__(717);
+};
+
+// MODULE: ./node_modules/core-js/internals/object-get-prototype-of.js
+var object_get_prototype_of_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var hasOwn = (has_own_property_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var toObject = (to_object_namespaceFn());
+var sharedKey = (shared_key_namespaceFn());
+var CORRECT_PROTOTYPE_GETTER = (correct_prototype_getter_namespaceFn());
+
+var IE_PROTO = sharedKey('IE_PROTO');
+var $Object = Object;
+var ObjectPrototype = $Object.prototype;
+
+// `Object.getPrototypeOf` method
+// https://tc39.es/ecma262/#sec-object.getprototypeof
+// eslint-disable-next-line es/no-object-getprototypeof -- safe
+module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O) {
+  var object = toObject(O);
+  if (hasOwn(object, IE_PROTO)) return object[IE_PROTO];
+  var constructor = object.constructor;
+  if (isCallable(constructor) && object instanceof constructor) {
+    return constructor.prototype;
+  } return object instanceof $Object ? ObjectPrototype : null;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/object-is-prototype-of.js
+var object_is_prototype_of_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+module.exports = uncurryThis({}.isPrototypeOf);
+
+});
+
+// MODULE: ./node_modules/core-js/internals/object-keys-internal.js
+var object_keys_internal_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+var toIndexedObject = (to_indexed_object_namespaceFn());
+var indexOf = (array_includes_namespaceFn().indexOf);
+var hiddenKeys = (hidden_keys_namespaceFn());
+
+var push = uncurryThis([].push);
+
+module.exports = function (object, names) {
+  var O = toIndexedObject(object);
+  var i = 0;
+  var result = [];
+  var key;
+  for (key in O) !hasOwn(hiddenKeys, key) && hasOwn(O, key) && push(result, key);
+  // Don't enum bug & hidden keys
+  while (names.length > i) if (hasOwn(O, key = names[i++])) {
+    ~indexOf(result, key) || push(result, key);
+  }
+  return result;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/object-keys.js
+var object_keys_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var internalObjectKeys = (object_keys_internal_namespaceFn());
+var enumBugKeys = (enum_bug_keys_namespaceFn());
+
+// `Object.keys` method
+// https://tc39.es/ecma262/#sec-object.keys
+// eslint-disable-next-line es/no-object-keys -- safe
+module.exports = Object.keys || function keys(O) {
+  return internalObjectKeys(O, enumBugKeys);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/object-property-is-enumerable.js
+var object_property_is_enumerable_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $propertyIsEnumerable = {}.propertyIsEnumerable;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+// Nashorn ~ JDK8 bug
+var NASHORN_BUG = getOwnPropertyDescriptor && !$propertyIsEnumerable.call({ 1: 2 }, 1);
+
+// `Object.prototype.propertyIsEnumerable` method implementation
+// https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable
+exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
+  var descriptor = getOwnPropertyDescriptor(this, V);
+  return !!descriptor && descriptor.enumerable;
+} : $propertyIsEnumerable;
+
+});
+
+// MODULE: ./node_modules/core-js/internals/object-set-prototype-of.js
+var object_set_prototype_of_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+/* eslint-disable no-proto -- safe */
+var uncurryThisAccessor = (function_uncurry_this_accessor_namespaceFn());
+var isObject = (is_object_namespaceFn());
+var requireObjectCoercible = (require_object_coercible_namespaceFn());
+var aPossiblePrototype = (a_possible_prototype_namespaceFn());
+
+// `Object.setPrototypeOf` method
+// https://tc39.es/ecma262/#sec-object.setprototypeof
+// Works with __proto__ only. Old v8 can't work with null proto objects.
+// eslint-disable-next-line es/no-object-setprototypeof -- safe
+module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
+  var CORRECT_SETTER = false;
+  var test = {};
+  var setter;
+  try {
+    setter = uncurryThisAccessor(Object.prototype, '__proto__', 'set');
+    setter(test, []);
+    CORRECT_SETTER = test instanceof Array;
+  } catch (error) { /* empty */ }
+  return function setPrototypeOf(O, proto) {
+    requireObjectCoercible(O);
+    aPossiblePrototype(proto);
+    if (!isObject(O)) return O;
+    if (CORRECT_SETTER) setter(O, proto);
+    else O.__proto__ = proto;
+    return O;
+  };
+}() : undefined);
+
+});
+
+// MODULE: ./node_modules/core-js/internals/ordinary-to-primitive.js
+var ordinary_to_primitive_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var call = (function_call_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var isObject = (is_object_namespaceFn());
+
+var $TypeError = TypeError;
+
+// `OrdinaryToPrimitive` abstract operation
+// https://tc39.es/ecma262/#sec-ordinarytoprimitive
+module.exports = function (input, pref) {
+  var fn, val;
+  if (pref === 'string' && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
+  if (isCallable(fn = input.valueOf) && !isObject(val = call(fn, input))) return val;
+  if (pref !== 'string' && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
+  throw new $TypeError("Can't convert object to primitive value");
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/own-keys.js
+var own_keys_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var getBuiltIn = (get_built_in_namespaceFn());
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var getOwnPropertyNamesModule = (object_get_own_property_names_namespaceFn());
+var getOwnPropertySymbolsModule = (object_get_own_property_symbols_namespaceFn());
+var anObject = (an_object_namespaceFn());
+
+var concat = uncurryThis([].concat);
+
+// all object keys, includes non-enumerable and symbols
+module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
+  var keys = getOwnPropertyNamesModule.f(anObject(it));
+  var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
+  return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/parse-json-string.js
+var parse_json_string_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+
+var $SyntaxError = SyntaxError;
+var $parseInt = parseInt;
+var fromCharCode = String.fromCharCode;
+var at = uncurryThis(''.charAt);
+var slice = uncurryThis(''.slice);
+var exec = uncurryThis(/./.exec);
+
+var codePoints = {
+  '\\"': '"',
+  '\\\\': '\\',
+  '\\/': '/',
+  '\\b': '\b',
+  '\\f': '\f',
+  '\\n': '\n',
+  '\\r': '\r',
+  '\\t': '\t'
+};
+
+var IS_4_HEX_DIGITS = /^[\da-f]{4}$/i;
+// eslint-disable-next-line regexp/no-control-character -- safe
+var IS_C0_CONTROL_CODE = /^[\u0000-\u001F]$/;
+
+module.exports = function (source, i) {
+  var unterminated = true;
+  var value = '';
+  while (i < source.length) {
+    var chr = at(source, i);
+    if (chr === '\\') {
+      var twoChars = slice(source, i, i + 2);
+      if (hasOwn(codePoints, twoChars)) {
+        value += codePoints[twoChars];
+        i += 2;
+      } else if (twoChars === '\\u') {
+        i += 2;
+        var fourHexDigits = slice(source, i, i + 4);
+        if (!exec(IS_4_HEX_DIGITS, fourHexDigits)) throw new $SyntaxError('Bad Unicode escape at: ' + i);
+        value += fromCharCode($parseInt(fourHexDigits, 16));
+        i += 4;
+      } else throw new $SyntaxError('Unknown escape sequence: "' + twoChars + '"');
+    } else if (chr === '"') {
+      unterminated = false;
+      i++;
+      break;
+    } else {
+      if (exec(IS_C0_CONTROL_CODE, chr)) throw new $SyntaxError('Bad control character in string literal at: ' + i);
+      value += chr;
+      i++;
+    }
+  }
+  if (unterminated) throw new $SyntaxError('Unterminated string at: ' + i);
+  return { value: value, end: i };
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/perform.js
+var perform_namespaceFn = () => {
+	return __webpack_require__(103);
+};
+
+// MODULE: ./node_modules/core-js/internals/promise-resolve.js
+var promise_resolve_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var anObject = (an_object_namespaceFn());
+var isObject = (is_object_namespaceFn());
+var newPromiseCapability = (new_promise_capability_namespaceFn());
+
+module.exports = function (C, x) {
+  anObject(C);
+  if (isObject(x) && x.constructor === C) return x;
+  var promiseCapability = newPromiseCapability.f(C);
+  var resolve = promiseCapability.resolve;
+  resolve(x);
+  return promiseCapability.promise;
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/require-object-coercible.js
+var require_object_coercible_namespaceFn = () => {
+	return __webpack_require__(750);
+};
+
+// MODULE: ./node_modules/core-js/internals/set-clone.js
+var set_clone_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var SetHelpers = (set_helpers_namespaceFn());
+var iterate = (set_iterate_namespaceFn());
+
+var Set = SetHelpers.Set;
+var add = SetHelpers.add;
+
+module.exports = function (set) {
+  var result = new Set();
+  iterate(set, function (it) {
+    add(result, it);
+  });
+  return result;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-difference.js
+var set_difference_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aSet = (a_set_namespaceFn());
+var SetHelpers = (set_helpers_namespaceFn());
+var clone = (set_clone_namespaceFn());
+var size = (set_size_namespaceFn());
+var getSetRecord = (get_set_record_namespaceFn());
+var iterateSet = (set_iterate_namespaceFn());
+var iterateSimple = (iterate_simple_namespaceFn());
+
+var has = SetHelpers.has;
+var remove = SetHelpers.remove;
+
+// `Set.prototype.difference` method
+// https://tc39.es/ecma262/#sec-set.prototype.difference
+module.exports = function difference(other) {
+  var O = aSet(this);
+  var otherRec = getSetRecord(other);
+  var result = clone(O);
+  if (size(result) <= otherRec.size) iterateSet(result, function (e) {
+    if (otherRec.includes(e)) remove(result, e);
+  });
+  else iterateSimple(otherRec.getIterator(), function (e) {
+    if (has(result, e)) remove(result, e);
+  });
+  return result;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-helpers.js
+var set_helpers_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+// eslint-disable-next-line es/no-set -- safe
+var SetPrototype = Set.prototype;
+
+module.exports = {
+  // eslint-disable-next-line es/no-set -- safe
+  Set: Set,
+  add: uncurryThis(SetPrototype.add),
+  has: uncurryThis(SetPrototype.has),
+  remove: uncurryThis(SetPrototype['delete']),
+  proto: SetPrototype
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-intersection.js
+var set_intersection_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aSet = (a_set_namespaceFn());
+var SetHelpers = (set_helpers_namespaceFn());
+var size = (set_size_namespaceFn());
+var getSetRecord = (get_set_record_namespaceFn());
+var iterateSet = (set_iterate_namespaceFn());
+var iterateSimple = (iterate_simple_namespaceFn());
+
+var Set = SetHelpers.Set;
+var add = SetHelpers.add;
+var has = SetHelpers.has;
+
+// `Set.prototype.intersection` method
+// https://tc39.es/ecma262/#sec-set.prototype.intersection
+module.exports = function intersection(other) {
+  var O = aSet(this);
+  var otherRec = getSetRecord(other);
+  var result = new Set();
+
+  if (size(O) > otherRec.size) {
+    iterateSimple(otherRec.getIterator(), function (e) {
+      if (has(O, e)) add(result, e);
+    });
+  } else {
+    iterateSet(O, function (e) {
+      if (otherRec.includes(e)) add(result, e);
+    });
+  }
+
+  return result;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-is-disjoint-from.js
+var set_is_disjoint_from_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aSet = (a_set_namespaceFn());
+var has = (set_helpers_namespaceFn().has);
+var size = (set_size_namespaceFn());
+var getSetRecord = (get_set_record_namespaceFn());
+var iterateSet = (set_iterate_namespaceFn());
+var iterateSimple = (iterate_simple_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+
+// `Set.prototype.isDisjointFrom` method
+// https://tc39.es/ecma262/#sec-set.prototype.isdisjointfrom
+module.exports = function isDisjointFrom(other) {
+  var O = aSet(this);
+  var otherRec = getSetRecord(other);
+  if (size(O) <= otherRec.size) return iterateSet(O, function (e) {
+    if (otherRec.includes(e)) return false;
+  }, true) !== false;
+  var iterator = otherRec.getIterator();
+  return iterateSimple(iterator, function (e) {
+    if (has(O, e)) return iteratorClose(iterator.iterator, 'normal', false);
+  }) !== false;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-is-subset-of.js
+var set_is_subset_of_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aSet = (a_set_namespaceFn());
+var size = (set_size_namespaceFn());
+var iterate = (set_iterate_namespaceFn());
+var getSetRecord = (get_set_record_namespaceFn());
+
+// `Set.prototype.isSubsetOf` method
+// https://tc39.es/ecma262/#sec-set.prototype.issubsetof
+module.exports = function isSubsetOf(other) {
+  var O = aSet(this);
+  var otherRec = getSetRecord(other);
+  if (size(O) > otherRec.size) return false;
+  return iterate(O, function (e) {
+    if (!otherRec.includes(e)) return false;
+  }, true) !== false;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-is-superset-of.js
+var set_is_superset_of_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aSet = (a_set_namespaceFn());
+var has = (set_helpers_namespaceFn().has);
+var size = (set_size_namespaceFn());
+var getSetRecord = (get_set_record_namespaceFn());
+var iterateSimple = (iterate_simple_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+
+// `Set.prototype.isSupersetOf` method
+// https://tc39.es/ecma262/#sec-set.prototype.issupersetof
+module.exports = function isSupersetOf(other) {
+  var O = aSet(this);
+  var otherRec = getSetRecord(other);
+  if (size(O) < otherRec.size) return false;
+  var iterator = otherRec.getIterator();
+  return iterateSimple(iterator, function (e) {
+    if (!has(O, e)) return iteratorClose(iterator.iterator, 'normal', false);
+  }) !== false;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-iterate.js
+var set_iterate_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var iterateSimple = (iterate_simple_namespaceFn());
+var SetHelpers = (set_helpers_namespaceFn());
+
+var Set = SetHelpers.Set;
+var SetPrototype = SetHelpers.proto;
+var forEach = uncurryThis(SetPrototype.forEach);
+var keys = uncurryThis(SetPrototype.keys);
+var next = keys(new Set()).next;
+
+module.exports = function (set, fn, interruptible) {
+  return interruptible ? iterateSimple({ iterator: keys(set), next: next }, fn) : forEach(set, fn);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-method-accept-set-like.js
+var set_method_accept_set_like_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var getBuiltIn = (get_built_in_namespaceFn());
+
+var createSetLike = function (size) {
+  return {
+    size: size,
+    has: function () {
+      return false;
+    },
+    keys: function () {
+      return {
+        next: function () {
+          return { done: true };
+        }
+      };
+    }
+  };
+};
+
+var createSetLikeWithInfinitySize = function (size) {
+  return {
+    size: size,
+    has: function () {
+      return true;
+    },
+    keys: function () {
+      throw new Error('e');
+    }
+  };
+};
+
+module.exports = function (name, callback) {
+  var Set = getBuiltIn('Set');
+  try {
+    new Set()[name](createSetLike(0));
+    try {
+      // late spec change, early WebKit ~ Safari 17 implementation does not pass it
+      // https://github.com/tc39/proposal-set-methods/pull/88
+      // also covered engines with
+      // https://bugs.webkit.org/show_bug.cgi?id=272679
+      new Set()[name](createSetLike(-1));
+      return false;
+    } catch (error2) {
+      if (!callback) return true;
+      // early V8 implementation bug
+      // https://issues.chromium.org/issues/351332634
+      try {
+        new Set()[name](createSetLikeWithInfinitySize(-Infinity));
+        return false;
+      } catch (error) {
+        var set = new Set([1, 2]);
+        return callback(set[name](createSetLikeWithInfinitySize(Infinity)));
+      }
+    }
+  } catch (error) {
+    return false;
+  }
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/set-method-get-keys-before-cloning-detection.js
+var set_method_get_keys_before_cloning_detection_namespaceFn = () => {
+	return __webpack_require__(835);
+};
+
+// MODULE: ./node_modules/core-js/internals/set-size.js
+var set_size_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThisAccessor = (function_uncurry_this_accessor_namespaceFn());
+var SetHelpers = (set_helpers_namespaceFn());
+
+module.exports = uncurryThisAccessor(SetHelpers.proto, 'size', 'get') || function (set) {
+  return set.size;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-symmetric-difference.js
+var set_symmetric_difference_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aSet = (a_set_namespaceFn());
+var SetHelpers = (set_helpers_namespaceFn());
+var clone = (set_clone_namespaceFn());
+var getSetRecord = (get_set_record_namespaceFn());
+var iterateSimple = (iterate_simple_namespaceFn());
+
+var add = SetHelpers.add;
+var has = SetHelpers.has;
+var remove = SetHelpers.remove;
+
+// `Set.prototype.symmetricDifference` method
+// https://tc39.es/ecma262/#sec-set.prototype.symmetricdifference
+module.exports = function symmetricDifference(other) {
+  var O = aSet(this);
+  var keysIter = getSetRecord(other).getIterator();
+  var result = clone(O);
+  iterateSimple(keysIter, function (e) {
+    if (has(O, e)) remove(result, e);
+    else add(result, e);
+  });
+  return result;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/set-union.js
+var set_union_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var aSet = (a_set_namespaceFn());
+var add = (set_helpers_namespaceFn().add);
+var clone = (set_clone_namespaceFn());
+var getSetRecord = (get_set_record_namespaceFn());
+var iterateSimple = (iterate_simple_namespaceFn());
+
+// `Set.prototype.union` method
+// https://tc39.es/ecma262/#sec-set.prototype.union
+module.exports = function union(other) {
+  var O = aSet(this);
+  var keysIter = getSetRecord(other).getIterator();
+  var result = clone(O);
+  iterateSimple(keysIter, function (it) {
+    add(result, it);
+  });
+  return result;
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/shared-key.js
+var shared_key_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var shared = (shared_namespaceFn());
+var uid = (uid_namespaceFn());
+
+var keys = shared('keys');
+
+module.exports = function (key) {
+  return keys[key] || (keys[key] = uid(key));
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/shared-store.js
+var shared_store_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var IS_PURE = (is_pure_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var defineGlobalProperty = (define_global_property_namespaceFn());
+
+var SHARED = '__core-js_shared__';
+var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
+
+(store.versions || (store.versions = [])).push({
+  version: '3.50.0',
+  mode: IS_PURE ? 'pure' : 'global',
+  copyright: '© 2013–2025 Denis Pushkarev (zloirock.ru), 2025–2026 CoreJS Company (core-js.io). All rights reserved.',
+  license: 'https://github.com/zloirock/core-js/blob/v3.50.0/LICENSE',
+  source: 'https://github.com/zloirock/core-js'
+});
+
+});
+
+// MODULE: ./node_modules/core-js/internals/shared.js
+var shared_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var store = (shared_store_namespaceFn());
+// eslint-disable-next-line es/no-object-create -- safe
+var create = Object.create || Object;
+
+module.exports = function (key, value) {
+  return store[key] || (store[key] = value || create(null));
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/symbol-constructor-detection.js
+var symbol_constructor_detection_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+/* eslint-disable es/no-symbol -- required for testing */
+var V8_VERSION = (environment_v8_version_namespaceFn());
+var fails = (fails_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+
+var $String = globalThis.String;
+
+// eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
+module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
+  var symbol = Symbol('symbol detection');
+  // Chrome 38 Symbol has incorrect toString conversion
+  // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
+  // nb: Do not call `String` directly to avoid this being optimized out to `symbol+''` which will,
+  // of course, fail.
+  return !$String(symbol) || !(Object(symbol) instanceof Symbol) ||
+    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
+    !Symbol.sham && V8_VERSION && V8_VERSION < 41;
+});
+
+});
+
+// MODULE: ./node_modules/core-js/internals/this-number-value.js
+var this_number_value_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+// `thisNumberValue` abstract operation
+// https://tc39.es/ecma262/#sec-thisnumbervalue
+module.exports = uncurryThis(1.1.valueOf);
+
+});
+
+// MODULE: ./node_modules/core-js/internals/to-absolute-index.js
+var to_absolute_index_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var toIntegerOrInfinity = (to_integer_or_infinity_namespaceFn());
+
+var max = Math.max;
+var min = Math.min;
+
+// Helper for a popular repeating case of the spec:
+// Let integer be ? ToInteger(index).
+// If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
+module.exports = function (index, length) {
+  var integer = toIntegerOrInfinity(index);
+  return integer < 0 ? max(integer + length, 0) : min(integer, length);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/to-big-int.js
+var to_big_int_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var toPrimitive = (to_primitive_namespaceFn());
+
+var $TypeError = TypeError;
+
+// `ToBigInt` abstract operation
+// https://tc39.es/ecma262/#sec-tobigint
+module.exports = function (argument) {
+  var prim = toPrimitive(argument, 'number');
+  if (typeof prim == 'number') throw new $TypeError("Can't convert number to bigint");
+  // eslint-disable-next-line es/no-bigint -- safe
+  return BigInt(prim);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/to-indexed-object.js
+var to_indexed_object_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+// toObject with fallback for non-array-like ES3 strings
+var IndexedObject = (indexed_object_namespaceFn());
+var requireObjectCoercible = (require_object_coercible_namespaceFn());
+
+module.exports = function (it) {
+  return IndexedObject(requireObjectCoercible(it));
+};
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/to-integer-or-infinity.js
+var to_integer_or_infinity_namespaceFn = () => {
+	return __webpack_require__(291);
+};
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/to-length.js
+var to_length_namespaceFn = () => {
+	return __webpack_require__(14);
+};
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/to-object.js
+var to_object_namespaceFn = () => {
+	return __webpack_require__(981);
+};
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/to-positive-integer.js
+var to_positive_integer_namespaceFn = () => {
+	return __webpack_require__(590);
+};
+
+// MODULE: ./node_modules/core-js/internals/to-primitive.js
+var to_primitive_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var call = (function_call_namespaceFn());
+var isObject = (is_object_namespaceFn());
+var isSymbol = (is_symbol_namespaceFn());
+var getMethod = (get_method_namespaceFn());
+var ordinaryToPrimitive = (ordinary_to_primitive_namespaceFn());
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+
+var $TypeError = TypeError;
+var TO_PRIMITIVE = wellKnownSymbol('toPrimitive');
+
+// `ToPrimitive` abstract operation
+// https://tc39.es/ecma262/#sec-toprimitive
+module.exports = function (input, pref) {
+  if (!isObject(input) || isSymbol(input)) return input;
+  var exoticToPrim = getMethod(input, TO_PRIMITIVE);
+  var result;
+  if (exoticToPrim) {
+    if (pref === undefined) pref = 'default';
+    result = call(exoticToPrim, input, pref);
+    if (!isObject(result) || isSymbol(result)) return result;
+    throw new $TypeError("Can't convert object to primitive value");
+  }
+  if (pref === undefined) pref = 'number';
+  return ordinaryToPrimitive(input, pref);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/to-property-key.js
+var to_property_key_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var toPrimitive = (to_primitive_namespaceFn());
+var isSymbol = (is_symbol_namespaceFn());
+
+// `ToPropertyKey` abstract operation
+// https://tc39.es/ecma262/#sec-topropertykey
+module.exports = function (argument) {
+  var key = toPrimitive(argument, 'string');
+  return isSymbol(key) ? key : key + '';
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/to-string-tag-support.js
+var to_string_tag_support_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+var test = {};
+// eslint-disable-next-line unicorn/no-immediate-mutation -- ES3 syntax limitation
+test[TO_STRING_TAG] = 'z';
+
+module.exports = String(test) === '[object z]';
+
+});
+
+// MODULE: ./node_modules/core-js/internals/to-string.js
+var to_string_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var classof = (classof_namespaceFn());
+
+var $String = String;
+
+module.exports = function (argument) {
+  if (classof(argument) === 'Symbol') throw new TypeError('Cannot convert a Symbol value to a string');
+  return $String(argument);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/try-to-string.js
+var try_to_string_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $String = String;
+
+module.exports = function (argument) {
+  try {
+    return $String(argument);
+  } catch (error) {
+    return 'Object';
+  }
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/uid.js
+var uid_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+var id = 0;
+var postfix = Math.random();
+var toString = uncurryThis(1.1.toString);
+
+module.exports = function (key) {
+  return 'Symbol(' + (key === undefined ? '' : key) + ')_' + toString(++id + postfix, 36);
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/uint8-from-base64.js
+var uint8_from_base64_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var anObjectOrUndefined = (an_object_or_undefined_namespaceFn());
+var aString = (a_string_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+var base64Map = (base64_map_namespaceFn());
+var getAlphabetOption = (get_alphabet_option_namespaceFn());
+var notDetached = (array_buffer_not_detached_namespaceFn());
+
+var base64Alphabet = base64Map.c2i;
+var base64UrlAlphabet = base64Map.c2iUrl;
+
+var SyntaxError = globalThis.SyntaxError;
+var TypeError = globalThis.TypeError;
+var $Array = globalThis.Array;
+var at = uncurryThis(''.charAt);
+var floor = Math.floor;
+
+var skipAsciiWhitespace = function (string, index) {
+  var length = string.length;
+  for (;index < length; index++) {
+    var chr = at(string, index);
+    if (chr !== ' ' && chr !== '\t' && chr !== '\n' && chr !== '\f' && chr !== '\r') break;
+  } return index;
+};
+
+var decodeBase64Chunk = function (chunk, alphabet, throwOnExtraBits) {
+  var chunkLength = chunk.length;
+
+  if (chunkLength < 4) {
+    chunk += chunkLength === 2 ? 'AA' : 'A';
+  }
+
+  var triplet = (alphabet[at(chunk, 0)] << 18)
+    + (alphabet[at(chunk, 1)] << 12)
+    + (alphabet[at(chunk, 2)] << 6)
+    + alphabet[at(chunk, 3)];
+
+  var chunkBytes = [
+    (triplet >> 16) & 255,
+    (triplet >> 8) & 255,
+    triplet & 255
+  ];
+
+  if (chunkLength === 2) {
+    if (throwOnExtraBits && chunkBytes[1] !== 0) {
+      throw new SyntaxError('Extra bits');
+    }
+    return [chunkBytes[0]];
+  }
+
+  if (chunkLength === 3) {
+    if (throwOnExtraBits && chunkBytes[2] !== 0) {
+      throw new SyntaxError('Extra bits');
+    }
+    return [chunkBytes[0], chunkBytes[1]];
+  }
+
+  return chunkBytes;
+};
+
+var writeBytes = function (bytes, elements, written) {
+  var elementsLength = elements.length;
+  for (var index = 0; index < elementsLength; index++) {
+    bytes[written + index] = elements[index];
+  }
+  return written + elementsLength;
+};
+
+/* eslint-disable max-statements, max-depth -- TODO */
+module.exports = function (string, options, into, maxLength) {
+  aString(string);
+  anObjectOrUndefined(options);
+  var alphabet = getAlphabetOption(options) === 'base64' ? base64Alphabet : base64UrlAlphabet;
+  var lastChunkHandling = options ? options.lastChunkHandling : undefined;
+
+  if (lastChunkHandling === undefined) lastChunkHandling = 'loose';
+
+  if (lastChunkHandling !== 'loose' && lastChunkHandling !== 'strict' && lastChunkHandling !== 'stop-before-partial') {
+    throw new TypeError('Incorrect `lastChunkHandling` option');
+  }
+
+  if (into) notDetached(into.buffer);
+
+  var stringLength = string.length;
+  var bytes = into || $Array(floor(stringLength * 3 / 4));
+  var written = 0;
+  var read = 0;
+  var chunk = '';
+  var index = 0;
+
+  if (maxLength) while (true) {
+    index = skipAsciiWhitespace(string, index);
+    if (index === stringLength) {
+      if (chunk.length > 0) {
+        if (lastChunkHandling === 'stop-before-partial') {
+          break;
+        }
+        if (lastChunkHandling === 'loose') {
+          if (chunk.length === 1) {
+            throw new SyntaxError('Malformed padding: exactly one additional character');
+          }
+          written = writeBytes(bytes, decodeBase64Chunk(chunk, alphabet, false), written);
+        } else {
+          throw new SyntaxError('Missing padding');
+        }
+      }
+      read = stringLength;
+      break;
+    }
+    var chr = at(string, index);
+    ++index;
+    if (chr === '=') {
+      if (chunk.length < 2) {
+        throw new SyntaxError('Padding is too early');
+      }
+      index = skipAsciiWhitespace(string, index);
+      if (chunk.length === 2) {
+        if (index === stringLength) {
+          if (lastChunkHandling === 'stop-before-partial') {
+            break;
+          }
+          throw new SyntaxError('Malformed padding: only one =');
+        }
+        if (at(string, index) === '=') {
+          ++index;
+          index = skipAsciiWhitespace(string, index);
+        }
+      }
+      if (index < stringLength) {
+        throw new SyntaxError('Unexpected character after padding');
+      }
+      written = writeBytes(bytes, decodeBase64Chunk(chunk, alphabet, lastChunkHandling === 'strict'), written);
+      read = stringLength;
+      break;
+    }
+    if (!hasOwn(alphabet, chr)) {
+      throw new SyntaxError('Unexpected character');
+    }
+    var remainingBytes = maxLength - written;
+    if (remainingBytes === 1 && chunk.length === 2 || remainingBytes === 2 && chunk.length === 3) {
+      // special case: we can fit exactly the number of bytes currently represented by chunk, so we were just checking for `=`
+      break;
+    }
+
+    chunk += chr;
+    if (chunk.length === 4) {
+      written = writeBytes(bytes, decodeBase64Chunk(chunk, alphabet, false), written);
+      chunk = '';
+      read = index;
+      if (written === maxLength) {
+        break;
+      }
+    }
+  }
+  if (!into) bytes.length = written;
+  return { bytes: bytes, read: read, written: written };
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/uint8-from-hex.js
+var uint8_from_hex_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+var Uint8Array = globalThis.Uint8Array;
+var SyntaxError = globalThis.SyntaxError;
+var min = Math.min;
+var stringMatch = uncurryThis(''.match);
+
+module.exports = function (string, into) {
+  var stringLength = string.length;
+  if (stringLength % 2 !== 0) throw new SyntaxError('String should be an even number of characters');
+  var maxLength = into ? min(into.length, stringLength / 2) : stringLength / 2;
+  var bytes = into || new Uint8Array(maxLength);
+  var segments = stringMatch(string, /[\S\s]{2}/g);
+  var written = 0;
+  for (; written < maxLength; written++) {
+    var result = +('0x' + segments[written] + '0');
+    // eslint-disable-next-line no-self-compare -- NaN check
+    if (result !== result) {
+      throw new SyntaxError('String should only contain hex characters');
+    }
+    bytes[written] = result >> 4;
+  }
+  return { bytes: bytes, read: written << 1 };
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/url-constructor-detection.js
+var url_constructor_detection_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var fails = (fails_namespaceFn());
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+var DESCRIPTORS = (descriptors_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var ITERATOR = wellKnownSymbol('iterator');
+
+module.exports = !fails(function () {
+  // eslint-disable-next-line unicorn/relative-url-style -- required for testing
+  var url = new URL('b?a=1&b=2&c=3', 'https://a');
+  var params = url.searchParams;
+  var params2 = new URLSearchParams('a=1&a=2&b=3');
+  var result = '';
+  url.pathname = 'c%20d';
+  params.forEach(function (value, key) {
+    params['delete']('b');
+    result += key + value;
+  });
+  params2['delete']('a', 2);
+  // `undefined` case is a Chromium 117 bug
+  // https://bugs.chromium.org/p/v8/issues/detail?id=14222
+  params2['delete']('b', undefined);
+  return (IS_PURE && (!url.toJSON || !params2.has('a', 1) || params2.has('a', 2) || !params2.has('a', undefined) || params2.has('b')))
+    || (!params.size && (IS_PURE || !DESCRIPTORS))
+    || !params.sort
+    || url.href !== 'https://a/c%20d?a=1&c=3'
+    || params.get('c') !== '3'
+    || String(new URLSearchParams('?a=1')) !== 'a=1'
+    || !params[ITERATOR]
+    // throws in Edge
+    || new URL('https://a@b').username !== 'a'
+    || new URLSearchParams(new URLSearchParams('a=b')).get('a') !== 'b'
+    // not punycoded in Edge
+    || new URL('https://тест').host !== 'xn--e1aybc'
+    // not escaped in Chrome 62-
+    || new URL('https://a#б').hash !== '#%D0%B1'
+    // fails in Chrome 66-
+    || result !== 'a1c3'
+    // throws in Safari
+    || new URL('https://x', undefined).host !== 'x';
+});
+
+});
+
+// MODULE: ./node_modules/core-js/internals/use-symbol-as-uid.js
+var use_symbol_as_uid_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+/* eslint-disable es/no-symbol -- required for testing */
+var NATIVE_SYMBOL = (symbol_constructor_detection_namespaceFn());
+
+module.exports = NATIVE_SYMBOL &&
+  !Symbol.sham &&
+  typeof Symbol.iterator == 'symbol';
+
+});
+
+// MODULE: ./node_modules/core-js/internals/v8-prototype-define-bug.js
+var v8_prototype_define_bug_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var DESCRIPTORS = (descriptors_namespaceFn());
+var fails = (fails_namespaceFn());
+
+// V8 ~ Chrome 36-
+// https://bugs.chromium.org/p/v8/issues/detail?id=3334
+module.exports = DESCRIPTORS && fails(function () {
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
+  return Object.defineProperty(function () { /* empty */ }, 'prototype', {
+    value: 42,
+    writable: false
+  }).prototype !== 42;
+});
+
+});
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/validate-arguments-length.js
+var validate_arguments_length_namespaceFn = () => {
+	return __webpack_require__(812);
+};
+
+// MODULE: ./node_modules/core-js/internals/weak-map-basic-detection.js
+var weak_map_basic_detection_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+
+var WeakMap = globalThis.WeakMap;
+
+module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
+
+});
+
+// MODULE: ./node_modules/core-js/internals/weak-map-helpers.js
+var weak_map_helpers_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var uncurryThis = (function_uncurry_this_namespaceFn());
+
+// eslint-disable-next-line es/no-weak-map -- safe
+var WeakMapPrototype = WeakMap.prototype;
+
+module.exports = {
+  // eslint-disable-next-line es/no-weak-map -- safe
+  WeakMap: WeakMap,
+  set: uncurryThis(WeakMapPrototype.set),
+  get: uncurryThis(WeakMapPrototype.get),
+  has: uncurryThis(WeakMapPrototype.has),
+  remove: uncurryThis(WeakMapPrototype['delete'])
+};
+
+});
+
+// MODULE: ./node_modules/core-js/internals/well-known-symbol.js
+var well_known_symbol_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var globalThis = (global_this_namespaceFn());
+var shared = (shared_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+var uid = (uid_namespaceFn());
+var NATIVE_SYMBOL = (symbol_constructor_detection_namespaceFn());
+var USE_SYMBOL_AS_UID = (use_symbol_as_uid_namespaceFn());
+
+var Symbol = globalThis.Symbol;
+var WellKnownSymbolsStore = shared('wks');
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol['for'] || Symbol : Symbol && Symbol.withoutSetter || uid;
+
+module.exports = function (name) {
+  if (!hasOwn(WellKnownSymbolsStore, name)) {
+    WellKnownSymbolsStore[name] = NATIVE_SYMBOL && hasOwn(Symbol, name)
+      ? Symbol[name]
+      : createWellKnownSymbol('Symbol.' + name);
+  } return WellKnownSymbolsStore[name];
+};
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.array.includes.js
+var es_array_includes_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var $includes = (array_includes_namespaceFn().includes);
+var fails = (fails_namespaceFn());
+var addToUnscopables = (add_to_unscopables_namespaceFn());
+
+// FF99+ bug
+var BROKEN_ON_SPARSE = fails(function () {
+  // eslint-disable-next-line es/no-array-prototype-includes -- detection
+  return !Array(1).includes();
+});
+
+// Safari 26.4- bug
+var BROKEN_ON_SPARSE_WITH_FROM_INDEX = fails(function () {
+  // eslint-disable-next-line no-sparse-arrays, es/no-array-prototype-includes -- detection
+  return [, 1].includes(undefined, 1);
+});
+
+// `Array.prototype.includes` method
+// https://tc39.es/ecma262/#sec-array.prototype.includes
+$({ target: 'Array', proto: true, forced: BROKEN_ON_SPARSE || BROKEN_ON_SPARSE_WITH_FROM_INDEX }, {
+  includes: function includes(el /* , fromIndex = 0 */) {
+    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
+addToUnscopables('includes');
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.array.push.js
+var es_array_push_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var toObject = (to_object_namespaceFn());
+var lengthOfArrayLike = (length_of_array_like_namespaceFn());
+var setArrayLength = (array_set_length_namespaceFn());
+var doesNotExceedSafeInteger = (does_not_exceed_safe_integer_namespaceFn());
+var fails = (fails_namespaceFn());
+
+var INCORRECT_TO_LENGTH = fails(function () {
+  return [].push.call({ length: 0x100000000 }, 1) !== 4294967297;
+});
+
+// V8 <= 121 and Safari <= 15.4; FF < 23 throws InternalError
+// https://bugs.chromium.org/p/v8/issues/detail?id=12681
+var properErrorOnNonWritableLength = function () {
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).push();
+  } catch (error) {
+    return error instanceof TypeError;
+  }
+};
+
+var FORCED = INCORRECT_TO_LENGTH || !properErrorOnNonWritableLength();
+
+// `Array.prototype.push` method
+// https://tc39.es/ecma262/#sec-array.prototype.push
+$({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  push: function push(item) {
+    var O = toObject(this);
+    var len = lengthOfArrayLike(O);
+    var argCount = arguments.length;
+    doesNotExceedSafeInteger(len + argCount);
+    for (var i = 0; i < argCount; i++) {
+      O[len] = arguments[i];
+      len++;
+    }
+    setArrayLength(O, len);
+    return len;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.constructor.js
+var es_iterator_constructor_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var anInstance = (an_instance_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var getPrototypeOf = (object_get_prototype_of_namespaceFn());
+var defineBuiltInAccessor = (define_built_in_accessor_namespaceFn());
+var createProperty = (create_property_namespaceFn());
+var fails = (fails_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+var wellKnownSymbol = (well_known_symbol_namespaceFn());
+var IteratorPrototype = (iterators_core_namespaceFn().IteratorPrototype);
+var DESCRIPTORS = (descriptors_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var CONSTRUCTOR = 'constructor';
+var ITERATOR = 'Iterator';
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+
+var $TypeError = TypeError;
+var NativeIterator = globalThis[ITERATOR];
+
+// FF56- have non-standard global helper `Iterator`
+var FORCED = IS_PURE
+  || !isCallable(NativeIterator)
+  || NativeIterator.prototype !== IteratorPrototype
+  // FF44- non-standard `Iterator` passes previous tests
+  || !fails(function () { NativeIterator({}); });
+
+var IteratorConstructor = function Iterator() {
+  anInstance(this, IteratorPrototype);
+  if (getPrototypeOf(this) === IteratorPrototype) throw new $TypeError('Abstract class Iterator not directly constructable');
+};
+
+var defineIteratorPrototypeAccessor = function (key, value) {
+  if (DESCRIPTORS) {
+    defineBuiltInAccessor(IteratorPrototype, key, {
+      configurable: true,
+      get: function () {
+        return value;
+      },
+      set: function (replacement) {
+        anObject(this);
+        if (this === IteratorPrototype) throw new $TypeError("You can't redefine this property");
+        if (hasOwn(this, key)) this[key] = replacement;
+        else createProperty(this, key, replacement);
+      }
+    });
+  } else IteratorPrototype[key] = value;
+};
+
+if (!hasOwn(IteratorPrototype, TO_STRING_TAG)) defineIteratorPrototypeAccessor(TO_STRING_TAG, ITERATOR);
+
+if (FORCED || !hasOwn(IteratorPrototype, CONSTRUCTOR) || IteratorPrototype[CONSTRUCTOR] === Object) {
+  defineIteratorPrototypeAccessor(CONSTRUCTOR, IteratorConstructor);
+}
+
+IteratorConstructor.prototype = IteratorPrototype;
+
+// `Iterator` constructor
+// https://tc39.es/ecma262/#sec-iterator
+$({ global: true, constructor: true, forced: FORCED }, {
+  Iterator: IteratorConstructor
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.drop.js
+var es_iterator_drop_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var call = (function_call_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var notANaN = (not_a_nan_namespaceFn());
+var toPositiveInteger = (to_positive_integer_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var createIteratorProxy = (iterator_create_proxy_namespaceFn());
+var iteratorHelperThrowsOnInvalidIterator = (iterator_helper_throws_on_invalid_iterator_namespaceFn());
+var iteratorHelperWithoutClosingOnEarlyError = (iterator_helper_without_closing_on_early_error_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var $RangeError = RangeError;
+var $Infinity = Infinity;
+
+var DROP_WITHOUT_THROWING_ON_INVALID_ITERATOR = !IS_PURE && !iteratorHelperThrowsOnInvalidIterator('drop', 0);
+var dropWithoutClosingOnEarlyError = !IS_PURE && !DROP_WITHOUT_THROWING_ON_INVALID_ITERATOR
+  && iteratorHelperWithoutClosingOnEarlyError('drop', RangeError);
+
+var FORCED = IS_PURE || DROP_WITHOUT_THROWING_ON_INVALID_ITERATOR || dropWithoutClosingOnEarlyError || !function () {
+  try {
+    // eslint-disable-next-line es/no-iterator, es/no-iterator-prototype-drop -- detection
+    Iterator.prototype.drop.call({
+      next: function () { return { done: true }; }
+    }, 0x20000000000000);
+  } catch (error) {
+    return error instanceof $RangeError;
+  }
+}();
+
+var IteratorProxy = createIteratorProxy(function () {
+  var iterator = this.iterator;
+  var next = this.next;
+  var result, done;
+  while (this.remaining) {
+    this.remaining--;
+    result = anObject(call(next, iterator));
+    done = this.done = !!result.done;
+    if (done) return;
+  }
+  result = anObject(call(next, iterator));
+  done = this.done = !!result.done;
+  if (!done) return result.value;
+});
+
+// `Iterator.prototype.drop` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.drop
+$({ target: 'Iterator', proto: true, real: true, forced: FORCED }, {
+  drop: function drop(limit) {
+    anObject(this);
+    var remaining;
+    try {
+      remaining = toPositiveInteger(notANaN(+limit));
+      if (remaining > 0x1FFFFFFFFFFFFF && remaining !== $Infinity) {
+        throw new $RangeError('The argument should be a safe integer');
+      }
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (dropWithoutClosingOnEarlyError) return call(dropWithoutClosingOnEarlyError, this, remaining);
+
+    return new IteratorProxy(getIteratorDirect(this), {
+      remaining: remaining
+    });
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.every.js
+var es_iterator_every_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var call = (function_call_namespaceFn());
+var iterate = (iterate_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var iteratorHelperWithoutClosingOnEarlyError = (iterator_helper_without_closing_on_early_error_namespaceFn());
+
+var everyWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('every', TypeError);
+
+// `Iterator.prototype.every` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.every
+$({ target: 'Iterator', proto: true, real: true, forced: everyWithoutClosingOnEarlyError }, {
+  every: function every(predicate) {
+    anObject(this);
+    try {
+      aCallable(predicate);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (everyWithoutClosingOnEarlyError) return call(everyWithoutClosingOnEarlyError, this, predicate);
+
+    var record = getIteratorDirect(this);
+    var counter = 0;
+    return !iterate(record, function (value, stop) {
+      if (!predicate(value, counter++)) return stop();
+    }, { IS_RECORD: true, INTERRUPTED: true }).stopped;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.filter.js
+var es_iterator_filter_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var call = (function_call_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var createIteratorProxy = (iterator_create_proxy_namespaceFn());
+var callWithSafeIterationClosing = (call_with_safe_iteration_closing_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var iteratorHelperThrowsOnInvalidIterator = (iterator_helper_throws_on_invalid_iterator_namespaceFn());
+var iteratorHelperWithoutClosingOnEarlyError = (iterator_helper_without_closing_on_early_error_namespaceFn());
+
+var FILTER_WITHOUT_THROWING_ON_INVALID_ITERATOR = !IS_PURE && !iteratorHelperThrowsOnInvalidIterator('filter', function () { /* empty */ });
+var filterWithoutClosingOnEarlyError = !IS_PURE && !FILTER_WITHOUT_THROWING_ON_INVALID_ITERATOR
+  && iteratorHelperWithoutClosingOnEarlyError('filter', TypeError);
+
+var FORCED = IS_PURE || FILTER_WITHOUT_THROWING_ON_INVALID_ITERATOR || filterWithoutClosingOnEarlyError;
+
+var IteratorProxy = createIteratorProxy(function () {
+  var iterator = this.iterator;
+  var predicate = this.predicate;
+  var next = this.next;
+  var result, done, value;
+  while (true) {
+    result = anObject(call(next, iterator));
+    done = this.done = !!result.done;
+    if (done) return;
+    value = result.value;
+    if (callWithSafeIterationClosing(iterator, predicate, [value, this.counter++], true)) return value;
+  }
+});
+
+// `Iterator.prototype.filter` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.filter
+$({ target: 'Iterator', proto: true, real: true, forced: FORCED }, {
+  filter: function filter(predicate) {
+    anObject(this);
+    try {
+      aCallable(predicate);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (filterWithoutClosingOnEarlyError) return call(filterWithoutClosingOnEarlyError, this, predicate);
+
+    return new IteratorProxy(getIteratorDirect(this), {
+      predicate: predicate
+    });
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.find.js
+var es_iterator_find_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var call = (function_call_namespaceFn());
+var iterate = (iterate_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var iteratorHelperWithoutClosingOnEarlyError = (iterator_helper_without_closing_on_early_error_namespaceFn());
+
+var findWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('find', TypeError);
+
+// `Iterator.prototype.find` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.find
+$({ target: 'Iterator', proto: true, real: true, forced: findWithoutClosingOnEarlyError }, {
+  find: function find(predicate) {
+    anObject(this);
+    try {
+      aCallable(predicate);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (findWithoutClosingOnEarlyError) return call(findWithoutClosingOnEarlyError, this, predicate);
+
+    var record = getIteratorDirect(this);
+    var counter = 0;
+    return iterate(record, function (value, stop) {
+      if (predicate(value, counter++)) return stop(value);
+    }, { IS_RECORD: true, INTERRUPTED: true }).result;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.flat-map.js
+var es_iterator_flat_map_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var call = (function_call_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var getIteratorFlattenable = (get_iterator_flattenable_namespaceFn());
+var createIteratorProxy = (iterator_create_proxy_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var fails = (fails_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+var iteratorHelperThrowsOnInvalidIterator = (iterator_helper_throws_on_invalid_iterator_namespaceFn());
+var iteratorHelperWithoutClosingOnEarlyError = (iterator_helper_without_closing_on_early_error_namespaceFn());
+
+// Should not throw an error for an iterator without `return` method. Fixed in Safari 26.2
+// https://bugs.webkit.org/show_bug.cgi?id=297532
+var THROWS_ON_ITERATOR_WITHOUT_RETURN = !IS_PURE && fails(function () {
+  // eslint-disable-next-line es/no-array-prototype-values, es/no-iterator-prototype-flatmap, es/no-iterator-prototype-find -- testing
+  return [1].values()
+    .flatMap(function () { return [1]; })
+    .find(function () { return true; }) !== 1;
+});
+
+var FLAT_MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR = !IS_PURE && !THROWS_ON_ITERATOR_WITHOUT_RETURN
+  && !iteratorHelperThrowsOnInvalidIterator('flatMap', function () { /* empty */ });
+
+var flatMapWithoutClosingOnEarlyError = !IS_PURE && !THROWS_ON_ITERATOR_WITHOUT_RETURN && !FLAT_MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR
+  && iteratorHelperWithoutClosingOnEarlyError('flatMap', TypeError);
+
+var FORCED = IS_PURE || THROWS_ON_ITERATOR_WITHOUT_RETURN || FLAT_MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR
+  || flatMapWithoutClosingOnEarlyError;
+
+var IteratorProxy = createIteratorProxy(function () {
+  var iterator = this.iterator;
+  var mapper = this.mapper;
+  var result, inner;
+
+  while (true) {
+    if (inner = this.inner) try {
+      result = anObject(call(inner.next, inner.iterator));
+      if (!result.done) return result.value;
+      this.inner = null;
+    } catch (error) { iteratorClose(iterator, 'throw', error); }
+
+    result = anObject(call(this.next, iterator));
+
+    if (this.done = !!result.done) return;
+
+    try {
+      this.inner = getIteratorFlattenable(mapper(result.value, this.counter++), false);
+    } catch (error) { iteratorClose(iterator, 'throw', error); }
+  }
+});
+
+// `Iterator.prototype.flatMap` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.flatmap
+$({ target: 'Iterator', proto: true, real: true, forced: FORCED }, {
+  flatMap: function flatMap(mapper) {
+    anObject(this);
+    try {
+      aCallable(mapper);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (flatMapWithoutClosingOnEarlyError) return call(flatMapWithoutClosingOnEarlyError, this, mapper);
+
+    return new IteratorProxy(getIteratorDirect(this), {
+      mapper: mapper,
+      inner: null
+    });
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.for-each.js
+var es_iterator_for_each_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var call = (function_call_namespaceFn());
+var iterate = (iterate_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var iteratorHelperWithoutClosingOnEarlyError = (iterator_helper_without_closing_on_early_error_namespaceFn());
+
+var forEachWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('forEach', TypeError);
+
+// `Iterator.prototype.forEach` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.foreach
+$({ target: 'Iterator', proto: true, real: true, forced: forEachWithoutClosingOnEarlyError }, {
+  forEach: function forEach(fn) {
+    anObject(this);
+    try {
+      aCallable(fn);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (forEachWithoutClosingOnEarlyError) return call(forEachWithoutClosingOnEarlyError, this, fn);
+
+    var record = getIteratorDirect(this);
+    var counter = 0;
+    iterate(record, function (value) {
+      fn(value, counter++);
+    }, { IS_RECORD: true });
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.map.js
+var es_iterator_map_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var call = (function_call_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var createIteratorProxy = (iterator_create_proxy_namespaceFn());
+var callWithSafeIterationClosing = (call_with_safe_iteration_closing_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var iteratorHelperThrowsOnInvalidIterator = (iterator_helper_throws_on_invalid_iterator_namespaceFn());
+var iteratorHelperWithoutClosingOnEarlyError = (iterator_helper_without_closing_on_early_error_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR = !IS_PURE && !iteratorHelperThrowsOnInvalidIterator('map', function () { /* empty */ });
+var mapWithoutClosingOnEarlyError = !IS_PURE && !MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR
+  && iteratorHelperWithoutClosingOnEarlyError('map', TypeError);
+
+var FORCED = IS_PURE || MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR || mapWithoutClosingOnEarlyError;
+
+var IteratorProxy = createIteratorProxy(function () {
+  var iterator = this.iterator;
+  var result = anObject(call(this.next, iterator));
+  var done = this.done = !!result.done;
+  if (!done) return callWithSafeIterationClosing(iterator, this.mapper, [result.value, this.counter++], true);
+});
+
+// `Iterator.prototype.map` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.map
+$({ target: 'Iterator', proto: true, real: true, forced: FORCED }, {
+  map: function map(mapper) {
+    anObject(this);
+    try {
+      aCallable(mapper);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (mapWithoutClosingOnEarlyError) return call(mapWithoutClosingOnEarlyError, this, mapper);
+
+    return new IteratorProxy(getIteratorDirect(this), {
+      mapper: mapper
+    });
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.some.js
+var es_iterator_some_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var call = (function_call_namespaceFn());
+var iterate = (iterate_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var iteratorHelperWithoutClosingOnEarlyError = (iterator_helper_without_closing_on_early_error_namespaceFn());
+
+var someWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('some', TypeError);
+
+// `Iterator.prototype.some` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.some
+$({ target: 'Iterator', proto: true, real: true, forced: someWithoutClosingOnEarlyError }, {
+  some: function some(predicate) {
+    anObject(this);
+    try {
+      aCallable(predicate);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (someWithoutClosingOnEarlyError) return call(someWithoutClosingOnEarlyError, this, predicate);
+
+    var record = getIteratorDirect(this);
+    var counter = 0;
+    return iterate(record, function (value, stop) {
+      if (predicate(value, counter++)) return stop();
+    }, { IS_RECORD: true, INTERRUPTED: true }).stopped;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.take.js
+var es_iterator_take_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var call = (function_call_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+var notANaN = (not_a_nan_namespaceFn());
+var toPositiveInteger = (to_positive_integer_namespaceFn());
+var createIteratorProxy = (iterator_create_proxy_namespaceFn());
+var iteratorClose = (iterator_close_namespaceFn());
+var iteratorHelperThrowsOnInvalidIterator = (iterator_helper_throws_on_invalid_iterator_namespaceFn());
+var iteratorHelperWithoutClosingOnEarlyError = (iterator_helper_without_closing_on_early_error_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var $RangeError = RangeError;
+var $Infinity = Infinity;
+
+var TAKE_WITHOUT_THROWING_ON_INVALID_ITERATOR = !IS_PURE && !iteratorHelperThrowsOnInvalidIterator('take', 1);
+var takeWithoutClosingOnEarlyError = !IS_PURE && !TAKE_WITHOUT_THROWING_ON_INVALID_ITERATOR
+  && iteratorHelperWithoutClosingOnEarlyError('take', RangeError);
+
+var FORCED = IS_PURE || TAKE_WITHOUT_THROWING_ON_INVALID_ITERATOR || takeWithoutClosingOnEarlyError || !function () {
+  try {
+    // eslint-disable-next-line es/no-iterator, es/no-iterator-prototype-take -- detection
+    Iterator.prototype.take.call({
+      next: function () { return { done: true }; }
+    }, 0x20000000000000);
+  } catch (error) {
+    return error instanceof $RangeError;
+  }
+}();
+
+var IteratorProxy = createIteratorProxy(function () {
+  var iterator = this.iterator;
+  if (!this.remaining--) {
+    this.done = true;
+    return iteratorClose(iterator, 'normal', undefined);
+  }
+  var result = anObject(call(this.next, iterator));
+  var done = this.done = !!result.done;
+  if (!done) return result.value;
+});
+
+// `Iterator.prototype.take` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.take
+$({ target: 'Iterator', proto: true, real: true, forced: FORCED }, {
+  take: function take(limit) {
+    anObject(this);
+    var remaining;
+    try {
+      remaining = toPositiveInteger(notANaN(+limit));
+      if (remaining > 0x1FFFFFFFFFFFFF && remaining !== $Infinity) {
+        throw new $RangeError('The argument should be a safe integer');
+      }
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (takeWithoutClosingOnEarlyError) return call(takeWithoutClosingOnEarlyError, this, remaining);
+
+    return new IteratorProxy(getIteratorDirect(this), {
+      remaining: remaining
+    });
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.iterator.to-array.js
+var es_iterator_to_array_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var anObject = (an_object_namespaceFn());
+var createProperty = (create_property_namespaceFn());
+var iterate = (iterate_namespaceFn());
+var getIteratorDirect = (get_iterator_direct_namespaceFn());
+
+// `Iterator.prototype.toArray` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.toarray
+$({ target: 'Iterator', proto: true, real: true }, {
+  toArray: function toArray() {
+    var result = [];
+    var index = 0;
+    iterate(getIteratorDirect(anObject(this)), function (element) {
+      createProperty(result, index++, element);
+    }, { IS_RECORD: true });
+    return result;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.json.parse.js
+var es_json_parse_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var DESCRIPTORS = (descriptors_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var getBuiltIn = (get_built_in_namespaceFn());
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var call = (function_call_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var isObject = (is_object_namespaceFn());
+var isArray = (is_array_namespaceFn());
+var hasOwn = (has_own_property_namespaceFn());
+var toString = (to_string_namespaceFn());
+var lengthOfArrayLike = (length_of_array_like_namespaceFn());
+var createProperty = (create_property_namespaceFn());
+var fails = (fails_namespaceFn());
+var parseJSONString = (parse_json_string_namespaceFn());
+var NATIVE_SYMBOL = (symbol_constructor_detection_namespaceFn());
+
+var JSON = globalThis.JSON;
+var Number = globalThis.Number;
+var SyntaxError = globalThis.SyntaxError;
+var nativeParse = JSON && JSON.parse;
+var enumerableOwnProperties = getBuiltIn('Object', 'keys');
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var at = uncurryThis(''.charAt);
+var slice = uncurryThis(''.slice);
+var exec = uncurryThis(/./.exec);
+var push = uncurryThis([].push);
+
+var IS_DIGIT = /^\d$/;
+var IS_NON_ZERO_DIGIT = /^[1-9]$/;
+var IS_NUMBER_START = /^[\d-]$/;
+var IS_WHITESPACE = /^[\t\n\r ]$/;
+
+var PRIMITIVE = 0;
+var OBJECT = 1;
+
+var $parse = function (source, reviver) {
+  source = toString(source);
+  var context = new Context(source, 0);
+  var root = context.parse();
+  var value = root.value;
+  var endIndex = context.skip(IS_WHITESPACE, root.end);
+  if (endIndex < source.length) {
+    throw new SyntaxError('Unexpected extra character: "' + at(source, endIndex) + '" after the parsed data at: ' + endIndex);
+  }
+  return isCallable(reviver) ? internalize({ '': value }, '', reviver, root) : value;
+};
+
+var internalize = function (holder, name, reviver, node) {
+  var val = holder[name];
+  var unmodified = node && val === node.value;
+  var context = unmodified && typeof node.source == 'string' ? { source: node.source } : {};
+  var elementRecordsLen, keys, len, i, P;
+  if (isObject(val)) {
+    var nodeIsArray = isArray(val);
+    var nodes = unmodified ? node.nodes : nodeIsArray ? [] : {};
+    if (nodeIsArray) {
+      elementRecordsLen = nodes.length;
+      len = lengthOfArrayLike(val);
+      for (i = 0; i < len; i++) {
+        internalizeProperty(val, i, internalize(val, '' + i, reviver, i < elementRecordsLen ? nodes[i] : undefined));
+      }
+    } else {
+      keys = enumerableOwnProperties(val);
+      len = lengthOfArrayLike(keys);
+      for (i = 0; i < len; i++) {
+        P = keys[i];
+        internalizeProperty(val, P, internalize(val, P, reviver, hasOwn(nodes, P) ? nodes[P] : undefined));
+      }
+    }
+  }
+  return call(reviver, holder, name, val, context);
+};
+
+var internalizeProperty = function (object, key, value) {
+  if (DESCRIPTORS) {
+    var descriptor = getOwnPropertyDescriptor(object, key);
+    if (descriptor && !descriptor.configurable) return;
+  }
+  if (value === undefined) delete object[key];
+  else createProperty(object, key, value);
+};
+
+var Node = function (value, end, source, nodes) {
+  this.value = value;
+  this.end = end;
+  this.source = source;
+  this.nodes = nodes;
+};
+
+var Context = function (source, index) {
+  this.source = source;
+  this.index = index;
+};
+
+// https://www.json.org/json-en.html
+Context.prototype = {
+  fork: function (nextIndex) {
+    return new Context(this.source, nextIndex);
+  },
+  parse: function () {
+    var source = this.source;
+    var i = this.skip(IS_WHITESPACE, this.index);
+    var fork = this.fork(i);
+    var chr = at(source, i);
+    if (exec(IS_NUMBER_START, chr)) return fork.number();
+    switch (chr) {
+      case '{':
+        return fork.object();
+      case '[':
+        return fork.array();
+      case '"':
+        return fork.string();
+      case 't':
+        return fork.keyword(true);
+      case 'f':
+        return fork.keyword(false);
+      case 'n':
+        return fork.keyword(null);
+    } throw new SyntaxError('Unexpected character: "' + chr + '" at: ' + i);
+  },
+  node: function (type, value, start, end, nodes) {
+    return new Node(value, end, type ? null : slice(this.source, start, end), nodes);
+  },
+  object: function () {
+    var source = this.source;
+    var i = this.index + 1;
+    var expectKeypair = false;
+    var object = {};
+    var nodes = {};
+    var closed = false;
+    while (i < source.length) {
+      i = this.until(['"', '}'], i);
+      if (at(source, i) === '}' && !expectKeypair) {
+        i++;
+        closed = true;
+        break;
+      }
+      // Parsing the key
+      var result = this.fork(i).string();
+      var key = result.value;
+      i = result.end;
+      i = this.until([':'], i) + 1;
+      // Parsing value
+      i = this.skip(IS_WHITESPACE, i);
+      result = this.fork(i).parse();
+      createProperty(nodes, key, result);
+      createProperty(object, key, result.value);
+      i = this.until([',', '}'], result.end);
+      var chr = at(source, i);
+      if (chr === ',') {
+        expectKeypair = true;
+        i++;
+      } else if (chr === '}') {
+        i++;
+        closed = true;
+        break;
+      }
+    }
+    if (!closed) throw new SyntaxError('Unterminated object at: ' + i);
+    return this.node(OBJECT, object, this.index, i, nodes);
+  },
+  array: function () {
+    var source = this.source;
+    var i = this.index + 1;
+    var expectElement = false;
+    var array = [];
+    var nodes = [];
+    var closed = false;
+    while (i < source.length) {
+      i = this.skip(IS_WHITESPACE, i);
+      if (at(source, i) === ']' && !expectElement) {
+        i++;
+        closed = true;
+        break;
+      }
+      var result = this.fork(i).parse();
+      push(nodes, result);
+      push(array, result.value);
+      i = this.until([',', ']'], result.end);
+      if (at(source, i) === ',') {
+        expectElement = true;
+        i++;
+      } else if (at(source, i) === ']') {
+        i++;
+        closed = true;
+        break;
+      }
+    }
+    if (!closed) throw new SyntaxError('Unterminated array at: ' + i);
+    return this.node(OBJECT, array, this.index, i, nodes);
+  },
+  string: function () {
+    var index = this.index;
+    var parsed = parseJSONString(this.source, this.index + 1);
+    return this.node(PRIMITIVE, parsed.value, index, parsed.end);
+  },
+  number: function () {
+    var source = this.source;
+    var startIndex = this.index;
+    var i = startIndex;
+    if (at(source, i) === '-') i++;
+    if (at(source, i) === '0') i++;
+    else if (exec(IS_NON_ZERO_DIGIT, at(source, i))) i = this.skip(IS_DIGIT, i + 1);
+    else throw new SyntaxError('Failed to parse number at: ' + i);
+    if (at(source, i) === '.') {
+      var fractionStartIndex = i + 1;
+      i = this.skip(IS_DIGIT, fractionStartIndex);
+      if (fractionStartIndex === i) throw new SyntaxError("Failed to parse number's fraction at: " + i);
+    }
+    if (at(source, i) === 'e' || at(source, i) === 'E') {
+      i++;
+      if (at(source, i) === '+' || at(source, i) === '-') i++;
+      var exponentStartIndex = i;
+      i = this.skip(IS_DIGIT, i);
+      if (exponentStartIndex === i) throw new SyntaxError("Failed to parse number's exponent value at: " + i);
+    }
+    return this.node(PRIMITIVE, Number(slice(source, startIndex, i)), startIndex, i);
+  },
+  keyword: function (value) {
+    var keyword = '' + value;
+    var index = this.index;
+    var endIndex = index + keyword.length;
+    if (slice(this.source, index, endIndex) !== keyword) throw new SyntaxError('Failed to parse value at: ' + index);
+    return this.node(PRIMITIVE, value, index, endIndex);
+  },
+  skip: function (regex, i) {
+    var source = this.source;
+    for (; i < source.length; i++) if (!exec(regex, at(source, i))) break;
+    return i;
+  },
+  until: function (array, i) {
+    i = this.skip(IS_WHITESPACE, i);
+    var chr = at(this.source, i);
+    for (var j = 0; j < array.length; j++) if (array[j] === chr) return i;
+    throw new SyntaxError('Unexpected character: "' + chr + '" at: ' + i);
+  }
+};
+
+var NO_SOURCE_SUPPORT = fails(function () {
+  var unsafeInt = '9007199254740993';
+  var source;
+  nativeParse(unsafeInt, function (key, value, context) {
+    source = context.source;
+  });
+  return source !== unsafeInt;
+});
+
+var PROPER_BASE_PARSE = NATIVE_SYMBOL && !fails(function () {
+  // Safari 9 bug
+  return 1 / nativeParse('-0 \t') !== -Infinity;
+});
+
+// `JSON.parse` method
+// https://tc39.es/ecma262/#sec-json.parse
+// https://github.com/tc39/proposal-json-parse-with-source
+$({ target: 'JSON', stat: true, forced: NO_SOURCE_SUPPORT }, {
+  parse: function parse(text, reviver) {
+    return PROPER_BASE_PARSE && !isCallable(reviver) ? nativeParse(text) : $parse(text, reviver);
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.json.stringify.js
+var es_json_stringify_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var getBuiltIn = (get_built_in_namespaceFn());
+var call = (function_call_namespaceFn());
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var fails = (fails_namespaceFn());
+var isArray = (is_array_namespaceFn());
+var isCallable = (is_callable_namespaceFn());
+var isObject = (is_object_namespaceFn());
+var create = (object_create_namespaceFn());
+var isRawJSON = (is_raw_json_namespaceFn());
+var isSymbol = (is_symbol_namespaceFn());
+var classof = (classof_raw_namespaceFn());
+var thisNumberValue = (this_number_value_namespaceFn());
+var includes = (array_includes_namespaceFn().includes);
+var hasOwn = (has_own_property_namespaceFn());
+var toString = (to_string_namespaceFn());
+var parseJSONString = (parse_json_string_namespaceFn());
+var uid = (uid_namespaceFn());
+var NATIVE_SYMBOL = (symbol_constructor_detection_namespaceFn());
+var NATIVE_RAW_JSON = (native_raw_json_namespaceFn());
+
+var $String = String;
+var $TypeError = TypeError;
+var $stringify = getBuiltIn('JSON', 'stringify');
+var $BigInt = getBuiltIn('BigInt');
+var stringValueOf = uncurryThis(''.valueOf);
+var booleanValueOf = uncurryThis(true.valueOf);
+var bigIntValueOf = $BigInt && uncurryThis($BigInt.prototype.valueOf);
+var exec = uncurryThis(/./.exec);
+var charAt = uncurryThis(''.charAt);
+var charCodeAt = uncurryThis(''.charCodeAt);
+var replace = uncurryThis(''.replace);
+var slice = uncurryThis(''.slice);
+var push = uncurryThis([].push);
+var pop = uncurryThis([].pop);
+var numberToString = uncurryThis(1.1.toString);
+
+var surrogates = /[\uD800-\uDFFF]/g;
+var leadingSurrogates = /^[\uD800-\uDBFF]$/;
+var trailingSurrogates = /^[\uDC00-\uDFFF]$/;
+var digits = /^\d+$/;
+
+// a placeholder of a raw JSON value
+var RAW_MARK = uid();
+// a prefix of keys of a reordered object, see `createOrderedObject`
+var KEY_MARK = uid();
+// the last key of a reordered object, marks the end of its serialization
+var END_MARK = uid();
+var RAW_MARK_LENGTH = RAW_MARK.length;
+var KEY_MARK_LENGTH = KEY_MARK.length;
+
+var WRONG_SYMBOLS_CONVERSION = !NATIVE_SYMBOL || fails(function () {
+  var symbol = getBuiltIn('Symbol')('stringify detection');
+  // MS Edge converts symbol values to JSON as {}
+  return $stringify([symbol]) !== '[null]'
+    // WebKit converts symbol values to JSON as null
+    || $stringify({ a: symbol }) !== '{}'
+    // V8 throws on boxed symbols
+    || $stringify(Object(symbol)) !== '{}';
+});
+
+// https://github.com/tc39/proposal-well-formed-stringify
+var ILL_FORMED_UNICODE = fails(function () {
+  return $stringify('\uDF06\uD834') !== '"\\udf06\\ud834"'
+    || $stringify('\uDEAD') !== '"\\udead"';
+});
+
+var isRawJSONValue = NATIVE_RAW_JSON ? getBuiltIn('JSON', 'isRawJSON') : isRawJSON;
+
+var stringifyWithProperSymbolsConversion = WRONG_SYMBOLS_CONVERSION ? function (it, replacer, space) {
+  return $stringify(it, function (key, value) {
+    var replaced = call(replacer, this, key, value);
+    if (!isSymbol(replaced)) return replaced;
+  }, space);
+} : $stringify;
+
+var fixIllFormedJSON = function (match, offset, string) {
+  var prev = charAt(string, offset - 1);
+  var next = charAt(string, offset + 1);
+  if (
+    (exec(leadingSurrogates, match) && !exec(trailingSurrogates, next)) ||
+    (exec(trailingSurrogates, match) && !exec(leadingSurrogates, prev))
+  ) {
+    return '\\u' + numberToString(charCodeAt(match, 0), 16);
+  } return match;
+};
+
+// `PropertyList` of `JSON.stringify`
+// https://tc39.es/ecma262/#sec-json.stringify
+var getPropertyList = function (replacer) {
+  if (!isArray(replacer)) return;
+  var rawLength = replacer.length;
+  var propertyList = [];
+  // a null prototype object is used as a set of already added keys to keep the deduplication linear
+  var addedKeys = create(null);
+  for (var i = 0; i < rawLength; i++) {
+    var element = replacer[i];
+    var key;
+    if (typeof element == 'string') key = element;
+    else if (typeof element == 'number' || classof(element) === 'Number' || classof(element) === 'String') key = toString(element);
+    else continue;
+    if (!hasOwn(addedKeys, key)) {
+      addedKeys[key] = true;
+      push(propertyList, key);
+    }
+  }
+  return propertyList;
+};
+
+// values with such an internal slot are unwrapped by `SerializeJSONProperty` instead of being serialized as objects
+var hasInternalSlot = function (valueOf, it) {
+  try {
+    valueOf(it);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+// the slot check is expensive, so it's performed only for the kind reported by the value itself -
+// a value lying about its kind via `Symbol.toStringTag` is serialized as an ordinary object
+var isBoxedPrimitive = function (it) {
+  var kind = classof(it);
+  return (kind === 'Number' && hasInternalSlot(thisNumberValue, it))
+    || (kind === 'String' && hasInternalSlot(stringValueOf, it))
+    || (kind === 'Boolean' && hasInternalSlot(booleanValueOf, it))
+    || (!!bigIntValueOf && kind === 'BigInt' && hasInternalSlot(bigIntValueOf, it));
+};
+
+// only objects serialized by `SerializeJSONObject` are affected by the property list
+var isSerializedAsObject = function (it) {
+  if (!isObject(it) || isCallable(it) || isArray(it)) return false;
+  try {
+    return !isBoxedPrimitive(it);
+  // `classof` reads `Symbol.toStringTag`, so a proxy could throw - it has no internal slots anyway
+  } catch (error) {
+    return true;
+  }
+};
+
+// the engine unwraps it in the same order as it would read the original property,
+// so the property is read lazily and `toJSON` is called once and with the original key
+var createElementHolder = function (holder, key) {
+  return {
+    toJSON: function () {
+      var element = holder[key];
+      if (isObject(element) || typeof element == 'bigint') {
+        var elementToJSON = element.toJSON;
+        if (isCallable(elementToJSON)) element = call(elementToJSON, element, key);
+      } return element;
+    }
+  };
+};
+
+// own keys of objects are sorted - integer-like keys are moved to the beginning,
+// so such keys should be marked and restored in the serialized string
+var getKeyPrefix = function (propertyList) {
+  for (var i = 0, length = propertyList.length; i < length; i++) {
+    if (exec(digits, propertyList[i])) return KEY_MARK;
+  } return '';
+};
+
+// `SerializeJSONObject` iterates the property list, so the value is replaced with an object with keys in this order
+var createOrderedObject = function (value, propertyList, keyPrefix) {
+  // keys are not marked if the property list has no integer-like keys, so `Object.prototype`
+  // with a setter, a non-writable property or `__proto__` should not intercept the assignment
+  var ordered = create(null);
+  for (var i = 0, length = propertyList.length; i < length; i++) {
+    var key = propertyList[i];
+    ordered[keyPrefix + key] = createElementHolder(value, key);
+  }
+  ordered[END_MARK] = null;
+  return ordered;
+};
+
+// `JSON.stringify` method
+// https://tc39.es/ecma262/#sec-json.stringify
+// https://github.com/tc39/proposal-json-parse-with-source
+if ($stringify) $({ target: 'JSON', stat: true, arity: 3, forced: WRONG_SYMBOLS_CONVERSION || ILL_FORMED_UNICODE || !NATIVE_RAW_JSON }, {
+  stringify: function stringify(text, replacer, space) {
+    var replacerFunction = isCallable(replacer) ? replacer : undefined;
+    var propertyList = replacerFunction ? undefined : getPropertyList(replacer);
+    var keyPrefix = propertyList && getKeyPrefix(propertyList);
+    var rawStrings = [];
+    var openObjects = [];
+    var parentOrdered = [];
+    var currentOrdered;
+    var marked = false;
+    var root = true;
+
+    var json = stringifyWithProperSymbolsConversion(text, function (key, value) {
+      // some old implementations (like WebKit) could pass numbers as keys
+      key = $String(key);
+
+      if (propertyList) {
+        if (key === END_MARK) {
+          pop(openObjects);
+          currentOrdered = pop(parentOrdered);
+          return;
+        }
+        if (root) root = false;
+        // the innermost reordered object already contains only keys of the property list and arrays are not
+        // affected by it, the rest of objects (like objects with a fake `Symbol.toStringTag`) are filtered here
+        else if (this !== currentOrdered && !isArray(this) && !includes(propertyList, key)) return;
+      } else if (replacerFunction) value = call(replacerFunction, this, key, value);
+
+      if (isRawJSONValue(value)) {
+        if (NATIVE_RAW_JSON) return value;
+        marked = true;
+        return RAW_MARK + (push(rawStrings, value.rawJSON) - 1);
+      }
+
+      if (propertyList && isSerializedAsObject(value)) {
+        // reordered objects are new each time, so cycles should be detected before the engine does it
+        if (includes(openObjects, value)) throw new $TypeError('Converting circular structure to JSON');
+        var ordered = createOrderedObject(value, propertyList, keyPrefix);
+        push(openObjects, value);
+        push(parentOrdered, currentOrdered);
+        currentOrdered = ordered;
+        if (keyPrefix) marked = true;
+        return ordered;
+      }
+
+      return value;
+    }, space);
+
+    if (typeof json != 'string') return json;
+
+    if (ILL_FORMED_UNICODE) json = replace(json, surrogates, fixIllFormedJSON);
+
+    if (!marked) return json;
+
+    var result = '';
+    var length = json.length;
+
+    for (var i = 0; i < length; i++) {
+      var chr = charAt(json, i);
+      if (chr === '"') {
+        var end = parseJSONString(json, ++i).end - 1;
+        var string = slice(json, i, end);
+        if (slice(string, 0, RAW_MARK_LENGTH) === RAW_MARK) result += rawStrings[slice(string, RAW_MARK_LENGTH)];
+        else if (slice(string, 0, KEY_MARK_LENGTH) === KEY_MARK) result += '"' + slice(string, KEY_MARK_LENGTH) + '"';
+        else result += '"' + string + '"';
+        i = end;
+      } else result += chr;
+    }
+
+    return result;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.map.get-or-insert-computed.js
+var es_map_get_or_insert_computed_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var MapHelpers = (map_helpers_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var get = MapHelpers.get;
+var has = MapHelpers.has;
+var set = MapHelpers.set;
+
+// `Map.prototype.getOrInsertComputed` method
+// https://tc39.es/ecma262/#sec-map.prototype.getorinsertcomputed
+$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+  getOrInsertComputed: function getOrInsertComputed(key, callbackfn) {
+    var hasKey = has(this, key);
+    aCallable(callbackfn);
+    if (hasKey) return get(this, key);
+    // CanonicalizeKeyedCollectionKey
+    if (key === 0 && 1 / key === -Infinity) key = 0;
+    var value = callbackfn(key);
+    set(this, key, value);
+    return value;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.map.get-or-insert.js
+var es_map_get_or_insert_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var MapHelpers = (map_helpers_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var get = MapHelpers.get;
+var has = MapHelpers.has;
+var set = MapHelpers.set;
+
+// `Map.prototype.getOrInsert` method
+// https://tc39.es/ecma262/#sec-map.prototype.getorinsert
+$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+  getOrInsert: function getOrInsert(key, value) {
+    if (has(this, key)) return get(this, key);
+    set(this, key, value);
+    return value;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.math.sum-precise.js
+var es_math_sum_precise_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+// based on Shewchuk's algorithm for exactly floating point addition
+// adapted from https://github.com/tc39/proposal-math-sum/blob/3513d58323a1ae25560e8700aa5294500c6c9287/polyfill/polyfill.mjs
+var $ = (export_namespaceFn());
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var iterate = (iterate_namespaceFn());
+
+var $RangeError = RangeError;
+var $TypeError = TypeError;
+var $Infinity = Infinity;
+var $NaN = NaN;
+var abs = Math.abs;
+var pow = Math.pow;
+var push = uncurryThis([].push);
+
+var POW_2_1023 = pow(2, 1023);
+var MAX_SAFE_INTEGER = pow(2, 53) - 1; // 2 ** 53 - 1 === 9007199254740991
+var MAX_DOUBLE = Number.MAX_VALUE; // 2 ** 1024 - 2 ** (1023 - 52) === 1.79769313486231570815e+308
+var MAX_ULP = pow(2, 971); // 2 ** (1023 - 52) === 1.99584030953471981166e+292
+
+var NOT_A_NUMBER = {};
+var MINUS_INFINITY = {};
+var PLUS_INFINITY = {};
+var MINUS_ZERO = {};
+var FINITE = {};
+
+// prerequisite: abs(x) >= abs(y)
+var twosum = function (x, y) {
+  var hi = x + y;
+  var lo = y - (hi - x);
+  return { hi: hi, lo: lo };
+};
+
+// `Math.sumPrecise` method
+// https://tc39.es/ecma262/#sec-math.sumprecise
+$({ target: 'Math', stat: true }, {
+  // eslint-disable-next-line max-statements -- ok
+  sumPrecise: function sumPrecise(items) {
+    var numbers = [];
+    var count = 0;
+    var state = MINUS_ZERO;
+
+    iterate(items, function (n) {
+      if (++count > MAX_SAFE_INTEGER) throw new $RangeError('Maximum allowed index exceeded');
+      if (typeof n != 'number') throw new $TypeError('Value is not a number');
+      if (state !== NOT_A_NUMBER) {
+        // eslint-disable-next-line no-self-compare -- NaN check
+        if (n !== n) state = NOT_A_NUMBER;
+        else if (n === $Infinity) state = state === MINUS_INFINITY ? NOT_A_NUMBER : PLUS_INFINITY;
+        else if (n === -$Infinity) state = state === PLUS_INFINITY ? NOT_A_NUMBER : MINUS_INFINITY;
+        else if ((n !== 0 || (1 / n) === $Infinity) && (state === MINUS_ZERO || state === FINITE)) {
+          state = FINITE;
+          push(numbers, n);
+        }
+      }
+    });
+
+    switch (state) {
+      case NOT_A_NUMBER: return $NaN;
+      case MINUS_INFINITY: return -$Infinity;
+      case PLUS_INFINITY: return $Infinity;
+      case MINUS_ZERO: return -0;
+    }
+
+    var partials = [];
+    var overflow = 0; // conceptually 2 ** 1024 times this value; the final partial is biased by this amount
+    var x, y, sum, hi, lo, tmp;
+
+    for (var i = 0; i < numbers.length; i++) {
+      x = numbers[i];
+      var actuallyUsedPartials = 0;
+      for (var j = 0; j < partials.length; j++) {
+        y = partials[j];
+        if (abs(x) < abs(y)) {
+          tmp = x;
+          x = y;
+          y = tmp;
+        }
+        sum = twosum(x, y);
+        hi = sum.hi;
+        lo = sum.lo;
+        if (abs(hi) === $Infinity) {
+          var sign = hi === $Infinity ? 1 : -1;
+          overflow += sign;
+
+          x = (x - (sign * POW_2_1023)) - (sign * POW_2_1023);
+          if (abs(x) < abs(y)) {
+            tmp = x;
+            x = y;
+            y = tmp;
+          }
+          sum = twosum(x, y);
+          hi = sum.hi;
+          lo = sum.lo;
+        }
+        if (lo !== 0) partials[actuallyUsedPartials++] = lo;
+        x = hi;
+      }
+      partials.length = actuallyUsedPartials;
+      if (x !== 0) push(partials, x);
+    }
+
+    // compute the exact sum of partials, stopping once we lose precision
+    var n = partials.length - 1;
+    hi = 0;
+    lo = 0;
+
+    if (overflow !== 0) {
+      var next = n >= 0 ? partials[n] : 0;
+      n--;
+      if (abs(overflow) > 1 || (overflow > 0 && next > 0) || (overflow < 0 && next < 0)) {
+        return overflow > 0 ? $Infinity : -$Infinity;
+      }
+      // here we actually have to do the arithmetic
+      // drop a factor of 2 so we can do it without overflow
+      // assert(abs(overflow) === 1)
+      sum = twosum(overflow * POW_2_1023, next / 2);
+      hi = sum.hi;
+      lo = sum.lo;
+      lo *= 2;
+      if (abs(2 * hi) === $Infinity) {
+        // rounding to the maximum value
+        if (hi > 0) {
+          return (hi === POW_2_1023 && lo === -(MAX_ULP / 2) && n >= 0 && partials[n] < 0) ? MAX_DOUBLE : $Infinity;
+        } return (hi === -POW_2_1023 && lo === (MAX_ULP / 2) && n >= 0 && partials[n] > 0) ? -MAX_DOUBLE : -$Infinity;
+      }
+
+      if (lo !== 0) {
+        partials[++n] = lo;
+        lo = 0;
+      }
+
+      hi *= 2;
+    }
+
+    while (n >= 0) {
+      sum = twosum(hi, partials[n--]);
+      hi = sum.hi;
+      lo = sum.lo;
+      if (lo !== 0) break;
+    }
+
+    if (n >= 0 && ((lo < 0 && partials[n] < 0) || (lo > 0 && partials[n] > 0))) {
+      y = lo * 2;
+      x = hi + y;
+      if (y === x - hi) hi = x;
+    }
+
+    return hi;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.promise.try.js
+var es_promise_try_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var apply = (function_apply_namespaceFn());
+var slice = (array_slice_namespaceFn());
+var promiseResolve = (promise_resolve_namespaceFn());
+var newPromiseCapabilityModule = (new_promise_capability_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var perform = (perform_namespaceFn());
+var fails = (fails_namespaceFn());
+
+var Promise = globalThis.Promise;
+
+var ACCEPT_ARGUMENTS = false;
+var FORCED = !Promise || !Promise['try'] || fails(function () {
+  var p = Promise.resolve();
+  return Promise['try'](function (argument) {
+    // avoiding the use of polyfills of the previous iteration of this proposal
+    // that does not accept arguments of the callback
+    ACCEPT_ARGUMENTS = argument === 8;
+    return p;
+  // it should use `PromiseResolve`
+  // https://github.com/tc39/ecma262/pull/3883
+  }, 8) !== p;
+}) || !ACCEPT_ARGUMENTS;
+
+// `Promise.try` method
+// https://tc39.es/ecma262/#sec-promise.try
+$({ target: 'Promise', stat: true, forced: FORCED }, {
+  'try': function (callbackfn /* , ...args */) {
+    var args = arguments.length > 1 ? slice(arguments, 1) : [];
+    var result = perform(function () {
+      return apply(aCallable(callbackfn), undefined, args);
+    });
+    if (!result.error) return promiseResolve(this, result.value);
+    var promiseCapability = newPromiseCapabilityModule.f(this);
+    var reject = promiseCapability.reject;
+    reject(result.value);
+    return promiseCapability.promise;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.set.difference.v2.js
+var es_set_difference_v2_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var difference = (set_difference_namespaceFn());
+var fails = (fails_namespaceFn());
+var setMethodAcceptSetLike = (set_method_accept_set_like_namespaceFn());
+
+var SET_LIKE_INCORRECT_BEHAVIOR = !setMethodAcceptSetLike('difference', function (result) {
+  return result.size === 0;
+});
+
+var FORCED = SET_LIKE_INCORRECT_BEHAVIOR || fails(function () {
+  // https://bugs.webkit.org/show_bug.cgi?id=288595
+  var setLike = {
+    size: 1,
+    has: function () { return true; },
+    keys: function () {
+      var index = 0;
+      return {
+        next: function () {
+          var done = index++ > 1;
+          if (baseSet.has(1)) baseSet.clear();
+          return { done: done, value: 2 };
+        }
+      };
+    }
+  };
+  // eslint-disable-next-line es/no-set -- testing
+  var baseSet = new Set([1, 2, 3, 4]);
+  // eslint-disable-next-line es/no-set-prototype-difference -- testing
+  return baseSet.difference(setLike).size !== 3;
+});
+
+// `Set.prototype.difference` method
+// https://tc39.es/ecma262/#sec-set.prototype.difference
+$({ target: 'Set', proto: true, real: true, forced: FORCED }, {
+  difference: difference
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.set.intersection.v2.js
+var es_set_intersection_v2_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var fails = (fails_namespaceFn());
+var intersection = (set_intersection_namespaceFn());
+var setMethodAcceptSetLike = (set_method_accept_set_like_namespaceFn());
+
+var INCORRECT = !setMethodAcceptSetLike('intersection', function (result) {
+  return result.size === 2 && result.has(1) && result.has(2);
+}) || fails(function () {
+  // eslint-disable-next-line es/no-array-from, es/no-set, es/no-set-prototype-intersection -- testing
+  return String(Array.from(new Set([1, 2, 3]).intersection(new Set([3, 2])))) !== '3,2';
+});
+
+// `Set.prototype.intersection` method
+// https://tc39.es/ecma262/#sec-set.prototype.intersection
+$({ target: 'Set', proto: true, real: true, forced: INCORRECT }, {
+  intersection: intersection
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.set.is-disjoint-from.v2.js
+var es_set_is_disjoint_from_v2_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var isDisjointFrom = (set_is_disjoint_from_namespaceFn());
+var setMethodAcceptSetLike = (set_method_accept_set_like_namespaceFn());
+
+var INCORRECT = !setMethodAcceptSetLike('isDisjointFrom', function (result) {
+  return !result;
+});
+
+// `Set.prototype.isDisjointFrom` method
+// https://tc39.es/ecma262/#sec-set.prototype.isdisjointfrom
+$({ target: 'Set', proto: true, real: true, forced: INCORRECT }, {
+  isDisjointFrom: isDisjointFrom
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.set.is-subset-of.v2.js
+var es_set_is_subset_of_v2_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var isSubsetOf = (set_is_subset_of_namespaceFn());
+var setMethodAcceptSetLike = (set_method_accept_set_like_namespaceFn());
+
+var INCORRECT = !setMethodAcceptSetLike('isSubsetOf', function (result) {
+  return result;
+});
+
+// `Set.prototype.isSubsetOf` method
+// https://tc39.es/ecma262/#sec-set.prototype.issubsetof
+$({ target: 'Set', proto: true, real: true, forced: INCORRECT }, {
+  isSubsetOf: isSubsetOf
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.set.is-superset-of.v2.js
+var es_set_is_superset_of_v2_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var isSupersetOf = (set_is_superset_of_namespaceFn());
+var setMethodAcceptSetLike = (set_method_accept_set_like_namespaceFn());
+
+var INCORRECT = !setMethodAcceptSetLike('isSupersetOf', function (result) {
+  return !result;
+});
+
+// `Set.prototype.isSupersetOf` method
+// https://tc39.es/ecma262/#sec-set.prototype.issupersetof
+$({ target: 'Set', proto: true, real: true, forced: INCORRECT }, {
+  isSupersetOf: isSupersetOf
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.set.symmetric-difference.v2.js
+var es_set_symmetric_difference_v2_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var symmetricDifference = (set_symmetric_difference_namespaceFn());
+var setMethodGetKeysBeforeCloning = (set_method_get_keys_before_cloning_detection_namespaceFn());
+var setMethodAcceptSetLike = (set_method_accept_set_like_namespaceFn());
+
+var FORCED = !setMethodAcceptSetLike('symmetricDifference') || !setMethodGetKeysBeforeCloning('symmetricDifference');
+
+// `Set.prototype.symmetricDifference` method
+// https://tc39.es/ecma262/#sec-set.prototype.symmetricdifference
+$({ target: 'Set', proto: true, real: true, forced: FORCED }, {
+  symmetricDifference: symmetricDifference
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.set.union.v2.js
+var es_set_union_v2_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var union = (set_union_namespaceFn());
+var setMethodGetKeysBeforeCloning = (set_method_get_keys_before_cloning_detection_namespaceFn());
+var setMethodAcceptSetLike = (set_method_accept_set_like_namespaceFn());
+
+var FORCED = !setMethodAcceptSetLike('union') || !setMethodGetKeysBeforeCloning('union');
+
+// `Set.prototype.union` method
+// https://tc39.es/ecma262/#sec-set.prototype.union
+$({ target: 'Set', proto: true, real: true, forced: FORCED }, {
+  union: union
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.typed-array.with.js
+var es_typed_array_with_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var ArrayBufferViewCore = (array_buffer_view_core_namespaceFn());
+var isBigIntArray = (is_big_int_array_namespaceFn());
+var lengthOfArrayLike = (length_of_array_like_namespaceFn());
+var toIntegerOrInfinity = (to_integer_or_infinity_namespaceFn());
+var toBigInt = (to_big_int_namespaceFn());
+
+var aTypedArray = ArrayBufferViewCore.aTypedArray;
+var getTypedArrayConstructor = ArrayBufferViewCore.getTypedArrayConstructor;
+var exportTypedArrayMethod = ArrayBufferViewCore.exportTypedArrayMethod;
+
+var $RangeError = RangeError;
+
+var PROPER_ORDER = function () {
+  try {
+    // eslint-disable-next-line no-throw-literal, es/no-typed-arrays, es/no-array-prototype-with -- required for testing
+    new Int8Array(1)['with'](2, { valueOf: function () { throw 8; } });
+  } catch (error) {
+    // some early implementations, like WebKit, does not follow the final semantic
+    // https://github.com/tc39/proposal-change-array-by-copy/pull/86
+    return error === 8;
+  }
+}();
+
+// Bug in WebKit. It should truncate a negative fractional index to zero, but instead throws an error
+var THROW_ON_NEGATIVE_FRACTIONAL_INDEX = PROPER_ORDER && function () {
+  try {
+    // eslint-disable-next-line es/no-typed-arrays, es/no-array-prototype-with -- required for testing
+    new Int8Array(1)['with'](-0.5, 1);
+  } catch (error) {
+    return true;
+  }
+}();
+
+// `%TypedArray%.prototype.with` method
+// https://tc39.es/ecma262/#sec-%typedarray%.prototype.with
+exportTypedArrayMethod('with', { 'with': function (index, value) {
+  var O = aTypedArray(this);
+  var len = lengthOfArrayLike(O);
+  var relativeIndex = toIntegerOrInfinity(index);
+  var actualIndex = relativeIndex < 0 ? len + relativeIndex : relativeIndex;
+  var numericValue = isBigIntArray(O) ? toBigInt(value) : +value;
+  if (actualIndex >= len || actualIndex < 0) throw new $RangeError('Incorrect index');
+  var A = new (getTypedArrayConstructor(O))(len);
+  var k = 0;
+  for (; k < len; k++) A[k] = k === actualIndex ? numericValue : O[k];
+  return A;
+} }['with'], !PROPER_ORDER || THROW_ON_NEGATIVE_FRACTIONAL_INDEX);
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.uint8-array.from-base64.js
+var es_uint8_array_from_base64_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var arrayFromConstructorAndList = (array_from_constructor_and_list_namespaceFn());
+var $fromBase64 = (uint8_from_base64_namespaceFn());
+
+var Uint8Array = globalThis.Uint8Array;
+
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.fromBase64 || !function () {
+  // Webkit not throw an error on odd length string
+  try {
+    Uint8Array.fromBase64('a');
+    return;
+  } catch (error) { /* empty */ }
+  try {
+    Uint8Array.fromBase64('', null);
+  } catch (error) {
+    return true;
+  }
+}();
+
+// `Uint8Array.fromBase64` method
+// https://tc39.es/ecma262/#sec-uint8array.frombase64
+if (Uint8Array) $({ target: 'Uint8Array', stat: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
+  fromBase64: function fromBase64(string /* , options */) {
+    var result = $fromBase64(string, arguments.length > 1 ? arguments[1] : undefined, null, 0x1FFFFFFFFFFFFF);
+    return arrayFromConstructorAndList(Uint8Array, result.bytes);
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.uint8-array.set-from-base64.js
+var es_uint8_array_set_from_base64_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var $fromBase64 = (uint8_from_base64_namespaceFn());
+var anUint8Array = (an_uint8_array_namespaceFn());
+
+var Uint8Array = globalThis.Uint8Array;
+
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.setFromBase64 || !function () {
+  var target = new Uint8Array([255, 255, 255, 255, 255]);
+  try {
+    target.setFromBase64('', null);
+    return;
+  } catch (error) { /* empty */ }
+  // Webkit not throw an error on odd length string
+  try {
+    target.setFromBase64('a');
+    return;
+  } catch (error) { /* empty */ }
+  try {
+    target.setFromBase64('MjYyZg===');
+  } catch (error) {
+    return target[0] === 50 && target[1] === 54 && target[2] === 50 && target[3] === 255 && target[4] === 255;
+  }
+}();
+
+// `Uint8Array.prototype.setFromBase64` method
+// https://tc39.es/ecma262/#sec-uint8array.prototype.setfrombase64
+if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
+  setFromBase64: function setFromBase64(string /* , options */) {
+    anUint8Array(this);
+
+    var result = $fromBase64(string, arguments.length > 1 ? arguments[1] : undefined, this, this.length);
+
+    return { read: result.read, written: result.written };
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.uint8-array.set-from-hex.js
+var es_uint8_array_set_from_hex_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var aString = (a_string_namespaceFn());
+var anUint8Array = (an_uint8_array_namespaceFn());
+var notDetached = (array_buffer_not_detached_namespaceFn());
+var $fromHex = (uint8_from_hex_namespaceFn());
+
+// Should not throw an error on length-tracking views over ResizableArrayBuffer
+// https://issues.chromium.org/issues/454630441
+function throwsOnLengthTrackingView() {
+  try {
+    // eslint-disable-next-line es/no-resizable-and-growable-arraybuffers -- required for testing
+    var rab = new ArrayBuffer(16, { maxByteLength: 1024 });
+    // eslint-disable-next-line es/no-uint8array-prototype-setfromhex, es/no-typed-arrays -- required for testing
+    new Uint8Array(rab).setFromHex('cafed00d');
+  } catch (error) {
+    return true;
+  }
+}
+
+// `Uint8Array.prototype.setFromHex` method
+// https://tc39.es/ecma262/#sec-uint8array.prototype.setfromhex
+if (globalThis.Uint8Array) $({ target: 'Uint8Array', proto: true, forced: throwsOnLengthTrackingView() }, {
+  setFromHex: function setFromHex(string) {
+    anUint8Array(this);
+    aString(string);
+    notDetached(this.buffer);
+    var read = $fromHex(string, this).read;
+    return { read: read, written: read / 2 };
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.uint8-array.to-base64.js
+var es_uint8_array_to_base64_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+/* eslint-disable no-useless-assignment -- false positive for [index++] syntax */
+var $ = (export_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var anObjectOrUndefined = (an_object_or_undefined_namespaceFn());
+var anUint8Array = (an_uint8_array_namespaceFn());
+var notDetached = (array_buffer_not_detached_namespaceFn());
+var base64Map = (base64_map_namespaceFn());
+var getAlphabetOption = (get_alphabet_option_namespaceFn());
+
+var base64Alphabet = base64Map.i2c;
+var base64UrlAlphabet = base64Map.i2cUrl;
+var $floor = Math.floor;
+var $ceil = Math.ceil;
+
+var charAt = uncurryThis(''.charAt);
+
+var Uint8Array = globalThis.Uint8Array;
+var $Array = globalThis.Array;
+var join = uncurryThis([].join);
+
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.toBase64 || !function () {
+  try {
+    var target = new Uint8Array();
+    target.toBase64(null);
+  } catch (error) {
+    return true;
+  }
+}();
+
+// `Uint8Array.prototype.toBase64` method
+// https://tc39.es/ecma262/#sec-uint8array.prototype.tobase64
+if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
+  toBase64: function toBase64(/* options */) {
+    var array = anUint8Array(this);
+    var options = arguments.length ? anObjectOrUndefined(arguments[0]) : undefined;
+    var alphabet = getAlphabetOption(options) === 'base64' ? base64Alphabet : base64UrlAlphabet;
+    var omitPadding = !!options && !!options.omitPadding;
+    notDetached(this.buffer);
+
+    var i = 0;
+    var length = array.length;
+    var result = $Array(omitPadding ? $floor(length / 3) * 4 + (length % 3 ? length % 3 + 1 : 0) : $ceil(length / 3) * 4);
+    var written = 0;
+    var triplet;
+
+    var at = function (shift) {
+      return charAt(alphabet, (triplet >> (6 * shift)) & 63);
+    };
+
+    for (; i + 2 < length; i += 3) {
+      triplet = (array[i] << 16) + (array[i + 1] << 8) + array[i + 2];
+      result[written++] = at(3);
+      result[written++] = at(2);
+      result[written++] = at(1);
+      result[written++] = at(0);
+    }
+    if (i + 2 === length) {
+      triplet = (array[i] << 16) + (array[i + 1] << 8);
+      result[written++] = at(3);
+      result[written++] = at(2);
+      result[written++] = at(1);
+      if (!omitPadding) result[written++] = '=';
+    } else if (i + 1 === length) {
+      triplet = array[i] << 16;
+      result[written++] = at(3);
+      result[written++] = at(2);
+      if (!omitPadding) {
+        result[written++] = '=';
+        result[written++] = '=';
+      }
+    }
+
+    return join(result, '');
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.uint8-array.to-hex.js
+var es_uint8_array_to_hex_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var uncurryThis = (function_uncurry_this_namespaceFn());
+var anUint8Array = (an_uint8_array_namespaceFn());
+var notDetached = (array_buffer_not_detached_namespaceFn());
+
+var numberToString = uncurryThis(1.1.toString);
+var join = uncurryThis([].join);
+var $Array = Array;
+
+var Uint8Array = globalThis.Uint8Array;
+
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.toHex || !(function () {
+  try {
+    var target = new Uint8Array([255, 255, 255, 255, 255, 255, 255, 255]);
+    return target.toHex() === 'ffffffffffffffff';
+  } catch (error) {
+    return false;
+  }
+})();
+
+// `Uint8Array.prototype.toHex` method
+// https://tc39.es/ecma262/#sec-uint8array.prototype.tohex
+if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
+  toHex: function toHex() {
+    anUint8Array(this);
+    notDetached(this.buffer);
+    var result = $Array(this.length);
+    for (var i = 0, length = this.length; i < length; i++) {
+      var hex = numberToString(this[i], 16);
+      result[i] = hex.length === 1 ? '0' + hex : hex;
+    }
+    return join(result, '');
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.weak-map.get-or-insert-computed.js
+var es_weak_map_get_or_insert_computed_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var aCallable = (a_callable_namespaceFn());
+var aWeakMap = (a_weak_map_namespaceFn());
+var aWeakKey = (a_weak_key_namespaceFn());
+var WeakMapHelpers = (weak_map_helpers_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var get = WeakMapHelpers.get;
+var has = WeakMapHelpers.has;
+var set = WeakMapHelpers.set;
+
+var FORCED = IS_PURE || !function () {
+  try {
+    // eslint-disable-next-line es/no-weak-map, no-throw-literal -- testing
+    if (WeakMap.prototype.getOrInsertComputed) new WeakMap().getOrInsertComputed(1, function () { throw 1; });
+  } catch (error) {
+    // FF144 Nightly - Beta 3 bug
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1988369
+    return error instanceof TypeError;
+  }
+}();
+
+// `WeakMap.prototype.getOrInsertComputed` method
+// https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsertcomputed
+$({ target: 'WeakMap', proto: true, real: true, forced: FORCED }, {
+  getOrInsertComputed: function getOrInsertComputed(key, callbackfn) {
+    if (!IS_PURE) aWeakMap(this);
+    aWeakKey(key);
+    aCallable(callbackfn);
+    if (has(this, key)) return get(this, key);
+    var value = callbackfn(key);
+    set(this, key, value);
+    return value;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/es.weak-map.get-or-insert.js
+var es_weak_map_get_or_insert_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var WeakMapHelpers = (weak_map_helpers_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var get = WeakMapHelpers.get;
+var has = WeakMapHelpers.has;
+var set = WeakMapHelpers.set;
+
+// `WeakMap.prototype.getOrInsert` method
+// https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert
+$({ target: 'WeakMap', proto: true, real: true, forced: IS_PURE }, {
+  getOrInsert: function getOrInsert(key, value) {
+    if (has(this, key)) return get(this, key);
+    set(this, key, value);
+    return value;
+  }
+});
+
+});
+
+// MODULE: ./node_modules/core-js/modules/web.dom-exception.stack.js
+var web_dom_exception_stack_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var globalThis = (global_this_namespaceFn());
+var getBuiltIn = (get_built_in_namespaceFn());
+var createPropertyDescriptor = (create_property_descriptor_namespaceFn());
+var defineProperty = (object_define_property_namespaceFn().f);
+var hasOwn = (has_own_property_namespaceFn());
+var anInstance = (an_instance_namespaceFn());
+var inheritIfRequired = (inherit_if_required_namespaceFn());
+var normalizeStringArgument = (normalize_string_argument_namespaceFn());
+var DOMExceptionConstants = (dom_exception_constants_namespaceFn());
+var clearErrorStack = (error_stack_clear_namespaceFn());
+var DESCRIPTORS = (descriptors_namespaceFn());
+var IS_PURE = (is_pure_namespaceFn());
+
+var DOM_EXCEPTION = 'DOMException';
+var Error = getBuiltIn('Error');
+var NativeDOMException = getBuiltIn(DOM_EXCEPTION);
+
+var $DOMException = function DOMException() {
+  anInstance(this, DOMExceptionPrototype);
+  var argumentsLength = arguments.length;
+  var message = normalizeStringArgument(argumentsLength < 1 ? undefined : arguments[0]);
+  var name = normalizeStringArgument(argumentsLength < 2 ? undefined : arguments[1], 'Error');
+  var that = new NativeDOMException(message, name);
+  var error = new Error(message);
+  error.name = DOM_EXCEPTION;
+  defineProperty(that, 'stack', createPropertyDescriptor(1, clearErrorStack(error.stack, 1)));
+  inheritIfRequired(that, this, $DOMException);
+  return that;
+};
+
+var DOMExceptionPrototype = $DOMException.prototype = NativeDOMException.prototype;
+
+var ERROR_HAS_STACK = 'stack' in new Error(DOM_EXCEPTION);
+var DOM_EXCEPTION_HAS_STACK = 'stack' in new NativeDOMException(1, 2);
+
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var descriptor = NativeDOMException && DESCRIPTORS && Object.getOwnPropertyDescriptor(globalThis, DOM_EXCEPTION);
+
+// Bun ~ 0.1.1 DOMException have incorrect descriptor and we can't redefine it
+// https://github.com/Jarred-Sumner/bun/issues/399
+var BUGGY_DESCRIPTOR = !!descriptor && !(descriptor.writable && descriptor.configurable);
+
+var FORCED_CONSTRUCTOR = ERROR_HAS_STACK && !BUGGY_DESCRIPTOR && !DOM_EXCEPTION_HAS_STACK;
+
+// `DOMException` constructor patch for `.stack` where it's required
+// https://webidl.spec.whatwg.org/#es-DOMException-specialness
+$({ global: true, constructor: true, forced: IS_PURE || FORCED_CONSTRUCTOR }, { // TODO: fix export logic
+  DOMException: FORCED_CONSTRUCTOR ? $DOMException : NativeDOMException
+});
+
+var PolyfilledDOMException = getBuiltIn(DOM_EXCEPTION);
+var PolyfilledDOMExceptionPrototype = PolyfilledDOMException.prototype;
+
+if (PolyfilledDOMExceptionPrototype.constructor !== PolyfilledDOMException) {
+  if (!IS_PURE) {
+    defineProperty(PolyfilledDOMExceptionPrototype, 'constructor', createPropertyDescriptor(1, PolyfilledDOMException));
+  }
+
+  for (var key in DOMExceptionConstants) if (hasOwn(DOMExceptionConstants, key)) {
+    var constant = DOMExceptionConstants[key];
+    var constantName = constant.s;
+    if (!hasOwn(PolyfilledDOMException, constantName)) {
+      defineProperty(PolyfilledDOMException, constantName, createPropertyDescriptor(6, constant.c));
+    }
+  }
+}
+
+});
+
+// MODULE: ./node_modules/core-js/modules/web.url.parse.js
+var web_url_parse_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (export_namespaceFn());
+var getBuiltIn = (get_built_in_namespaceFn());
+var validateArgumentsLength = (validate_arguments_length_namespaceFn());
+var toString = (to_string_namespaceFn());
+var USE_NATIVE_URL = (url_constructor_detection_namespaceFn());
+
+var URL = getBuiltIn('URL');
+
+// `URL.parse` method
+// https://url.spec.whatwg.org/#dom-url-parse
+$({ target: 'URL', stat: true, forced: !USE_NATIVE_URL }, {
+  parse: function parse(url) {
+    var length = validateArgumentsLength(arguments.length, 1);
+    var urlString = toString(url);
+    var base = length < 2 || arguments[1] === undefined ? undefined : toString(arguments[1]);
+    try {
+      return new URL(urlString, base);
+    } catch (error) {
+      return null;
+    }
+  }
+});
+
+});
+
+;// ./node_modules/core-js/modules/es.array.includes.js
+es_array_includes_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.array.push.js
+es_array_push_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.iterator.constructor.js
+es_iterator_constructor_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.iterator.filter.js
+es_iterator_filter_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.map.get-or-insert.js
+es_map_get_or_insert_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.map.get-or-insert-computed.js
+es_map_get_or_insert_computed_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.set.difference.v2.js
+es_set_difference_v2_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.set.intersection.v2.js
+es_set_intersection_v2_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.set.is-disjoint-from.v2.js
+es_set_is_disjoint_from_v2_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.set.is-subset-of.v2.js
+es_set_is_subset_of_v2_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.set.is-superset-of.v2.js
+es_set_is_superset_of_v2_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.set.symmetric-difference.v2.js
+es_set_symmetric_difference_v2_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.set.union.v2.js
+es_set_union_v2_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.typed-array.with.js
+es_typed_array_with_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.uint8-array.set-from-base64.js
+es_uint8_array_set_from_base64_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.uint8-array.set-from-hex.js
+es_uint8_array_set_from_hex_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.uint8-array.to-base64.js
+es_uint8_array_to_base64_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.uint8-array.to-hex.js
+es_uint8_array_to_hex_namespaceFn();
+
+;// ./node_modules/core-js/modules/web.url.parse.js
+web_url_parse_namespaceFn();
 
 ;// ./src/shared/util.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const isNodeJS = typeof process === "object" && process + "" === "[object process]" && !process.versions.nw && !(process.versions.electron && process.type && process.type !== "browser");
+const BBOX_INIT = [Infinity, Infinity, -Infinity, -Infinity];
+const F32_BBOX_INIT = new Float32Array(BBOX_INIT);
 const FONT_IDENTITY_MATRIX = [0.001, 0, 0, 0.001, 0, 0];
 const LINE_FACTOR = 1.35;
 const LINE_DESCENT_FACTOR = 0.35;
-const BASELINE_FACTOR = LINE_DESCENT_FACTOR / LINE_FACTOR;
+const BASELINE_FACTOR = (/* unused pure expression or super */ null && (LINE_DESCENT_FACTOR / LINE_FACTOR));
+const SVG_NS = "http://www.w3.org/2000/svg";
 const RenderingIntentFlag = {
   ANY: 0x01,
   DISPLAY: 0x02,
@@ -71,6 +6080,7 @@ const AnnotationMode = {
   ENABLE_FORMS: 2,
   ENABLE_STORAGE: 3
 };
+const AnnotationPrefix = "pdfjs_internal_id_";
 const AnnotationEditorPrefix = "pdfjs_internal_editor_";
 const AnnotationEditorType = {
   DISABLE: -1,
@@ -92,6 +6102,7 @@ const AnnotationEditorParamsType = {
   INK_COLOR: 21,
   INK_THICKNESS: 22,
   INK_OPACITY: 23,
+  INK_COLOR_AND_OPACITY: 24,
   HIGHLIGHT_COLOR: 31,
   HIGHLIGHT_THICKNESS: 32,
   HIGHLIGHT_FREE: 33,
@@ -108,11 +6119,11 @@ const PermissionFlag = {
   ASSEMBLE: 0x400,
   PRINT_HIGH_QUALITY: 0x800
 };
-const MeshFigureType = {
+const MeshFigureType = (/* unused pure expression or super */ null && ({
   TRIANGLES: 1,
   LATTICE: 2,
   PATCH: 3
-};
+}));
 const TextRenderingMode = {
   FILL: 0,
   STROKE: 1,
@@ -156,13 +6167,21 @@ const AnnotationType = {
   TRAPNET: 23,
   WATERMARK: 24,
   THREED: 25,
-  REDACT: 26
+  REDACT: 26,
+  RICHMEDIA: 27
 };
-const AnnotationReplyType = {
+const AnnotationReplyType = (/* unused pure expression or super */ null && ({
   GROUP: "Group",
   REPLY: "R"
-};
-const AnnotationFlag = {
+}));
+const AnnotationRenditionOperation = (/* unused pure expression or super */ null && ({
+  PLAY_OR_RESUME: 0,
+  STOP: 1,
+  PAUSE: 2,
+  RESUME: 3,
+  PLAY: 4
+}));
+const AnnotationFlag = (/* unused pure expression or super */ null && ({
   INVISIBLE: 0x01,
   HIDDEN: 0x02,
   PRINT: 0x04,
@@ -173,8 +6192,8 @@ const AnnotationFlag = {
   LOCKED: 0x80,
   TOGGLENOVIEW: 0x100,
   LOCKEDCONTENTS: 0x200
-};
-const AnnotationFieldFlag = {
+}));
+const AnnotationFieldFlag = (/* unused pure expression or super */ null && ({
   READONLY: 0x0000001,
   REQUIRED: 0x0000002,
   NOEXPORT: 0x0000004,
@@ -194,7 +6213,7 @@ const AnnotationFieldFlag = {
   RICHTEXT: 0x2000000,
   RADIOSINUNISON: 0x2000000,
   COMMITONSELCHANGE: 0x4000000
-};
+}));
 const AnnotationBorderStyleType = {
   SOLID: 1,
   DASHED: 2,
@@ -202,7 +6221,7 @@ const AnnotationBorderStyleType = {
   INSET: 4,
   UNDERLINE: 5
 };
-const AnnotationActionEventType = {
+const AnnotationActionEventType = (/* unused pure expression or super */ null && ({
   E: "Mouse Enter",
   X: "Mouse Exit",
   D: "Mouse Down",
@@ -217,18 +6236,18 @@ const AnnotationActionEventType = {
   F: "Format",
   V: "Validate",
   C: "Calculate"
-};
-const DocumentActionEventType = {
+}));
+const DocumentActionEventType = (/* unused pure expression or super */ null && ({
   WC: "WillClose",
   WS: "WillSave",
   DS: "DidSave",
   WP: "WillPrint",
   DP: "DidPrint"
-};
-const PageActionEventType = {
+}));
+const PageActionEventType = (/* unused pure expression or super */ null && ({
   O: "PageOpen",
   C: "PageClose"
-};
+}));
 const VerbosityLevel = {
   ERRORS: 0,
   WARNINGS: 1,
@@ -360,7 +6379,7 @@ function warn(msg) {
 function unreachable(msg) {
   throw new Error(msg);
 }
-function assert(cond, msg) {
+function util_assert(cond, msg) {
   if (!cond) {
     unreachable(msg);
   }
@@ -411,7 +6430,7 @@ function updateUrlHash(url, hash, allowRel = false) {
 function stripPath(str) {
   return str.substring(str.lastIndexOf("/") + 1);
 }
-function shadow(obj, prop, value, nonSerializable = false) {
+function util_shadow(obj, prop, value, nonSerializable = false) {
   Object.defineProperty(obj, prop, {
     value,
     enumerable: !nonSerializable,
@@ -491,51 +6510,31 @@ function stringToBytes(str) {
   }
   return bytes;
 }
-function string32(value) {
-  return String.fromCharCode(value >> 24 & 0xff, value >> 16 & 0xff, value >> 8 & 0xff, value & 0xff);
-}
-function objectSize(obj) {
-  return Object.keys(obj).length;
-}
-function isLittleEndian() {
-  const buffer8 = new Uint8Array(4);
-  buffer8[0] = 1;
-  const view32 = new Uint32Array(buffer8.buffer, 0, 1);
-  return view32[0] === 1;
-}
-function isEvalSupported() {
-  try {
-    new Function("");
-    return true;
-  } catch {
-    return false;
-  }
-}
 class FeatureTest {
   static get isLittleEndian() {
-    return shadow(this, "isLittleEndian", isLittleEndian());
-  }
-  static get isEvalSupported() {
-    return shadow(this, "isEvalSupported", isEvalSupported());
+    const buffer8 = new Uint8Array(4);
+    buffer8[0] = 1;
+    const view32 = new Uint32Array(buffer8.buffer, 0, 1);
+    return util_shadow(this, "isLittleEndian", view32[0] === 1);
   }
   static get isOffscreenCanvasSupported() {
-    return shadow(this, "isOffscreenCanvasSupported", typeof OffscreenCanvas !== "undefined");
+    return util_shadow(this, "isOffscreenCanvasSupported", typeof OffscreenCanvas !== "undefined");
   }
   static get isImageDecoderSupported() {
-    return shadow(this, "isImageDecoderSupported", typeof ImageDecoder !== "undefined");
+    return util_shadow(this, "isImageDecoderSupported", typeof ImageDecoder !== "undefined");
   }
   static get isFloat16ArraySupported() {
-    return shadow(this, "isFloat16ArraySupported", typeof Float16Array !== "undefined");
+    return util_shadow(this, "isFloat16ArraySupported", typeof Float16Array !== "undefined");
   }
   static get isSanitizerSupported() {
-    return shadow(this, "isSanitizerSupported", typeof Sanitizer !== "undefined");
+    return util_shadow(this, "isSanitizerSupported", typeof Sanitizer !== "undefined");
   }
   static get platform() {
     const {
       platform,
       userAgent
     } = navigator;
-    return shadow(this, "platform", {
+    return util_shadow(this, "platform", {
       isAndroid: userAgent.includes("Android"),
       isLinux: platform.includes("Linux"),
       isMac: platform.includes("Mac"),
@@ -543,61 +6542,37 @@ class FeatureTest {
       isFirefox: userAgent.includes("Firefox")
     });
   }
-  static get isCSSRoundSupported() {
-    return shadow(this, "isCSSRoundSupported", globalThis.CSS?.supports?.("width: round(1.5px, 1px)"));
+  static get isCanvasFilterSupported() {
+    let ctx;
+    if (this.isOffscreenCanvasSupported) {
+      ctx = new OffscreenCanvas(1, 1).getContext("2d");
+    } else if (typeof document !== "undefined") {
+      ctx = document.createElement("canvas").getContext("2d");
+    }
+    return util_shadow(this, "isCanvasFilterSupported", ctx?.filter !== undefined);
+  }
+  static get isAlphaColorInputSupported() {
+    if (typeof document === "undefined") {
+      return util_shadow(this, "isAlphaColorInputSupported", false);
+    }
+    const input = document.createElement("input");
+    input.type = "color";
+    input.setAttribute("alpha", "");
+    input.value = "#ff000080";
+    return util_shadow(this, "isAlphaColorInputSupported", input.value !== "#ff0000");
+  }
+  static get isBackdropFilterSupported() {
+    return util_shadow(this, "isBackdropFilterSupported", typeof CSS !== "undefined" && CSS.supports("backdrop-filter", "blur(1px)"));
   }
 }
-const hexNumbers = Array.from(Array(256).keys(), n => n.toString(16).padStart(2, "0"));
 class Util {
+  static get hexNums() {
+    return util_shadow(this, "hexNums", Array.from({
+      length: 256
+    }, (_, n) => n.toString(16).padStart(2, "0")));
+  }
   static makeHexColor(r, g, b) {
-    return `#${hexNumbers[r]}${hexNumbers[g]}${hexNumbers[b]}`;
-  }
-  static domMatrixToTransform(dm) {
-    return [dm.a, dm.b, dm.c, dm.d, dm.e, dm.f];
-  }
-  static scaleMinMax(transform, minMax) {
-    let temp;
-    if (transform[0]) {
-      if (transform[0] < 0) {
-        temp = minMax[0];
-        minMax[0] = minMax[2];
-        minMax[2] = temp;
-      }
-      minMax[0] *= transform[0];
-      minMax[2] *= transform[0];
-      if (transform[3] < 0) {
-        temp = minMax[1];
-        minMax[1] = minMax[3];
-        minMax[3] = temp;
-      }
-      minMax[1] *= transform[3];
-      minMax[3] *= transform[3];
-    } else {
-      temp = minMax[0];
-      minMax[0] = minMax[1];
-      minMax[1] = temp;
-      temp = minMax[2];
-      minMax[2] = minMax[3];
-      minMax[3] = temp;
-      if (transform[1] < 0) {
-        temp = minMax[1];
-        minMax[1] = minMax[3];
-        minMax[3] = temp;
-      }
-      minMax[1] *= transform[1];
-      minMax[3] *= transform[1];
-      if (transform[2] < 0) {
-        temp = minMax[0];
-        minMax[0] = minMax[2];
-        minMax[2] = temp;
-      }
-      minMax[0] *= transform[2];
-      minMax[2] *= transform[2];
-    }
-    minMax[0] += transform[4];
-    minMax[1] += transform[5];
-    minMax[2] += transform[4];
-    minMax[3] += transform[5];
+    return `#${this.hexNums[r]}${this.hexNums[g]}${this.hexNums[b]}`;
   }
   static transform(m1, m2) {
     return [m1[0] * m2[0] + m1[2] * m2[1], m1[1] * m2[0] + m1[3] * m2[1], m1[0] * m2[2] + m1[2] * m2[3], m1[1] * m2[2] + m1[3] * m2[3], m1[0] * m2[4] + m1[2] * m2[5] + m1[4], m1[1] * m2[4] + m1[3] * m2[5] + m1[5]];
@@ -707,10 +6682,7 @@ class Util {
     }
     const yLow = Math.max(Math.min(rect1[1], rect1[3]), Math.min(rect2[1], rect2[3]));
     const yHigh = Math.min(Math.max(rect1[1], rect1[3]), Math.max(rect2[1], rect2[3]));
-    if (yLow > yHigh) {
-      return null;
-    }
-    return [xLow, yLow, xHigh, yHigh];
+    return yLow > yHigh ? null : [xLow, yLow, xHigh, yHigh];
   }
   static pointBoundingBox(x, y, minMax) {
     minMax[0] = Math.min(minMax[0], x);
@@ -763,51 +6735,6 @@ class Util {
     this.#getExtremum(x0, x1, x2, x3, y0, y1, y2, y3, 3 * (-y0 + 3 * (y1 - y2) + y3), 6 * (y0 - 2 * y1 + y2), 3 * (y1 - y0), minMax);
   }
 }
-const PDFStringTranslateTable = (/* unused pure expression or super */ null && ([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x2d8, 0x2c7, 0x2c6, 0x2d9, 0x2dd, 0x2db, 0x2da, 0x2dc, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x2022, 0x2020, 0x2021, 0x2026, 0x2014, 0x2013, 0x192, 0x2044, 0x2039, 0x203a, 0x2212, 0x2030, 0x201e, 0x201c, 0x201d, 0x2018, 0x2019, 0x201a, 0x2122, 0xfb01, 0xfb02, 0x141, 0x152, 0x160, 0x178, 0x17d, 0x131, 0x142, 0x153, 0x161, 0x17e, 0, 0x20ac]));
-function stringToPDFString(str, keepEscapeSequence = false) {
-  if (str[0] >= "\xEF") {
-    let encoding;
-    if (str[0] === "\xFE" && str[1] === "\xFF") {
-      encoding = "utf-16be";
-      if (str.length % 2 === 1) {
-        str = str.slice(0, -1);
-      }
-    } else if (str[0] === "\xFF" && str[1] === "\xFE") {
-      encoding = "utf-16le";
-      if (str.length % 2 === 1) {
-        str = str.slice(0, -1);
-      }
-    } else if (str[0] === "\xEF" && str[1] === "\xBB" && str[2] === "\xBF") {
-      encoding = "utf-8";
-    }
-    if (encoding) {
-      try {
-        const decoder = new TextDecoder(encoding, {
-          fatal: true
-        });
-        const buffer = stringToBytes(str);
-        const decoded = decoder.decode(buffer);
-        if (keepEscapeSequence || !decoded.includes("\x1b")) {
-          return decoded;
-        }
-        return decoded.replaceAll(/\x1b[^\x1b]*(?:\x1b|$)/g, "");
-      } catch (ex) {
-        warn(`stringToPDFString: "${ex}".`);
-      }
-    }
-  }
-  const strBuf = [];
-  for (let i = 0, ii = str.length; i < ii; i++) {
-    const charCode = str.charCodeAt(i);
-    if (!keepEscapeSequence && charCode === 0x1b) {
-      while (++i < ii && str.charCodeAt(i) !== 0x1b) {}
-      continue;
-    }
-    const code = PDFStringTranslateTable[charCode];
-    strBuf.push(code ? String.fromCharCode(code) : str.charAt(i));
-  }
-  return strBuf.join("");
-}
 function stringToUTF8String(str) {
   return decodeURIComponent(escape(str));
 }
@@ -825,18 +6752,11 @@ function isArrayEqual(arr1, arr2) {
   }
   return true;
 }
-function getModificationDate(date = new Date()) {
-  if (!(date instanceof Date)) {
-    date = new Date(date);
-  }
-  const buffer = [date.getUTCFullYear().toString(), (date.getUTCMonth() + 1).toString().padStart(2, "0"), date.getUTCDate().toString().padStart(2, "0"), date.getUTCHours().toString().padStart(2, "0"), date.getUTCMinutes().toString().padStart(2, "0"), date.getUTCSeconds().toString().padStart(2, "0")];
-  return buffer.join("");
-}
 let NormalizeRegex = null;
 let NormalizationMap = null;
 function normalizeUnicode(str) {
   if (!NormalizeRegex) {
-    NormalizeRegex = /([\u00a0\u00b5\u037e\u0eb3\u2000-\u200a\u202f\u2126\ufb00-\ufb04\ufb06\ufb20-\ufb36\ufb38-\ufb3c\ufb3e\ufb40-\ufb41\ufb43-\ufb44\ufb46-\ufba1\ufba4-\ufba9\ufbae-\ufbb1\ufbd3-\ufbdc\ufbde-\ufbe7\ufbea-\ufbf8\ufbfc-\ufbfd\ufc00-\ufc5d\ufc64-\ufcf1\ufcf5-\ufd3d\ufd88\ufdf4\ufdfa-\ufdfb\ufe71\ufe77\ufe79\ufe7b\ufe7d]+)|(\ufb05+)/gu;
+    NormalizeRegex = /([\u00a0\u00b5\u037e\u0eb3\u2000-\u200a\u202f\u2126\ufb00-\ufb04\ufb06\ufb20-\ufb36\ufb38-\ufb3c\ufb3e\ufb40\ufb41\ufb43\ufb44\ufb46-\ufba1\ufba4-\ufba9\ufbae-\ufbb1\ufbd3-\ufbdc\ufbde-\ufbe7\ufbea-\ufbf8\ufbfc\ufbfd\ufc00-\ufc5d\ufc64-\ufcf1\ufcf5-\ufd3d\ufd88\ufdf4\ufdfa\ufdfb\ufe71\ufe77\ufe79\ufe7b\ufe7d]+)|(\ufb05+)/gu;
     NormalizationMap = new Map([["ﬅ", "ſt"]]);
   }
   return str.replaceAll(NormalizeRegex, (_, p1, p2) => p1 ? p1.normalize("NFKC") : NormalizationMap.get(p2));
@@ -849,7 +6769,6 @@ function getUuid() {
   crypto.getRandomValues(buf);
   return bytesToString(buf);
 }
-const AnnotationPrefix = "pdfjs_internal_id_";
 function _isValidExplicitDest(validRef, validName, dest) {
   if (!Array.isArray(dest) || dest.length < 2) {
     return false;
@@ -900,320 +6819,33 @@ function _isValidExplicitDest(validRef, validName, dest) {
 const makeArr = () => [];
 const makeMap = () => new Map();
 const makeObj = () => Object.create(null);
-function MathClamp(v, min, max) {
-  return Math.min(Math.max(v, min), max);
+const makeSet = () => new Set();
+if (typeof Blob.prototype.bytes !== "function") {
+  Blob.prototype.bytes = async function () {
+    return new Uint8Array(await this.arrayBuffer());
+  };
 }
-if (typeof Math.sumPrecise !== "function") {
-  Math.sumPrecise = function (numbers) {
-    return numbers.reduce((a, b) => a + b, 0);
+if (typeof Response.prototype.bytes !== "function") {
+  Response.prototype.bytes = async function () {
+    return new Uint8Array(await this.arrayBuffer());
+  };
+}
+if (typeof Iterator.prototype.join !== "function") {
+  Iterator.prototype.join = function (separator) {
+    return [...this].join(separator);
   };
 }
 
-;// ./src/display/xfa_text.js
-class XfaText {
-  static textContent(xfa) {
-    const items = [];
-    const output = {
-      items,
-      styles: Object.create(null)
-    };
-    function walk(node) {
-      if (!node) {
-        return;
-      }
-      let str = null;
-      const name = node.name;
-      if (name === "#text") {
-        str = node.value;
-      } else if (!XfaText.shouldBuildText(name)) {
-        return;
-      } else if (node?.attributes?.textContent) {
-        str = node.attributes.textContent;
-      } else if (node.value) {
-        str = node.value;
-      }
-      if (str !== null) {
-        items.push({
-          str
-        });
-      }
-      if (!node.children) {
-        return;
-      }
-      for (const child of node.children) {
-        walk(child);
-      }
-    }
-    walk(xfa);
-    return output;
-  }
-  static shouldBuildText(name) {
-    return !(name === "textarea" || name === "input" || name === "option" || name === "select");
-  }
+;// ./node_modules/core-js/modules/es.iterator.map.js
+es_iterator_map_namespaceFn();
+
+;// ./src/shared/math_clamp.js
+function MathClamp(v, min, max) {
+  return Math.min(Math.max(v, min), max);
 }
 
-;// ./src/display/xfa_layer.js
+;// ./src/display/page_viewport.js
 
-class XfaLayer {
-  static setupStorage(html, id, element, storage, intent) {
-    const storedData = storage.getValue(id, {
-      value: null
-    });
-    switch (element.name) {
-      case "textarea":
-        if (storedData.value !== null) {
-          html.textContent = storedData.value;
-        }
-        if (intent === "print") {
-          break;
-        }
-        html.addEventListener("input", event => {
-          storage.setValue(id, {
-            value: event.target.value
-          });
-        });
-        break;
-      case "input":
-        if (element.attributes.type === "radio" || element.attributes.type === "checkbox") {
-          if (storedData.value === element.attributes.xfaOn) {
-            html.setAttribute("checked", true);
-          } else if (storedData.value === element.attributes.xfaOff) {
-            html.removeAttribute("checked");
-          }
-          if (intent === "print") {
-            break;
-          }
-          html.addEventListener("change", event => {
-            storage.setValue(id, {
-              value: event.target.checked ? event.target.getAttribute("xfaOn") : event.target.getAttribute("xfaOff")
-            });
-          });
-        } else {
-          if (storedData.value !== null) {
-            html.setAttribute("value", storedData.value);
-          }
-          if (intent === "print") {
-            break;
-          }
-          html.addEventListener("input", event => {
-            storage.setValue(id, {
-              value: event.target.value
-            });
-          });
-        }
-        break;
-      case "select":
-        if (storedData.value !== null) {
-          html.setAttribute("value", storedData.value);
-          for (const option of element.children) {
-            if (option.attributes.value === storedData.value) {
-              option.attributes.selected = true;
-            } else if (option.attributes.hasOwnProperty("selected")) {
-              delete option.attributes.selected;
-            }
-          }
-        }
-        html.addEventListener("input", event => {
-          const options = event.target.options;
-          const value = options.selectedIndex === -1 ? "" : options[options.selectedIndex].value;
-          storage.setValue(id, {
-            value
-          });
-        });
-        break;
-    }
-  }
-  static setAttributes({
-    html,
-    element,
-    storage = null,
-    intent,
-    linkService
-  }) {
-    const {
-      attributes
-    } = element;
-    const isHTMLAnchorElement = html instanceof HTMLAnchorElement;
-    if (attributes.type === "radio") {
-      attributes.name = `${attributes.name}-${intent}`;
-    }
-    for (const [key, value] of Object.entries(attributes)) {
-      if (value === null || value === undefined) {
-        continue;
-      }
-      switch (key) {
-        case "class":
-          if (value.length) {
-            html.setAttribute(key, value.join(" "));
-          }
-          break;
-        case "dataId":
-          break;
-        case "id":
-          html.setAttribute("data-element-id", value);
-          break;
-        case "style":
-          Object.assign(html.style, value);
-          break;
-        case "textContent":
-          html.textContent = value;
-          break;
-        default:
-          if (!isHTMLAnchorElement || key !== "href" && key !== "newWindow") {
-            html.setAttribute(key, value);
-          }
-      }
-    }
-    if (isHTMLAnchorElement) {
-      linkService.addLinkAttributes(html, attributes.href, attributes.newWindow);
-    }
-    if (storage && attributes.dataId) {
-      this.setupStorage(html, attributes.dataId, element, storage);
-    }
-  }
-  static render(parameters) {
-    const storage = parameters.annotationStorage;
-    const linkService = parameters.linkService;
-    const root = parameters.xfaHtml;
-    const intent = parameters.intent || "display";
-    const rootHtml = document.createElement(root.name);
-    if (root.attributes) {
-      this.setAttributes({
-        html: rootHtml,
-        element: root,
-        intent,
-        linkService
-      });
-    }
-    const isNotForRichText = intent !== "richText";
-    const rootDiv = parameters.div;
-    rootDiv.append(rootHtml);
-    if (parameters.viewport) {
-      const transform = `matrix(${parameters.viewport.transform.join(",")})`;
-      rootDiv.style.transform = transform;
-    }
-    if (isNotForRichText) {
-      rootDiv.setAttribute("class", "xfaLayer xfaFont");
-    }
-    const textDivs = [];
-    if (root.children.length === 0) {
-      if (root.value) {
-        const node = document.createTextNode(root.value);
-        rootHtml.append(node);
-        if (isNotForRichText && XfaText.shouldBuildText(root.name)) {
-          textDivs.push(node);
-        }
-      }
-      return {
-        textDivs
-      };
-    }
-    const stack = [[root, -1, rootHtml]];
-    while (stack.length > 0) {
-      const [parent, i, html] = stack.at(-1);
-      if (i + 1 === parent.children.length) {
-        stack.pop();
-        continue;
-      }
-      const child = parent.children[++stack.at(-1)[1]];
-      if (child === null) {
-        continue;
-      }
-      const {
-        name
-      } = child;
-      if (name === "#text") {
-        const node = document.createTextNode(child.value);
-        textDivs.push(node);
-        html.append(node);
-        continue;
-      }
-      const childHtml = child?.attributes?.xmlns ? document.createElementNS(child.attributes.xmlns, name) : document.createElement(name);
-      html.append(childHtml);
-      if (child.attributes) {
-        this.setAttributes({
-          html: childHtml,
-          element: child,
-          storage,
-          intent,
-          linkService
-        });
-      }
-      if (child.children?.length > 0) {
-        stack.push([child, -1, childHtml]);
-      } else if (child.value) {
-        const node = document.createTextNode(child.value);
-        if (isNotForRichText && XfaText.shouldBuildText(name)) {
-          textDivs.push(node);
-        }
-        childHtml.append(node);
-      }
-    }
-    for (const el of rootDiv.querySelectorAll(".xfaNonInteractive input, .xfaNonInteractive textarea")) {
-      el.setAttribute("readOnly", true);
-    }
-    return {
-      textDivs
-    };
-  }
-  static update(parameters) {
-    const transform = `matrix(${parameters.viewport.transform.join(",")})`;
-    parameters.div.style.transform = transform;
-    parameters.div.hidden = false;
-  }
-}
-
-;// ./src/display/display_utils.js
-
-
-const SVG_NS = "http://www.w3.org/2000/svg";
-class PixelsPerInch {
-  static CSS = 96.0;
-  static PDF = 72.0;
-  static PDF_TO_CSS_UNITS = this.CSS / this.PDF;
-}
-async function fetchData(url, type = "text") {
-  if (isValidFetchUrl(url, document.baseURI)) {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    switch (type) {
-      case "blob":
-        return response.blob();
-      case "bytes":
-        return response.bytes();
-      case "json":
-        return response.json();
-    }
-    return response.text();
-  }
-  return new Promise((resolve, reject) => {
-    const request = new XMLHttpRequest();
-    request.open("GET", url, true);
-    request.responseType = type === "bytes" ? "arraybuffer" : type;
-    request.onreadystatechange = () => {
-      if (request.readyState !== XMLHttpRequest.DONE) {
-        return;
-      }
-      if (request.status === 200 || request.status === 0) {
-        switch (type) {
-          case "bytes":
-            resolve(new Uint8Array(request.response));
-            return;
-          case "blob":
-          case "json":
-            resolve(request.response);
-            return;
-        }
-        resolve(request.responseText);
-        return;
-      }
-      reject(new Error(request.statusText));
-    };
-    request.send(null);
-  });
-}
 class PageViewport {
   constructor({
     viewBox,
@@ -1289,7 +6921,7 @@ class PageViewport {
   }
   get rawDims() {
     const dims = this.viewBox;
-    return shadow(this, "rawDims", {
+    return util_shadow(this, "rawDims", {
       pageWidth: dims[2] - dims[0],
       pageHeight: dims[3] - dims[1],
       pageX: dims[0],
@@ -1318,18 +6950,404 @@ class PageViewport {
     Util.applyTransform(p, this.transform);
     return p;
   }
-  convertToViewportRectangle(rect) {
-    const topLeft = [rect[0], rect[1]];
-    Util.applyTransform(topLeft, this.transform);
-    const bottomRight = [rect[2], rect[3]];
-    Util.applyTransform(bottomRight, this.transform);
-    return [topLeft[0], topLeft[1], bottomRight[0], bottomRight[1]];
-  }
   convertToPdfPoint(x, y) {
     const p = [x, y];
     Util.applyInverseTransform(p, this.transform);
     return p;
   }
+}
+
+;// ./src/display/xfa_text.js
+
+class XfaText {
+  static textContent(xfa) {
+    const items = [];
+    const output = {
+      items,
+      styles: Object.create(null)
+    };
+    function walk(node) {
+      if (!node) {
+        return;
+      }
+      let str = null;
+      const name = node.name;
+      if (name === "#text") {
+        str = node.value;
+      } else if (!XfaText.shouldBuildText(name)) {
+        return;
+      } else if (node?.attributes?.textContent) {
+        str = node.attributes.textContent;
+      } else if (node.value) {
+        str = node.value;
+      }
+      if (str !== null) {
+        items.push({
+          str
+        });
+      }
+      if (!node.children) {
+        return;
+      }
+      for (const child of node.children) {
+        walk(child);
+      }
+    }
+    walk(xfa);
+    return output;
+  }
+  static shouldBuildText(name) {
+    return !(name === "textarea" || name === "input" || name === "option" || name === "select");
+  }
+}
+
+;// ./src/display/xfa_layer.js
+
+
+
+
+
+
+
+
+
+
+
+const disallowedRichTextStyleRegExp = /url\(|image-set\(/i;
+const disallowedEventHandlerAttrRegExp = /^on/i;
+class XfaLayer {
+  static get _allowedHtmlElements() {
+    return util_shadow(this, "_allowedHtmlElements", new Set(["a", "b", "br", "button", "div", "i", "img", "input", "label", "li", "ol", "option", "p", "select", "span", "sub", "sup", "textarea", "ul"]));
+  }
+  static get _allowedSvgElements() {
+    return util_shadow(this, "_allowedSvgElements", new Set(["ellipse", "line", "path", "rect", "svg"]));
+  }
+  static get _allowedRichTextElements() {
+    return util_shadow(this, "_allowedRichTextElements", new Set(["a", "b", "br", "div", "i", "li", "ol", "p", "span", "sub", "sup", "ul"]));
+  }
+  static get _allowedRichTextAttributes() {
+    return util_shadow(this, "_allowedRichTextAttributes", new Set(["class", "dir", "style"]));
+  }
+  static get _allowedRichTextStyles() {
+    return util_shadow(this, "_allowedRichTextStyles", new Set(["color", "font", "fontFamily", "fontSize", "fontStretch", "fontStyle", "fontWeight", "kerningMode", "letterSpacing", "lineHeight", "margin", "marginBottom", "marginLeft", "marginRight", "marginTop", "orphans", "paddingLeft", "paddingRight", "breakAfter", "breakBefore", "breakInside", "tabInterval", "tabStop", "textAlign", "textDecoration", "textIndent", "transform", "verticalAlign", "widows"]));
+  }
+  static setupStorage(html, id, element, storage, intent) {
+    const storedData = storage.getValue(id, {
+      value: null
+    });
+    switch (element.name) {
+      case "textarea":
+        if (storedData.value !== null) {
+          html.textContent = storedData.value;
+        }
+        if (intent === "print") {
+          break;
+        }
+        html.addEventListener("input", event => {
+          storage.setValue(id, {
+            value: event.target.value
+          });
+        });
+        break;
+      case "input":
+        if (element.attributes.type === "radio" || element.attributes.type === "checkbox") {
+          if (storedData.value === element.attributes.xfaOn) {
+            html.setAttribute("checked", true);
+          } else if (storedData.value === element.attributes.xfaOff) {
+            html.removeAttribute("checked");
+          }
+          if (intent === "print") {
+            break;
+          }
+          html.addEventListener("change", event => {
+            storage.setValue(id, {
+              value: event.target.checked ? event.target.getAttribute("xfaOn") : event.target.getAttribute("xfaOff")
+            });
+          });
+        } else {
+          if (storedData.value !== null) {
+            html.setAttribute("value", storedData.value);
+          }
+          if (intent === "print") {
+            break;
+          }
+          html.addEventListener("input", event => {
+            storage.setValue(id, {
+              value: event.target.value
+            });
+          });
+        }
+        break;
+      case "select":
+        if (storedData.value !== null) {
+          html.setAttribute("value", storedData.value);
+          for (const option of element.children) {
+            if (option.attributes.value === storedData.value) {
+              option.attributes.selected = true;
+            } else if (Object.hasOwn(option.attributes, "selected")) {
+              delete option.attributes.selected;
+            }
+          }
+        }
+        html.addEventListener("input", event => {
+          const options = event.target.options;
+          const value = options.selectedIndex === -1 ? "" : options[options.selectedIndex].value;
+          storage.setValue(id, {
+            value
+          });
+        });
+        break;
+    }
+  }
+  static setAttributes({
+    html,
+    element,
+    storage = null,
+    intent,
+    linkService
+  }) {
+    const {
+      attributes
+    } = element;
+    const isHTMLAnchorElement = html instanceof HTMLAnchorElement;
+    if (attributes.type === "radio") {
+      attributes.name = `${attributes.name}-${intent}`;
+    }
+    for (const [key, value] of Object.entries(attributes)) {
+      if (value === null || value === undefined || disallowedEventHandlerAttrRegExp.test(key)) {
+        continue;
+      }
+      if (intent === "richText" && !this._allowedRichTextAttributes.has(key)) {
+        continue;
+      }
+      switch (key) {
+        case "class":
+          if (value.length) {
+            html.setAttribute(key, value.join(" "));
+          }
+          break;
+        case "dataId":
+          break;
+        case "id":
+          html.setAttribute("data-element-id", value);
+          break;
+        case "style":
+          if (intent === "richText") {
+            const allowedStyles = this._allowedRichTextStyles;
+            for (const [styleName, styleValue] of Object.entries(value)) {
+              if (allowedStyles.has(styleName) && !disallowedRichTextStyleRegExp.test(styleValue)) {
+                html.style[styleName] = styleValue;
+              }
+            }
+          } else {
+            Object.assign(html.style, value);
+          }
+          break;
+        case "textContent":
+          html.textContent = value;
+          break;
+        default:
+          if (!isHTMLAnchorElement || key !== "href" && key !== "newWindow") {
+            html.setAttribute(key, value);
+          }
+      }
+    }
+    if (isHTMLAnchorElement) {
+      linkService?.addLinkAttributes(html, attributes.href, attributes.newWindow);
+    }
+    if (storage && attributes.dataId) {
+      this.setupStorage(html, attributes.dataId, element, storage);
+    }
+  }
+  static #createElement(name, xmlns, intent) {
+    if (intent === "richText") {
+      return !xmlns && this._allowedRichTextElements.has(name) ? document.createElement(name) : null;
+    }
+    if (xmlns) {
+      return xmlns === SVG_NS && this._allowedSvgElements.has(name) ? document.createElementNS(SVG_NS, name) : null;
+    }
+    return this._allowedHtmlElements.has(name) ? document.createElement(name) : null;
+  }
+  static render(parameters) {
+    const storage = parameters.annotationStorage;
+    const linkService = parameters.linkService;
+    const root = parameters.xfaHtml;
+    const intent = parameters.intent || "display";
+    const rootHtml = this.#createElement(root.name, root.attributes?.xmlns, intent) ?? document.createElement("div");
+    if (root.attributes) {
+      this.setAttributes({
+        html: rootHtml,
+        element: root,
+        intent,
+        linkService
+      });
+    }
+    const isNotForRichText = intent !== "richText";
+    const rootDiv = parameters.div;
+    rootDiv.append(rootHtml);
+    if (parameters.viewport) {
+      const transform = `matrix(${parameters.viewport.transform.join(",")})`;
+      rootDiv.style.transform = transform;
+    }
+    if (isNotForRichText) {
+      rootDiv.setAttribute("class", "xfaLayer xfaFont");
+    }
+    const textDivs = [];
+    if (root.children.length === 0) {
+      if (root.value) {
+        const node = document.createTextNode(root.value);
+        rootHtml.append(node);
+        if (isNotForRichText && XfaText.shouldBuildText(root.name)) {
+          textDivs.push(node);
+        }
+      }
+      return {
+        textDivs
+      };
+    }
+    const stack = [[root, -1, rootHtml]];
+    while (stack.length > 0) {
+      const [parent, i, html] = stack.at(-1);
+      if (i + 1 === parent.children.length) {
+        stack.pop();
+        continue;
+      }
+      const child = parent.children[++stack.at(-1)[1]];
+      if (child === null) {
+        continue;
+      }
+      const {
+        name
+      } = child;
+      if (name === "#text") {
+        const node = document.createTextNode(child.value);
+        textDivs.push(node);
+        html.append(node);
+        continue;
+      }
+      const childHtml = this.#createElement(name, child.attributes?.xmlns, intent);
+      if (!childHtml) {
+        continue;
+      }
+      html.append(childHtml);
+      if (child.attributes) {
+        this.setAttributes({
+          html: childHtml,
+          element: child,
+          storage,
+          intent,
+          linkService
+        });
+      }
+      if (child.children?.length > 0) {
+        stack.push([child, -1, childHtml]);
+      } else if (child.value) {
+        const node = document.createTextNode(child.value);
+        if (isNotForRichText && XfaText.shouldBuildText(name)) {
+          textDivs.push(node);
+        }
+        childHtml.append(node);
+      }
+    }
+    for (const el of rootDiv.querySelectorAll(".xfaNonInteractive input, .xfaNonInteractive textarea")) {
+      el.setAttribute("readOnly", true);
+    }
+    return {
+      textDivs
+    };
+  }
+  static update(parameters) {
+    const transform = `matrix(${parameters.viewport.transform.join(",")})`;
+    parameters.div.style.transform = transform;
+    parameters.div.hidden = false;
+  }
+  static getPageViewport(xfaPage, {
+    scale = 1,
+    rotation = 0
+  }) {
+    const {
+      width,
+      height
+    } = xfaPage.attributes.style;
+    return new PageViewport({
+      viewBox: [0, 0, parseInt(width, 10), parseInt(height, 10)],
+      userUnit: 1,
+      scale,
+      rotation
+    });
+  }
+}
+
+;// ./src/display/display_utils.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class PixelsPerInch {
+  static CSS = 96.0;
+  static PDF = 72.0;
+  static PDF_TO_CSS_UNITS = this.CSS / this.PDF;
+}
+async function fetchData(url, type = "text") {
+  if (isValidFetchUrl(url, document.baseURI)) {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    switch (type) {
+      case "blob":
+        return response.blob();
+      case "bytes":
+        return response.bytes();
+      case "json":
+        return response.json();
+    }
+    return response.text();
+  }
+  return new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open("GET", url, true);
+    request.responseType = type === "bytes" ? "arraybuffer" : type;
+    request.onreadystatechange = () => {
+      if (request.readyState !== XMLHttpRequest.DONE) {
+        return;
+      }
+      if (request.status === 200 || request.status === 0) {
+        switch (type) {
+          case "bytes":
+            resolve(new Uint8Array(request.response));
+            return;
+          case "blob":
+          case "json":
+            resolve(request.response);
+            return;
+        }
+        resolve(request.responseText);
+        return;
+      }
+      reject(new Error(request.statusText));
+    };
+    request.send(null);
+  });
 }
 class RenderingCancelledException extends BaseException {
   constructor(msg, extraDelay = 0) {
@@ -1363,21 +7381,17 @@ function getPdfFilenameFromUrl(url, defaultFilename = "document.pdf") {
   const getURL = urlString => {
     try {
       return new URL(urlString);
-    } catch {
-      try {
-        return new URL(decodeURIComponent(urlString));
-      } catch {
-        try {
-          return new URL(urlString, "https://foo.bar");
-        } catch {
-          try {
-            return new URL(decodeURIComponent(urlString), "https://foo.bar");
-          } catch {
-            return null;
-          }
-        }
-      }
-    }
+    } catch {}
+    try {
+      return new URL(decodeURIComponent(urlString));
+    } catch {}
+    try {
+      return new URL(urlString, "https://foo.bar");
+    } catch {}
+    try {
+      return new URL(decodeURIComponent(urlString), "https://foo.bar");
+    } catch {}
+    return null;
   };
   const newURL = getURL(url);
   if (!newURL) {
@@ -1388,7 +7402,7 @@ function getPdfFilenameFromUrl(url, defaultFilename = "document.pdf") {
       let decoded = decodeURIComponent(name);
       if (decoded.includes("/")) {
         decoded = stripPath(decoded);
-        if (/^\.pdf$/i.test(decoded)) {
+        if (decoded.length === 4 && pdfRegex.test(decoded)) {
           return name;
         }
       }
@@ -1410,10 +7424,23 @@ function getPdfFilenameFromUrl(url, defaultFilename = "document.pdf") {
     }
   }
   if (newURL.hash) {
-    const reFilename = /[^/?#=]+\.pdf\b(?!.*\.pdf\b)/i;
-    const hashFilename = reFilename.exec(newURL.hash);
-    if (hashFilename) {
-      return decode(hashFilename[0]);
+    const {
+      hash
+    } = newURL;
+    let extensionStart = -1;
+    for (const {
+      index
+    } of hash.matchAll(/\.pdf\b/gi)) {
+      extensionStart = index;
+    }
+    if (extensionStart > 0) {
+      let filenameStart = extensionStart;
+      while (filenameStart > 0 && !"/?#=".includes(hash[filenameStart - 1])) {
+        filenameStart--;
+      }
+      if (filenameStart < extensionStart) {
+        return decode(hash.slice(filenameStart, extensionStart + 4));
+      }
     }
   }
   return defaultFilename;
@@ -1466,7 +7493,7 @@ class PDFDateString {
     if (!input || typeof input !== "string") {
       return null;
     }
-    this.#regex ||= new RegExp("^D:" + "(\\d{4})" + "(\\d{2})?" + "(\\d{2})?" + "(\\d{2})?" + "(\\d{2})?" + "(\\d{2})?" + "([Z|+|-])?" + "(\\d{2})?" + "'?" + "(\\d{2})?" + "'?");
+    this.#regex ||= new RegExp("^D:" + "(\\d{4})" + "(\\d{2})?" + "(\\d{2})?" + "(\\d{2})?" + "(\\d{2})?" + "(\\d{2})?" + "([Z|+\\-])?" + "(\\d{2})?" + "'?" + "(\\d{2})?" + "'?");
     const matches = this.#regex.exec(input);
     if (!matches) {
       return null;
@@ -1497,35 +7524,32 @@ class PDFDateString {
     return new Date(Date.UTC(year, month, day, hour, minute, second));
   }
 }
-function getXfaPageViewport(xfaPage, {
-  scale = 1,
-  rotation = 0
-}) {
-  const {
-    width,
-    height
-  } = xfaPage.attributes.style;
-  const viewBox = [0, 0, parseInt(width), parseInt(height)];
-  return new PageViewport({
-    viewBox,
-    userUnit: 1,
-    scale,
-    rotation
-  });
-}
-function getRGB(color) {
+function getRGBA(color) {
   if (color.startsWith("#")) {
-    const colorRGB = parseInt(color.slice(1), 16);
-    return [(colorRGB & 0xff0000) >> 16, (colorRGB & 0x00ff00) >> 8, colorRGB & 0x0000ff];
+    const hex = color.slice(1);
+    return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16), hex.length >= 8 ? parseInt(hex.slice(6, 8), 16) / 255 : 1];
   }
   if (color.startsWith("rgb(")) {
-    return color.slice(4, -1).split(",").map(x => parseInt(x));
+    const [r, g, b] = color.slice(4, -1).split(",").map(x => parseInt(x, 10));
+    return [r, g, b, 1];
   }
   if (color.startsWith("rgba(")) {
-    return color.slice(5, -1).split(",", 3).map(x => parseInt(x));
+    const parts = color.slice(5, -1).split(",");
+    return [parseInt(parts[0], 10), parseInt(parts[1], 10), parseInt(parts[2], 10), parseFloat(parts[3])];
   }
-  warn(`Not a valid color format: "${color}"`);
-  return [0, 0, 0];
+  const m = color.match(/^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+|none))?\)$/);
+  if (m) {
+    return [Math.round(parseFloat(m[1]) * 255), Math.round(parseFloat(m[2]) * 255), Math.round(parseFloat(m[3]) * 255), m[4] !== undefined && m[4] !== "none" ? parseFloat(m[4]) : 1];
+  }
+  return null;
+}
+function getRGB(color) {
+  const rgba = getRGBA(color);
+  if (!rgba) {
+    warn(`Not a valid color format: "${color}"`);
+    return [0, 0, 0];
+  }
+  return rgba.slice(0, 3);
 }
 function getColorValues(colors) {
   const span = document.createElement("span");
@@ -1570,11 +7594,8 @@ function setLayerDimensions(div, viewport, mustFlip = false, mustRotate = true) 
     const {
       style
     } = div;
-    const useRound = FeatureTest.isCSSRoundSupported;
-    const w = `var(--total-scale-factor) * ${pageWidth}px`,
-      h = `var(--total-scale-factor) * ${pageHeight}px`;
-    const widthStr = useRound ? `round(down, ${w}, var(--scale-round-x))` : `calc(${w})`,
-      heightStr = useRound ? `round(down, ${h}, var(--scale-round-y))` : `calc(${h})`;
+    const widthStr = `round(down, var(--total-scale-factor) * ${pageWidth}px, var(--scale-round-x))`,
+      heightStr = `round(down, var(--total-scale-factor) * ${pageHeight}px, var(--scale-round-y))`;
     if (!mustFlip || viewport.rotation % 180 === 0) {
       style.width = widthStr;
       style.height = heightStr;
@@ -1632,10 +7653,10 @@ class OutputScale {
     return maxPixels;
   }
 }
-const SupportedImageMimeTypes = ["image/apng", "image/avif", "image/bmp", "image/gif", "image/jpeg", "image/png", "image/svg+xml", "image/webp", "image/x-icon"];
+const SupportedImageMimeTypes = new Set(["image/apng", "image/avif", "image/bmp", "image/gif", "image/jpeg", "image/png", "image/svg+xml", "image/webp", "image/x-icon"]);
 class ColorScheme {
   static get isDarkMode() {
-    return shadow(this, "isDarkMode", !!window?.matchMedia?.("(prefers-color-scheme: dark)").matches);
+    return util_shadow(this, "isDarkMode", !!window?.matchMedia?.("(prefers-color-scheme: dark)").matches);
   }
 }
 class CSSConstants {
@@ -1653,7 +7674,7 @@ class CSSConstants {
       color
     } = window.getComputedStyle(element);
     element.remove();
-    return shadow(this, "commentForegroundColor", getRGB(color));
+    return util_shadow(this, "commentForegroundColor", getRGB(color));
   }
 }
 function applyOpacity(color, opacity) {
@@ -1790,7 +7811,7 @@ function renderRichText({
   if (typeof html === "string") {
     const p = document.createElement("p");
     p.dir = dir || "auto";
-    const lines = html.split(/(?:\r\n?|\n)/);
+    const lines = html.split(/\r\n?|\n/);
     for (let i = 0, ii = lines.length; i < ii; ++i) {
       const line = lines[i];
       p.append(document.createTextNode(line));
@@ -1838,6 +7859,36 @@ function makePathFromDrawOPS(data) {
   }
   return path;
 }
+
+;// ./node_modules/core-js/modules/es.iterator.take.js
+es_iterator_take_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.weak-map.get-or-insert.js
+es_weak_map_get_or_insert_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.weak-map.get-or-insert-computed.js
+es_weak_map_get_or_insert_computed_namespaceFn();
+
+;// ./node_modules/core-js/modules/web.dom-exception.stack.js
+web_dom_exception_stack_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.iterator.some.js
+es_iterator_some_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.json.stringify.js
+es_json_stringify_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.iterator.drop.js
+es_iterator_drop_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.iterator.every.js
+es_iterator_every_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.iterator.find.js
+es_iterator_find_namespaceFn();
+
+;// ./node_modules/core-js/modules/es.json.parse.js
+es_json_parse_namespaceFn();
 
 ;// ./src/display/editor/toolbar.js
 
@@ -1988,6 +8039,9 @@ class EditorToolbar {
   }
   async addEditSignatureButton(signatureManager) {
     const button = this.#signatureDescriptionButton = await signatureManager.renderEditButton(this.#editor);
+    if (!button) {
+      return;
+    }
     this.#addListenersToElement(button);
     this.#buttons.append(button, this.#divider);
   }
@@ -2062,6 +8116,7 @@ class FloatingToolbar {
     const editToolbar = this.#toolbar = document.createElement("div");
     editToolbar.className = "editToolbar";
     editToolbar.setAttribute("role", "toolbar");
+    editToolbar.dir = this.#uiManager.direction;
     const signal = this.#uiManager._signal;
     if (signal instanceof AbortSignal && !signal.aborted) {
       editToolbar.addEventListener("contextmenu", noContextMenu, {
@@ -2139,7 +8194,33 @@ class FloatingToolbar {
   }
 }
 
+;// ./src/shared/internal_evt.js
+const INTERNAL_EVT = "fed9040f-f139-41a7-bcf0-3bcfcca89c08";
+const internalOpt = Object.freeze({
+  internal: INTERNAL_EVT
+});
+
 ;// ./src/display/editor/tools.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2207,7 +8288,7 @@ class ImageManager {
   #id = 0;
   #cache = null;
   static get _isSVGFittingCanvas() {
-    const svg = `data:image/svg+xml;charset=UTF-8,<svg viewBox="0 0 1 1" width="1" height="1" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" style="fill:red;"/></svg>`;
+    const svg = `data:image/svg+xml;charset=UTF-8,<svg viewBox="0 0 1 1" width="1" height="1" xmlns="${SVG_NS}"><rect width="1" height="1" style="fill:red;"/></svg>`;
     const canvas = new OffscreenCanvas(1, 3);
     const ctx = canvas.getContext("2d", {
       willReadFrequently: true
@@ -2218,7 +8299,7 @@ class ImageManager {
       ctx.drawImage(image, 0, 0, 1, 1, 0, 0, 1, 3);
       return new Uint32Array(ctx.getImageData(0, 0, 1, 1).data.buffer)[0] === 0;
     });
-    return shadow(this, "_isSVGFittingCanvas", promise);
+    return util_shadow(this, "_isSVGFittingCanvas", promise);
   }
   async #get(key, rawData) {
     this.#cache ||= new Map();
@@ -2338,10 +8419,7 @@ class ImageManager {
   }
   getSvgUrl(id) {
     const data = this.#cache.get(id);
-    if (!data?.isSvg) {
-      return null;
-    }
-    return data.svgUrl;
+    return !data?.isSvg ? null : data.svgUrl;
   }
   deleteId(id) {
     this.#cache ||= new Map();
@@ -2476,55 +8554,86 @@ class CommandManager {
   }
 }
 class KeyboardManager {
+  static ALT = 0x1;
+  static CTRL = 0x2;
+  static META = 0x4;
+  static SHIFT = 0x8;
   constructor(callbacks) {
-    this.buffer = [];
     this.callbacks = new Map();
-    this.allKeys = new Set();
     const {
       isMac
     } = FeatureTest.platform;
     for (const [keys, callback, options = {}] of callbacks) {
+      const hasMacOverride = keys.some(k => k.startsWith("mac+"));
       for (const key of keys) {
-        const isMacKey = key.startsWith("mac+");
-        if (isMac && isMacKey) {
-          this.callbacks.set(key.slice(4), {
-            callback,
-            options
-          });
-          this.allKeys.add(key.split("+").at(-1));
-        } else if (!isMac && !isMacKey) {
-          this.callbacks.set(key, {
-            callback,
-            options
-          });
-          this.allKeys.add(key.split("+").at(-1));
+        let shortcut = key;
+        if (hasMacOverride) {
+          const isMacKey = key.startsWith("mac+");
+          if (isMac !== isMacKey) {
+            continue;
+          }
+          if (isMacKey) {
+            shortcut = key.slice(4);
+          }
         }
+        const [keyName, modifiers] = KeyboardManager.#parseShortcut(shortcut);
+        if (keyName === null) {
+          continue;
+        }
+        this.callbacks.getOrInsertComputed(keyName, makeArr).push({
+          callback,
+          options,
+          modifiers
+        });
       }
     }
   }
-  #serialize(event) {
-    if (event.altKey) {
-      this.buffer.push("alt");
+  static #parseShortcut(value) {
+    let keyPart = null;
+    let modifiers = 0;
+    for (let part of value.split("+")) {
+      part = part.trim();
+      if (!part) {
+        continue;
+      }
+      const upper = part.toUpperCase();
+      const modifier = KeyboardManager[upper];
+      if (modifier) {
+        modifiers |= modifier;
+        continue;
+      }
+      if (keyPart !== null) {
+        warn(`KeyboardManager: multiple keys in shortcut "${value}"`);
+        break;
+      }
+      keyPart = upper === "SPACE" ? " " : part;
     }
-    if (event.ctrlKey) {
-      this.buffer.push("ctrl");
+    if (keyPart === null) {
+      warn(`KeyboardManager: no key found in shortcut "${value}"`);
     }
-    if (event.metaKey) {
-      this.buffer.push("meta");
-    }
-    if (event.shiftKey) {
-      this.buffer.push("shift");
-    }
-    this.buffer.push(event.key);
-    const str = this.buffer.join("+");
-    this.buffer.length = 0;
-    return str;
+    return [keyPart, modifiers];
+  }
+  static #codeToKey(code) {
+    const match = /^(?:Key([A-Z])|(?:Digit|Numpad)(\d))$/.exec(code);
+    return !match ? null : match[1]?.toLowerCase() ?? match[2];
   }
   exec(self, event) {
-    if (!this.allKeys.has(event.key)) {
-      return;
+    let shortcuts = this.callbacks.get(event.key);
+    if (!shortcuts) {
+      if (/^[a-z]$/i.test(event.key)) {
+        return;
+      }
+      const fallback = KeyboardManager.#codeToKey(event.code);
+      if (fallback === null || fallback === event.key) {
+        return;
+      }
+      shortcuts = this.callbacks.get(fallback);
+      if (!shortcuts) {
+        return;
+      }
     }
-    const info = this.callbacks.get(this.#serialize(event));
+    const eventModifiers = (event.altKey ? KeyboardManager.ALT : 0) | (event.ctrlKey ? KeyboardManager.CTRL : 0) | (event.metaKey ? KeyboardManager.META : 0) | (event.shiftKey ? KeyboardManager.SHIFT : 0);
+    const info = shortcuts.find(shortcut => shortcut.modifiers === eventModifiers);
     if (!info) {
       return;
     }
@@ -2550,7 +8659,7 @@ class ColorManager {
   get _colors() {
     const colors = new Map([["CanvasText", null], ["Canvas", null]]);
     getColorValues(colors);
-    return shadow(this, "_colors", colors);
+    return util_shadow(this, "_colors", colors);
   }
   convert(color) {
     const rgb = getRGB(color);
@@ -2566,10 +8675,7 @@ class ColorManager {
   }
   getHexCode(name) {
     const rgb = this._colors.get(name);
-    if (!rgb) {
-      return name;
-    }
-    return Util.makeHexColor(...rgb);
+    return !rgb ? name : Util.makeHexColor(...rgb);
   }
 }
 class AnnotationEditorUIManager {
@@ -2579,6 +8685,7 @@ class AnnotationEditorUIManager {
   #allEditors = new Map();
   #allLayers = new Map();
   #savedAllLayers = null;
+  #savedEditorsByPage = null;
   #altTextManager = null;
   #annotationStorage = null;
   #changedExistingAnnotations = null;
@@ -2649,7 +8756,7 @@ class AnnotationEditorUIManager {
     };
     const small = this.TRANSLATE_SMALL;
     const big = this.TRANSLATE_BIG;
-    return shadow(this, "_keyboardManager", new KeyboardManager([[["ctrl+a", "mac+meta+a"], proto.selectAll, {
+    return util_shadow(this, "_keyboardManager", new KeyboardManager([[["ctrl+a", "mac+meta+a"], proto.selectAll, {
       checker: textInputChecker
     }], [["ctrl+z", "mac+meta+z"], proto.undo, {
       checker: textInputChecker
@@ -2657,33 +8764,33 @@ class AnnotationEditorUIManager {
       checker: textInputChecker
     }], [["Backspace", "alt+Backspace", "ctrl+Backspace", "shift+Backspace", "mac+Backspace", "mac+alt+Backspace", "mac+ctrl+Backspace", "Delete", "ctrl+Delete", "shift+Delete", "mac+Delete"], proto.delete, {
       checker: textInputChecker
-    }], [["Enter", "mac+Enter"], proto.addNewEditorFromKeyboard, {
+    }], [["Enter"], proto.addNewEditorFromKeyboard, {
       checker: (self, {
         target: el
       }) => !(el instanceof HTMLButtonElement) && self.#container.contains(el) && !self.isEnterHandled
-    }], [[" ", "mac+ "], proto.addNewEditorFromKeyboard, {
+    }], [["Space"], proto.addNewEditorFromKeyboard, {
       checker: (self, {
         target: el
       }) => !(el instanceof HTMLButtonElement) && self.#container.contains(document.activeElement)
-    }], [["Escape", "mac+Escape"], proto.unselectAll], [["ArrowLeft", "mac+ArrowLeft"], proto.translateSelectedEditors, {
+    }], [["Escape"], proto.unselectAll], [["ArrowLeft"], proto.translateSelectedEditors, {
       args: [-small, 0],
       checker: arrowChecker
     }], [["ctrl+ArrowLeft", "mac+shift+ArrowLeft"], proto.translateSelectedEditors, {
       args: [-big, 0],
       checker: arrowChecker
-    }], [["ArrowRight", "mac+ArrowRight"], proto.translateSelectedEditors, {
+    }], [["ArrowRight"], proto.translateSelectedEditors, {
       args: [small, 0],
       checker: arrowChecker
     }], [["ctrl+ArrowRight", "mac+shift+ArrowRight"], proto.translateSelectedEditors, {
       args: [big, 0],
       checker: arrowChecker
-    }], [["ArrowUp", "mac+ArrowUp"], proto.translateSelectedEditors, {
+    }], [["ArrowUp"], proto.translateSelectedEditors, {
       args: [0, -small],
       checker: arrowChecker
     }], [["ctrl+ArrowUp", "mac+shift+ArrowUp"], proto.translateSelectedEditors, {
       args: [0, -big],
       checker: arrowChecker
-    }], [["ArrowDown", "mac+ArrowDown"], proto.translateSelectedEditors, {
+    }], [["ArrowDown"], proto.translateSelectedEditors, {
       args: [0, small],
       checker: arrowChecker
     }], [["ctrl+ArrowDown", "mac+shift+ArrowDown"], proto.translateSelectedEditors, {
@@ -2701,24 +8808,16 @@ class AnnotationEditorUIManager {
     this.#signatureManager = signatureManager;
     this.#pdfDocument = pdfDocument;
     this._eventBus = eventBus;
-    eventBus._on("editingaction", this.onEditingAction.bind(this), {
-      signal
-    });
-    eventBus._on("pagechanging", this.onPageChanging.bind(this), {
-      signal
-    });
-    eventBus._on("scalechanging", this.onScaleChanging.bind(this), {
-      signal
-    });
-    eventBus._on("rotationchanging", this.onRotationChanging.bind(this), {
-      signal
-    });
-    eventBus._on("setpreference", this.onSetPreference.bind(this), {
-      signal
-    });
-    eventBus._on("switchannotationeditorparams", evt => this.updateParams(evt.type, evt.value), {
-      signal
-    });
+    const evtOpts = {
+      signal,
+      ...internalOpt
+    };
+    eventBus.on("editingaction", this.onEditingAction.bind(this), evtOpts);
+    eventBus.on("pagechanging", this.onPageChanging.bind(this), evtOpts);
+    eventBus.on("scalechanging", this.onScaleChanging.bind(this), evtOpts);
+    eventBus.on("rotationchanging", this.onRotationChanging.bind(this), evtOpts);
+    eventBus.on("setpreference", this.onSetPreference.bind(this), evtOpts);
+    eventBus.on("switchannotationeditorparams", evt => this.updateParams(evt.type, evt.value), evtOpts);
     window.addEventListener("pointerdown", () => {
       this.#isPointerDown = true;
     }, {
@@ -2731,7 +8830,7 @@ class AnnotationEditorUIManager {
       capture: true,
       signal
     });
-    window.addEventListener("beforeunload", this.#beforeUnload.bind(this), {
+    window.addEventListener("beforeunload", this.endCurrentEditing.bind(this), {
       capture: true,
       signal
     });
@@ -2803,13 +8902,13 @@ class AnnotationEditorUIManager {
     return this.#enableNewAltTextWhenAddingImage;
   }
   get hcmFilter() {
-    return shadow(this, "hcmFilter", this.#pageColors ? this.#filterFactory.addHCMFilter(this.#pageColors.foreground, this.#pageColors.background) : "none");
+    return util_shadow(this, "hcmFilter", this.#pageColors ? this.#filterFactory.addHCMFilter(this.#pageColors.foreground, this.#pageColors.background) : "none");
   }
   get direction() {
-    return shadow(this, "direction", getComputedStyle(this.#container).direction);
+    return util_shadow(this, "direction", getComputedStyle(this.#container).direction);
   }
   get _highlightColors() {
-    return shadow(this, "_highlightColors", this.#highlightColors ? new Map(this.#highlightColors.split(",").map(pair => {
+    return util_shadow(this, "_highlightColors", this.#highlightColors ? new Map(this.#highlightColors.split(",").map(pair => {
       pair = pair.split("=").map(x => x.trim());
       pair[1] = pair[1].toUpperCase();
       return pair;
@@ -2820,7 +8919,7 @@ class AnnotationEditorUIManager {
       _highlightColors
     } = this;
     if (!_highlightColors) {
-      return shadow(this, "highlightColors", null);
+      return util_shadow(this, "highlightColors", null);
     }
     const map = new Map();
     const hasHCM = !!this.#pageColors;
@@ -2834,10 +8933,10 @@ class AnnotationEditorUIManager {
         map.set(name, color);
       }
     }
-    return shadow(this, "highlightColors", map);
+    return util_shadow(this, "highlightColors", map);
   }
   get highlightColorNames() {
-    return shadow(this, "highlightColorNames", this.highlightColors ? new Map(Array.from(this.highlightColors, e => e.reverse())) : null);
+    return util_shadow(this, "highlightColorNames", this.highlightColors ? new Map(Array.from(this.highlightColors, e => e.reverse())) : null);
   }
   getNonHCMColor(color) {
     if (!this._highlightColors) {
@@ -2918,11 +9017,11 @@ class AnnotationEditorUIManager {
     } = Promise.withResolvers();
     const onEditorsRendered = evt => {
       if (evt.pageNumber === pageNumber) {
-        this._eventBus._off("editorsrendered", onEditorsRendered);
+        this._eventBus.off("editorsrendered", onEditorsRendered);
         resolve();
       }
     };
-    this._eventBus.on("editorsrendered", onEditorsRendered);
+    this._eventBus.on("editorsrendered", onEditorsRendered, internalOpt);
     await promise;
   }
   getSignature(editor) {
@@ -2937,7 +9036,8 @@ class AnnotationEditorUIManager {
   switchToMode(mode, callback) {
     this._eventBus.on("annotationeditormodechanged", callback, {
       once: true,
-      signal: this._signal
+      signal: this._signal,
+      ...internalOpt
     });
     this._eventBus.dispatch("showannotationeditorui", {
       source: this,
@@ -3086,7 +9186,7 @@ class AnnotationEditorUIManager {
   commentSelection(methodOfCreation = "") {
     this.highlightSelection(methodOfCreation, true);
   }
-  #beforeUnload(e) {
+  endCurrentEditing() {
     this.commitOrRemove();
     this.currentLayer?.endDrawingSession(false);
   }
@@ -3458,7 +9558,7 @@ class AnnotationEditorUIManager {
     }
   }
   updatePageIndex(oldPageIndex, newPageIndex) {
-    for (const editor of this.getEditors(oldPageIndex)) {
+    for (const editor of this.#savedEditorsByPage.get(oldPageIndex) || []) {
       editor.pageIndex = newPageIndex;
     }
     const layer = this.#savedAllLayers.get(oldPageIndex);
@@ -3475,9 +9575,22 @@ class AnnotationEditorUIManager {
   startUpdatePages() {
     this.#savedAllLayers = new Map(this.#allLayers);
     this.#allLayers.clear();
+    const savedEditorsByPage = this.#savedEditorsByPage = new Map();
+    const saveEditor = editor => {
+      savedEditorsByPage.getOrInsertComputed(editor.pageIndex, makeArr).push(editor);
+    };
+    for (const editor of this.#allEditors.values()) {
+      saveEditor(editor);
+    }
+    for (const [id, editor] of this.#annotationStorage) {
+      if (id.startsWith(AnnotationEditorPrefix) && !this.#allEditors.has(id) && Number.isInteger(editor?.pageIndex)) {
+        saveEditor(editor);
+      }
+    }
   }
   endUpdatePages() {
     this.#savedAllLayers = null;
+    this.#savedEditorsByPage = null;
   }
   clonePage(pageIndex, newPageIndex) {
     for (const editor of this.getEditors(pageIndex)) {
@@ -3884,9 +9997,6 @@ class AnnotationEditorUIManager {
       hasSelectedEditor: true
     });
   }
-  isSelected(editor) {
-    return this.#selectedEditors.has(editor);
-  }
   get firstSelectedEditor() {
     return this.#selectedEditors.values().next().value;
   }
@@ -4171,7 +10281,7 @@ class AnnotationEditorUIManager {
     return this.#mode !== AnnotationEditorType.NONE;
   }
   get imageManager() {
-    return shadow(this, "imageManager", new ImageManager());
+    return util_shadow(this, "imageManager", new ImageManager());
   }
   getSelectionBoxes(textLayer) {
     if (!textLayer) {
@@ -4375,16 +10485,10 @@ class AltText {
     this.#altTextWasFromKeyBoard = false;
   }
   isEmpty() {
-    if (this.#useNewAltTextFlow) {
-      return this.#altText === null;
-    }
-    return !this.#altText && !this.#altTextDecorative;
+    return this.#useNewAltTextFlow ? this.#altText === null : !this.#altText && !this.#altTextDecorative;
   }
   hasData() {
-    if (this.#useNewAltTextFlow) {
-      return this.#altText !== null || !!this.#guessedText;
-    }
-    return this.isEmpty();
+    return this.#useNewAltTextFlow ? this.#altText !== null || !!this.#guessedText : this.isEmpty();
   }
   get guessedText() {
     return this.#guessedText;
@@ -4821,6 +10925,26 @@ class Comment {
 
 ;// ./src/display/touch_manager.js
 
+
+
+
+
+
+
+
+
+function preventDefault(evt) {
+  evt.preventDefault();
+}
+const MIN_TOUCH_SPAN = 1e-4;
+function stopTouchEvent(evt) {
+  if (evt.cancelable) {
+    stopEvent(evt);
+    return true;
+  }
+  evt.stopPropagation();
+  return false;
+}
 class TouchManager {
   #container;
   #isPinching = false;
@@ -4829,11 +10953,15 @@ class TouchManager {
   #onPinchStart;
   #onPinching;
   #onPinchEnd;
+  #onPanning;
+  #ownsGesture = false;
   #pointerDownAC = null;
   #signal;
+  #touchIds = new Set();
   #touchInfo = null;
   #touchManagerAC;
   #touchMoveAC = null;
+  #unconfirmedPinch = 0;
   constructor({
     container,
     isPinchingDisabled = null,
@@ -4841,6 +10969,7 @@ class TouchManager {
     onPinchStart = null,
     onPinching = null,
     onPinchEnd = null,
+    onPanning = null,
     signal
   }) {
     this.#container = container;
@@ -4849,6 +10978,7 @@ class TouchManager {
     this.#onPinchStart = onPinchStart;
     this.#onPinching = onPinching;
     this.#onPinchEnd = onPinchEnd;
+    this.#onPanning = onPanning;
     this.#touchManagerAC = new AbortController();
     this.#signal = AbortSignal.any([signal, this.#touchManagerAC.signal]);
     container.addEventListener("touchstart", this.#onTouchStart.bind(this), {
@@ -4859,36 +10989,22 @@ class TouchManager {
   get MIN_TOUCH_DISTANCE_TO_PINCH() {
     return 35 / OutputScale.pixelRatio;
   }
+  get MIN_TOUCH_DISTANCE_TO_SCALE() {
+    return 4 / OutputScale.pixelRatio;
+  }
   #onTouchStart(evt) {
     if (this.#isPinchingDisabled?.()) {
       return;
     }
-    if (evt.touches.length === 1) {
-      if (this.#pointerDownAC) {
-        return;
-      }
-      const pointerDownAC = this.#pointerDownAC = new AbortController();
-      const signal = AbortSignal.any([this.#signal, pointerDownAC.signal]);
-      const container = this.#container;
-      const opts = {
-        capture: true,
-        signal,
-        passive: false
-      };
-      const cancelPointerDown = e => {
-        if (e.pointerType === "touch") {
-          this.#pointerDownAC?.abort();
-          this.#pointerDownAC = null;
-        }
-      };
-      container.addEventListener("pointerdown", e => {
-        if (e.pointerType === "touch") {
-          stopEvent(e);
-          cancelPointerDown(e);
-        }
-      }, opts);
-      container.addEventListener("pointerup", cancelPointerDown, opts);
-      container.addEventListener("pointercancel", cancelPointerDown, opts);
+    this.#pruneTouchIds(evt);
+    const touchIds = this.#touchIds;
+    for (const {
+      identifier
+    } of evt.changedTouches) {
+      touchIds.add(identifier);
+    }
+    if (touchIds.size === 1) {
+      this.#armPointerDown();
       return;
     }
     if (!this.#touchMoveAC) {
@@ -4907,35 +11023,100 @@ class TouchManager {
       opt.capture = true;
       container.addEventListener("pointerdown", stopEvent, opt);
       container.addEventListener("pointermove", stopEvent, opt);
-      container.addEventListener("pointercancel", stopEvent, opt);
-      container.addEventListener("pointerup", stopEvent, opt);
+      container.addEventListener("pointercancel", preventDefault, opt);
+      container.addEventListener("pointerup", preventDefault, opt);
       this.#onPinchStart?.();
     }
-    stopEvent(evt);
-    if (evt.touches.length !== 2 || this.#isPinchingStopped?.()) {
+    this.#ownsGesture = stopTouchEvent(evt);
+    this.#setTouchInfo(evt);
+  }
+  #armPointerDown() {
+    if (this.#pointerDownAC) {
+      return;
+    }
+    const pointerDownAC = this.#pointerDownAC = new AbortController();
+    const signal = AbortSignal.any([this.#signal, pointerDownAC.signal]);
+    const container = this.#container;
+    const opts = {
+      capture: true,
+      signal,
+      passive: false
+    };
+    const cancelPointerDown = e => {
+      if (e.pointerType === "touch") {
+        this.#pointerDownAC?.abort();
+        this.#pointerDownAC = null;
+      }
+    };
+    container.addEventListener("pointerdown", e => {
+      if (e.pointerType === "touch") {
+        stopEvent(e);
+        cancelPointerDown(e);
+      }
+    }, opts);
+    container.addEventListener("pointerup", cancelPointerDown, opts);
+    container.addEventListener("pointercancel", cancelPointerDown, opts);
+  }
+  #pruneTouchIds(evt) {
+    const previous = this.#touchIds;
+    if (previous.size === 0) {
+      return;
+    }
+    const touchIds = this.#touchIds = new Set();
+    for (const {
+      identifier
+    } of evt.touches) {
+      if (previous.has(identifier)) {
+        touchIds.add(identifier);
+      }
+    }
+  }
+  #getTrackedTouches(evt) {
+    const touchIds = this.#touchIds;
+    const touches = [];
+    for (const touch of evt.touches) {
+      if (touchIds.has(touch.identifier)) {
+        touches.push(touch);
+      }
+    }
+    return touches;
+  }
+  #setTouchInfo(evt) {
+    const touches = this.#getTrackedTouches(evt);
+    if (touches.length !== 2 || this.#isPinchingStopped?.()) {
       this.#touchInfo = null;
       return;
     }
-    let [touch0, touch1] = evt.touches;
-    if (touch0.identifier > touch1.identifier) {
-      [touch0, touch1] = [touch1, touch0];
-    }
+    const [touch0, touch1] = touches;
     this.#touchInfo = {
       touch0X: touch0.screenX,
       touch0Y: touch0.screenY,
       touch1X: touch1.screenX,
-      touch1Y: touch1.screenY
+      touch1Y: touch1.screenY,
+      panX: (touch0.clientX + touch1.clientX) / 2,
+      panY: (touch0.clientY + touch1.clientY) / 2,
+      screenPanX: (touch0.screenX + touch1.screenX) / 2,
+      screenPanY: (touch0.screenY + touch1.screenY) / 2
     };
   }
   #onTouchMove(evt) {
-    if (!this.#touchInfo || evt.touches.length !== 2) {
+    if (!this.#touchInfo) {
       return;
     }
-    stopEvent(evt);
-    let [touch0, touch1] = evt.touches;
-    if (touch0.identifier > touch1.identifier) {
-      [touch0, touch1] = [touch1, touch0];
+    const touches = this.#getTrackedTouches(evt);
+    if (touches.length !== 2) {
+      return;
     }
+    const wasOwned = this.#ownsGesture;
+    this.#ownsGesture = stopTouchEvent(evt);
+    if (!this.#ownsGesture) {
+      return;
+    }
+    if (!wasOwned) {
+      this.#setTouchInfo(evt);
+      return;
+    }
+    const [touch0, touch1] = touches;
     const {
       screenX: screen0X,
       screenY: screen0Y
@@ -4949,45 +11130,89 @@ class TouchManager {
       touch0X: pTouch0X,
       touch0Y: pTouch0Y,
       touch1X: pTouch1X,
-      touch1Y: pTouch1Y
+      touch1Y: pTouch1Y,
+      panX: pPanX,
+      panY: pPanY
     } = touchInfo;
     const prevGapX = pTouch1X - pTouch0X;
     const prevGapY = pTouch1Y - pTouch0Y;
     const currGapX = screen1X - screen0X;
     const currGapY = screen1Y - screen0Y;
-    const distance = Math.hypot(currGapX, currGapY) || 1;
-    const pDistance = Math.hypot(prevGapX, prevGapY) || 1;
-    if (!this.#isPinching && Math.abs(pDistance - distance) <= TouchManager.MIN_TOUCH_DISTANCE_TO_PINCH) {
+    const panX = (touch0.clientX + touch1.clientX) / 2;
+    const panY = (touch0.clientY + touch1.clientY) / 2;
+    touchInfo.panX = panX;
+    touchInfo.panY = panY;
+    const dx = panX - pPanX;
+    const dy = panY - pPanY;
+    const screenPanX = (screen0X + screen1X) / 2;
+    const screenPanY = (screen0Y + screen1Y) / 2;
+    const translation = Math.hypot(screenPanX - touchInfo.screenPanX, screenPanY - touchInfo.screenPanY);
+    touchInfo.screenPanX = screenPanX;
+    touchInfo.screenPanY = screenPanY;
+    const distance = Math.hypot(currGapX, currGapY);
+    const pDistance = Math.hypot(prevGapX, prevGapY);
+    const minDistance = this.#isPinching ? this.MIN_TOUCH_DISTANCE_TO_SCALE : this.MIN_TOUCH_DISTANCE_TO_PINCH + 2 * translation;
+    if (distance < MIN_TOUCH_SPAN || pDistance < MIN_TOUCH_SPAN || Math.abs(pDistance - distance) <= minDistance) {
+      if (dx || dy) {
+        this.#onPanning?.(dx, dy);
+      }
       return;
     }
     touchInfo.touch0X = screen0X;
     touchInfo.touch0Y = screen0Y;
     touchInfo.touch1X = screen1X;
     touchInfo.touch1Y = screen1Y;
+    const direction = Math.sign(distance - pDistance);
     if (!this.#isPinching) {
       this.#isPinching = true;
+      this.#unconfirmedPinch = direction;
+      if (dx || dy) {
+        this.#onPanning?.(dx, dy);
+      }
       return;
     }
-    const origin = [(screen0X + screen1X) / 2, (screen0Y + screen1Y) / 2];
-    this.#onPinching?.(origin, pDistance, distance);
+    if (this.#unconfirmedPinch) {
+      const unconfirmed = this.#unconfirmedPinch;
+      this.#unconfirmedPinch = 0;
+      if (direction !== unconfirmed && Math.abs(distance - pDistance) <= 2 * translation) {
+        this.#isPinching = false;
+        if (dx || dy) {
+          this.#onPanning?.(dx, dy);
+        }
+        return;
+      }
+    }
+    this.#onPinching?.([pPanX, pPanY], pDistance, distance, dx, dy);
   }
   #onTouchEnd(evt) {
-    if (evt.touches.length >= 2) {
+    this.#pruneTouchIds(evt);
+    if (this.#touchIds.size >= 2) {
+      this.#setTouchInfo(evt);
       return;
     }
+    const wasTracking = !!this.#touchInfo;
+    this.#endGesture();
+    if (this.#touchIds.size === 1) {
+      this.#armPointerDown();
+    }
+    if (wasTracking) {
+      stopTouchEvent(evt);
+    }
+  }
+  #endGesture() {
+    this.#touchInfo = null;
+    this.#isPinching = false;
+    this.#unconfirmedPinch = 0;
+    this.#ownsGesture = false;
     if (this.#touchMoveAC) {
       this.#touchMoveAC.abort();
       this.#touchMoveAC = null;
       this.#onPinchEnd?.();
     }
-    if (!this.#touchInfo) {
-      return;
-    }
-    stopEvent(evt);
-    this.#touchInfo = null;
-    this.#isPinching = false;
   }
   destroy() {
+    this.#endGesture();
+    this.#touchIds.clear();
     this.#touchManagerAC?.abort();
     this.#touchManagerAC = null;
     this.#pointerDownAC?.abort();
@@ -4996,6 +11221,9 @@ class TouchManager {
 }
 
 ;// ./src/display/editor/editor.js
+
+
+
 
 
 
@@ -5037,6 +11265,7 @@ class AnnotationEditor {
   _uiManager = null;
   _focusEventsAllowed = true;
   static _l10n = null;
+  static _l10nAlert = null;
   static _l10nResizer = null;
   #isDraggable = false;
   #zIndex = AnnotationEditor._zIndex++;
@@ -5048,23 +11277,23 @@ class AnnotationEditor {
     const resize = AnnotationEditor.prototype._resizeWithKeyboard;
     const small = AnnotationEditorUIManager.TRANSLATE_SMALL;
     const big = AnnotationEditorUIManager.TRANSLATE_BIG;
-    return shadow(this, "_resizerKeyboardManager", new KeyboardManager([[["ArrowLeft", "mac+ArrowLeft"], resize, {
+    return util_shadow(this, "_resizerKeyboardManager", new KeyboardManager([[["ArrowLeft"], resize, {
       args: [-small, 0]
     }], [["ctrl+ArrowLeft", "mac+shift+ArrowLeft"], resize, {
       args: [-big, 0]
-    }], [["ArrowRight", "mac+ArrowRight"], resize, {
+    }], [["ArrowRight"], resize, {
       args: [small, 0]
     }], [["ctrl+ArrowRight", "mac+shift+ArrowRight"], resize, {
       args: [big, 0]
-    }], [["ArrowUp", "mac+ArrowUp"], resize, {
+    }], [["ArrowUp"], resize, {
       args: [0, -small]
     }], [["ctrl+ArrowUp", "mac+shift+ArrowUp"], resize, {
       args: [0, -big]
-    }], [["ArrowDown", "mac+ArrowDown"], resize, {
+    }], [["ArrowDown"], resize, {
       args: [0, small]
     }], [["ctrl+ArrowDown", "mac+shift+ArrowDown"], resize, {
       args: [0, big]
-    }], [["Escape", "mac+Escape"], AnnotationEditor.prototype._stopResizingWithKeyboard]]));
+    }], [["Escape"], AnnotationEditor.prototype._stopResizingWithKeyboard]]));
   }
   constructor(parameters) {
     this.parent = parameters.parent;
@@ -5114,7 +11343,7 @@ class AnnotationEditor {
     return false;
   }
   static get _defaultLineColor() {
-    return shadow(this, "_defaultLineColor", this._colorManager.getHexCode("CanvasText"));
+    return util_shadow(this, "_defaultLineColor", this._colorManager.getHexCode("CanvasText"));
   }
   static deleteAnnotationElement(editor) {
     const fakeEditor = new FakeEditor({
@@ -5128,7 +11357,14 @@ class AnnotationEditor {
   }
   static initialize(l10n, _uiManager) {
     AnnotationEditor._l10n ??= l10n;
-    AnnotationEditor._l10nResizer ||= Object.freeze({
+    AnnotationEditor._l10nAlert ??= Object.freeze({
+      highlight: "pdfjs-editor-highlight-added-alert",
+      freetext: "pdfjs-editor-freetext-added-alert",
+      ink: "pdfjs-editor-ink-added-alert",
+      stamp: "pdfjs-editor-stamp-added-alert",
+      signature: "pdfjs-editor-signature-added-alert"
+    });
+    AnnotationEditor._l10nResizer ??= Object.freeze({
       topLeft: "pdfjs-editor-resizer-top-left",
       topMiddle: "pdfjs-editor-resizer-top-middle",
       topRight: "pdfjs-editor-resizer-top-right",
@@ -5226,10 +11462,7 @@ class AnnotationEditor {
     }
   }
   focusout(event) {
-    if (!this._focusEventsAllowed) {
-      return;
-    }
-    if (!this.isAttachedToDOM) {
+    if (!this._focusEventsAllowed || !this.isAttachedToDOM) {
       return;
     }
     const target = event.relatedTarget;
@@ -5324,9 +11557,6 @@ class AnnotationEditor {
     style.left = `${(100 * x).toFixed(2)}%`;
     style.top = `${(100 * y).toFixed(2)}%`;
     this._onTranslating(x, y);
-    div.scrollIntoView({
-      block: "nearest"
-    });
   }
   _onTranslating(x, y) {}
   _onTranslated(x, y) {}
@@ -5921,16 +12151,7 @@ class AnnotationEditor {
     const [tx, ty] = this.getInitialTranslation();
     this.translate(tx, ty);
     bindEvents(this, div, ["keydown", "pointerdown", "dblclick"]);
-    if (this.isResizable && this._uiManager._supportsPinchToZoom) {
-      this.#touchManager ||= new TouchManager({
-        container: div,
-        isPinchingDisabled: () => !this.isSelected,
-        onPinchStart: this.#touchPinchStartCallback.bind(this),
-        onPinching: this.#touchPinchCallback.bind(this),
-        onPinchEnd: this.#touchPinchEndCallback.bind(this),
-        signal: this._uiManager._signal
-      });
-    }
+    this.#addTouchManager();
     this.addStandaloneCommentButton();
     this._uiManager._editorUndoBar?.hide();
     return div;
@@ -6057,6 +12278,9 @@ class AnnotationEditor {
         this.#prevDragX = x;
         this.#prevDragY = y;
         this._uiManager.dragSelectedEditors(tx, ty);
+        this.div.scrollIntoView({
+          block: "nearest"
+        });
       }, opts);
       window.addEventListener("touchmove", stopEvent, opts);
       window.addEventListener("pointerdown", e => {
@@ -6234,8 +12458,22 @@ class AnnotationEditor {
       signal
     });
   }
+  #addTouchManager() {
+    if (this.#touchManager || !this.div || !this.isResizable || !this._uiManager._supportsPinchToZoom) {
+      return;
+    }
+    this.#touchManager = new TouchManager({
+      container: this.div,
+      isPinchingDisabled: () => !this.isSelected,
+      onPinchStart: this.#touchPinchStartCallback.bind(this),
+      onPinching: this.#touchPinchCallback.bind(this),
+      onPinchEnd: this.#touchPinchEndCallback.bind(this),
+      signal: this._uiManager._signal
+    });
+  }
   rebuild() {
     this.#addFocusListeners();
+    this.#addTouchManager();
   }
   rotate(_angle) {}
   resize() {}
@@ -6286,6 +12524,8 @@ class AnnotationEditor {
     if (!this.isEmpty()) {
       this.commit();
     }
+    this.#touchManager?.destroy();
+    this.#touchManager = null;
     if (this.parent) {
       this.parent.remove(this);
     } else {
@@ -6305,8 +12545,6 @@ class AnnotationEditor {
       this.#telemetryTimeouts = null;
     }
     this.parent = null;
-    this.#touchManager?.destroy();
-    this.#touchManager = null;
     this.#fakeAnnotation?.remove();
     this.#fakeAnnotation = null;
   }
@@ -6663,6 +12901,11 @@ class FakeEditor extends AnnotationEditor {
 }
 
 ;// ./src/shared/murmurhash3.js
+
+
+
+
+
 const SEED = 0xc3d2e1f0;
 const MASK_HIGH = 0xffff0000;
 const MASK_LOW = 0xffff;
@@ -6759,6 +13002,21 @@ class MurmurHash3_64 {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const SerializableEmpty = Object.freeze({
   map: null,
   hash: "",
@@ -6774,10 +13032,7 @@ class AnnotationStorage {
   onAnnotationEditor = null;
   getValue(key, defaultValue) {
     const value = this.#storage.get(key);
-    if (value === undefined) {
-      return defaultValue;
-    }
-    return Object.assign(defaultValue, value);
+    return value === undefined ? defaultValue : Object.assign(defaultValue, value);
   }
   getRawValue(key) {
     return this.#storage.get(key);
@@ -6904,9 +13159,7 @@ class AnnotationStorage {
       const {
         type
       } = editorStats;
-      if (!typeToEditor.has(type)) {
-        typeToEditor.set(type, Object.getPrototypeOf(value).constructor);
-      }
+      typeToEditor.getOrInsertComputed(type, () => Object.getPrototypeOf(value).constructor);
       stats ||= Object.create(null);
       const map = stats[type] ||= new Map();
       for (const [key, val] of Object.entries(editorStats)) {
@@ -6959,9 +13212,15 @@ class AnnotationStorage {
         ids.push(value.annotationElementId);
       }
     }
+    let hash = "";
+    if (ids.length) {
+      const h = new MurmurHash3_64();
+      h.update(ids.join(","));
+      hash = h.hexdigest();
+    }
     return this.#modifiedIds = {
       ids: new Set(ids),
-      hash: ids.join(",")
+      hash
     };
   }
   [Symbol.iterator]() {
@@ -6999,18 +13258,41 @@ class PrintAnnotationStorage extends AnnotationStorage {
     return this.#serializable;
   }
   get modifiedIds() {
-    return shadow(this, "modifiedIds", {
+    return util_shadow(this, "modifiedIds", {
       ids: new Set(),
       hash: ""
     });
   }
 }
 
+;// ./node_modules/core-js/modules/es.iterator.for-each.js
+es_iterator_for_each_namespaceFn();
+
 ;// ./src/display/canvas_dependency_tracker.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const FORCED_DEPENDENCY_LABEL = "__forcedDependency";
 const {
-  floor,
+  floor: canvas_dependency_tracker_floor,
   ceil
 } = Math;
 function expandBBox(array, index, minX, minY, maxX, maxY) {
@@ -7018,6 +13300,31 @@ function expandBBox(array, index, minX, minY, maxX, maxY) {
   array[index * 4 + 1] = Math.min(array[index * 4 + 1], minY);
   array[index * 4 + 2] = Math.max(array[index * 4 + 2], maxX);
   array[index * 4 + 3] = Math.max(array[index * 4 + 3], maxY);
+}
+function scaleCharBBox(scaleX, scaleY, x, y, bbox) {
+  let temp;
+  if (scaleX) {
+    if (scaleX < 0) {
+      temp = bbox[0];
+      bbox[0] = bbox[2];
+      bbox[2] = temp;
+    }
+    bbox[0] *= scaleX;
+    bbox[2] *= scaleX;
+    if (scaleY < 0) {
+      temp = bbox[1];
+      bbox[1] = bbox[3];
+      bbox[3] = temp;
+    }
+    bbox[1] *= scaleY;
+    bbox[3] *= scaleY;
+  } else {
+    bbox.fill(0);
+  }
+  bbox[0] += x;
+  bbox[1] += y;
+  bbox[2] += x;
+  bbox[3] += y;
 }
 const EMPTY_BBOX = new Uint32Array(new Uint8Array([255, 255, 0, 0]).buffer)[0];
 class BBoxReader {
@@ -7053,7 +13360,7 @@ const ensureDebugMetadata = (map, key) => map?.getOrInsertComputed(key, () => ({
 class CanvasBBoxTracker {
   #baseTransformStack = [[1, 0, 0, 1, 0, 0]];
   #clipBox = [-Infinity, -Infinity, Infinity, Infinity];
-  #pendingBBox = new Float64Array([Infinity, Infinity, -Infinity, -Infinity]);
+  #pendingBBox = new Float64Array(BBOX_INIT);
   _pendingBBoxIdx = -1;
   #canvasWidth;
   #canvasHeight;
@@ -7110,10 +13417,7 @@ class CanvasBBoxTracker {
     return this;
   }
   getOpenMarker() {
-    if (this._savesStack.length === 0) {
-      return null;
-    }
-    return this._savesStack.at(-1);
+    return this._savesStack.length === 0 ? null : this._savesStack.at(-1);
   }
   recordCloseMarker(opIdx, onSavePopped) {
     const lastSave = this._savesStack.pop();
@@ -7148,16 +13452,13 @@ class CanvasBBoxTracker {
   resetBBox(idx) {
     if (this._pendingBBoxIdx !== idx) {
       this._pendingBBoxIdx = idx;
-      this.#pendingBBox[0] = Infinity;
-      this.#pendingBBox[1] = Infinity;
-      this.#pendingBBox[2] = -Infinity;
-      this.#pendingBBox[3] = -Infinity;
+      this.#pendingBBox.set(BBOX_INIT, 0);
     }
     return this;
   }
   recordClipBox(idx, ctx, minX, maxX, minY, maxY) {
     const transform = Util.multiplyByDOMMatrix(this.#baseTransformStack.at(-1), ctx.getTransform());
-    const clipBox = [Infinity, Infinity, -Infinity, -Infinity];
+    const clipBox = BBOX_INIT.slice();
     Util.axialAlignedBoundingBox([minX, minY, maxX, maxY], transform, clipBox);
     const intersection = Util.intersect(this.#clipBox, clipBox);
     if (intersection) {
@@ -7181,12 +13482,12 @@ class CanvasBBoxTracker {
       Util.axialAlignedBoundingBox([minX, minY, maxX, maxY], transform, this.#pendingBBox);
       return this;
     }
-    const bbox = [Infinity, Infinity, -Infinity, -Infinity];
+    const bbox = BBOX_INIT.slice();
     Util.axialAlignedBoundingBox([minX, minY, maxX, maxY], transform, bbox);
-    this.#pendingBBox[0] = Math.min(this.#pendingBBox[0], Math.max(bbox[0], clipBox[0]));
-    this.#pendingBBox[1] = Math.min(this.#pendingBBox[1], Math.max(bbox[1], clipBox[1]));
-    this.#pendingBBox[2] = Math.max(this.#pendingBBox[2], Math.min(bbox[2], clipBox[2]));
-    this.#pendingBBox[3] = Math.max(this.#pendingBBox[3], Math.min(bbox[3], clipBox[3]));
+    this.#pendingBBox[0] = MathClamp(bbox[0], clipBox[0], this.#pendingBBox[0]);
+    this.#pendingBBox[1] = MathClamp(bbox[1], clipBox[1], this.#pendingBBox[1]);
+    this.#pendingBBox[2] = MathClamp(bbox[2], this.#pendingBBox[2], clipBox[2]);
+    this.#pendingBBox[3] = MathClamp(bbox[3], this.#pendingBBox[3], clipBox[3]);
     return this;
   }
   recordFullPageBBox(idx) {
@@ -7200,8 +13501,8 @@ class CanvasBBoxTracker {
     if (this._pendingBBoxIdx !== idx) {
       return this;
     }
-    const minX = floor(this.#pendingBBox[0] * 256 / this.#canvasWidth);
-    const minY = floor(this.#pendingBBox[1] * 256 / this.#canvasHeight);
+    const minX = canvas_dependency_tracker_floor(this.#pendingBBox[0] * 256 / this.#canvasWidth);
+    const minY = canvas_dependency_tracker_floor(this.#pendingBBox[1] * 256 / this.#canvasHeight);
     const maxX = ceil(this.#pendingBBox[2] * 256 / this.#canvasWidth);
     const maxY = ceil(this.#pendingBBox[3] * 256 / this.#canvasHeight);
     expandBBox(this.#bboxesCoords, idx, minX, minY, maxX, maxY);
@@ -7425,7 +13726,7 @@ class CanvasDependencyTracker {
         computedBBox = [0, 0, 0, 0];
         Util.axialAlignedBoundingBox(fontBBox, font.fontMatrix, computedBBox);
         if (scale !== 1 || x !== 0 || y !== 0) {
-          Util.scaleMinMax([scale, 0, 0, -scale, x, y], computedBBox);
+          scaleCharBBox(scale, -scale, x, y, computedBBox);
         }
         if (isBBoxTrustworthy) {
           return this.recordBBox(idx, ctx, computedBBox[0], computedBBox[2], computedBBox[1], computedBBox[3]);
@@ -7673,7 +13974,7 @@ const Dependencies = {
   rawFillPath: ["filter", "fillColor", "fillAlpha"],
   showText: ["transform", "leading", "charSpacing", "wordSpacing", "hScale", "textRise", "moveText", "textMatrix", "font", "fontObj", "filter", "fillColor", "textRenderingMode", "SMask", "fillAlpha", "strokeAlpha", "globalCompositeOperation", "sameLineText"],
   transform: ["transform"],
-  transformAndFill: ["transform", "fillColor"]
+  transformAndFill: ["transform", "filter", "fillColor"]
 };
 class CanvasImagesTracker {
   #canvasWidth;
@@ -7693,10 +13994,10 @@ class CanvasImagesTracker {
       newCoords.set(this.#coords);
       this.#coords = newCoords;
     }
-    const transform = Util.domMatrixToTransform(ctx.getTransform());
+    const transform = getCurrentTransform(ctx);
     let coords;
     if (clipBox[0] !== Infinity) {
-      const bbox = [Infinity, Infinity, -Infinity, -Infinity];
+      const bbox = BBOX_INIT.slice();
       Util.axialAlignedBoundingBox([0, -height, width, 0], transform, bbox);
       const finalBBox = Util.intersect(clipBox, bbox);
       if (!finalBBox) {
@@ -7742,47 +14043,116 @@ class CanvasImagesTracker {
   }
 }
 
+;// ./src/shared/css_utils.js
+const CONTROL_CHAR_REGEXP = /\p{Cc}/u;
+function isCSSString(str) {
+  const quote = str[0];
+  if (str.length < 2 || quote !== `"` && quote !== `'` || str.at(-1) !== quote) {
+    return false;
+  }
+  const end = str.length - 1;
+  for (let i = 1; i < end; i++) {
+    const char = str[i];
+    if (char === quote || CONTROL_CHAR_REGEXP.test(char)) {
+      return false;
+    }
+    if (char === "\\") {
+      if (++i >= end || CONTROL_CHAR_REGEXP.test(str[i])) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+function serializeFontFamily(fontFamily) {
+  if (isCSSString(fontFamily)) {
+    return fontFamily;
+  }
+  const escaped = fontFamily.replaceAll(/["\\\p{Cc}]/gu, char => char === `"` || char === "\\" ? `\\${char}` : `\\${char.codePointAt(0).toString(16)} `);
+  return `"${escaped}"`;
+}
+
 ;// ./src/display/font_loader.js
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class FontLoader {
+  #nativeFontFaces = new Set();
   #systemFonts = new Set();
+  #styleSheet = null;
   constructor({
     ownerDocument = globalThis.document,
     styleElement = null
   }) {
     this._document = ownerDocument;
-    this.nativeFontFaces = new Set();
     this.styleElement = null;
     this.loadingRequests = [];
     this.loadTestFontId = 0;
   }
   addNativeFontFace(nativeFontFace) {
-    this.nativeFontFaces.add(nativeFontFace);
+    this.#nativeFontFaces.add(nativeFontFace);
     this._document.fonts.add(nativeFontFace);
   }
   removeNativeFontFace(nativeFontFace) {
-    this.nativeFontFaces.delete(nativeFontFace);
+    this.#nativeFontFaces.delete(nativeFontFace);
     this._document.fonts.delete(nativeFontFace);
   }
   insertRule(rule) {
+    const styleSheet = this.#getStyleSheet();
+    styleSheet.insertRule(rule, styleSheet.cssRules.length);
+  }
+  #getStyleSheet() {
+    if (this.#styleSheet) {
+      return this.#styleSheet;
+    }
+    const StyleSheet = this._document.defaultView?.CSSStyleSheet || globalThis.CSSStyleSheet;
+    if (!this.styleElement && StyleSheet) {
+      const {
+        adoptedStyleSheets
+      } = this._document;
+      if (adoptedStyleSheets) {
+        const styleSheet = new StyleSheet();
+        adoptedStyleSheets.push(styleSheet);
+        return this.#styleSheet = styleSheet;
+      }
+    }
     if (!this.styleElement) {
       this.styleElement = this._document.createElement("style");
       this._document.documentElement.getElementsByTagName("head")[0].append(this.styleElement);
     }
-    const styleSheet = this.styleElement.sheet;
-    styleSheet.insertRule(rule, styleSheet.cssRules.length);
+    return this.#styleSheet = this.styleElement.sheet;
   }
   clear() {
-    for (const nativeFontFace of this.nativeFontFaces) {
+    for (const nativeFontFace of this.#nativeFontFaces) {
       this._document.fonts.delete(nativeFontFace);
     }
-    this.nativeFontFaces.clear();
+    this.#nativeFontFaces.clear();
     this.#systemFonts.clear();
-    if (this.styleElement) {
-      this.styleElement.remove();
-      this.styleElement = null;
+    if (this.#styleSheet) {
+      const {
+        adoptedStyleSheets
+      } = this._document;
+      if (adoptedStyleSheets?.includes(this.#styleSheet)) {
+        this._document.adoptedStyleSheets = adoptedStyleSheets.filter(styleSheet => styleSheet !== this.#styleSheet);
+      }
+      this.#styleSheet = null;
     }
+    this.styleElement?.remove();
+    this.styleElement = null;
   }
   async loadSystemFont({
     systemFontInfo: info,
@@ -7792,7 +14162,7 @@ class FontLoader {
     if (!info || this.#systemFonts.has(info.loadedName)) {
       return;
     }
-    assert(!disableFontFace, "loadSystemFont shouldn't be called when `disableFontFace` is set.");
+    util_assert(!disableFontFace, "loadSystemFont shouldn't be called when `disableFontFace` is set.");
     if (this.isFontLoadingAPISupported) {
       const {
         loadedName,
@@ -7842,46 +14212,42 @@ class FontLoader {
       if (this.isSyncFontLoadingSupported) {
         return;
       }
-      await new Promise(resolve => {
-        const request = this._queueLoadingCallback(resolve);
-        this._prepareFontLoadEvent(font, request);
-      });
+      await this.#testFontLoaded(font);
     }
   }
   get isFontLoadingAPISupported() {
-    const hasFonts = !!this._document?.fonts;
-    return shadow(this, "isFontLoadingAPISupported", hasFonts);
+    return util_shadow(this, "isFontLoadingAPISupported", !!this._document?.fonts);
   }
   get isSyncFontLoadingSupported() {
-    return shadow(this, "isSyncFontLoadingSupported", isNodeJS || FeatureTest.platform.isFirefox);
+    return util_shadow(this, "isSyncFontLoadingSupported", isNodeJS || FeatureTest.platform.isFirefox);
   }
-  _queueLoadingCallback(callback) {
+  #testFontLoaded(font) {
     function completeRequest() {
-      assert(!request.done, "completeRequest() cannot be called twice.");
+      util_assert(!request.done, "completeRequest() cannot be called twice.");
       request.done = true;
       while (loadingRequests.length > 0 && loadingRequests[0].done) {
         const otherRequest = loadingRequests.shift();
-        setTimeout(otherRequest.callback, 0);
+        setTimeout(otherRequest.resolve, 0);
       }
     }
     const {
       loadingRequests
     } = this;
+    const {
+      promise,
+      resolve
+    } = Promise.withResolvers();
     const request = {
       done: false,
-      complete: completeRequest,
-      callback
+      resolve
     };
     loadingRequests.push(request);
-    return request;
-  }
-  get _loadTestFont() {
-    const testFont = atob("T1RUTwALAIAAAwAwQ0ZGIDHtZg4AAAOYAAAAgUZGVE1lkzZwAAAEHAAAABxHREVGABQA" + "FQAABDgAAAAeT1MvMlYNYwkAAAEgAAAAYGNtYXABDQLUAAACNAAAAUJoZWFk/xVFDQAA" + "ALwAAAA2aGhlYQdkA+oAAAD0AAAAJGhtdHgD6AAAAAAEWAAAAAZtYXhwAAJQAAAAARgA" + "AAAGbmFtZVjmdH4AAAGAAAAAsXBvc3T/hgAzAAADeAAAACAAAQAAAAEAALZRFsRfDzz1" + "AAsD6AAAAADOBOTLAAAAAM4KHDwAAAAAA+gDIQAAAAgAAgAAAAAAAAABAAADIQAAAFoD" + "6AAAAAAD6AABAAAAAAAAAAAAAAAAAAAAAQAAUAAAAgAAAAQD6AH0AAUAAAKKArwAAACM" + "AooCvAAAAeAAMQECAAACAAYJAAAAAAAAAAAAAQAAAAAAAAAAAAAAAFBmRWQAwAAuAC4D" + "IP84AFoDIQAAAAAAAQAAAAAAAAAAACAAIAABAAAADgCuAAEAAAAAAAAAAQAAAAEAAAAA" + "AAEAAQAAAAEAAAAAAAIAAQAAAAEAAAAAAAMAAQAAAAEAAAAAAAQAAQAAAAEAAAAAAAUA" + "AQAAAAEAAAAAAAYAAQAAAAMAAQQJAAAAAgABAAMAAQQJAAEAAgABAAMAAQQJAAIAAgAB" + "AAMAAQQJAAMAAgABAAMAAQQJAAQAAgABAAMAAQQJAAUAAgABAAMAAQQJAAYAAgABWABY" + "AAAAAAAAAwAAAAMAAAAcAAEAAAAAADwAAwABAAAAHAAEACAAAAAEAAQAAQAAAC7//wAA" + "AC7////TAAEAAAAAAAABBgAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAD/gwAyAAAAAQAAAAAAAAAAAAAAAAAA" + "AAABAAQEAAEBAQJYAAEBASH4DwD4GwHEAvgcA/gXBIwMAYuL+nz5tQXkD5j3CBLnEQAC" + "AQEBIVhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYAAABAQAADwACAQEEE/t3" + "Dov6fAH6fAT+fPp8+nwHDosMCvm1Cvm1DAz6fBQAAAAAAAABAAAAAMmJbzEAAAAAzgTj" + "FQAAAADOBOQpAAEAAAAAAAAADAAUAAQAAAABAAAAAgABAAAAAAAAAAAD6AAAAAAAAA==");
-    return shadow(this, "_loadTestFont", testFont);
-  }
-  _prepareFontLoadEvent(font, request) {
+    this._loadTestFont ??= atob("T1RUTwALAIAAAwAwQ0ZGIDHtZg4AAAOYAAAAgUZGVE1lkzZwAAAEHAAAABxHREVGABQA" + "FQAABDgAAAAeT1MvMlYNYwkAAAEgAAAAYGNtYXABDQLUAAACNAAAAUJoZWFk/xVFDQAA" + "ALwAAAA2aGhlYQdkA+oAAAD0AAAAJGhtdHgD6AAAAAAEWAAAAAZtYXhwAAJQAAAAARgA" + "AAAGbmFtZVjmdH4AAAGAAAAAsXBvc3T/hgAzAAADeAAAACAAAQAAAAEAALZRFsRfDzz1" + "AAsD6AAAAADOBOTLAAAAAM4KHDwAAAAAA+gDIQAAAAgAAgAAAAAAAAABAAADIQAAAFoD" + "6AAAAAAD6AABAAAAAAAAAAAAAAAAAAAAAQAAUAAAAgAAAAQD6AH0AAUAAAKKArwAAACM" + "AooCvAAAAeAAMQECAAACAAYJAAAAAAAAAAAAAQAAAAAAAAAAAAAAAFBmRWQAwAAuAC4D" + "IP84AFoDIQAAAAAAAQAAAAAAAAAAACAAIAABAAAADgCuAAEAAAAAAAAAAQAAAAEAAAAA" + "AAEAAQAAAAEAAAAAAAIAAQAAAAEAAAAAAAMAAQAAAAEAAAAAAAQAAQAAAAEAAAAAAAUA" + "AQAAAAEAAAAAAAYAAQAAAAMAAQQJAAAAAgABAAMAAQQJAAEAAgABAAMAAQQJAAIAAgAB" + "AAMAAQQJAAMAAgABAAMAAQQJAAQAAgABAAMAAQQJAAUAAgABAAMAAQQJAAYAAgABWABY" + "AAAAAAAAAwAAAAMAAAAcAAEAAAAAADwAAwABAAAAHAAEACAAAAAEAAQAAQAAAC7//wAA" + "AC7////TAAEAAAAAAAABBgAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAD/gwAyAAAAAQAAAAAAAAAAAAAAAAAA" + "AAABAAQEAAEBAQJYAAEBASH4DwD4GwHEAvgcA/gXBIwMAYuL+nz5tQXkD5j3CBLnEQAC" + "AQEBIVhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYAAABAQAADwACAQEEE/t3" + "Dov6fAH6fAT+fPp8+nwHDosMCvm1Cvm1DAz6fBQAAAAAAAABAAAAAMmJbzEAAAAAzgTj" + "FQAAAADOBOQpAAEAAAAAAAAADAAUAAQAAAABAAAAAgABAAAAAAAAAAAD6AAAAAAAAA==");
     function int32(data, offset) {
       return data.charCodeAt(offset) << 24 | data.charCodeAt(offset + 1) << 16 | data.charCodeAt(offset + 2) << 8 | data.charCodeAt(offset + 3) & 0xff;
+    }
+    function string32(value) {
+      return String.fromCharCode(value >> 24 & 0xff, value >> 16 & 0xff, value >> 8 & 0xff, value & 0xff);
     }
     function spliceString(s, offset, remove, insert) {
       const chunk1 = s.substring(0, offset);
@@ -7940,12 +14306,13 @@ class FontLoader {
     this._document.body.append(div);
     isFontReady(loadTestFontId, () => {
       div.remove();
-      request.complete();
+      completeRequest();
     });
+    return promise;
   }
 }
 class FontFaceObject {
-  compiledGlyphs = Object.create(null);
+  #compiledPaths = new Map();
   #fontData;
   constructor(translatedData, inspectFont = null, charProcOperatorList, extra) {
     this.#fontData = translatedData;
@@ -7958,12 +14325,15 @@ class FontFaceObject {
     }
   }
   createNativeFontFace() {
-    if (!this.data || this.disableFontFace) {
+    const {
+      data
+    } = this;
+    if (!data || this.disableFontFace) {
       return null;
     }
     let nativeFontFace;
     if (!this.cssFontInfo) {
-      nativeFontFace = new FontFace(this.loadedName, this.data, {});
+      nativeFontFace = new FontFace(this.loadedName, data, {});
     } else {
       const css = {
         weight: this.cssFontInfo.fontWeight
@@ -7971,16 +14341,19 @@ class FontFaceObject {
       if (this.cssFontInfo.italicAngle) {
         css.style = `oblique ${this.cssFontInfo.italicAngle}deg`;
       }
-      nativeFontFace = new FontFace(this.cssFontInfo.fontFamily, this.data, css);
+      nativeFontFace = new FontFace(serializeFontFamily(this.cssFontInfo.fontFamily), data, css);
     }
     this._inspectFont?.(this);
     return nativeFontFace;
   }
   createFontFaceRule() {
-    if (!this.data || this.disableFontFace) {
+    const {
+      data
+    } = this;
+    if (!data || this.disableFontFace) {
       return null;
     }
-    const url = `url(data:${this.mimetype};base64,${this.data.toBase64()});`;
+    const url = `url(data:${this.mimetype};base64,${data.toBase64()});`;
     let rule;
     if (!this.cssFontInfo) {
       rule = `@font-face {font-family:"${this.loadedName}";src:${url}}`;
@@ -7989,27 +14362,30 @@ class FontFaceObject {
       if (this.cssFontInfo.italicAngle) {
         css += `font-style: oblique ${this.cssFontInfo.italicAngle}deg;`;
       }
-      rule = `@font-face {font-family:"${this.cssFontInfo.fontFamily}";${css}src:${url}}`;
+      const fontFamily = serializeFontFamily(this.cssFontInfo.fontFamily);
+      rule = `@font-face {font-family:${fontFamily};${css}src:${url}}`;
     }
     this._inspectFont?.(this, url);
     return rule;
   }
   getPathGenerator(objs, character) {
-    if (this.compiledGlyphs[character] !== undefined) {
-      return this.compiledGlyphs[character];
+    let path = this.#compiledPaths.get(character);
+    if (path) {
+      return path;
     }
-    const objId = this.loadedName + "_path_" + character;
+    const objId = `${this.loadedName}_path_${character}`;
     let cmds;
     try {
       cmds = objs.get(objId);
     } catch (ex) {
       warn(`getPathGenerator - ignoring character: "${ex}".`);
     }
-    const path = makePathFromDrawOPS(cmds?.path);
+    path = makePathFromDrawOPS(cmds?.path);
     if (!this.fontExtraProperties) {
       objs.delete(objId);
     }
-    return this.compiledGlyphs[character] = path;
+    this.#compiledPaths.set(character, path);
+    return path;
   }
   get black() {
     return this.#fontData.black;
@@ -8021,7 +14397,7 @@ class FontFaceObject {
     return this.#fontData.disableFontFace;
   }
   set disableFontFace(value) {
-    shadow(this, "disableFontFace", !!value);
+    util_shadow(this, "disableFontFace", !!value);
   }
   get fontExtraProperties() {
     return this.#fontData.fontExtraProperties;
@@ -8044,15 +14420,6 @@ class FontFaceObject {
   get vertical() {
     return this.#fontData.vertical;
   }
-  get ascent() {
-    return this.#fontData.ascent;
-  }
-  get defaultWidth() {
-    return this.#fontData.defaultWidth;
-  }
-  get descent() {
-    return this.#fontData.descent;
-  }
   get bbox() {
     return this.#fontData.bbox;
   }
@@ -8066,10 +14433,7 @@ class FontFaceObject {
     return this.#fontData.loadedName;
   }
   get mimetype() {
-    return this.#fontData.mimetype;
-  }
-  get name() {
-    return this.#fontData.name;
+    return this.missingFile ? null : "font/opentype";
   }
   get data() {
     return this.#fontData.data;
@@ -8083,12 +14447,10 @@ class FontFaceObject {
   get systemFontInfo() {
     return this.#fontData.systemFontInfo;
   }
-  get defaultVMetrics() {
-    return this.#fontData.defaultVMetrics;
-  }
 }
 
 ;// ./src/shared/obj_bin_transform_utils.js
+
 class CSS_FONT_INFO {
   static strings = ["fontFamily", "fontWeight", "italicAngle"];
 }
@@ -8097,13 +14459,10 @@ class SYSTEM_FONT_INFO {
 }
 class FONT_INFO {
   static bools = ["black", "bold", "disableFontFace", "fontExtraProperties", "isInvalidPDFjsFont", "isType3Font", "italic", "missingFile", "remeasure", "vertical"];
-  static numbers = ["ascent", "defaultWidth", "descent"];
-  static strings = ["fallbackName", "loadedName", "mimetype", "name"];
-  static OFFSET_NUMBERS = Math.ceil(this.bools.length * 2 / 8);
-  static OFFSET_BBOX = this.OFFSET_NUMBERS + this.numbers.length * 8;
+  static strings = ["fallbackName", "loadedName"];
+  static OFFSET_BBOX = Math.ceil(this.bools.length * 2 / 8);
   static OFFSET_FONT_MATRIX = this.OFFSET_BBOX + 1 + 2 * 4;
-  static OFFSET_DEFAULT_VMETRICS = this.OFFSET_FONT_MATRIX + 1 + 8 * 6;
-  static OFFSET_STRINGS = this.OFFSET_DEFAULT_VMETRICS + 1 + 2 * 3;
+  static OFFSET_STRINGS = this.OFFSET_FONT_MATRIX + 1 + 8 * 6;
 }
 class PATTERN_INFO {
   static KIND = 0;
@@ -8115,154 +14474,139 @@ class PATTERN_INFO {
   static N_STOP = 12;
   static N_FIGURES = 16;
 }
+class InfoUtils {
+  static get decoder() {
+    return util_shadow(this, "decoder", new TextDecoder());
+  }
+  static get encoder() {
+    return util_shadow(this, "encoder", new TextEncoder());
+  }
+}
 
 ;// ./src/display/obj_bin_transform_display.js
 
 
+
+
+
+
+
+
+function readString(buffer, view, index, offset = 0) {
+  const {
+    decoder
+  } = InfoUtils;
+  for (let i = 0; i < index; i++) {
+    offset += view.getUint32(offset) + 4;
+  }
+  const length = view.getUint32(offset);
+  return decoder.decode(new Uint8Array(buffer, offset + 4, length));
+}
 class CssFontInfo {
   #buffer;
-  #decoder = new TextDecoder();
   #view;
   constructor(buffer) {
     this.#buffer = buffer;
     this.#view = new DataView(buffer);
   }
   #readString(index) {
-    assert(index < CSS_FONT_INFO.strings.length, "Invalid string index");
-    let offset = 0;
-    for (let i = 0; i < index; i++) {
-      offset += this.#view.getUint32(offset) + 4;
-    }
-    const length = this.#view.getUint32(offset);
-    return this.#decoder.decode(new Uint8Array(this.#buffer, offset + 4, length));
+    util_assert(index < CSS_FONT_INFO.strings.length, "Invalid string index");
+    return readString(this.#buffer, this.#view, index);
   }
   get fontFamily() {
-    return this.#readString(0);
+    return util_shadow(this, "fontFamily", this.#readString(0));
   }
   get fontWeight() {
-    return this.#readString(1);
+    return util_shadow(this, "fontWeight", this.#readString(1));
   }
   get italicAngle() {
-    return this.#readString(2);
+    return util_shadow(this, "italicAngle", this.#readString(2));
   }
 }
 class SystemFontInfo {
   #buffer;
-  #decoder = new TextDecoder();
   #view;
   constructor(buffer) {
     this.#buffer = buffer;
     this.#view = new DataView(buffer);
   }
-  get guessFallback() {
-    return this.#view.getUint8(0) !== 0;
-  }
   #readString(index) {
-    assert(index < SYSTEM_FONT_INFO.strings.length, "Invalid string index");
-    let offset = 5;
-    for (let i = 0; i < index; i++) {
-      offset += this.#view.getUint32(offset) + 4;
-    }
-    const length = this.#view.getUint32(offset);
-    return this.#decoder.decode(new Uint8Array(this.#buffer, offset + 4, length));
+    util_assert(index < SYSTEM_FONT_INFO.strings.length, "Invalid string index");
+    return readString(this.#buffer, this.#view, index, 4);
   }
   get css() {
-    return this.#readString(0);
+    return util_shadow(this, "css", this.#readString(0));
   }
   get loadedName() {
-    return this.#readString(1);
+    return util_shadow(this, "loadedName", this.#readString(1));
   }
   get baseFontName() {
-    return this.#readString(2);
+    return util_shadow(this, "baseFontName", this.#readString(2));
   }
   get src() {
-    return this.#readString(3);
+    return util_shadow(this, "src", this.#readString(3));
   }
   get style() {
-    let offset = 1;
+    let offset = 0;
     offset += 4 + this.#view.getUint32(offset);
-    const styleLength = this.#view.getUint32(offset);
-    const style = this.#decoder.decode(new Uint8Array(this.#buffer, offset + 4, styleLength));
-    offset += 4 + styleLength;
-    const weightLength = this.#view.getUint32(offset);
-    const weight = this.#decoder.decode(new Uint8Array(this.#buffer, offset + 4, weightLength));
-    return {
+    const style = readString(this.#buffer, this.#view, 0, offset),
+      weight = readString(this.#buffer, this.#view, 1, offset);
+    return util_shadow(this, "style", {
       style,
       weight
-    };
+    });
   }
 }
 class FontInfo {
   #buffer;
-  #decoder = new TextDecoder();
   #view;
-  constructor({
-    buffer,
-    extra
-  }) {
+  constructor(buffer) {
     this.#buffer = buffer;
     this.#view = new DataView(buffer);
-    if (extra) {
-      Object.assign(this, extra);
-    }
   }
   #readBoolean(index) {
-    assert(index < FONT_INFO.bools.length, "Invalid boolean index");
+    util_assert(index < FONT_INFO.bools.length, "Invalid boolean index");
     const byteOffset = Math.floor(index / 4);
     const bitOffset = index * 2 % 8;
     const value = this.#view.getUint8(byteOffset) >> bitOffset & 0x03;
     return value === 0x00 ? undefined : value === 0x02;
   }
   get black() {
-    return this.#readBoolean(0);
+    return util_shadow(this, "black", this.#readBoolean(0));
   }
   get bold() {
-    return this.#readBoolean(1);
+    return util_shadow(this, "bold", this.#readBoolean(1));
   }
   get disableFontFace() {
-    return this.#readBoolean(2);
+    return util_shadow(this, "disableFontFace", this.#readBoolean(2));
   }
   get fontExtraProperties() {
-    return this.#readBoolean(3);
+    return util_shadow(this, "fontExtraProperties", this.#readBoolean(3));
   }
   get isInvalidPDFjsFont() {
-    return this.#readBoolean(4);
+    return util_shadow(this, "isInvalidPDFjsFont", this.#readBoolean(4));
   }
   get isType3Font() {
-    return this.#readBoolean(5);
+    return util_shadow(this, "isType3Font", this.#readBoolean(5));
   }
   get italic() {
-    return this.#readBoolean(6);
+    return util_shadow(this, "italic", this.#readBoolean(6));
   }
   get missingFile() {
-    return this.#readBoolean(7);
+    return util_shadow(this, "missingFile", this.#readBoolean(7));
   }
   get remeasure() {
-    return this.#readBoolean(8);
+    return util_shadow(this, "remeasure", this.#readBoolean(8));
   }
   get vertical() {
-    return this.#readBoolean(9);
-  }
-  #readNumber(index) {
-    assert(index < FONT_INFO.numbers.length, "Invalid number index");
-    return this.#view.getFloat64(FONT_INFO.OFFSET_NUMBERS + index * 8);
-  }
-  get ascent() {
-    return this.#readNumber(0);
-  }
-  get defaultWidth() {
-    return this.#readNumber(1);
-  }
-  get descent() {
-    return this.#readNumber(2);
+    return util_shadow(this, "vertical", this.#readBoolean(9));
   }
   #readArray(offset, arrLen, lookupName, increment) {
-    const len = this.#view.getUint8(offset);
+    const len = this.#view.getUint8(offset++);
     if (len === 0) {
       return undefined;
     }
-    assert(len === arrLen, "Invalid array length.");
-    offset += 1;
+    util_assert(len === arrLen, "Invalid array length.");
     const arr = new Array(len);
     for (let i = 0; i < len; i++) {
       arr[i] = this.#view[lookupName](offset, true);
@@ -8271,43 +14615,26 @@ class FontInfo {
     return arr;
   }
   get bbox() {
-    return this.#readArray(FONT_INFO.OFFSET_BBOX, 4, "getInt16", 2);
+    return util_shadow(this, "bbox", this.#readArray(FONT_INFO.OFFSET_BBOX, 4, "getInt16", 2));
   }
   get fontMatrix() {
-    return this.#readArray(FONT_INFO.OFFSET_FONT_MATRIX, 6, "getFloat64", 8);
-  }
-  get defaultVMetrics() {
-    return this.#readArray(FONT_INFO.OFFSET_DEFAULT_VMETRICS, 3, "getInt16", 2);
+    return util_shadow(this, "fontMatrix", this.#readArray(FONT_INFO.OFFSET_FONT_MATRIX, 6, "getFloat64", 8));
   }
   #readString(index) {
-    assert(index < FONT_INFO.strings.length, "Invalid string index");
-    let offset = FONT_INFO.OFFSET_STRINGS + 4;
-    for (let i = 0; i < index; i++) {
-      offset += this.#view.getUint32(offset) + 4;
-    }
-    const length = this.#view.getUint32(offset);
-    return this.#decoder.decode(new Uint8Array(this.#buffer, offset + 4, length));
+    util_assert(index < FONT_INFO.strings.length, "Invalid string index");
+    return readString(this.#buffer, this.#view, index, FONT_INFO.OFFSET_STRINGS + 4);
   }
   get fallbackName() {
-    return this.#readString(0);
+    return util_shadow(this, "fallbackName", this.#readString(0));
   }
   get loadedName() {
-    return this.#readString(1);
+    return util_shadow(this, "loadedName", this.#readString(1));
   }
-  get mimetype() {
-    return this.#readString(2);
-  }
-  get name() {
-    return this.#readString(3);
-  }
-  #getDataOffsets() {
+  #getBufferOffset(index) {
     let offset = FONT_INFO.OFFSET_STRINGS;
-    const stringsLength = this.#view.getUint32(offset);
-    offset += 4 + stringsLength;
-    const systemFontInfoLength = this.#view.getUint32(offset);
-    offset += 4 + systemFontInfoLength;
-    const cssFontInfoLength = this.#view.getUint32(offset);
-    offset += 4 + cssFontInfoLength;
+    for (let i = 0; i <= index; i++) {
+      offset += 4 + this.#view.getUint32(offset);
+    }
     const length = this.#view.getUint32(offset);
     return {
       offset,
@@ -8318,15 +14645,15 @@ class FontInfo {
     const {
       offset,
       length
-    } = this.#getDataOffsets();
-    return length === 0 ? undefined : new Uint8Array(this.#buffer, offset + 4, length);
+    } = this.#getBufferOffset(2);
+    return !length ? undefined : new Uint8Array(this.#buffer, offset + 4, length);
   }
   clearData() {
     const {
       offset,
       length
-    } = this.#getDataOffsets();
-    if (length === 0) {
+    } = this.#getBufferOffset(2);
+    if (!length) {
       return;
     }
     this.#view.setUint32(offset, 0);
@@ -8334,30 +14661,28 @@ class FontInfo {
     this.#view = new DataView(this.#buffer);
   }
   get cssFontInfo() {
-    let offset = FONT_INFO.OFFSET_STRINGS;
-    const stringsLength = this.#view.getUint32(offset);
-    offset += 4 + stringsLength;
-    const systemFontInfoLength = this.#view.getUint32(offset);
-    offset += 4 + systemFontInfoLength;
-    const cssFontInfoLength = this.#view.getUint32(offset);
-    if (cssFontInfoLength === 0) {
-      return null;
+    const {
+      offset,
+      length
+    } = this.#getBufferOffset(1);
+    let info = null;
+    if (length) {
+      const data = new Uint8Array(this.#buffer, offset + 4, length).slice();
+      info = new CssFontInfo(data.buffer);
     }
-    const cssFontInfoData = new Uint8Array(cssFontInfoLength);
-    cssFontInfoData.set(new Uint8Array(this.#buffer, offset + 4, cssFontInfoLength));
-    return new CssFontInfo(cssFontInfoData.buffer);
+    return util_shadow(this, "cssFontInfo", info);
   }
   get systemFontInfo() {
-    let offset = FONT_INFO.OFFSET_STRINGS;
-    const stringsLength = this.#view.getUint32(offset);
-    offset += 4 + stringsLength;
-    const systemFontInfoLength = this.#view.getUint32(offset);
-    if (systemFontInfoLength === 0) {
-      return null;
+    const {
+      offset,
+      length
+    } = this.#getBufferOffset(0);
+    let info = null;
+    if (length) {
+      const data = new Uint8Array(this.#buffer, offset + 4, length).slice();
+      info = new SystemFontInfo(data.buffer);
     }
-    const systemFontInfoData = new Uint8Array(systemFontInfoLength);
-    systemFontInfoData.set(new Uint8Array(this.#buffer, offset + 4, systemFontInfoLength));
-    return new SystemFontInfo(systemFontInfoData.buffer);
+    return util_shadow(this, "systemFontInfo", info);
   }
 }
 class PatternInfo {
@@ -8374,12 +14699,11 @@ class PatternInfo {
     const nCoord = dataView.getUint32(PATTERN_INFO.N_COORD, true);
     const nColor = dataView.getUint32(PATTERN_INFO.N_COLOR, true);
     const nStop = dataView.getUint32(PATTERN_INFO.N_STOP, true);
-    const nFigures = dataView.getUint32(PATTERN_INFO.N_FIGURES, true);
     let offset = 20;
     const coords = new Float32Array(this.buffer, offset, nCoord * 2);
     offset += nCoord * 8;
-    const colors = new Uint8Array(this.buffer, offset, nColor * 3);
-    offset += nColor * 3;
+    const colors = new Uint8Array(this.buffer, offset, nColor * 4);
+    offset += nColor * 4;
     const stops = [];
     for (let i = 0; i < nStop; ++i) {
       const p = dataView.getFloat32(offset, true);
@@ -8401,32 +14725,8 @@ class PatternInfo {
       background = new Uint8Array(this.buffer, offset, 3);
       offset += 3;
     }
-    const figures = [];
-    for (let i = 0; i < nFigures; ++i) {
-      const type = dataView.getUint8(offset);
-      offset += 1;
-      offset = Math.ceil(offset / 4) * 4;
-      const coordsLength = dataView.getUint32(offset, true);
-      offset += 4;
-      const figureCoords = new Int32Array(this.buffer, offset, coordsLength);
-      offset += coordsLength * 4;
-      const colorsLength = dataView.getUint32(offset, true);
-      offset += 4;
-      const figureColors = new Int32Array(this.buffer, offset, colorsLength);
-      offset += colorsLength * 4;
-      const figure = {
-        type,
-        coords: figureCoords,
-        colors: figureColors
-      };
-      if (type === MeshFigureType.LATTICE) {
-        figure.verticesPerRow = dataView.getUint32(offset, true);
-        offset += 4;
-      }
-      figures.push(figure);
-    }
     if (kind === 1) {
-      return ["RadialAxial", "axial", bbox, stops, Array.from(coords.slice(0, 2)), Array.from(coords.slice(2, 4)), null, null];
+      return ["RadialAxial", "axial", bbox, stops, [coords[0], coords[1]], [coords[2], coords[3]], null, null];
     }
     if (kind === 2) {
       return ["RadialAxial", "radial", bbox, stops, [coords[0], coords[1]], [coords[3], coords[4]], coords[2], coords[5]];
@@ -8435,12 +14735,12 @@ class PatternInfo {
       const shadingType = this.data[PATTERN_INFO.SHADING_TYPE];
       let bounds = null;
       if (coords.length > 0) {
-        bounds = [Infinity, Infinity, -Infinity, -Infinity];
+        bounds = BBOX_INIT.slice();
         for (let i = 0, ii = coords.length; i < ii; i += 2) {
           Util.pointBoundingBox(coords[i], coords[i + 1], bounds);
         }
       }
-      return ["Mesh", shadingType, coords, colors, figures, bounds, bbox, background];
+      return ["Mesh", shadingType, coords, colors, nCoord, bounds, bbox, background];
     }
     throw new Error(`Unsupported pattern kind: ${kind}`);
   }
@@ -8459,6 +14759,15 @@ class FontPathInfo {
 }
 
 ;// ./src/display/api_utils.js
+
+
+
+
+
+
+
+
+
 
 function getUrlProp(val) {
   if (val instanceof URL) {
@@ -8550,7 +14859,13 @@ class LoopbackPort {
   }
 }
 
+;// ./node_modules/core-js/modules/es.promise.try.js
+es_promise_try_namespaceFn();
+
 ;// ./src/shared/message_handler.js
+
+
+
 
 const CallbackKind = {
   DATA: 1,
@@ -8589,17 +14904,20 @@ function wrapReason(ex) {
   return new UnknownErrorException(ex.message, ex.toString());
 }
 class MessageHandler {
+  #actions = new Map();
+  #callbackCapabilities = new Map();
+  #callbackId = 1;
+  #comObj;
   #messageAC = new AbortController();
+  #sourceName;
+  #streamControllers = new Map();
+  #streamId = 1;
+  #streamSinks = new Map();
+  #targetName;
   constructor(sourceName, targetName, comObj) {
-    this.sourceName = sourceName;
-    this.targetName = targetName;
-    this.comObj = comObj;
-    this.callbackId = 1;
-    this.streamId = 1;
-    this.streamSinks = Object.create(null);
-    this.streamControllers = Object.create(null);
-    this.callbackCapabilities = Object.create(null);
-    this.actionHandler = Object.create(null);
+    this.#sourceName = sourceName;
+    this.#targetName = targetName;
+    this.#comObj = comObj;
     comObj.addEventListener("message", this.#onMessage.bind(this), {
       signal: this.#messageAC.signal
     });
@@ -8607,7 +14925,7 @@ class MessageHandler {
   #onMessage({
     data
   }) {
-    if (data.targetName !== this.sourceName) {
+    if (data.targetName !== this.#sourceName) {
       return;
     }
     if (data.stream) {
@@ -8615,30 +14933,33 @@ class MessageHandler {
       return;
     }
     if (data.callback) {
-      const callbackId = data.callbackId;
-      const capability = this.callbackCapabilities[callbackId];
+      const {
+        callbackId,
+        callback
+      } = data;
+      const capability = this.#callbackCapabilities.get(callbackId);
       if (!capability) {
         throw new Error(`Cannot resolve callback ${callbackId}`);
       }
-      delete this.callbackCapabilities[callbackId];
-      if (data.callback === CallbackKind.DATA) {
+      this.#callbackCapabilities.delete(callbackId);
+      if (callback === CallbackKind.DATA) {
         capability.resolve(data.data);
-      } else if (data.callback === CallbackKind.ERROR) {
+      } else if (callback === CallbackKind.ERROR) {
         capability.reject(wrapReason(data.reason));
       } else {
         throw new Error("Unexpected callback case");
       }
       return;
     }
-    const action = this.actionHandler[data.action];
+    const action = this.#actions.get(data.action);
     if (!action) {
       throw new Error(`Unknown action from worker: ${data.action}`);
     }
     if (data.callbackId) {
-      const sourceName = this.sourceName,
+      const sourceName = this.#sourceName,
         targetName = data.sourceName,
-        comObj = this.comObj;
-      Promise.try(action, data.data).then(function (result) {
+        comObj = this.#comObj;
+      Promise.try(action, data.data).then(result => {
         comObj.postMessage({
           sourceName,
           targetName,
@@ -8646,7 +14967,7 @@ class MessageHandler {
           callbackId: data.callbackId,
           data: result
         });
-      }, function (reason) {
+      }, reason => {
         comObj.postMessage({
           sourceName,
           targetName,
@@ -8664,28 +14985,28 @@ class MessageHandler {
     action(data.data);
   }
   on(actionName, handler) {
-    const ah = this.actionHandler;
-    if (ah[actionName]) {
-      throw new Error(`There is already an actionName called "${actionName}"`);
+    const ah = this.#actions;
+    if (ah.has(actionName)) {
+      throw new Error(`There is already a "${actionName}" handler.`);
     }
-    ah[actionName] = handler;
+    ah.set(actionName, handler);
   }
   send(actionName, data, transfers) {
-    this.comObj.postMessage({
-      sourceName: this.sourceName,
-      targetName: this.targetName,
+    this.#comObj.postMessage({
+      sourceName: this.#sourceName,
+      targetName: this.#targetName,
       action: actionName,
       data
     }, transfers);
   }
   sendWithPromise(actionName, data, transfers) {
-    const callbackId = this.callbackId++;
-    const capability = Promise.withResolvers();
-    this.callbackCapabilities[callbackId] = capability;
+    const callbackId = this.#callbackId++,
+      capability = Promise.withResolvers();
+    this.#callbackCapabilities.set(callbackId, capability);
     try {
-      this.comObj.postMessage({
-        sourceName: this.sourceName,
-        targetName: this.targetName,
+      this.#comObj.postMessage({
+        sourceName: this.#sourceName,
+        targetName: this.#targetName,
         action: actionName,
         callbackId,
         data
@@ -8696,20 +15017,20 @@ class MessageHandler {
     return capability.promise;
   }
   sendWithStream(actionName, data, queueingStrategy, transfers) {
-    const streamId = this.streamId++,
-      sourceName = this.sourceName,
-      targetName = this.targetName,
-      comObj = this.comObj;
+    const streamId = this.#streamId++,
+      sourceName = this.#sourceName,
+      targetName = this.#targetName,
+      comObj = this.#comObj;
     return new ReadableStream({
       start: controller => {
         const startCapability = Promise.withResolvers();
-        this.streamControllers[streamId] = {
+        this.#streamControllers.set(streamId, {
           controller,
           startCall: startCapability,
           pullCall: null,
           cancelCall: null,
           isClosed: false
-        };
+        });
         comObj.postMessage({
           sourceName,
           targetName,
@@ -8722,7 +15043,7 @@ class MessageHandler {
       },
       pull: controller => {
         const pullCapability = Promise.withResolvers();
-        this.streamControllers[streamId].pullCall = pullCapability;
+        this.#streamControllers.get(streamId).pullCall = pullCapability;
         comObj.postMessage({
           sourceName,
           targetName,
@@ -8733,10 +15054,10 @@ class MessageHandler {
         return pullCapability.promise;
       },
       cancel: reason => {
-        assert(reason instanceof Error, "cancel must have a valid reason");
+        util_assert(reason instanceof Error, "cancel must have a valid reason");
         const cancelCapability = Promise.withResolvers();
-        this.streamControllers[streamId].cancelCall = cancelCapability;
-        this.streamControllers[streamId].isClosed = true;
+        this.#streamControllers.get(streamId).cancelCall = cancelCapability;
+        this.#streamControllers.get(streamId).isClosed = true;
         comObj.postMessage({
           sourceName,
           targetName,
@@ -8750,11 +15071,11 @@ class MessageHandler {
   }
   #createStreamSink(data) {
     const streamId = data.streamId,
-      sourceName = this.sourceName,
+      sourceName = this.#sourceName,
       targetName = data.sourceName,
-      comObj = this.comObj;
-    const self = this,
-      action = this.actionHandler[data.action];
+      comObj = this.#comObj;
+    const streamSinks = this.#streamSinks,
+      action = this.#actions.get(data.action);
     const streamSink = {
       enqueue(chunk, size = 1, transfers) {
         if (this.isCancelled) {
@@ -8785,10 +15106,10 @@ class MessageHandler {
           stream: StreamKind.CLOSE,
           streamId
         });
-        delete self.streamSinks[streamId];
+        streamSinks.delete(streamId);
       },
       error(reason) {
-        assert(reason instanceof Error, "error must have a valid reason");
+        util_assert(reason instanceof Error, "error must have a valid reason");
         if (this.isCancelled) {
           return;
         }
@@ -8810,8 +15131,8 @@ class MessageHandler {
     };
     streamSink.sinkCapability.resolve();
     streamSink.ready = streamSink.sinkCapability.promise;
-    this.streamSinks[streamId] = streamSink;
-    Promise.try(action, data.data, streamSink).then(function () {
+    streamSinks.set(streamId, streamSink);
+    Promise.try(action, data.data, streamSink).then(() => {
       comObj.postMessage({
         sourceName,
         targetName,
@@ -8819,7 +15140,7 @@ class MessageHandler {
         streamId,
         success: true
       });
-    }, function (reason) {
+    }, reason => {
       comObj.postMessage({
         sourceName,
         targetName,
@@ -8831,11 +15152,11 @@ class MessageHandler {
   }
   #processStreamMessage(data) {
     const streamId = data.streamId,
-      sourceName = this.sourceName,
+      sourceName = this.#sourceName,
       targetName = data.sourceName,
-      comObj = this.comObj;
-    const streamController = this.streamControllers[streamId],
-      streamSink = this.streamSinks[streamId];
+      comObj = this.#comObj;
+    const streamController = this.#streamControllers.get(streamId),
+      streamSink = this.#streamSinks.get(streamId);
     switch (data.stream) {
       case StreamKind.START_COMPLETE:
         if (data.success) {
@@ -8866,7 +15187,7 @@ class MessageHandler {
           streamSink.sinkCapability.resolve();
         }
         streamSink.desiredSize = data.desiredSize;
-        Promise.try(streamSink.onPull || onFn).then(function () {
+        Promise.try(streamSink.onPull || onFn).then(() => {
           comObj.postMessage({
             sourceName,
             targetName,
@@ -8874,7 +15195,7 @@ class MessageHandler {
             streamId,
             success: true
           });
-        }, function (reason) {
+        }, reason => {
           comObj.postMessage({
             sourceName,
             targetName,
@@ -8885,14 +15206,14 @@ class MessageHandler {
         });
         break;
       case StreamKind.ENQUEUE:
-        assert(streamController, "enqueue should have stream controller");
+        util_assert(streamController, "enqueue should have stream controller");
         if (streamController.isClosed) {
           break;
         }
         streamController.controller.enqueue(data.chunk);
         break;
       case StreamKind.CLOSE:
-        assert(streamController, "close should have stream controller");
+        util_assert(streamController, "close should have stream controller");
         if (streamController.isClosed) {
           break;
         }
@@ -8901,7 +15222,7 @@ class MessageHandler {
         this.#deleteStreamController(streamController, streamId);
         break;
       case StreamKind.ERROR:
-        assert(streamController, "error should have stream controller");
+        util_assert(streamController, "error should have stream controller");
         streamController.controller.error(wrapReason(data.reason));
         this.#deleteStreamController(streamController, streamId);
         break;
@@ -8918,7 +15239,7 @@ class MessageHandler {
           break;
         }
         const dataReason = wrapReason(data.reason);
-        Promise.try(streamSink.onCancel || onFn, dataReason).then(function () {
+        Promise.try(streamSink.onCancel || onFn, dataReason).then(() => {
           comObj.postMessage({
             sourceName,
             targetName,
@@ -8926,7 +15247,7 @@ class MessageHandler {
             streamId,
             success: true
           });
-        }, function (reason) {
+        }, reason => {
           comObj.postMessage({
             sourceName,
             targetName,
@@ -8937,7 +15258,7 @@ class MessageHandler {
         });
         streamSink.sinkCapability.reject(dataReason);
         streamSink.isCancelled = true;
-        delete this.streamSinks[streamId];
+        this.#streamSinks.delete(streamId);
         break;
       default:
         throw new Error("Unexpected stream case");
@@ -8945,7 +15266,7 @@ class MessageHandler {
   }
   async #deleteStreamController(streamController, streamId) {
     await Promise.allSettled([streamController.startCall?.promise, streamController.pullCall?.promise, streamController.cancelCall?.promise]);
-    delete this.streamControllers[streamId];
+    this.#streamControllers.delete(streamId);
   }
   destroy() {
     this.#messageAC?.abort();
@@ -8954,6 +15275,11 @@ class MessageHandler {
 }
 
 ;// ./src/display/binary_data_factory.js
+
+
+
+
+
 
 
 class BaseBinaryDataFactory {
@@ -9073,6 +15399,10 @@ class DOMCanvasFactory extends BaseCanvasFactory {
 ;// ./src/display/filter_factory.js
 
 
+
+
+
+
 class BaseFilterFactory {
   addFilter(maps) {
     return "none";
@@ -9086,8 +15416,20 @@ class BaseFilterFactory {
   addLuminosityFilter(map) {
     return "none";
   }
+  addKnockoutFilter(alpha = 0) {
+    return "none";
+  }
   addHighlightHCMFilter(filterName, fgColor, bgColor, newFgColor, newBgColor) {
     return "none";
+  }
+  addSelectionHCMFilter(fgColor, bgColor) {
+    return "none";
+  }
+  addSelectionFilter() {
+    return "none";
+  }
+  createSelectionStyle(pageColors = null) {
+    return null;
   }
   destroy(keepHCM = false) {}
 }
@@ -9119,6 +15461,7 @@ class DOMFilterFactory extends BaseFilterFactory {
       const {
         style
       } = div;
+      style.colorScheme = "only light";
       style.visibility = "hidden";
       style.contain = "strict";
       style.width = style.height = 0;
@@ -9136,25 +15479,13 @@ class DOMFilterFactory extends BaseFilterFactory {
     return this.#_defs;
   }
   #createTables(maps) {
+    const toTable = map => map && Array.from(map, v => v / 255).join(",");
     if (maps.length === 1) {
-      const mapR = maps[0];
-      const buffer = new Array(256);
-      for (let i = 0; i < 256; i++) {
-        buffer[i] = mapR[i] / 255;
-      }
-      const table = buffer.join(",");
+      const table = toTable(maps[0]);
       return [table, table, table];
     }
     const [mapR, mapG, mapB] = maps;
-    const bufferR = new Array(256);
-    const bufferG = new Array(256);
-    const bufferB = new Array(256);
-    for (let i = 0; i < 256; i++) {
-      bufferR[i] = mapR[i] / 255;
-      bufferG[i] = mapG[i] / 255;
-      bufferB[i] = mapB[i] / 255;
-    }
-    return [bufferR.join(","), bufferG.join(","), bufferB.join(",")];
+    return [toTable(mapR), toTable(mapG), toTable(mapB)];
   }
   #createUrl(id) {
     if (this.#baseUrl === undefined) {
@@ -9220,15 +15551,13 @@ class DOMFilterFactory extends BaseFilterFactory {
     fgColor = Util.makeHexColor(...fgRGB);
     const bgRGB = this.#getRGB(bgColor);
     bgColor = Util.makeHexColor(...bgRGB);
-    this.#defs.style.color = "";
+    this.#resetDefsColor();
     if (fgColor === "#000000" && bgColor === "#ffffff" || fgColor === bgColor) {
       return info.url;
     }
-    const map = new Array(256);
-    for (let i = 0; i <= 255; i++) {
-      const x = i / 255;
-      map[i] = x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4;
-    }
+    const map = Array.from({
+      length: 256
+    }, (_, i) => computeLuminance(i / 255));
     const table = map.join(",");
     const id = `g_${this.#docId}_hcm_filter`;
     const filter = info.filter = this.#createFilter(id);
@@ -9246,6 +15575,22 @@ class DOMFilterFactory extends BaseFilterFactory {
     this.#addTransferMapConversion(getSteps(0, 5), getSteps(1, 5), getSteps(2, 5), filter);
     info.url = this.#createUrl(id);
     return info.url;
+  }
+  addSelectionHCMFilter(fgColor, bgColor) {
+    return this.addHighlightHCMFilter("selection", fgColor, bgColor, "HighlightText", "Highlight");
+  }
+  addSelectionFilter() {
+    return this.addHighlightHCMFilter("selection_default", "black", "white", "HighlightText", "Highlight");
+  }
+  createSelectionStyle(pageColors = null) {
+    const filter = pageColors ? this.addSelectionHCMFilter(pageColors.foreground, pageColors.background) : this.addSelectionFilter();
+    if (filter === "none" || !FeatureTest.platform.isFirefox) {
+      return null;
+    }
+    return {
+      "backdrop-filter": filter,
+      "background-color": "transparent"
+    };
   }
   addAlphaFilter(map) {
     let value = this.#cache.get(map);
@@ -9295,6 +15640,26 @@ class DOMFilterFactory extends BaseFilterFactory {
     }
     return url;
   }
+  addKnockoutFilter(alpha = 0) {
+    const slope = alpha > 0 ? Math.min(1 / alpha, 1e6) : 1e6;
+    const key = `knockout_${slope}`;
+    const value = this.#cache.get(key);
+    if (value) {
+      return value;
+    }
+    const id = `g_${this.#docId}_knockout_filter_${this.#id++}`;
+    const url = this.#createUrl(id);
+    this.#cache.set(key, url);
+    const filter = this.#createFilter(id);
+    const feComponentTransfer = this.#document.createElementNS(SVG_NS, "feComponentTransfer");
+    filter.append(feComponentTransfer);
+    const feFuncA = this.#document.createElementNS(SVG_NS, "feFuncA");
+    feFuncA.setAttribute("type", "linear");
+    feFuncA.setAttribute("slope", `${slope}`);
+    feFuncA.setAttribute("intercept", "0");
+    feComponentTransfer.append(feFuncA);
+    return url;
+  }
   addHighlightHCMFilter(filterName, fgColor, bgColor, newFgColor, newBgColor) {
     const key = `${fgColor}-${bgColor}-${newFgColor}-${newBgColor}`;
     let info = this.#hcmCache.get(filterName);
@@ -9320,11 +15685,11 @@ class DOMFilterFactory extends BaseFilterFactory {
     const [fgRGB, bgRGB] = [fgColor, bgColor].map(this.#getRGB.bind(this));
     let fgGray = Math.round(0.2126 * fgRGB[0] + 0.7152 * fgRGB[1] + 0.0722 * fgRGB[2]);
     let bgGray = Math.round(0.2126 * bgRGB[0] + 0.7152 * bgRGB[1] + 0.0722 * bgRGB[2]);
-    let [newFgRGB, newBgRGB] = [newFgColor, newBgColor].map(this.#getRGB.bind(this));
+    let [newFgRGB, newBgRGB] = [newFgColor, newBgColor].map(this.#getOpaqueTextColor.bind(this));
     if (bgGray < fgGray) {
       [fgGray, bgGray, newFgRGB, newBgRGB] = [bgGray, fgGray, newBgRGB, newFgRGB];
     }
-    this.#defs.style.color = "";
+    this.#resetDefsColor();
     const getSteps = (fg, bg, n) => {
       const arr = new Array(256);
       const step = (bgGray - fgGray) / n;
@@ -9383,6 +15748,9 @@ class DOMFilterFactory extends BaseFilterFactory {
     return filter;
   }
   #appendFeFunc(feComponentTransfer, func, table) {
+    if (!table) {
+      return;
+    }
     const feFunc = this.#document.createElementNS(SVG_NS, func);
     feFunc.setAttribute("type", "discrete");
     feFunc.setAttribute("tableValues", table);
@@ -9401,9 +15769,30 @@ class DOMFilterFactory extends BaseFilterFactory {
     this.#appendFeFunc(feComponentTransfer, "feFuncA", aTable);
   }
   #getRGB(color) {
-    this.#defs.style.color = color;
-    return getRGB(getComputedStyle(this.#defs).getPropertyValue("color"));
+    this.#defs.style.color = "CanvasText";
+    this.#defs.style.backgroundColor = color;
+    return getRGB(getComputedStyle(this.#defs).getPropertyValue("background-color"));
   }
+  #getRGBA(color) {
+    this.#defs.style.color = "CanvasText";
+    this.#defs.style.backgroundColor = color;
+    return getRGBA(getComputedStyle(this.#defs).getPropertyValue("background-color"));
+  }
+  #resetDefsColor() {
+    this.#defs.style.color = "";
+    this.#defs.style.backgroundColor = "";
+  }
+  #getOpaqueTextColor(color) {
+    const [r, g, b, alpha] = this.#getRGBA(color);
+    if (alpha === 1) {
+      return [r, g, b];
+    }
+    const [canvasR, canvasG, canvasB] = this.#getRGB("Canvas");
+    return [blend(r, canvasR, alpha), blend(g, canvasG, alpha), blend(b, canvasB, alpha)];
+  }
+}
+function blend(fg, bg, alpha) {
+  return Math.round(alpha * fg + (1 - alpha) * bg);
 }
 
 ;// ./src/display/node_utils.js
@@ -9411,12 +15800,48 @@ class DOMFilterFactory extends BaseFilterFactory {
 
 
 
+
+
+
+
+
 if (isNodeJS) {
-  warn("Please use the `legacy` build in Node.js environments.");
+  let canvas;
+  try {
+    const require = process.getBuiltinModule("module").createRequire(import.meta.url);
+    try {
+      canvas = require("@napi-rs/canvas");
+    } catch (ex) {
+      warn(`Cannot load "@napi-rs/canvas" package: "${ex}".`);
+    }
+  } catch (ex) {
+    warn(`Cannot access the \`require\` function: "${ex}".`);
+  }
+  if (!globalThis.DOMMatrix) {
+    if (canvas?.DOMMatrix) {
+      globalThis.DOMMatrix = canvas.DOMMatrix;
+    } else {
+      warn("Cannot polyfill `DOMMatrix`, rendering may be broken.");
+    }
+  }
+  if (!globalThis.Path2D) {
+    if (canvas?.Path2D) {
+      globalThis.Path2D = canvas.Path2D;
+    } else {
+      warn("Cannot polyfill `Path2D`, rendering may be broken.");
+    }
+  }
+  if (!globalThis.navigator?.language) {
+    globalThis.navigator = {
+      language: "en-US",
+      platform: "",
+      userAgent: ""
+    };
+  }
 }
 async function node_utils_fetchData(url) {
-  const fs = process.getBuiltinModule("fs");
-  const data = await fs.promises.readFile(url);
+  const fs = process.getBuiltinModule("fs/promises");
+  const data = await fs.readFile(url);
   return new Uint8Array(data);
 }
 class NodeFilterFactory extends BaseFilterFactory {}
@@ -9433,9 +15858,122 @@ class NodeBinaryDataFactory extends BaseBinaryDataFactory {
   }
 }
 
-;// ./src/display/webgpu_mesh.js
+;// ./src/shared/image_utils.js
+/* unused harmony import specifier */ var image_utils_ImageKind;
+/* unused harmony import specifier */ var image_utils_FeatureTest;
 
-const WGSL = `
+
+function convertToRGBA(params) {
+  switch (params.kind) {
+    case image_utils_ImageKind.GRAYSCALE_1BPP:
+      return convertBlackAndWhiteToRGBA(params);
+    case image_utils_ImageKind.RGB_24BPP:
+      return convertRGBToRGBA(params);
+  }
+  return null;
+}
+function convertBlackAndWhiteToRGBA({
+  src,
+  srcPos = 0,
+  dest,
+  width,
+  height,
+  nonBlackColor = 0xffffffff,
+  inverseDecode = false
+}) {
+  const black = FeatureTest.isLittleEndian ? 0xff000000 : 0x000000ff;
+  const [zeroMapping, oneMapping] = inverseDecode ? [nonBlackColor, black] : [black, nonBlackColor];
+  const widthInSource = width >> 3;
+  const widthRemainder = width & 7;
+  const xorMask = zeroMapping ^ oneMapping;
+  const srcLength = src.length;
+  dest = new Uint32Array(dest.buffer);
+  let destPos = 0;
+  for (let i = 0; i < height; ++i) {
+    for (const max = srcPos + widthInSource; srcPos < max; ++srcPos, destPos += 8) {
+      const elem = src[srcPos];
+      dest[destPos] = zeroMapping ^ -(elem >> 7 & 1) & xorMask;
+      dest[destPos + 1] = zeroMapping ^ -(elem >> 6 & 1) & xorMask;
+      dest[destPos + 2] = zeroMapping ^ -(elem >> 5 & 1) & xorMask;
+      dest[destPos + 3] = zeroMapping ^ -(elem >> 4 & 1) & xorMask;
+      dest[destPos + 4] = zeroMapping ^ -(elem >> 3 & 1) & xorMask;
+      dest[destPos + 5] = zeroMapping ^ -(elem >> 2 & 1) & xorMask;
+      dest[destPos + 6] = zeroMapping ^ -(elem >> 1 & 1) & xorMask;
+      dest[destPos + 7] = zeroMapping ^ -(elem & 1) & xorMask;
+    }
+    if (widthRemainder === 0) {
+      continue;
+    }
+    const elem = srcPos < srcLength ? src[srcPos++] : 255;
+    for (let j = 0; j < widthRemainder; ++j, ++destPos) {
+      dest[destPos] = zeroMapping ^ -(elem >> 7 - j & 1) & xorMask;
+    }
+  }
+  return {
+    srcPos,
+    destPos
+  };
+}
+function convertRGBToRGBA({
+  src,
+  srcPos = 0,
+  dest,
+  destPos = 0,
+  width,
+  height
+}) {
+  let i = 0;
+  const len = width * height * 3;
+  const len32 = len >> 2;
+  const src32 = new Uint32Array(src.buffer, srcPos, len32);
+  const alphaMask = FeatureTest.isLittleEndian ? 0xff000000 : 0xff;
+  if (FeatureTest.isLittleEndian) {
+    for (; i < len32 - 2; i += 3, destPos += 4) {
+      const s1 = src32[i],
+        s2 = src32[i + 1],
+        s3 = src32[i + 2];
+      dest[destPos] = s1 | alphaMask;
+      dest[destPos + 1] = s1 >>> 24 | s2 << 8 | alphaMask;
+      dest[destPos + 2] = s2 >>> 16 | s3 << 16 | alphaMask;
+      dest[destPos + 3] = s3 >>> 8 | alphaMask;
+    }
+    for (let j = srcPos + i * 4, jj = srcPos + len; j < jj; j += 3) {
+      dest[destPos++] = src[j] | src[j + 1] << 8 | src[j + 2] << 16 | alphaMask;
+    }
+  } else {
+    for (; i < len32 - 2; i += 3, destPos += 4) {
+      const s1 = src32[i],
+        s2 = src32[i + 1],
+        s3 = src32[i + 2];
+      dest[destPos] = s1 | alphaMask;
+      dest[destPos + 1] = s1 << 24 | s2 >>> 8 | alphaMask;
+      dest[destPos + 2] = s2 << 16 | s3 >>> 16 | alphaMask;
+      dest[destPos + 3] = s3 << 8 | alphaMask;
+    }
+    for (let j = srcPos + i * 4, jj = srcPos + len; j < jj; j += 3) {
+      dest[destPos++] = src[j] << 24 | src[j + 1] << 16 | src[j + 2] << 8 | alphaMask;
+    }
+  }
+  return {
+    srcPos: srcPos + len,
+    destPos
+  };
+}
+function grayToRGBA(src, dest) {
+  if (image_utils_FeatureTest.isLittleEndian) {
+    for (let i = 0, ii = src.length; i < ii; i++) {
+      dest[i] = src[i] * 0x10101 | 0xff000000;
+    }
+  } else {
+    for (let i = 0, ii = src.length; i < ii; i++) {
+      dest[i] = src[i] * 0x1010100 | 0x000000ff;
+    }
+  }
+}
+
+;// ./src/display/webgpu.js
+
+const MESH_WGSL = `
 struct Uniforms {
   offsetX      : f32,
   offsetY      : f32,
@@ -9479,10 +16017,10 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
   return vec4<f32>(in.color, 1.0);
 }
 `;
-class WebGPUMesh {
+class WebGPU {
   #initPromise = null;
   #device = null;
-  #pipeline = null;
+  #meshPipeline = null;
   #preferredFormat = null;
   async #initGPU() {
     if (!globalThis.navigator?.gpu) {
@@ -9494,115 +16032,60 @@ class WebGPUMesh {
         return false;
       }
       this.#preferredFormat = navigator.gpu.getPreferredCanvasFormat();
-      const device = this.#device = await adapter.requestDevice();
-      const shaderModule = device.createShaderModule({
-        code: WGSL
-      });
-      this.#pipeline = device.createRenderPipeline({
-        layout: "auto",
-        vertex: {
-          module: shaderModule,
-          entryPoint: "vs_main",
-          buffers: [{
-            arrayStride: 2 * 4,
-            attributes: [{
-              shaderLocation: 0,
-              offset: 0,
-              format: "float32x2"
-            }]
-          }, {
-            arrayStride: 4,
-            attributes: [{
-              shaderLocation: 1,
-              offset: 0,
-              format: "unorm8x4"
-            }]
-          }]
-        },
-        fragment: {
-          module: shaderModule,
-          entryPoint: "fs_main",
-          targets: [{
-            format: this.#preferredFormat
-          }]
-        },
-        primitive: {
-          topology: "triangle-list"
-        }
-      });
+      this.#device = await adapter.requestDevice();
       return true;
     } catch {
       return false;
     }
   }
   init() {
-    if (this.#initPromise === null) {
-      this.#initPromise = this.#initGPU();
-    }
+    return this.#initPromise ||= this.#initGPU();
   }
   get isReady() {
     return this.#device !== null;
   }
-  #buildVertexStreams(figures, context) {
-    const {
-      coords,
-      colors
-    } = context;
-    let vertexCount = 0;
-    for (const figure of figures) {
-      const ps = figure.coords;
-      if (figure.type === MeshFigureType.TRIANGLES) {
-        vertexCount += ps.length;
-      } else if (figure.type === MeshFigureType.LATTICE) {
-        const vpr = figure.verticesPerRow;
-        vertexCount += (Math.floor(ps.length / vpr) - 1) * (vpr - 1) * 6;
-      }
+  loadMeshShader() {
+    if (!this.#device || this.#meshPipeline) {
+      return;
     }
-    const posData = new Float32Array(vertexCount * 2);
-    const colData = new Uint8Array(vertexCount * 4);
-    let pOff = 0,
-      cOff = 0;
-    const addVertex = (pi, ci) => {
-      posData[pOff++] = coords[pi * 2];
-      posData[pOff++] = coords[pi * 2 + 1];
-      colData[cOff++] = colors[ci * 4];
-      colData[cOff++] = colors[ci * 4 + 1];
-      colData[cOff++] = colors[ci * 4 + 2];
-      cOff++;
-    };
-    for (const figure of figures) {
-      const ps = figure.coords;
-      const cs = figure.colors;
-      if (figure.type === MeshFigureType.TRIANGLES) {
-        for (let i = 0, ii = ps.length; i < ii; i += 3) {
-          addVertex(ps[i], cs[i]);
-          addVertex(ps[i + 1], cs[i + 1]);
-          addVertex(ps[i + 2], cs[i + 2]);
-        }
-      } else if (figure.type === MeshFigureType.LATTICE) {
-        const vpr = figure.verticesPerRow;
-        const rows = Math.floor(ps.length / vpr) - 1;
-        const cols = vpr - 1;
-        for (let i = 0; i < rows; i++) {
-          let q = i * vpr;
-          for (let j = 0; j < cols; j++, q++) {
-            addVertex(ps[q], cs[q]);
-            addVertex(ps[q + 1], cs[q + 1]);
-            addVertex(ps[q + vpr], cs[q + vpr]);
-            addVertex(ps[q + vpr + 1], cs[q + vpr + 1]);
-            addVertex(ps[q + 1], cs[q + 1]);
-            addVertex(ps[q + vpr], cs[q + vpr]);
-          }
-        }
+    const shaderModule = this.#device.createShaderModule({
+      code: MESH_WGSL
+    });
+    this.#meshPipeline = this.#device.createRenderPipeline({
+      layout: "auto",
+      vertex: {
+        module: shaderModule,
+        entryPoint: "vs_main",
+        buffers: [{
+          arrayStride: 2 * 4,
+          attributes: [{
+            shaderLocation: 0,
+            offset: 0,
+            format: "float32x2"
+          }]
+        }, {
+          arrayStride: 4,
+          attributes: [{
+            shaderLocation: 1,
+            offset: 0,
+            format: "unorm8x4"
+          }]
+        }]
+      },
+      fragment: {
+        module: shaderModule,
+        entryPoint: "fs_main",
+        targets: [{
+          format: this.#preferredFormat
+        }]
+      },
+      primitive: {
+        topology: "triangle-list"
       }
-    }
-    return {
-      posData,
-      colData,
-      vertexCount
-    };
+    });
   }
-  draw(figures, context, backgroundColor, paddedWidth, paddedHeight, borderSize) {
+  draw(posData, colData, vertexCount, context, backgroundColor, paddedWidth, paddedHeight, borderSize) {
+    this.loadMeshShader();
     const device = this.#device;
     const {
       offsetX,
@@ -9610,11 +16093,6 @@ class WebGPUMesh {
       scaleX,
       scaleY
     } = context;
-    const {
-      posData,
-      colData,
-      vertexCount
-    } = this.#buildVertexStreams(figures, context);
     const posBuffer = device.createBuffer({
       size: Math.max(posData.byteLength, 4),
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
@@ -9635,7 +16113,7 @@ class WebGPUMesh {
     });
     device.queue.writeBuffer(uniformBuffer, 0, new Float32Array([offsetX, offsetY, scaleX, scaleY, paddedWidth, paddedHeight, borderSize, 0]));
     const bindGroup = device.createBindGroup({
-      layout: this.#pipeline.getBindGroupLayout(0),
+      layout: this.#meshPipeline.getBindGroupLayout(0),
       entries: [{
         binding: 0,
         resource: {
@@ -9671,7 +16149,7 @@ class WebGPUMesh {
       }]
     });
     if (vertexCount > 0) {
-      renderPass.setPipeline(this.#pipeline);
+      renderPass.setPipeline(this.#meshPipeline);
       renderPass.setBindGroup(0, bindGroup);
       renderPass.setVertexBuffer(0, posBuffer);
       renderPass.setVertexBuffer(1, colBuffer);
@@ -9685,18 +16163,26 @@ class WebGPUMesh {
     return offscreen.transferToImageBitmap();
   }
 }
-const _webGPUMesh = new WebGPUMesh();
-function initWebGPUMesh() {
-  _webGPUMesh.init();
+const _webGPU = new WebGPU();
+function initGPU() {
+  return _webGPU.init();
 }
-function isWebGPUMeshReady() {
-  return _webGPUMesh.isReady;
+function isGPUReady() {
+  return _webGPU.isReady;
 }
-function drawMeshWithGPU(figures, context, backgroundColor, paddedWidth, paddedHeight, borderSize) {
-  return _webGPUMesh.draw(figures, context, backgroundColor, paddedWidth, paddedHeight, borderSize);
+function loadMeshShader() {
+  _webGPU.loadMeshShader();
+}
+function drawMeshWithGPU(posData, colData, vertexCount, context, backgroundColor, paddedWidth, paddedHeight, borderSize) {
+  return _webGPU.draw(posData, colData, vertexCount, context, backgroundColor, paddedWidth, paddedHeight, borderSize);
 }
 
 ;// ./src/display/pattern_helper.js
+
+
+
+
+
 
 
 
@@ -9716,6 +16202,7 @@ function applyBoundingBox(ctx, bbox) {
   ctx.clip(region);
 }
 class BaseShadingPattern {
+  matrix = null;
   isModifyingCurrentTransform() {
     return false;
   }
@@ -9733,7 +16220,6 @@ class RadialAxialShadingPattern extends BaseShadingPattern {
     this._p1 = IR[5];
     this._r0 = IR[6];
     this._r1 = IR[7];
-    this.matrix = null;
   }
   isOriginBased() {
     return this._p0[0] === 0 && this._p0[1] === 0 && (!this.isRadial() || this._p1[0] === 0 && this._p1[1] === 0);
@@ -9741,12 +16227,12 @@ class RadialAxialShadingPattern extends BaseShadingPattern {
   isRadial() {
     return this._type === "radial";
   }
-  _isCircleCenterOutside() {
-    if (!this.isRadial() || this._r0 > this._r1) {
+  areConic() {
+    if (!this.isRadial()) {
       return false;
     }
     const dist = Math.hypot(this._p0[0] - this._p1[0], this._p0[1] - this._p1[1]);
-    return dist > this._r1;
+    return dist + this._r1 > this._r0 && dist + this._r0 > this._r1;
   }
   _createGradient(ctx, transform = null) {
     let grad;
@@ -9800,10 +16286,34 @@ class RadialAxialShadingPattern extends BaseShadingPattern {
     }
     return grad;
   }
+  _createRasterPattern(ctx, owner, inverse, bbox, transform, transferMaps) {
+    const width = Math.ceil(bbox[2] - bbox[0]) || 1;
+    const height = Math.ceil(bbox[3] - bbox[1]) || 1;
+    const tmpCanvas = owner.canvasFactory.create(width, height);
+    const tmpCtx = tmpCanvas.context;
+    tmpCtx.clearRect(0, 0, width, height);
+    tmpCtx.beginPath();
+    tmpCtx.rect(0, 0, width, height);
+    tmpCtx.translate(-bbox[0], -bbox[1]);
+    inverse = Util.transform(inverse, [1, 0, 0, 1, bbox[0], bbox[1]]);
+    tmpCtx.transform(...transform);
+    applyBoundingBox(tmpCtx, this._bbox);
+    if (this.areConic()) {
+      tmpCtx.fillStyle = this._createReversedGradient(tmpCtx);
+      tmpCtx.fill();
+    }
+    tmpCtx.fillStyle = this._createGradient(tmpCtx);
+    tmpCtx.fill();
+    transferMaps?.applyToCanvas(tmpCtx);
+    const pattern = ctx.createPattern(tmpCanvas.canvas, "no-repeat");
+    owner.canvasFactory.destroy(tmpCanvas);
+    pattern.setTransform(new DOMMatrix(inverse));
+    return pattern;
+  }
   getPattern(ctx, owner, inverse, pathType) {
-    let pattern;
+    const transferMaps = owner.current.transferMapsFallback;
     if (pathType === PathType.STROKE || pathType === PathType.FILL) {
-      if (this.isOriginBased()) {
+      if (this.isOriginBased() && !transferMaps) {
         let transf = Util.transform(inverse, owner.baseTransform);
         if (this.matrix) {
           transf = Util.transform(transf, this.matrix);
@@ -9823,42 +16333,21 @@ class RadialAxialShadingPattern extends BaseShadingPattern {
         }
       }
       const ownerBBox = owner.current.getClippedPathBoundingBox(pathType, getCurrentTransform(ctx)) || [0, 0, 0, 0];
-      const width = Math.ceil(ownerBBox[2] - ownerBBox[0]) || 1;
-      const height = Math.ceil(ownerBBox[3] - ownerBBox[1]) || 1;
-      const tmpCanvas = owner.canvasFactory.create(width, height);
-      const tmpCtx = tmpCanvas.context;
-      tmpCtx.clearRect(0, 0, tmpCtx.canvas.width, tmpCtx.canvas.height);
-      tmpCtx.beginPath();
-      tmpCtx.rect(0, 0, tmpCtx.canvas.width, tmpCtx.canvas.height);
-      tmpCtx.translate(-ownerBBox[0], -ownerBBox[1]);
-      inverse = Util.transform(inverse, [1, 0, 0, 1, ownerBBox[0], ownerBBox[1]]);
-      tmpCtx.transform(...owner.baseTransform);
-      if (this.matrix) {
-        tmpCtx.transform(...this.matrix);
-      }
-      applyBoundingBox(tmpCtx, this._bbox);
-      if (this._isCircleCenterOutside()) {
-        tmpCtx.fillStyle = this._createReversedGradient(tmpCtx);
-        tmpCtx.fill();
-      }
-      tmpCtx.fillStyle = this._createGradient(tmpCtx);
-      tmpCtx.fill();
-      pattern = ctx.createPattern(tmpCanvas.canvas, "no-repeat");
-      owner.canvasFactory.destroy(tmpCanvas);
-      const domMatrix = new DOMMatrix(inverse);
-      pattern.setTransform(domMatrix);
-    } else {
-      if (this._isCircleCenterOutside()) {
-        ctx.save();
-        applyBoundingBox(ctx, this._bbox);
-        ctx.fillStyle = this._createReversedGradient(ctx);
-        ctx.fillRect(-1e10, -1e10, 2e10, 2e10);
-        ctx.restore();
-      }
-      applyBoundingBox(ctx, this._bbox);
-      pattern = this._createGradient(ctx);
+      const transform = this.matrix ? Util.transform(owner.baseTransform, this.matrix) : owner.baseTransform;
+      return this._createRasterPattern(ctx, owner, inverse, ownerBBox, transform, transferMaps);
     }
-    return pattern;
+    if (transferMaps && inverse) {
+      return this._createRasterPattern(ctx, owner, inverse, owner.current.clipBox, getCurrentTransform(ctx), transferMaps);
+    }
+    if (this.areConic()) {
+      ctx.save();
+      applyBoundingBox(ctx, this._bbox);
+      ctx.fillStyle = this._createReversedGradient(ctx);
+      ctx.fillRect(-1e10, -1e10, 2e10, 2e10);
+      ctx.restore();
+    }
+    applyBoundingBox(ctx, this._bbox);
+    return this._createGradient(ctx);
   }
 }
 function drawTriangle(data, context, p1, p2, p3, c1, c2, c3) {
@@ -9963,44 +16452,18 @@ function drawTriangle(data, context, p1, p2, p3, c1, c2, c3) {
     }
   }
 }
-function drawFigure(data, figure, context) {
-  const ps = figure.coords;
-  const cs = figure.colors;
-  let i, ii;
-  switch (figure.type) {
-    case MeshFigureType.LATTICE:
-      const verticesPerRow = figure.verticesPerRow;
-      const rows = Math.floor(ps.length / verticesPerRow) - 1;
-      const cols = verticesPerRow - 1;
-      for (i = 0; i < rows; i++) {
-        let q = i * verticesPerRow;
-        for (let j = 0; j < cols; j++, q++) {
-          drawTriangle(data, context, ps[q], ps[q + 1], ps[q + verticesPerRow], cs[q], cs[q + 1], cs[q + verticesPerRow]);
-          drawTriangle(data, context, ps[q + verticesPerRow + 1], ps[q + 1], ps[q + verticesPerRow], cs[q + verticesPerRow + 1], cs[q + 1], cs[q + verticesPerRow]);
-        }
-      }
-      break;
-    case MeshFigureType.TRIANGLES:
-      for (i = 0, ii = ps.length; i < ii; i += 3) {
-        drawTriangle(data, context, ps[i], ps[i + 1], ps[i + 2], cs[i], cs[i + 1], cs[i + 2]);
-      }
-      break;
-    default:
-      throw new Error("illegal figure");
-  }
-}
 class MeshShadingPattern extends BaseShadingPattern {
   constructor(IR) {
     super();
-    this._coords = IR[2];
-    this._colors = IR[3];
-    this._figures = IR[4];
+    this._posData = IR[2];
+    this._colData = IR[3];
+    this._vertexCount = IR[4];
     this._bounds = IR[5];
     this._bbox = IR[6];
     this._background = IR[7];
-    this.matrix = null;
+    loadMeshShader();
   }
-  _createMeshCanvas(combinedScale, backgroundColor, canvasFactory) {
+  _createMeshCanvas(combinedScale, backgroundColor, canvasFactory, transferMaps = null) {
     const EXPECTED_SCALE = 1.1;
     const MAX_PATTERN_SIZE = 3000;
     const BORDER_SIZE = 2;
@@ -10013,8 +16476,8 @@ class MeshShadingPattern extends BaseShadingPattern {
     const scaleX = boundsWidth ? boundsWidth / width : 1;
     const scaleY = boundsHeight ? boundsHeight / height : 1;
     const context = {
-      coords: this._coords,
-      colors: this._colors,
+      coords: this._posData,
+      colors: this._colData,
       offsetX: -offsetX,
       offsetY: -offsetY,
       scaleX: 1 / scaleX,
@@ -10023,8 +16486,8 @@ class MeshShadingPattern extends BaseShadingPattern {
     const paddedWidth = width + BORDER_SIZE * 2;
     const paddedHeight = height + BORDER_SIZE * 2;
     const tmpCanvas = canvasFactory.create(paddedWidth, paddedHeight);
-    if (isWebGPUMeshReady()) {
-      tmpCanvas.context.drawImage(drawMeshWithGPU(this._figures, context, backgroundColor, paddedWidth, paddedHeight, BORDER_SIZE), 0, 0);
+    if (isGPUReady() && this._vertexCount > 48) {
+      tmpCanvas.context.drawImage(drawMeshWithGPU(this._posData, this._colData, this._vertexCount, context, backgroundColor, paddedWidth, paddedHeight, BORDER_SIZE), 0, 0);
     } else {
       const data = tmpCanvas.context.createImageData(width, height);
       if (backgroundColor) {
@@ -10036,11 +16499,12 @@ class MeshShadingPattern extends BaseShadingPattern {
           bytes[i + 3] = 255;
         }
       }
-      for (const figure of this._figures) {
-        drawFigure(data, figure, context);
+      for (let i = 0, ii = this._vertexCount; i < ii; i += 3) {
+        drawTriangle(data, context, i, i + 1, i + 2, i, i + 1, i + 2);
       }
       tmpCanvas.context.putImageData(data, BORDER_SIZE, BORDER_SIZE);
     }
+    transferMaps?.applyToCanvas(tmpCanvas.context);
     return {
       canvas: tmpCanvas.canvas,
       offsetX: offsetX - BORDER_SIZE * scaleX,
@@ -10066,7 +16530,7 @@ class MeshShadingPattern extends BaseShadingPattern {
     } else {
       Util.singularValueDecompose2dScale(owner.baseTransform, scale);
     }
-    const temporaryPatternCanvas = this._createMeshCanvas(scale, pathType === PathType.SHADING ? null : this._background, owner.canvasFactory);
+    const temporaryPatternCanvas = this._createMeshCanvas(scale, pathType === PathType.SHADING ? null : this._background, owner.canvasFactory, owner.current.transferMapsFallback);
     if (pathType !== PathType.SHADING) {
       ctx.setTransform(...owner.baseTransform);
       if (this.matrix) {
@@ -10111,73 +16575,125 @@ class TilingPattern {
     this.ystep = IR[6];
     this.paintType = IR[7];
     this.tilingType = IR[8];
+    this.needsIsolation = IR[9] ?? true;
     this.ctx = ctx;
     this.canvasGraphicsFactory = canvasGraphicsFactory;
     this.baseTransform = baseTransform;
+    this.patternBaseMatrix = this.matrix ? Util.transform(baseTransform, this.matrix) : baseTransform;
   }
-  createPatternCanvas(owner, opIdx) {
-    const {
-      bbox,
-      operatorList,
-      paintType,
-      tilingType,
-      color,
-      canvasGraphicsFactory
-    } = this;
-    let {
-      xstep,
-      ystep
-    } = this;
-    xstep = Math.abs(xstep);
-    ystep = Math.abs(ystep);
-    info("TilingType: " + tilingType);
-    const x0 = bbox[0],
-      y0 = bbox[1],
-      x1 = bbox[2],
-      y1 = bbox[3];
-    const width = x1 - x0;
-    const height = y1 - y0;
-    const scale = new Float32Array(2);
-    Util.singularValueDecompose2dScale(this.matrix, scale);
-    const [matrixScaleX, matrixScaleY] = scale;
-    Util.singularValueDecompose2dScale(this.baseTransform, scale);
-    const combinedScaleX = matrixScaleX * scale[0];
-    const combinedScaleY = matrixScaleY * scale[1];
-    let canvasWidth = width,
-      canvasHeight = height,
-      redrawHorizontally = false,
-      redrawVertically = false;
-    const xScaledStep = Math.ceil(xstep * combinedScaleX);
-    const yScaledStep = Math.ceil(ystep * combinedScaleY);
-    const xScaledWidth = Math.ceil(width * combinedScaleX);
-    const yScaledHeight = Math.ceil(height * combinedScaleY);
-    if (xScaledStep >= xScaledWidth) {
-      canvasWidth = xstep;
-    } else {
-      redrawHorizontally = true;
+  canSkipPatternCanvas([width, height, offsetX, offsetY]) {
+    const [x0, y0, x1, y1] = this.bbox;
+    const absXStep = Math.abs(this.xstep);
+    const absYStep = Math.abs(this.ystep);
+    if (width > absXStep + 1e-6 || height > absYStep + 1e-6) {
+      return null;
     }
-    if (yScaledStep >= yScaledHeight) {
-      canvasHeight = ystep;
-    } else {
-      redrawVertically = true;
-    }
-    const dimx = this.getSizeAndScale(canvasWidth, this.ctx.canvas.width, combinedScaleX);
-    const dimy = this.getSizeAndScale(canvasHeight, this.ctx.canvas.height, combinedScaleY);
+    const nXFirst = Math.floor((offsetX - x1) / absXStep) + 1;
+    const nXLast = Math.ceil((offsetX + width - x0) / absXStep) - 1;
+    const nYFirst = Math.floor((offsetY - y1) / absYStep) + 1;
+    const nYLast = Math.ceil((offsetY + height - y0) / absYStep) - 1;
+    return nXLast <= nXFirst && nYLast <= nYFirst ? [nXFirst, nYFirst] : null;
+  }
+  updatePatternDims(clippedBBox, dims) {
+    const bbox = BBOX_INIT.slice();
+    Util.axialAlignedBoundingBox(clippedBBox, Util.inverseTransform(this.patternBaseMatrix), bbox);
+    dims[0] = bbox[2] - bbox[0];
+    dims[1] = bbox[3] - bbox[1];
+    dims[2] = bbox[0];
+    dims[3] = bbox[1];
+  }
+  _renderTileCanvas(owner, opIdx, dimx, dimy) {
+    const [x0, y0, x1, y1] = this.bbox;
     const tmpCanvas = owner.canvasFactory.create(dimx.size, dimy.size);
     const tmpCtx = tmpCanvas.context;
-    const graphics = canvasGraphicsFactory.createCanvasGraphics(tmpCtx, opIdx);
+    const graphics = this.canvasGraphicsFactory.createCanvasGraphics(tmpCtx, opIdx);
     graphics.groupLevel = owner.groupLevel;
-    this.setFillAndStrokeStyleToContext(graphics, paintType, color);
+    graphics.current.transferMapsFallback = owner.current.transferMapsFallback;
+    this.setFillAndStrokeStyleToContext(graphics, this.paintType, this.color);
     tmpCtx.translate(-dimx.scale * x0, -dimy.scale * y0);
     graphics.transform(0, dimx.scale, 0, 0, dimy.scale, 0, 0);
     tmpCtx.save();
     graphics.dependencyTracker?.save();
     this.clipBbox(graphics, x0, y0, x1, y1);
     graphics.baseTransform = getCurrentTransform(graphics.ctx);
-    graphics.executeOperatorList(operatorList);
+    graphics.executeOperatorList(this.operatorList);
     graphics.endDrawing();
     graphics.dependencyTracker?.restore();
     tmpCtx.restore();
+    return tmpCanvas;
+  }
+  _getCombinedScales() {
+    const scale = new Float32Array(2);
+    Util.singularValueDecompose2dScale(this.matrix, scale);
+    const [matrixScaleX, matrixScaleY] = scale;
+    Util.singularValueDecompose2dScale(this.baseTransform, scale);
+    return [matrixScaleX * scale[0], matrixScaleY * scale[1]];
+  }
+  drawPattern(owner, path, useEOFill = false, [n, m], opIdx) {
+    const [x0, y0, x1, y1] = this.bbox;
+    const dependencyTracker = owner.dependencyTracker;
+    if (dependencyTracker) {
+      owner.dependencyTracker = new CanvasNestedDependencyTracker(dependencyTracker, opIdx);
+    }
+    owner.save();
+    if (useEOFill) {
+      owner.ctx.clip(path, "evenodd");
+    } else {
+      owner.ctx.clip(path);
+    }
+    owner.ctx.setTransform(...this.patternBaseMatrix);
+    owner.ctx.translate(n * this.xstep, m * this.ystep);
+    if (this.needsIsolation || owner.ctx.globalAlpha !== 1 || owner.ctx.globalCompositeOperation !== "source-over" || owner.inSMaskMode) {
+      const bboxWidth = x1 - x0;
+      const bboxHeight = y1 - y0;
+      const [combinedScaleX, combinedScaleY] = this._getCombinedScales();
+      const dimx = this.getSizeAndScale(bboxWidth, this.ctx.canvas.width, combinedScaleX);
+      const dimy = this.getSizeAndScale(bboxHeight, this.ctx.canvas.height, combinedScaleY);
+      const tmpCanvas = this._renderTileCanvas(owner, opIdx, dimx, dimy);
+      owner.ctx.drawImage(tmpCanvas.canvas, x0, y0, bboxWidth, bboxHeight);
+      owner.canvasFactory.destroy(tmpCanvas);
+    } else {
+      this.setFillAndStrokeStyleToContext(owner, this.paintType, this.color);
+      this.clipBbox(owner, x0, y0, x1, y1);
+      owner.baseTransformStack.push(owner.baseTransform);
+      owner.baseTransform = getCurrentTransform(owner.ctx);
+      owner.executeOperatorList(this.operatorList);
+      owner.baseTransform = owner.baseTransformStack.pop();
+    }
+    owner.restore();
+    if (dependencyTracker) {
+      owner.dependencyTracker = dependencyTracker;
+    }
+  }
+  createPatternCanvas(owner, opIdx) {
+    const [x0, y0, x1, y1] = this.bbox;
+    const width = x1 - x0;
+    const height = y1 - y0;
+    let {
+      xstep,
+      ystep
+    } = this;
+    xstep = Math.abs(xstep);
+    ystep = Math.abs(ystep);
+    info("TilingType: " + this.tilingType);
+    const [combinedScaleX, combinedScaleY] = this._getCombinedScales();
+    let canvasWidth = width,
+      canvasHeight = height,
+      redrawHorizontally = false,
+      redrawVertically = false;
+    if (Math.ceil(xstep * combinedScaleX) >= Math.ceil(width * combinedScaleX)) {
+      canvasWidth = xstep;
+    } else {
+      redrawHorizontally = true;
+    }
+    if (Math.ceil(ystep * combinedScaleY) >= Math.ceil(height * combinedScaleY)) {
+      canvasHeight = ystep;
+    } else {
+      redrawVertically = true;
+    }
+    const dimx = this.getSizeAndScale(canvasWidth, this.ctx.canvas.width, combinedScaleX);
+    const dimy = this.getSizeAndScale(canvasHeight, this.ctx.canvas.height, combinedScaleY);
+    const tmpCanvas = this._renderTileCanvas(owner, opIdx, dimx, dimy);
     if (redrawHorizontally || redrawVertically) {
       const image = tmpCanvas.canvas;
       if (redrawHorizontally) {
@@ -10192,12 +16708,23 @@ class TilingPattern {
       const ySize = dimy2.size;
       const tmpCanvas2 = owner.canvasFactory.create(xSize, ySize);
       const tmpCtx2 = tmpCanvas2.context;
-      const ii = redrawHorizontally ? Math.floor(width / xstep) : 0;
-      const jj = redrawVertically ? Math.floor(height / ystep) : 0;
-      for (let i = 0; i <= ii; i++) {
-        for (let j = 0; j <= jj; j++) {
-          tmpCtx2.drawImage(image, xSize * i, ySize * j, xSize, ySize, 0, 0, xSize, ySize);
+      const ii = redrawHorizontally ? Math.min(Math.floor(width / xstep), Math.ceil(image.width / xSize)) : 0;
+      const jj = redrawVertically ? Math.min(Math.floor(height / ystep), Math.ceil(image.height / ySize)) : 0;
+      let rowSource = image;
+      let bandCanvas = null;
+      if (redrawVertically) {
+        bandCanvas = owner.canvasFactory.create(image.width, ySize);
+        const bandCtx = bandCanvas.context;
+        for (let j = jj; j >= 0; j--) {
+          bandCtx.drawImage(image, 0, ySize * j, image.width, ySize, 0, 0, image.width, ySize);
         }
+        rowSource = bandCanvas.canvas;
+      }
+      for (let i = ii; i >= 0; i--) {
+        tmpCtx2.drawImage(rowSource, xSize * i, 0, xSize, ySize, 0, 0, xSize, ySize);
+      }
+      if (bandCanvas) {
+        owner.canvasFactory.destroy(bandCanvas);
       }
       owner.canvasFactory.destroy(tmpCanvas);
       return {
@@ -10234,42 +16761,35 @@ class TilingPattern {
   clipBbox(graphics, x0, y0, x1, y1) {
     const bboxWidth = x1 - x0;
     const bboxHeight = y1 - y0;
-    graphics.ctx.rect(x0, y0, bboxWidth, bboxHeight);
+    const clip = new Path2D();
+    clip.rect(x0, y0, bboxWidth, bboxHeight);
     Util.axialAlignedBoundingBox([x0, y0, x1, y1], getCurrentTransform(graphics.ctx), graphics.current.minMax);
-    graphics.clip();
-    graphics.endPath();
+    graphics.ctx.clip(clip);
+    graphics.current.updateClipFromPath();
   }
   setFillAndStrokeStyleToContext(graphics, paintType, color) {
-    const context = graphics.ctx,
-      current = graphics.current;
     switch (paintType) {
       case PaintType.COLORED:
-        const {
-          fillStyle,
-          strokeStyle
-        } = this.ctx;
-        context.fillStyle = current.fillColor = fillStyle;
-        context.strokeStyle = current.strokeColor = strokeStyle;
+        color = "#000000";
         break;
       case PaintType.UNCOLORED:
-        context.fillStyle = context.strokeStyle = color;
-        current.fillColor = current.strokeColor = color;
         break;
       default:
         throw new FormatError(`Unsupported paint type: ${paintType}`);
     }
+    const {
+      ctx,
+      current
+    } = graphics;
+    current.patternFill = current.patternStroke = false;
+    ctx.fillStyle = ctx.strokeStyle = current.transferMapsFallback?.applyToColor(color) ?? color;
+    current.fillColor = current.strokeColor = color;
   }
   isModifyingCurrentTransform() {
     return false;
   }
   getPattern(ctx, owner, inverse, pathType, opIdx) {
-    let matrix = inverse;
-    if (pathType !== PathType.SHADING) {
-      matrix = Util.transform(matrix, owner.baseTransform);
-      if (this.matrix) {
-        matrix = Util.transform(matrix, this.matrix);
-      }
-    }
+    const matrix = pathType !== PathType.SHADING ? Util.transform(inverse, this.patternBaseMatrix) : inverse;
     const temporaryPatternCanvas = this.createPatternCanvas(owner, opIdx);
     let domMatrix = new DOMMatrix(matrix);
     domMatrix = domMatrix.translate(temporaryPatternCanvas.offsetX, temporaryPatternCanvas.offsetY);
@@ -10281,119 +16801,16 @@ class TilingPattern {
   }
 }
 
-;// ./src/shared/image_utils.js
-/* unused harmony import specifier */ var image_utils_ImageKind;
-/* unused harmony import specifier */ var image_utils_FeatureTest;
-
-function convertToRGBA(params) {
-  switch (params.kind) {
-    case image_utils_ImageKind.GRAYSCALE_1BPP:
-      return convertBlackAndWhiteToRGBA(params);
-    case image_utils_ImageKind.RGB_24BPP:
-      return convertRGBToRGBA(params);
-  }
-  return null;
-}
-function convertBlackAndWhiteToRGBA({
-  src,
-  srcPos = 0,
-  dest,
-  width,
-  height,
-  nonBlackColor = 0xffffffff,
-  inverseDecode = false
-}) {
-  const black = FeatureTest.isLittleEndian ? 0xff000000 : 0x000000ff;
-  const [zeroMapping, oneMapping] = inverseDecode ? [nonBlackColor, black] : [black, nonBlackColor];
-  const widthInSource = width >> 3;
-  const widthRemainder = width & 7;
-  const xorMask = zeroMapping ^ oneMapping;
-  const srcLength = src.length;
-  dest = new Uint32Array(dest.buffer);
-  let destPos = 0;
-  for (let i = 0; i < height; ++i) {
-    for (const max = srcPos + widthInSource; srcPos < max; ++srcPos, destPos += 8) {
-      const elem = src[srcPos];
-      dest[destPos] = zeroMapping ^ -(elem >> 7 & 1) & xorMask;
-      dest[destPos + 1] = zeroMapping ^ -(elem >> 6 & 1) & xorMask;
-      dest[destPos + 2] = zeroMapping ^ -(elem >> 5 & 1) & xorMask;
-      dest[destPos + 3] = zeroMapping ^ -(elem >> 4 & 1) & xorMask;
-      dest[destPos + 4] = zeroMapping ^ -(elem >> 3 & 1) & xorMask;
-      dest[destPos + 5] = zeroMapping ^ -(elem >> 2 & 1) & xorMask;
-      dest[destPos + 6] = zeroMapping ^ -(elem >> 1 & 1) & xorMask;
-      dest[destPos + 7] = zeroMapping ^ -(elem & 1) & xorMask;
-    }
-    if (widthRemainder === 0) {
-      continue;
-    }
-    const elem = srcPos < srcLength ? src[srcPos++] : 255;
-    for (let j = 0; j < widthRemainder; ++j, ++destPos) {
-      dest[destPos] = zeroMapping ^ -(elem >> 7 - j & 1) & xorMask;
-    }
-  }
-  return {
-    srcPos,
-    destPos
-  };
-}
-function convertRGBToRGBA({
-  src,
-  srcPos = 0,
-  dest,
-  destPos = 0,
-  width,
-  height
-}) {
-  let i = 0;
-  const len = width * height * 3;
-  const len32 = len >> 2;
-  const src32 = new Uint32Array(src.buffer, srcPos, len32);
-  const alphaMask = image_utils_FeatureTest.isLittleEndian ? 0xff000000 : 0xff;
-  if (image_utils_FeatureTest.isLittleEndian) {
-    for (; i < len32 - 2; i += 3, destPos += 4) {
-      const s1 = src32[i],
-        s2 = src32[i + 1],
-        s3 = src32[i + 2];
-      dest[destPos] = s1 | alphaMask;
-      dest[destPos + 1] = s1 >>> 24 | s2 << 8 | alphaMask;
-      dest[destPos + 2] = s2 >>> 16 | s3 << 16 | alphaMask;
-      dest[destPos + 3] = s3 >>> 8 | alphaMask;
-    }
-    for (let j = i * 4, jj = srcPos + len; j < jj; j += 3) {
-      dest[destPos++] = src[j] | src[j + 1] << 8 | src[j + 2] << 16 | alphaMask;
-    }
-  } else {
-    for (; i < len32 - 2; i += 3, destPos += 4) {
-      const s1 = src32[i],
-        s2 = src32[i + 1],
-        s3 = src32[i + 2];
-      dest[destPos] = s1 | alphaMask;
-      dest[destPos + 1] = s1 << 24 | s2 >>> 8 | alphaMask;
-      dest[destPos + 2] = s2 << 16 | s3 >>> 16 | alphaMask;
-      dest[destPos + 3] = s3 << 8 | alphaMask;
-    }
-    for (let j = i * 4, jj = srcPos + len; j < jj; j += 3) {
-      dest[destPos++] = src[j] << 24 | src[j + 1] << 16 | src[j + 2] << 8 | alphaMask;
-    }
-  }
-  return {
-    srcPos: srcPos + len,
-    destPos
-  };
-}
-function grayToRGBA(src, dest) {
-  if (image_utils_FeatureTest.isLittleEndian) {
-    for (let i = 0, ii = src.length; i < ii; i++) {
-      dest[i] = src[i] * 0x10101 | 0xff000000;
-    }
-  } else {
-    for (let i = 0, ii = src.length; i < ii; i++) {
-      dest[i] = src[i] * 0x1010100 | 0x000000ff;
-    }
-  }
-}
-
 ;// ./src/display/canvas.js
+
+
+
+
+
+
+
+
+
 
 
 
@@ -10404,105 +16821,28 @@ const MAX_FONT_SIZE = 100;
 const EXECUTION_TIME = 15;
 const EXECUTION_STEPS = 10;
 const FULL_CHUNK_HEIGHT = 16;
-const SCALE_MATRIX = new DOMMatrix();
 const XY = new Float32Array(2);
-const MIN_MAX_INIT = new Float32Array([Infinity, Infinity, -Infinity, -Infinity]);
 function mirrorContextOperations(ctx, destCtx) {
   if (ctx._removeMirroring) {
     throw new Error("Context is already forwarding operations.");
   }
-  ctx.__originalSave = ctx.save;
-  ctx.__originalRestore = ctx.restore;
-  ctx.__originalRotate = ctx.rotate;
-  ctx.__originalScale = ctx.scale;
-  ctx.__originalTranslate = ctx.translate;
-  ctx.__originalTransform = ctx.transform;
-  ctx.__originalSetTransform = ctx.setTransform;
-  ctx.__originalResetTransform = ctx.resetTransform;
-  ctx.__originalClip = ctx.clip;
-  ctx.__originalMoveTo = ctx.moveTo;
-  ctx.__originalLineTo = ctx.lineTo;
-  ctx.__originalBezierCurveTo = ctx.bezierCurveTo;
-  ctx.__originalRect = ctx.rect;
-  ctx.__originalClosePath = ctx.closePath;
-  ctx.__originalBeginPath = ctx.beginPath;
+  const originalMethods = new Map();
+  for (const name of ["save", "restore", "rotate", "scale", "translate", "transform", "setTransform", "resetTransform", "clip", "moveTo", "lineTo", "bezierCurveTo", "quadraticCurveTo", "arc", "arcTo", "ellipse", "rect", "roundRect", "closePath", "beginPath"]) {
+    const original = ctx[name];
+    if (typeof original !== "function" || typeof destCtx[name] !== "function") {
+      continue;
+    }
+    originalMethods.set(name, original);
+    ctx[name] = function (...args) {
+      destCtx[name](...args);
+      return original.apply(this, args);
+    };
+  }
   ctx._removeMirroring = () => {
-    ctx.save = ctx.__originalSave;
-    ctx.restore = ctx.__originalRestore;
-    ctx.rotate = ctx.__originalRotate;
-    ctx.scale = ctx.__originalScale;
-    ctx.translate = ctx.__originalTranslate;
-    ctx.transform = ctx.__originalTransform;
-    ctx.setTransform = ctx.__originalSetTransform;
-    ctx.resetTransform = ctx.__originalResetTransform;
-    ctx.clip = ctx.__originalClip;
-    ctx.moveTo = ctx.__originalMoveTo;
-    ctx.lineTo = ctx.__originalLineTo;
-    ctx.bezierCurveTo = ctx.__originalBezierCurveTo;
-    ctx.rect = ctx.__originalRect;
-    ctx.closePath = ctx.__originalClosePath;
-    ctx.beginPath = ctx.__originalBeginPath;
+    for (const [name, original] of originalMethods) {
+      ctx[name] = original;
+    }
     delete ctx._removeMirroring;
-  };
-  ctx.save = function () {
-    destCtx.save();
-    this.__originalSave();
-  };
-  ctx.restore = function () {
-    destCtx.restore();
-    this.__originalRestore();
-  };
-  ctx.translate = function (x, y) {
-    destCtx.translate(x, y);
-    this.__originalTranslate(x, y);
-  };
-  ctx.scale = function (x, y) {
-    destCtx.scale(x, y);
-    this.__originalScale(x, y);
-  };
-  ctx.transform = function (a, b, c, d, e, f) {
-    destCtx.transform(a, b, c, d, e, f);
-    this.__originalTransform(a, b, c, d, e, f);
-  };
-  ctx.setTransform = function (a, b, c, d, e, f) {
-    destCtx.setTransform(a, b, c, d, e, f);
-    this.__originalSetTransform(a, b, c, d, e, f);
-  };
-  ctx.resetTransform = function () {
-    destCtx.resetTransform();
-    this.__originalResetTransform();
-  };
-  ctx.rotate = function (angle) {
-    destCtx.rotate(angle);
-    this.__originalRotate(angle);
-  };
-  ctx.clip = function (rule) {
-    destCtx.clip(rule);
-    this.__originalClip(rule);
-  };
-  ctx.moveTo = function (x, y) {
-    destCtx.moveTo(x, y);
-    this.__originalMoveTo(x, y);
-  };
-  ctx.lineTo = function (x, y) {
-    destCtx.lineTo(x, y);
-    this.__originalLineTo(x, y);
-  };
-  ctx.bezierCurveTo = function (cp1x, cp1y, cp2x, cp2y, x, y) {
-    destCtx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
-    this.__originalBezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
-  };
-  ctx.rect = function (x, y, width, height) {
-    destCtx.rect(x, y, width, height);
-    this.__originalRect(x, y, width, height);
-  };
-  ctx.closePath = function () {
-    destCtx.closePath();
-    this.__originalClosePath();
-  };
-  ctx.beginPath = function () {
-    destCtx.beginPath();
-    this.__originalBeginPath();
   };
 }
 function drawImageAtIntegerCoords(ctx, srcImg, srcX, srcY, srcW, srcH, destX, destY, destW, destH) {
@@ -10559,6 +16899,7 @@ class CanvasExtraState {
   textRise = 0;
   fillColor = "#000000";
   strokeColor = "#000000";
+  tilingPatternDims = null;
   patternFill = false;
   patternStroke = false;
   fillAlpha = 1;
@@ -10566,7 +16907,8 @@ class CanvasExtraState {
   lineWidth = 1;
   activeSMask = null;
   transferMaps = "none";
-  minMax = MIN_MAX_INIT.slice();
+  transferMapsFallback = null;
+  minMax = F32_BBOX_INIT.slice();
   constructor(width, height) {
     this.clipBox = new Float32Array([0, 0, width, height]);
   }
@@ -10574,6 +16916,7 @@ class CanvasExtraState {
     const clone = Object.create(this);
     clone.clipBox = this.clipBox.slice();
     clone.minMax = this.minMax.slice();
+    clone.tilingPatternDims = this.tilingPatternDims?.slice();
     return clone;
   }
   getPathBoundingBox(pathType = PathType.FILL, transform = null) {
@@ -10601,73 +16944,42 @@ class CanvasExtraState {
   }
   startNewPathAndClipBox(box) {
     this.clipBox.set(box, 0);
-    this.minMax.set(MIN_MAX_INIT, 0);
+    this.minMax.set(F32_BBOX_INIT, 0);
   }
   getClippedPathBoundingBox(pathType = PathType.FILL, transform = null) {
     return Util.intersect(this.clipBox, this.getPathBoundingBox(pathType, transform));
   }
 }
 function putBinaryImageData(ctx, imgData) {
-  if (imgData instanceof ImageData) {
-    ctx.putImageData(imgData, 0, 0);
-    return;
-  }
-  const height = imgData.height,
-    width = imgData.width;
+  const {
+    width,
+    height,
+    kind
+  } = imgData;
   const partialChunkHeight = height % FULL_CHUNK_HEIGHT;
   const fullChunks = (height - partialChunkHeight) / FULL_CHUNK_HEIGHT;
   const totalChunks = partialChunkHeight === 0 ? fullChunks : fullChunks + 1;
   const chunkImgData = ctx.createImageData(width, FULL_CHUNK_HEIGHT);
-  let srcPos = 0,
-    destPos;
+  let srcPos = 0;
   const src = imgData.data;
   const dest = chunkImgData.data;
-  let i, j, thisChunkHeight, elemsInThisChunk;
-  if (imgData.kind === ImageKind.GRAYSCALE_1BPP) {
-    const srcLength = src.byteLength;
-    const dest32 = new Uint32Array(dest.buffer, 0, dest.byteLength >> 2);
-    const dest32DataLength = dest32.length;
-    const fullSrcDiff = width + 7 >> 3;
-    const white = 0xffffffff;
-    const black = FeatureTest.isLittleEndian ? 0xff000000 : 0x000000ff;
+  let i;
+  if (kind === ImageKind.GRAYSCALE_1BPP) {
     for (i = 0; i < totalChunks; i++) {
-      thisChunkHeight = i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight;
-      destPos = 0;
-      for (j = 0; j < thisChunkHeight; j++) {
-        const srcDiff = srcLength - srcPos;
-        let k = 0;
-        const kEnd = srcDiff > fullSrcDiff ? width : srcDiff * 8 - 7;
-        const kEndUnrolled = kEnd & ~7;
-        let mask = 0;
-        let srcByte = 0;
-        for (; k < kEndUnrolled; k += 8) {
-          srcByte = src[srcPos++];
-          dest32[destPos++] = srcByte & 128 ? white : black;
-          dest32[destPos++] = srcByte & 64 ? white : black;
-          dest32[destPos++] = srcByte & 32 ? white : black;
-          dest32[destPos++] = srcByte & 16 ? white : black;
-          dest32[destPos++] = srcByte & 8 ? white : black;
-          dest32[destPos++] = srcByte & 4 ? white : black;
-          dest32[destPos++] = srcByte & 2 ? white : black;
-          dest32[destPos++] = srcByte & 1 ? white : black;
-        }
-        for (; k < kEnd; k++) {
-          if (mask === 0) {
-            srcByte = src[srcPos++];
-            mask = 128;
-          }
-          dest32[destPos++] = srcByte & mask ? white : black;
-          mask >>= 1;
-        }
-      }
-      while (destPos < dest32DataLength) {
-        dest32[destPos++] = 0;
-      }
+      ({
+        srcPos
+      } = convertBlackAndWhiteToRGBA({
+        src,
+        srcPos,
+        dest,
+        width,
+        height: i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight
+      }));
       ctx.putImageData(chunkImgData, 0, i * FULL_CHUNK_HEIGHT);
     }
-  } else if (imgData.kind === ImageKind.RGBA_32BPP) {
-    j = 0;
-    elemsInThisChunk = width * FULL_CHUNK_HEIGHT * 4;
+  } else if (kind === ImageKind.RGBA_32BPP) {
+    let j = 0;
+    let elemsInThisChunk = width * FULL_CHUNK_HEIGHT * 4;
     for (i = 0; i < fullChunks; i++) {
       dest.set(src.subarray(srcPos, srcPos + elemsInThisChunk));
       srcPos += elemsInThisChunk;
@@ -10679,25 +16991,21 @@ function putBinaryImageData(ctx, imgData) {
       dest.set(src.subarray(srcPos, srcPos + elemsInThisChunk));
       ctx.putImageData(chunkImgData, 0, j);
     }
-  } else if (imgData.kind === ImageKind.RGB_24BPP) {
-    thisChunkHeight = FULL_CHUNK_HEIGHT;
-    elemsInThisChunk = width * thisChunkHeight;
+  } else if (kind === ImageKind.RGB_24BPP) {
     for (i = 0; i < totalChunks; i++) {
-      if (i >= fullChunks) {
-        thisChunkHeight = partialChunkHeight;
-        elemsInThisChunk = width * thisChunkHeight;
-      }
-      destPos = 0;
-      for (j = elemsInThisChunk; j--;) {
-        dest[destPos++] = src[srcPos++];
-        dest[destPos++] = src[srcPos++];
-        dest[destPos++] = src[srcPos++];
-        dest[destPos++] = 255;
-      }
+      ({
+        srcPos
+      } = convertRGBToRGBA({
+        src,
+        srcPos,
+        dest: new Uint32Array(dest.buffer),
+        width,
+        height: i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight
+      }));
       ctx.putImageData(chunkImgData, 0, i * FULL_CHUNK_HEIGHT);
     }
   } else {
-    throw new Error(`bad image kind: ${imgData.kind}`);
+    throw new Error(`bad image kind: ${kind}`);
   }
 }
 function putBinaryImageMask(ctx, imgData) {
@@ -10705,8 +17013,10 @@ function putBinaryImageMask(ctx, imgData) {
     ctx.drawImage(imgData.bitmap, 0, 0);
     return;
   }
-  const height = imgData.height,
-    width = imgData.width;
+  const {
+    width,
+    height
+  } = imgData;
   const partialChunkHeight = height % FULL_CHUNK_HEIGHT;
   const fullChunks = (height - partialChunkHeight) / FULL_CHUNK_HEIGHT;
   const totalChunks = partialChunkHeight === 0 ? fullChunks : fullChunks + 1;
@@ -10715,7 +17025,6 @@ function putBinaryImageMask(ctx, imgData) {
   const src = imgData.data;
   const dest = chunkImgData.data;
   for (let i = 0; i < totalChunks; i++) {
-    const thisChunkHeight = i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight;
     ({
       srcPos
     } = convertBlackAndWhiteToRGBA({
@@ -10723,7 +17032,7 @@ function putBinaryImageMask(ctx, imgData) {
       srcPos,
       dest,
       width,
-      height: thisChunkHeight,
+      height: i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight,
       nonBlackColor: 0
     }));
     ctx.putImageData(chunkImgData, 0, i * FULL_CHUNK_HEIGHT);
@@ -10762,6 +17071,48 @@ function resetCtxToDefault(ctx) {
     ctx.filter = "none";
   }
 }
+class TransferMapsFallback {
+  #maps;
+  constructor(maps) {
+    const [mapR, mapG = mapR, mapB = mapR] = maps;
+    const {
+      identityMap
+    } = TransferMapsFallback;
+    this.#maps = [mapR || identityMap, mapG || identityMap, mapB || identityMap];
+  }
+  static get identityMap() {
+    return util_shadow(this, "identityMap", Uint8Array.from({
+      length: 256
+    }, (_, i) => i));
+  }
+  applyToColor(color) {
+    if (typeof color !== "string" || !color.startsWith("#")) {
+      return color;
+    }
+    const [r, g, b] = getRGBA(color);
+    const [mapR, mapG, mapB] = this.#maps;
+    return Util.makeHexColor(mapR[r], mapG[g], mapB[b]);
+  }
+  applyToImageData({
+    data
+  }) {
+    const [mapR, mapG, mapB] = this.#maps;
+    for (let i = 0, ii = data.length; i < ii; i += 4) {
+      data[i] = mapR[data[i]];
+      data[i + 1] = mapG[data[i + 1]];
+      data[i + 2] = mapB[data[i + 2]];
+    }
+  }
+  applyToCanvas(ctx) {
+    const {
+      width,
+      height
+    } = ctx.canvas;
+    const imgData = ctx.getImageData(0, 0, width, height);
+    this.applyToImageData(imgData);
+    ctx.putImageData(imgData, 0, 0);
+  }
+}
 function getImageSmoothingEnabled(transform, interpolate) {
   if (interpolate) {
     return true;
@@ -10775,6 +17126,17 @@ const LINE_JOIN_STYLES = ["miter", "round", "bevel"];
 const NORMAL_CLIP = {};
 const EO_CLIP = {};
 class CanvasGraphics {
+  static #SCALE_MATRIX = null;
+  #knockoutGroupLevel = 0;
+  #knockoutElementDepth = 0;
+  #knockoutTempCanvasEntry = null;
+  #knockoutSavedCtx = null;
+  #knockoutSavedSMaskCtx = null;
+  #knockoutSavedGCO = null;
+  #knockoutElementAlpha = 1;
+  #knockoutFilterCache;
+  #knockoutElementGroupMeta = null;
+  #groupStackMeta = [];
   constructor(canvasCtx, commonObjs, objs, canvasFactory, filterFactory, {
     optionalContentConfig,
     markedContentStack = null
@@ -10793,9 +17155,13 @@ class CanvasGraphics {
     this.baseTransformStack = [];
     this.groupLevel = 0;
     this.smaskStack = [];
-    this.smaskCounter = 0;
     this.tempSMask = null;
     this.smaskGroupCanvases = [];
+    this.smaskPreparedEntry = null;
+    this.smaskPreparedFor = null;
+    this.smaskPreparedOffsetX = 0;
+    this.smaskPreparedOffsetY = 0;
+    this.smaskPreparedOOBAlpha = null;
     this.suspendedCtx = null;
     this.contentVisible = true;
     this.markedContentStack = markedContentStack || [];
@@ -10807,7 +17173,6 @@ class CanvasGraphics {
     this.outputScaleY = 1;
     this.pageColors = pageColors;
     this._cachedScaleForStroking = [-1, 0];
-    this._cachedGetSinglePixelWidth = null;
     this._cachedBitmapsMap = new Map();
     this.dependencyTracker = dependencyTracker ?? null;
     this.imagesTracker = imagesTracker ?? null;
@@ -10846,7 +17211,7 @@ class CanvasGraphics {
     if (transform) {
       this.ctx.transform(...transform);
       this.outputScaleX = transform[0];
-      this.outputScaleY = transform[0];
+      this.outputScaleY = transform[3];
     }
     this.ctx.transform(...viewport.transform);
     this.viewportScale = viewport.scale;
@@ -10879,7 +17244,7 @@ class CanvasGraphics {
           continue;
         }
       }
-      if (!operationsFilter || operationsFilter(i)) {
+      if (!operationsFilter || operationsFilter(i, operatorList)) {
         fnId = fnArray[i];
         fnArgs = argsArray[i] ?? null;
         if (fnId !== OPS.dependency) {
@@ -10935,8 +17300,21 @@ class CanvasGraphics {
       this.canvasFactory.destroy(canvas);
     }
     this.smaskGroupCanvases.length = 0;
+    this._clearPreparedSMask();
     this.tempSMask = null;
     this.smaskStack.length = 0;
+    for (const meta of this.#groupStackMeta) {
+      this.#destroyKnockoutPools(meta);
+    }
+    this.#groupStackMeta.length = 0;
+    this.#knockoutTempCanvasEntry = null;
+    this.#knockoutSavedCtx = null;
+    this.#knockoutSavedSMaskCtx = null;
+    this.#knockoutSavedGCO = null;
+    this.#knockoutElementAlpha = 1;
+    this.#knockoutElementGroupMeta = null;
+    this.#knockoutElementDepth = 0;
+    this.#knockoutGroupLevel = 0;
     this.cachedPatterns.clear();
     for (const cache of this._cachedBitmapsMap.values()) {
       for (const canvas of cache.values()) {
@@ -10974,11 +17352,11 @@ class CanvasGraphics {
       let nw = pw,
         nh = ph;
       if (ws > 2 && pw > 1) {
-        nw = pw >= 16384 ? Math.floor(pw / 2) - 1 || 1 : Math.ceil(pw / 2);
+        nw = Math.ceil(pw / 2);
         ws /= pw / nw;
       }
       if (hs > 2 && ph > 1) {
-        nh = ph >= 16384 ? Math.floor(ph / 2) - 1 || 1 : Math.ceil(ph) / 2;
+        nh = Math.ceil(ph / 2);
         hs /= ph / nh;
       }
       scaleSteps.push({
@@ -11040,8 +17418,8 @@ class CanvasGraphics {
       width,
       height
     } = img;
-    const fillColor = this.current.fillColor;
     const isPatternFill = this.current.patternFill;
+    const fillColor = isPatternFill ? this.current.fillColor : ctx.fillStyle;
     const currentTransform = getCurrentTransform(ctx);
     let cache, cacheKey, scaled, maskCanvas;
     if ((img.bitmap || img.data) && img.count > 1) {
@@ -11067,7 +17445,7 @@ class CanvasGraphics {
     }
     let maskToCanvas = Util.transform(currentTransform, [1 / width, 0, 0, -1 / height, 0, 0]);
     maskToCanvas = Util.transform(maskToCanvas, [1, 0, 0, 1, 0, -height]);
-    const minMax = MIN_MAX_INIT.slice();
+    const minMax = F32_BBOX_INIT.slice();
     Util.axialAlignedBoundingBox([0, 0, width, height], maskToCanvas, minMax);
     const [minX, minY, maxX, maxY] = minMax;
     const drawnWidth = Math.round(maxX - minX) || 1;
@@ -11188,33 +17566,171 @@ class CanvasGraphics {
         case "SMask":
           this.dependencyTracker?.recordSimpleData("SMask", opIdx);
           this.current.activeSMask = value ? this.tempSMask : null;
+          if (this.current.activeSMask) {
+            this.current.activeSMask.blendMode = this.ctx.globalCompositeOperation;
+          }
           this.tempSMask = null;
-          this.checkSMaskState();
+          this.checkSMaskState(opIdx);
           break;
         case "TR":
-          this.dependencyTracker?.recordSimpleData("filter", opIdx);
-          this.ctx.filter = this.current.transferMaps = this.filterFactory.addFilter(value);
-          break;
+          {
+            this.dependencyTracker?.recordSimpleData("filter", opIdx);
+            let filter = this.filterFactory.addFilter(value);
+            this.ctx.filter = filter;
+            let fallback = null;
+            if (value && (filter === "none" || !FeatureTest.isCanvasFilterSupported || this.ctx.filter === "none" || this.ctx.filter === "")) {
+              this.ctx.filter = filter = "none";
+              fallback = new TransferMapsFallback(value);
+            }
+            this.current.transferMaps = filter;
+            if (fallback || this.current.transferMapsFallback) {
+              this.current.transferMapsFallback = fallback;
+              if (!this.current.patternFill) {
+                this.ctx.fillStyle = this.#transferColor(this.current.fillColor);
+              }
+              if (!this.current.patternStroke) {
+                this.ctx.strokeStyle = this.#transferColor(this.current.strokeColor);
+              }
+            }
+            break;
+          }
       }
     }
   }
   get inSMaskMode() {
     return !!this.suspendedCtx;
   }
-  checkSMaskState() {
+  _clearPreparedSMask() {
+    if (this.smaskPreparedEntry) {
+      this.canvasFactory.destroy(this.smaskPreparedEntry);
+      this.smaskPreparedEntry = null;
+    }
+    this.smaskPreparedFor = null;
+    this.smaskPreparedOffsetX = 0;
+    this.smaskPreparedOffsetY = 0;
+    this.smaskPreparedOOBAlpha = null;
+  }
+  _ensurePreparedSMask(smask) {
+    if (smask === this.smaskPreparedFor) {
+      return;
+    }
+    this._clearPreparedSMask();
+    this._prepareSMaskCanvas(smask);
+  }
+  checkSMaskState(opIdx) {
     const inSMaskMode = this.inSMaskMode;
     if (this.current.activeSMask && !inSMaskMode) {
-      this.beginSMaskMode();
+      this.beginSMaskMode(opIdx);
     } else if (!this.current.activeSMask && inSMaskMode) {
       this.endSMaskMode();
+    } else if (this.current.activeSMask && inSMaskMode) {
+      this._ensurePreparedSMask(this.current.activeSMask);
     }
+  }
+  _prepareSMaskCanvas(smask) {
+    const {
+      canvas: maskCanvas,
+      subtype,
+      backdrop,
+      transferMap
+    } = smask;
+    const hasFilter = subtype === "Luminosity" || subtype === "Alpha" && transferMap;
+    if (!hasFilter && !(subtype === "Luminosity" && backdrop)) {
+      this.smaskPreparedFor = smask;
+      return;
+    }
+    let filteredOOBAlpha;
+    if (subtype === "Luminosity" && backdrop) {
+      const [r, g, b] = getRGBA(backdrop);
+      const inputAlpha = Math.round(0.3 * r + 0.59 * g + 0.11 * b);
+      filteredOOBAlpha = transferMap?.[inputAlpha] ?? inputAlpha;
+    } else {
+      filteredOOBAlpha = transferMap?.[0] ?? 0;
+    }
+    const SMASK_LAYER_TO_MASK_AREA_RATIO = 4;
+    const {
+      width: layerW,
+      height: layerH
+    } = this.ctx.canvas;
+    const maskArea = maskCanvas.width * maskCanvas.height;
+    const useLayerSize = layerW * layerH < SMASK_LAYER_TO_MASK_AREA_RATIO * maskArea;
+    const filterSpec = hasFilter ? {
+      url: subtype === "Alpha" ? this.filterFactory.addAlphaFilter(transferMap) : this.filterFactory.addLuminosityFilter(transferMap),
+      subtype,
+      transferMap
+    } : null;
+    const bakedBackdrop = subtype === "Luminosity" ? backdrop : null;
+    let preparedEntry, offsetX, offsetY;
+    if (useLayerSize) {
+      preparedEntry = this._bakeSMaskCanvas(maskCanvas, smask.offsetX, smask.offsetY, layerW, layerH, bakedBackdrop, filterSpec);
+      offsetX = 0;
+      offsetY = 0;
+    } else {
+      preparedEntry = this._bakeSMaskCanvas(maskCanvas, 0, 0, maskCanvas.width, maskCanvas.height, bakedBackdrop, filterSpec);
+      offsetX = smask.offsetX;
+      offsetY = smask.offsetY;
+    }
+    this.smaskPreparedEntry = preparedEntry;
+    this.smaskPreparedFor = smask;
+    this.smaskPreparedOffsetX = offsetX;
+    this.smaskPreparedOffsetY = offsetY;
+    this.smaskPreparedOOBAlpha = !useLayerSize && filteredOOBAlpha !== 0 ? filteredOOBAlpha : null;
+  }
+  _bakeSMaskCanvas(maskCanvas, drawX, drawY, w, h, backdrop, filterSpec) {
+    if (!backdrop && !filterSpec) {
+      unreachable("_bakeSMaskCanvas with neither backdrop nor filter");
+    }
+    const srcEntry = this.canvasFactory.create(w, h);
+    const sCtx = srcEntry.context;
+    sCtx.drawImage(maskCanvas, drawX, drawY);
+    if (backdrop) {
+      sCtx.globalCompositeOperation = "destination-atop";
+      sCtx.fillStyle = backdrop;
+      sCtx.fillRect(0, 0, w, h);
+    }
+    if (!filterSpec) {
+      return srcEntry;
+    }
+    const preparedEntry = this.canvasFactory.create(w, h);
+    const pCtx = preparedEntry.context;
+    pCtx.filter = filterSpec.url;
+    const filterApplied = FeatureTest.isCanvasFilterSupported && pCtx.filter !== "none" && pCtx.filter !== "";
+    pCtx.drawImage(srcEntry.canvas, 0, 0);
+    if (FeatureTest.isCanvasFilterSupported) {
+      pCtx.filter = "none";
+    }
+    if (!filterApplied) {
+      const img = pCtx.getImageData(0, 0, w, h);
+      const {
+        data
+      } = img;
+      const {
+        transferMap
+      } = filterSpec;
+      if (filterSpec.subtype === "Luminosity") {
+        for (let i = 0, ii = data.length; i < ii; i += 4) {
+          const a = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2] + 0.5 | 0;
+          data[i] = data[i + 1] = data[i + 2] = 0;
+          data[i + 3] = transferMap?.[a] ?? a;
+        }
+      } else {
+        for (let i = 3, ii = data.length; i < ii; i += 4) {
+          data[i] = transferMap[data[i]];
+        }
+      }
+      pCtx.putImageData(img, 0, 0);
+    }
+    this.canvasFactory.destroy(srcEntry);
+    return preparedEntry;
   }
   beginSMaskMode(opIdx) {
     if (this.inSMaskMode) {
       throw new Error("beginSMaskMode called while already in smask mode");
     }
-    const drawnWidth = this.ctx.canvas.width;
-    const drawnHeight = this.ctx.canvas.height;
+    const {
+      width: drawnWidth,
+      height: drawnHeight
+    } = this.ctx.canvas;
     const scratchCanvas = this.canvasFactory.create(drawnWidth, drawnHeight);
     this.smaskScratchCanvas = scratchCanvas;
     this.suspendedCtx = this.ctx;
@@ -11222,6 +17738,7 @@ class CanvasGraphics {
     ctx.setTransform(this.suspendedCtx.getTransform());
     copyCtxState(this.suspendedCtx, ctx);
     mirrorContextOperations(ctx, this.suspendedCtx);
+    this._ensurePreparedSMask(this.current.activeSMask);
     this.setGState(opIdx, [["BM", "source-over"]]);
   }
   endSMaskMode() {
@@ -11234,22 +17751,201 @@ class CanvasGraphics {
     this.suspendedCtx = null;
     this.canvasFactory.destroy(this.smaskScratchCanvas);
     this.smaskScratchCanvas = null;
+    this._clearPreparedSMask();
+  }
+  #createKnockoutMaskCanvas(sourceCanvas, reuseEntry = null, alpha = 1) {
+    const {
+      width,
+      height
+    } = sourceCanvas;
+    const maskEntry = reuseEntry ?? this.canvasFactory.create(width, height);
+    const maskCtx = maskEntry.context;
+    alpha = Math.round(alpha * 255) / 255;
+    const needsAlphaScaling = alpha < 1;
+    if (needsAlphaScaling && this.#knockoutFilterCache === undefined) {
+      this.#knockoutFilterCache = FeatureTest.isCanvasFilterSupported ? new Map() : "none";
+    }
+    let knockoutFilter = "none";
+    if (needsAlphaScaling && this.#knockoutFilterCache instanceof Map) {
+      knockoutFilter = this.#knockoutFilterCache.getOrInsertComputed(alpha, () => this.filterFactory.addKnockoutFilter(alpha));
+    }
+    if (!needsAlphaScaling || knockoutFilter !== "none") {
+      if (reuseEntry) {
+        maskCtx.save();
+        maskCtx.setTransform(1, 0, 0, 1, 0, 0);
+        maskCtx.clearRect(0, 0, width, height);
+        maskCtx.restore();
+      }
+      maskCtx.filter = knockoutFilter;
+      maskCtx.drawImage(sourceCanvas, 0, 0);
+      maskCtx.filter = "none";
+      return maskEntry;
+    }
+    const sourceData = sourceCanvas.getContext("2d", {
+      willReadFrequently: true
+    }).getImageData(0, 0, width, height);
+    const maskData = maskCtx.createImageData(width, height);
+    const sourcePixels = sourceData.data,
+      maskPixels = maskData.data;
+    const alphaScale = alpha > 0 ? 1 / alpha : 1e6;
+    for (let i = 3, ii = sourcePixels.length; i < ii; i += 4) {
+      maskPixels[i] = Math.min(Math.round(sourcePixels[i] * alphaScale), 255);
+    }
+    maskCtx.putImageData(maskData, 0, 0);
+    return maskEntry;
+  }
+  #getOrCreatePooledEntry(meta, key, width, height) {
+    let entry = meta?.[key] ?? null;
+    if (entry && (entry.canvas.width !== width || entry.canvas.height !== height)) {
+      this.canvasFactory.destroy(entry);
+      entry = null;
+    }
+    if (!entry) {
+      entry = this.canvasFactory.create(width, height);
+      if (meta) {
+        meta[key] = entry;
+      }
+      return entry;
+    }
+    const ctx = entry.context;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    ctx.restore();
+    return entry;
+  }
+  #compositeKnockoutSurface(destCtx, surfaceCanvas, options = {}) {
+    const {
+      backdropCanvas = null,
+      destTransform = [1, 0, 0, 1, 0, 0],
+      backdropOffset = [0, 0],
+      reuseMaskEntry = null,
+      poolMeta = null,
+      sourceAlpha = 1,
+      sourceFilter = "none",
+      knockoutAlpha = 1
+    } = options;
+    const {
+      width,
+      height
+    } = surfaceCanvas;
+    const knockoutMaskEntry = this.#createKnockoutMaskCanvas(surfaceCanvas, reuseMaskEntry, knockoutAlpha);
+    const sourceCompositeOperation = destCtx.globalCompositeOperation;
+    destCtx.save();
+    destCtx.setTransform(...destTransform);
+    destCtx.globalAlpha = 1;
+    if (FeatureTest.isCanvasFilterSupported) {
+      destCtx.filter = "none";
+    }
+    destCtx.globalCompositeOperation = "destination-out";
+    destCtx.drawImage(knockoutMaskEntry.canvas, 0, 0);
+    if (backdropCanvas) {
+      const [bx, by] = backdropOffset;
+      const backdropEntry = this.#getOrCreatePooledEntry(poolMeta, "knockoutBackdropEntry", width, height);
+      const backdropCtx = backdropEntry.context;
+      backdropCtx.drawImage(backdropCanvas, bx, by, width, height, 0, 0, width, height);
+      backdropCtx.globalCompositeOperation = "destination-in";
+      backdropCtx.drawImage(knockoutMaskEntry.canvas, 0, 0);
+      backdropCtx.globalCompositeOperation = "source-over";
+      destCtx.globalCompositeOperation = "destination-over";
+      destCtx.drawImage(backdropEntry.canvas, 0, 0);
+      if (!poolMeta) {
+        this.canvasFactory.destroy(backdropEntry);
+      }
+    }
+    destCtx.globalCompositeOperation = sourceCompositeOperation;
+    destCtx.globalAlpha = sourceAlpha;
+    if (FeatureTest.isCanvasFilterSupported) {
+      destCtx.filter = sourceFilter ?? "none";
+    }
+    destCtx.drawImage(surfaceCanvas, 0, 0);
+    destCtx.restore();
+    if (!reuseMaskEntry) {
+      this.canvasFactory.destroy(knockoutMaskEntry);
+    }
+  }
+  #beginKnockoutElement(alpha = 1) {
+    if (this.#knockoutGroupLevel === 0 || this.#knockoutElementDepth > 0 || !this.contentVisible) {
+      return false;
+    }
+    this.#knockoutElementDepth++;
+    this.#knockoutElementAlpha = alpha;
+    const groupMeta = this.#groupStackMeta.at(-1);
+    const {
+      canvas
+    } = this.ctx;
+    const tempEntry = this.#getOrCreatePooledEntry(groupMeta, "knockoutTempEntry", canvas.width, canvas.height);
+    this.#knockoutTempCanvasEntry = tempEntry;
+    const tempCtx = tempEntry.context;
+    tempCtx.save();
+    tempCtx.setTransform(this.ctx.getTransform());
+    copyCtxState(this.ctx, tempCtx);
+    this.#knockoutSavedGCO = tempCtx.globalCompositeOperation;
+    tempCtx.globalCompositeOperation = "source-over";
+    mirrorContextOperations(tempCtx, this.ctx);
+    this.#knockoutElementGroupMeta = groupMeta;
+    this.#knockoutSavedCtx = this.ctx;
+    this.#knockoutSavedSMaskCtx = this.suspendedCtx;
+    this.ctx = tempCtx;
+    if (this.inSMaskMode) {
+      this.suspendedCtx = tempCtx;
+    }
+    return true;
+  }
+  #endKnockoutElement(started) {
+    if (!started) {
+      return;
+    }
+    const tempEntry = this.#knockoutTempCanvasEntry;
+    const savedCtx = this.#knockoutSavedCtx;
+    const savedSMaskCtx = this.#knockoutSavedSMaskCtx;
+    const tempCtx = tempEntry.context;
+    this.#knockoutTempCanvasEntry = null;
+    this.#knockoutSavedCtx = null;
+    this.#knockoutSavedSMaskCtx = null;
+    if (this.inSMaskMode && this.suspendedCtx === tempCtx && this.ctx !== tempCtx) {
+      this.endSMaskMode();
+    }
+    if (this.inSMaskMode) {
+      this.suspendedCtx = savedSMaskCtx;
+    }
+    this.ctx._removeMirroring();
+    this.ctx.globalCompositeOperation = this.#knockoutSavedGCO;
+    this.#knockoutSavedGCO = null;
+    copyCtxState(this.ctx, savedCtx);
+    this.ctx = savedCtx;
+    const groupMeta = this.#knockoutElementGroupMeta;
+    this.#knockoutElementGroupMeta = null;
+    const knockoutAlpha = this.#knockoutElementAlpha;
+    this.#knockoutElementAlpha = 1;
+    try {
+      this.#compositeKnockoutSurface(savedSMaskCtx ?? savedCtx, tempEntry.canvas, {
+        backdropCanvas: groupMeta?.backdropCtx?.canvas ?? null,
+        backdropOffset: groupMeta?.backdropCtx ? [groupMeta.offsetX, groupMeta.offsetY] : [0, 0],
+        reuseMaskEntry: groupMeta?.knockoutMaskEntry ?? null,
+        poolMeta: groupMeta,
+        knockoutAlpha
+      });
+    } finally {
+      tempCtx.restore();
+      this.#knockoutElementDepth--;
+      if (!groupMeta) {
+        this.canvasFactory.destroy(tempEntry);
+      }
+    }
   }
   compose(dirtyBox) {
     if (!this.current.activeSMask) {
       return;
     }
-    if (!dirtyBox) {
-      dirtyBox = [0, 0, this.ctx.canvas.width, this.ctx.canvas.height];
-    } else {
-      dirtyBox[0] = Math.floor(dirtyBox[0]);
-      dirtyBox[1] = Math.floor(dirtyBox[1]);
-      dirtyBox[2] = Math.ceil(dirtyBox[2]);
-      dirtyBox[3] = Math.ceil(dirtyBox[3]);
-    }
+    dirtyBox = dirtyBox ? [Math.floor(dirtyBox[0]), Math.floor(dirtyBox[1]), Math.ceil(dirtyBox[2]), Math.ceil(dirtyBox[3])] : [0, 0, this.ctx.canvas.width, this.ctx.canvas.height];
     const smask = this.current.activeSMask;
     const suspendedCtx = this.suspendedCtx;
-    this.composeSMask(suspendedCtx, smask, this.ctx, dirtyBox);
+    const applySMaskInPlace = this.#knockoutElementDepth > 0 && suspendedCtx === this.ctx;
+    this.composeSMask(applySMaskInPlace ? null : suspendedCtx, smask, this.ctx, dirtyBox);
+    if (applySMaskInPlace) {
+      return;
+    }
     this.ctx.save();
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -11263,60 +17959,85 @@ class CanvasGraphics {
     if (layerWidth === 0 || layerHeight === 0) {
       return;
     }
-    this.genericComposeSMask(smask.context, layerCtx, layerWidth, layerHeight, smask.subtype, smask.backdrop, smask.transferMap, layerOffsetX, layerOffsetY, smask.offsetX, smask.offsetY);
+    const preparedEntry = this.smaskPreparedEntry;
+    if (preparedEntry) {
+      let clipX = layerOffsetX;
+      let clipY = layerOffsetY;
+      let clipW = layerWidth;
+      let clipH = layerHeight;
+      const oobAlpha = this.smaskPreparedOOBAlpha;
+      const hasOOBAlpha = oobAlpha !== null;
+      if (hasOOBAlpha) {
+        clipX = Math.max(layerOffsetX, smask.offsetX);
+        clipY = Math.max(layerOffsetY, smask.offsetY);
+        const x1 = Math.min(layerOffsetX + layerWidth, smask.offsetX + smask.canvas.width);
+        const y1 = Math.min(layerOffsetY + layerHeight, smask.offsetY + smask.canvas.height);
+        clipW = x1 - clipX;
+        clipH = y1 - clipY;
+      }
+      if (clipW > 0 && clipH > 0) {
+        const srcX = clipX - this.smaskPreparedOffsetX;
+        const srcY = clipY - this.smaskPreparedOffsetY;
+        layerCtx.save();
+        layerCtx.globalAlpha = 1;
+        layerCtx.setTransform(1, 0, 0, 1, 0, 0);
+        const clip = new Path2D();
+        clip.rect(clipX, clipY, clipW, clipH);
+        layerCtx.clip(clip);
+        layerCtx.globalCompositeOperation = "destination-in";
+        layerCtx.drawImage(preparedEntry.canvas, srcX, srcY, clipW, clipH, clipX, clipY, clipW, clipH);
+        layerCtx.restore();
+      }
+      if (hasOOBAlpha && oobAlpha < 255) {
+        this._applySMaskOOBAlpha(layerCtx, layerOffsetX, layerOffsetY, layerWidth, layerHeight, clipX, clipY, clipX + clipW, clipY + clipH, oobAlpha);
+      }
+    } else {
+      this.genericComposeSMask(smask, layerCtx, layerWidth, layerHeight, layerOffsetX, layerOffsetY);
+    }
+    if (!ctx) {
+      return;
+    }
     ctx.save();
     ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = "source-over";
+    ctx.globalCompositeOperation = smask.blendMode || "source-over";
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.drawImage(layerCtx.canvas, 0, 0);
+    ctx.drawImage(layerCtx.canvas, layerOffsetX, layerOffsetY, layerWidth, layerHeight, layerOffsetX, layerOffsetY, layerWidth, layerHeight);
     ctx.restore();
   }
-  genericComposeSMask(maskCtx, layerCtx, width, height, subtype, backdrop, transferMap, layerOffsetX, layerOffsetY, maskOffsetX, maskOffsetY) {
-    let maskCanvas = maskCtx.canvas;
-    let maskX = layerOffsetX - maskOffsetX;
-    let maskY = layerOffsetY - maskOffsetY;
-    let maskExtensionEntry = null;
-    if (backdrop) {
-      if (maskX < 0 || maskY < 0 || maskX + width > maskCanvas.width || maskY + height > maskCanvas.height) {
-        maskExtensionEntry = this.canvasFactory.create(width, height);
-        const ctx = maskExtensionEntry.context;
-        ctx.drawImage(maskCanvas, -maskX, -maskY);
-        ctx.globalCompositeOperation = "destination-atop";
-        ctx.fillStyle = backdrop;
-        ctx.fillRect(0, 0, width, height);
-        ctx.globalCompositeOperation = "source-over";
-        maskCanvas = maskExtensionEntry.canvas;
-        maskX = maskY = 0;
-      } else {
-        maskCtx.save();
-        maskCtx.globalAlpha = 1;
-        maskCtx.setTransform(1, 0, 0, 1, 0, 0);
-        const clip = new Path2D();
-        clip.rect(maskX, maskY, width, height);
-        maskCtx.clip(clip);
-        maskCtx.globalCompositeOperation = "destination-atop";
-        maskCtx.fillStyle = backdrop;
-        maskCtx.fillRect(maskX, maskY, width, height);
-        maskCtx.restore();
-      }
+  _applySMaskOOBAlpha(layerCtx, layerOffsetX, layerOffsetY, layerWidth, layerHeight, maskX0, maskY0, maskX1, maskY1, alpha) {
+    const hasInnerCutout = maskX0 < maskX1 && maskY0 < maskY1;
+    if (hasInnerCutout && maskX0 === layerOffsetX && maskY0 === layerOffsetY && maskX1 === layerOffsetX + layerWidth && maskY1 === layerOffsetY + layerHeight) {
+      return;
     }
+    const path = new Path2D();
+    path.rect(layerOffsetX, layerOffsetY, layerWidth, layerHeight);
+    if (hasInnerCutout) {
+      path.rect(maskX0, maskY0, maskX1 - maskX0, maskY1 - maskY0);
+    }
+    layerCtx.save();
+    layerCtx.globalAlpha = alpha / 255;
+    layerCtx.setTransform(1, 0, 0, 1, 0, 0);
+    layerCtx.clip(path, "evenodd");
+    layerCtx.globalCompositeOperation = "destination-in";
+    layerCtx.fillStyle = "#000000";
+    layerCtx.fillRect(layerOffsetX, layerOffsetY, layerWidth, layerHeight);
+    layerCtx.restore();
+  }
+  genericComposeSMask(smask, layerCtx, width, height, layerOffsetX, layerOffsetY) {
+    const {
+      context: maskCtx,
+      offsetX: maskOffsetX,
+      offsetY: maskOffsetY
+    } = smask;
     layerCtx.save();
     layerCtx.globalAlpha = 1;
     layerCtx.setTransform(1, 0, 0, 1, 0, 0);
-    if (subtype === "Alpha" && transferMap) {
-      layerCtx.filter = this.filterFactory.addAlphaFilter(transferMap);
-    } else if (subtype === "Luminosity") {
-      layerCtx.filter = this.filterFactory.addLuminosityFilter(transferMap);
-    }
     const clip = new Path2D();
     clip.rect(layerOffsetX, layerOffsetY, width, height);
     layerCtx.clip(clip);
     layerCtx.globalCompositeOperation = "destination-in";
-    layerCtx.drawImage(maskCanvas, maskX, maskY, width, height, layerOffsetX, layerOffsetY, width, height);
+    layerCtx.drawImage(maskCtx.canvas, layerOffsetX - maskOffsetX, layerOffsetY - maskOffsetY, width, height, layerOffsetX, layerOffsetY, width, height);
     layerCtx.restore();
-    if (maskExtensionEntry) {
-      this.canvasFactory.destroy(maskExtensionEntry);
-    }
   }
   save(opIdx) {
     if (this.inSMaskMode) {
@@ -11340,22 +18061,24 @@ class CanvasGraphics {
     this.ctx.restore();
     if (this.inSMaskMode) {
       copyCtxState(this.suspendedCtx, this.ctx);
+      this.ctx.setTransform(this.suspendedCtx.getTransform());
     }
-    this.checkSMaskState();
+    this.checkSMaskState(opIdx);
     this.pendingClip = null;
     this._cachedScaleForStroking[0] = -1;
-    this._cachedGetSinglePixelWidth = null;
   }
   transform(opIdx, a, b, c, d, e, f) {
     this.dependencyTracker?.recordIncrementalData("transform", opIdx);
     this.ctx.transform(a, b, c, d, e, f);
     this._cachedScaleForStroking[0] = -1;
-    this._cachedGetSinglePixelWidth = null;
   }
   constructPath(opIdx, op, data, minMax) {
     let [path] = data;
     if (!minMax) {
       path ||= data[0] = new Path2D();
+      if (op !== OPS.stroke && op !== OPS.closeStroke) {
+        this.current.tilingPatternDims = null;
+      }
       this[op](opIdx, path);
       return;
     }
@@ -11367,6 +18090,15 @@ class CanvasGraphics {
       path = data[0] = makePathFromDrawOPS(path);
     }
     Util.axialAlignedBoundingBox(minMax, getCurrentTransform(this.ctx), this.current.minMax);
+    const tilingDims = this.current.tilingPatternDims;
+    if (tilingDims && op !== OPS.stroke && op !== OPS.closeStroke && this.current.fillColor instanceof TilingPattern) {
+      const clippedBBox = Util.intersect(this.current.clipBox, this.current.minMax);
+      if (!clippedBBox) {
+        this.current.tilingPatternDims = null;
+      } else {
+        this.current.fillColor.updatePatternDims(clippedBBox, tilingDims);
+      }
+    }
     this[op](opIdx, path);
     this._pathStartIdx = opIdx;
   }
@@ -11374,6 +18106,7 @@ class CanvasGraphics {
     this.ctx.closePath();
   }
   stroke(opIdx, path, consumePath = true) {
+    const started = consumePath && this.#beginKnockoutElement(this.current.strokeAlpha);
     const ctx = this.ctx;
     const strokeColor = this.current.strokeColor;
     ctx.globalAlpha = this.current.strokeAlpha;
@@ -11398,16 +18131,32 @@ class CanvasGraphics {
       this.consumePath(opIdx, path, this.current.getClippedPathBoundingBox(PathType.STROKE, getCurrentTransform(this.ctx)));
     }
     ctx.globalAlpha = this.current.fillAlpha;
+    this.#endKnockoutElement(started);
   }
   closeStroke(opIdx, path) {
     this.stroke(opIdx, path);
   }
   fill(opIdx, path, consumePath = true) {
+    const started = consumePath && this.#beginKnockoutElement(this.current.fillAlpha);
     const ctx = this.ctx;
     const fillColor = this.current.fillColor;
     const isPatternFill = this.current.patternFill;
     let needRestore = false;
+    const intersect = this.current.getClippedPathBoundingBox();
+    this.dependencyTracker?.recordDependencies(opIdx, Dependencies.fill);
     if (isPatternFill) {
+      const dims = this.current.tilingPatternDims;
+      const tileIdx = dims && fillColor.canSkipPatternCanvas(dims);
+      if (tileIdx) {
+        fillColor.drawPattern(this, path, this.pendingEOFill, tileIdx, opIdx);
+        this.pendingEOFill = false;
+        if (consumePath) {
+          this.consumePath(opIdx, path, intersect);
+        }
+        this.current.tilingPatternDims = null;
+        this.#endKnockoutElement(started);
+        return;
+      }
       const baseTransform = fillColor.isModifyingCurrentTransform() ? ctx.getTransform() : null;
       this.dependencyTracker?.save(opIdx);
       ctx.save();
@@ -11419,7 +18168,6 @@ class CanvasGraphics {
       }
       needRestore = true;
     }
-    const intersect = this.current.getClippedPathBoundingBox();
     if (this.contentVisible && intersect !== null) {
       if (this.pendingEOFill) {
         ctx.fill(path, "evenodd");
@@ -11428,7 +18176,6 @@ class CanvasGraphics {
         ctx.fill(path);
       }
     }
-    this.dependencyTracker?.recordDependencies(opIdx, Dependencies.fill);
     if (needRestore) {
       ctx.restore();
       this.dependencyTracker?.restore(opIdx);
@@ -11436,15 +18183,18 @@ class CanvasGraphics {
     if (consumePath) {
       this.consumePath(opIdx, path, intersect);
     }
+    this.#endKnockoutElement(started);
   }
   eoFill(opIdx, path) {
     this.pendingEOFill = true;
     this.fill(opIdx, path);
   }
   fillStroke(opIdx, path) {
+    const started = this.#beginKnockoutElement(Math.min(this.current.fillAlpha, this.current.strokeAlpha));
     this.fill(opIdx, path, false);
     this.stroke(opIdx, path, false);
     this.consumePath(opIdx, path);
+    this.#endKnockoutElement(started);
   }
   eoFillStroke(opIdx, path) {
     this.pendingEOFill = true;
@@ -11461,8 +18211,10 @@ class CanvasGraphics {
     this.consumePath(opIdx, path);
   }
   rawFillPath(opIdx, path) {
+    const started = this.#beginKnockoutElement(this.current.fillAlpha);
     this.ctx.fill(path);
     this.dependencyTracker?.recordDependencies(opIdx, Dependencies.rawFillPath).recordOperation(opIdx);
+    this.#endKnockoutElement(started);
   }
   clip(opIdx) {
     this.dependencyTracker?.recordFutureForcedDependency("clipMode", opIdx);
@@ -11557,12 +18309,7 @@ class CanvasGraphics {
       bold = "bold";
     }
     const italic = fontObj.italic ? "italic" : "normal";
-    let browserFontSize = size;
-    if (size < MIN_FONT_SIZE) {
-      browserFontSize = MIN_FONT_SIZE;
-    } else if (size > MAX_FONT_SIZE) {
-      browserFontSize = MAX_FONT_SIZE;
-    }
+    const browserFontSize = MathClamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
     this.current.fontSizeScale = size / browserFontSize;
     this.ctx.font = `${italic} ${bold} ${browserFontSize}px ${typeface}`;
   }
@@ -11691,7 +18438,7 @@ class CanvasGraphics {
         break;
       }
     }
-    return shadow(this, "isFontSubpixelAAEnabled", enabled);
+    return util_shadow(this, "isFontSubpixelAAEnabled", enabled);
   }
   showText(opIdx, glyphs) {
     if (this.dependencyTracker) {
@@ -11703,15 +18450,18 @@ class CanvasGraphics {
     const current = this.current;
     const font = current.font;
     if (font.isType3Font) {
+      const started = this.#beginKnockoutElement(current.fillAlpha);
       this.showType3Text(opIdx, glyphs);
       this.dependencyTracker?.recordShowTextOperation(opIdx);
-      return undefined;
+      this.#endKnockoutElement(started);
+      return;
     }
     const fontSize = current.fontSize;
     if (fontSize === 0) {
       this.dependencyTracker?.recordOperation(opIdx);
-      return undefined;
+      return;
     }
+    const started = this.#beginKnockoutElement(current.fillAlpha);
     const ctx = this.ctx;
     const fontSizeScale = current.fontSizeScale;
     const charSpacing = current.charSpacing;
@@ -11721,7 +18471,6 @@ class CanvasGraphics {
     const glyphsLength = glyphs.length;
     const vertical = font.vertical;
     const spacingDir = vertical ? 1 : -1;
-    const defaultVMetrics = font.defaultVMetrics;
     const widthAdvanceScale = fontSize * current.fontMatrix[0];
     const simpleFillText = current.textRenderingMode === TextRenderingMode.FILL && !font.disableFontFace && !current.patternFill;
     ctx.save();
@@ -11738,20 +18487,6 @@ class CanvasGraphics {
     const fillStrokeMode = current.textRenderingMode & TextRenderingMode.FILL_STROKE_MASK;
     const needsFill = fillStrokeMode === TextRenderingMode.FILL || fillStrokeMode === TextRenderingMode.FILL_STROKE;
     const needsStroke = fillStrokeMode === TextRenderingMode.STROKE || fillStrokeMode === TextRenderingMode.FILL_STROKE;
-    if (needsFill && current.patternFill) {
-      ctx.save();
-      const pattern = current.fillColor.getPattern(ctx, this, getCurrentTransformInverse(ctx), PathType.FILL, opIdx);
-      patternFillTransform = getCurrentTransform(ctx);
-      ctx.restore();
-      ctx.fillStyle = pattern;
-    }
-    if (needsStroke && current.patternStroke) {
-      ctx.save();
-      const pattern = current.strokeColor.getPattern(ctx, this, getCurrentTransformInverse(ctx), PathType.STROKE, opIdx);
-      patternStrokeTransform = getCurrentTransform(ctx);
-      ctx.restore();
-      ctx.strokeStyle = pattern;
-    }
     let lineWidth = current.lineWidth;
     const scale = current.textMatrixScale;
     if (scale === 0 || lineWidth === 0) {
@@ -11766,6 +18501,20 @@ class CanvasGraphics {
       lineWidth /= fontSizeScale;
     }
     ctx.lineWidth = lineWidth;
+    if (needsFill && current.patternFill) {
+      ctx.save();
+      const pattern = current.fillColor.getPattern(ctx, this, getCurrentTransformInverse(ctx), PathType.FILL, opIdx);
+      patternFillTransform = getCurrentTransform(ctx);
+      ctx.restore();
+      ctx.fillStyle = pattern;
+    }
+    if (needsStroke && current.patternStroke) {
+      ctx.save();
+      const pattern = current.strokeColor.getPattern(ctx, this, getCurrentTransformInverse(ctx), PathType.STROKE, opIdx);
+      patternStrokeTransform = getCurrentTransform(ctx);
+      ctx.restore();
+      ctx.strokeStyle = pattern;
+    }
     if (font.isInvalidPDFjsFont) {
       const chars = [];
       let width = 0;
@@ -11782,7 +18531,8 @@ class CanvasGraphics {
       current.x += width * widthAdvanceScale * textHScale;
       ctx.restore();
       this.compose();
-      return undefined;
+      this.#endKnockoutElement(started);
+      return;
     }
     let x = 0,
       i;
@@ -11799,10 +18549,10 @@ class CanvasGraphics {
       let scaledX, scaledY;
       let width = glyph.width;
       if (vertical) {
-        const vmetric = glyph.vmetric || defaultVMetrics;
-        const vx = -(glyph.vmetric ? vmetric[1] : width * 0.5) * widthAdvanceScale;
+        const vmetric = glyph.vmetric;
+        const vx = -vmetric[1] * widthAdvanceScale;
         const vy = vmetric[2] * widthAdvanceScale;
-        width = vmetric ? -vmetric[0] : width;
+        width = -vmetric[0];
         scaledX = vx / fontSizeScale;
         scaledY = (x + vy) / fontSizeScale;
       } else {
@@ -11852,7 +18602,7 @@ class CanvasGraphics {
     ctx.restore();
     this.compose();
     this.dependencyTracker?.recordShowTextOperation(opIdx);
-    return undefined;
+    this.#endKnockoutElement(started);
   }
   showType3Text(opIdx, glyphs) {
     const ctx = this.ctx;
@@ -11872,7 +18622,6 @@ class CanvasGraphics {
       return;
     }
     this._cachedScaleForStroking[0] = -1;
-    this._cachedGetSinglePixelWidth = null;
     ctx.save();
     if (current.textMatrix) {
       ctx.transform(...current.textMatrix);
@@ -11890,11 +18639,15 @@ class CanvasGraphics {
         continue;
       }
       const spacing = (glyph.isSpace ? wordSpacing : 0) + charSpacing;
-      const operatorList = font.charProcOperatorList[glyph.operatorListId];
+      const operatorList = font.charProcOperatorList.get(glyph.operatorListId);
       if (!operatorList) {
         warn(`Type3 character "${glyph.operatorListId}" is not available.`);
       } else if (this.contentVisible) {
         this.save();
+        if (operatorList.fnArray[0] === OPS.setCharWidth) {
+          current.fillAlpha = current.strokeAlpha = 1;
+          ctx.globalAlpha = 1;
+        }
         ctx.scale(fontSize, fontSize);
         ctx.transform(...fontMatrix);
         this.executeOperatorList(operatorList);
@@ -11942,12 +18695,17 @@ class CanvasGraphics {
   }
   setFillColorN(opIdx, ...args) {
     this.dependencyTracker?.recordSimpleData("fillColor", opIdx);
-    this.current.fillColor = this.getColorN_Pattern(opIdx, args);
+    const pattern = this.current.fillColor = this.getColorN_Pattern(opIdx, args);
     this.current.patternFill = true;
+    this.current.tilingPatternDims = pattern instanceof TilingPattern ? [0, 0, 0, 0] : null;
+  }
+  #transferColor(color) {
+    return this.current.transferMapsFallback?.applyToColor(color) ?? color;
   }
   setStrokeRGBColor(opIdx, color) {
     this.dependencyTracker?.recordSimpleData("strokeColor", opIdx);
-    this.ctx.strokeStyle = this.current.strokeColor = color;
+    this.current.strokeColor = color;
+    this.ctx.strokeStyle = this.#transferColor(color);
     this.current.patternStroke = false;
   }
   setStrokeTransparent(opIdx) {
@@ -11957,22 +18715,19 @@ class CanvasGraphics {
   }
   setFillRGBColor(opIdx, color) {
     this.dependencyTracker?.recordSimpleData("fillColor", opIdx);
-    this.ctx.fillStyle = this.current.fillColor = color;
+    this.current.fillColor = color;
+    this.ctx.fillStyle = this.#transferColor(color);
     this.current.patternFill = false;
+    this.current.tilingPatternDims = null;
   }
   setFillTransparent(opIdx) {
     this.dependencyTracker?.recordSimpleData("fillColor", opIdx);
     this.ctx.fillStyle = this.current.fillColor = "transparent";
     this.current.patternFill = false;
+    this.current.tilingPatternDims = null;
   }
   _getPattern(opIdx, objId, matrix = null) {
-    let pattern;
-    if (this.cachedPatterns.has(objId)) {
-      pattern = this.cachedPatterns.get(objId);
-    } else {
-      pattern = getShadingPattern(this.getObject(opIdx, objId));
-      this.cachedPatterns.set(objId, pattern);
-    }
+    const pattern = this.cachedPatterns.getOrInsertComputed(objId, () => getShadingPattern(this.getObject(opIdx, objId)));
     if (matrix) {
       pattern.matrix = matrix;
     }
@@ -11982,6 +18737,7 @@ class CanvasGraphics {
     if (!this.contentVisible) {
       return;
     }
+    const started = this.#beginKnockoutElement(this.current.fillAlpha);
     const ctx = this.ctx;
     this.save(opIdx);
     const pattern = this._getPattern(opIdx, objId);
@@ -11992,7 +18748,7 @@ class CanvasGraphics {
         width,
         height
       } = ctx.canvas;
-      const minMax = MIN_MAX_INIT.slice();
+      const minMax = F32_BBOX_INIT.slice();
       Util.axialAlignedBoundingBox([0, 0, width, height], inv, minMax);
       const [x0, y0, x1, y1] = minMax;
       this.ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
@@ -12002,6 +18758,7 @@ class CanvasGraphics {
     this.dependencyTracker?.resetBBox(opIdx).recordFullPageBBox(opIdx).recordDependencies(opIdx, Dependencies.transform).recordDependencies(opIdx, Dependencies.fill).recordOperation(opIdx);
     this.compose(this.current.getClippedPathBoundingBox());
     this.restore(opIdx);
+    this.#endKnockoutElement(started);
   }
   beginInlineImage() {
     unreachable("Should not call beginInlineImage");
@@ -12041,16 +18798,33 @@ class CanvasGraphics {
       return;
     }
     this.save(opIdx);
-    if (this.inSMaskMode) {
+    const {
+      inSMaskMode
+    } = this;
+    if (inSMaskMode) {
       this.endSMaskMode();
       this.current.activeSMask = null;
     }
     const currentCtx = this.ctx;
-    if (!group.isolated) {
-      info("TODO: Support non-isolated groups.");
+    if ((!group.needsIsolation || !group.isolated && !group.hasSoftMask) && !group.knockout && !group.isGray && this.#knockoutGroupLevel === 0 && currentCtx.globalAlpha === 1 && currentCtx.globalCompositeOperation === "source-over" && !inSMaskMode) {
+      if (group.bbox) {
+        let clip = new Path2D();
+        const [x0, y0, x1, y1] = group.bbox;
+        clip.rect(x0, y0, x1 - x0, y1 - y0);
+        if (group.matrix) {
+          const path = new Path2D();
+          path.addPath(clip, new DOMMatrix(group.matrix));
+          clip = path;
+        }
+        currentCtx.clip(clip);
+      }
+      this.groupStack.push(null);
+      this.#groupStackMeta.push(null);
+      this.groupLevel++;
+      return;
     }
-    if (group.knockout) {
-      warn("Knockout groups not supported.");
+    if (!group.isolated && !group.knockout && this.#knockoutGroupLevel === 0) {
+      info("TODO: Fully support non-isolated non-knockout groups.");
     }
     const currentTransform = getCurrentTransform(currentCtx);
     if (group.matrix) {
@@ -12059,7 +18833,7 @@ class CanvasGraphics {
     const canvasBounds = [0, 0, currentCtx.canvas.width, currentCtx.canvas.height];
     let bounds;
     if (group.bbox) {
-      bounds = MIN_MAX_INIT.slice();
+      bounds = F32_BBOX_INIT.slice();
       Util.axialAlignedBoundingBox(group.bbox, getCurrentTransform(currentCtx), bounds);
       bounds = Util.intersect(bounds, canvasBounds) || [0, 0, 0, 0];
     } else {
@@ -12070,16 +18844,30 @@ class CanvasGraphics {
     const drawnWidth = Math.max(Math.ceil(bounds[2]) - offsetX, 1);
     const drawnHeight = Math.max(Math.ceil(bounds[3]) - offsetY, 1);
     this.current.startNewPathAndClipBox([0, 0, drawnWidth, drawnHeight]);
-    if (group.smask) {
-      this.smaskCounter++;
-    }
     const scratchCanvas = this.canvasFactory.create(drawnWidth, drawnHeight);
     if (group.smask) {
       this.smaskGroupCanvases.push(scratchCanvas);
     }
     const groupCtx = scratchCanvas.context;
+    const backdropCtx = group.knockout && !group.isolated ? currentCtx : null;
+    const hasInnerBackdrop = !group.isolated && !group.knockout && !group.smask && group.needsIsolation && this.#knockoutGroupLevel > 0;
+    const knockoutMaskEntry = group.knockout ? this.canvasFactory.create(drawnWidth, drawnHeight) : null;
+    const savedKnockoutLevel = this.#knockoutGroupLevel;
+    if (group.knockout) {
+      this.#knockoutGroupLevel++;
+    } else {
+      this.#knockoutGroupLevel = 0;
+    }
     groupCtx.translate(-offsetX, -offsetY);
     groupCtx.transform(...currentTransform);
+    const needsBackdropCopy = !group.isolated && !group.smask && group.needsIsolation;
+    const replaceBackdrop = needsBackdropCopy && !inSMaskMode && savedKnockoutLevel === 0 && !group.knockout && !group.isGray && group.hasSoftMask && currentCtx.globalAlpha === 1 && currentCtx.globalCompositeOperation === "source-over" && this.current.transferMaps === "none" && !this.current.transferMapsFallback;
+    if (needsBackdropCopy && (inSMaskMode || replaceBackdrop)) {
+      groupCtx.save();
+      groupCtx.setTransform(1, 0, 0, 1, 0, 0);
+      groupCtx.drawImage(currentCtx.canvas, -offsetX, -offsetY);
+      groupCtx.restore();
+    }
     if (group.bbox) {
       let clip = new Path2D();
       const [x0, y0, x1, y1] = group.bbox;
@@ -12099,8 +18887,7 @@ class CanvasGraphics {
         offsetY,
         subtype: group.smask.subtype,
         backdrop: group.smask.backdrop,
-        transferMap: group.smask.transferMap || null,
-        startTransformInverse: null
+        transferMap: group.smask.transferMap || null
       });
     }
     if (!group.smask || this.dependencyTracker) {
@@ -12113,6 +18900,17 @@ class CanvasGraphics {
     this.dependencyTracker?.inheritSimpleDataAsFutureForcedDependencies(["fillAlpha", "strokeAlpha", "globalCompositeOperation"]).pushBaseTransform(currentCtx);
     this.setGState(opIdx, [["BM", "source-over"], ["ca", 1], ["CA", 1], ["TR", null]]);
     this.groupStack.push(currentCtx);
+    this.#groupStackMeta.push({
+      backdropCtx,
+      savedKnockoutLevel,
+      offsetX,
+      offsetY,
+      hasInnerBackdrop,
+      replaceBackdrop,
+      knockoutMaskEntry,
+      knockoutTempEntry: null,
+      knockoutBackdropEntry: null
+    });
     this.groupLevel++;
   }
   endGroup(opIdx, group) {
@@ -12122,6 +18920,17 @@ class CanvasGraphics {
     this.groupLevel--;
     const groupCtx = this.ctx;
     const ctx = this.groupStack.pop();
+    const groupMeta = this.#groupStackMeta.pop();
+    if (groupMeta) {
+      this.#knockoutGroupLevel = groupMeta.savedKnockoutLevel;
+    }
+    if (ctx === null) {
+      this.restore(opIdx);
+      return;
+    }
+    if (group.isGray) {
+      this.#convertGroupToGray(groupCtx);
+    }
     this.ctx = ctx;
     this.ctx.imageSmoothingEnabled = false;
     this.dependencyTracker?.popBaseTransform();
@@ -12130,25 +18939,129 @@ class CanvasGraphics {
       this.restore(opIdx);
       if (this.dependencyTracker) {
         this.ctx.restore();
+        if (this.inSMaskMode) {
+          this.ctx.setTransform(this.suspendedCtx.getTransform());
+        }
       }
+      this.#destroyKnockoutPools(groupMeta);
     } else {
       this.ctx.restore();
       const currentMtx = getCurrentTransform(this.ctx);
       this.restore(opIdx);
+      this.current.transferMapsFallback?.applyToCanvas(groupCtx);
       this.ctx.save();
       this.ctx.setTransform(...currentMtx);
-      const dirtyBox = MIN_MAX_INIT.slice();
+      const dirtyBox = F32_BBOX_INIT.slice();
       Util.axialAlignedBoundingBox([0, 0, groupCtx.canvas.width, groupCtx.canvas.height], currentMtx, dirtyBox);
-      this.ctx.drawImage(groupCtx.canvas, 0, 0);
+      const parentGroupMeta = this.#groupStackMeta.at(-1);
+      if (this.#knockoutGroupLevel > 0) {
+        if (groupMeta.hasInnerBackdrop) {
+          const {
+            width,
+            height
+          } = groupCtx.canvas;
+          const colorEntry = this.canvasFactory.create(width, height);
+          const colorCtx = colorEntry.context;
+          colorCtx.drawImage(ctx.canvas, groupMeta.offsetX, groupMeta.offsetY, width, height, 0, 0, width, height);
+          colorCtx.globalCompositeOperation = "source-over";
+          colorCtx.drawImage(groupCtx.canvas, 0, 0);
+          const shapeMaskEntry = this.#createKnockoutMaskCanvas(groupCtx.canvas);
+          colorCtx.globalCompositeOperation = "destination-in";
+          colorCtx.drawImage(shapeMaskEntry.canvas, 0, 0);
+          const sourceCompositeOperation = this.ctx.globalCompositeOperation;
+          const sourceAlpha = this.ctx.globalAlpha;
+          const sourceFilter = this.ctx.filter;
+          this.ctx.save();
+          this.ctx.setTransform(...currentMtx);
+          this.ctx.globalAlpha = 1;
+          if (FeatureTest.isCanvasFilterSupported) {
+            this.ctx.filter = "none";
+          }
+          this.ctx.globalCompositeOperation = "destination-out";
+          this.ctx.drawImage(shapeMaskEntry.canvas, 0, 0);
+          this.ctx.globalCompositeOperation = sourceCompositeOperation;
+          this.ctx.globalAlpha = sourceAlpha;
+          if (FeatureTest.isCanvasFilterSupported) {
+            this.ctx.filter = sourceFilter ?? "none";
+          }
+          this.ctx.drawImage(colorEntry.canvas, 0, 0);
+          this.ctx.restore();
+          this.canvasFactory.destroy(shapeMaskEntry);
+          this.canvasFactory.destroy(colorEntry);
+        } else {
+          const backdropCtx = parentGroupMeta?.backdropCtx ?? null;
+          this.#compositeKnockoutSurface(this.ctx, groupCtx.canvas, {
+            backdropCanvas: backdropCtx?.canvas ?? null,
+            destTransform: currentMtx,
+            backdropOffset: backdropCtx ? [parentGroupMeta.offsetX + groupMeta.offsetX, parentGroupMeta.offsetY + groupMeta.offsetY] : [0, 0],
+            sourceAlpha: this.ctx.globalAlpha,
+            sourceFilter: this.ctx.filter
+          });
+        }
+      } else {
+        if (groupMeta.replaceBackdrop) {
+          const clip = new Path2D();
+          clip.rect(0, 0, groupCtx.canvas.width, groupCtx.canvas.height);
+          this.ctx.clip(clip);
+          this.ctx.globalCompositeOperation = "copy";
+        }
+        this.ctx.drawImage(groupCtx.canvas, 0, 0);
+      }
       this.ctx.restore();
       this.canvasFactory.destroy({
         canvas: groupCtx.canvas,
         context: groupCtx
       });
+      this.#destroyKnockoutPools(groupMeta);
       this.compose(dirtyBox);
     }
   }
-  beginAnnotation(opIdx, id, rect, transform, matrix, hasOwnCanvas) {
+  #convertGroupToGray(groupCtx) {
+    const {
+      canvas
+    } = groupCtx;
+    const {
+      width,
+      height
+    } = canvas;
+    if (FeatureTest.isCanvasFilterSupported) {
+      groupCtx.save();
+      groupCtx.setTransform(1, 0, 0, 1, 0, 0);
+      groupCtx.filter = "grayscale(1)";
+      groupCtx.globalAlpha = 1;
+      groupCtx.globalCompositeOperation = "copy";
+      groupCtx.drawImage(canvas, 0, 0);
+      groupCtx.restore();
+      return;
+    }
+    const imageData = groupCtx.getImageData(0, 0, width, height);
+    const {
+      data
+    } = imageData;
+    for (let i = 0, ii = data.length; i < ii; i += 4) {
+      const gray = data[i] * 0.2126 + data[i + 1] * 0.7152 + data[i + 2] * 0.0722 + 0.5 | 0;
+      data[i] = data[i + 1] = data[i + 2] = gray;
+    }
+    groupCtx.putImageData(imageData, 0, 0);
+  }
+  #destroyKnockoutPools(groupMeta) {
+    if (!groupMeta) {
+      return;
+    }
+    if (groupMeta.knockoutMaskEntry) {
+      this.canvasFactory.destroy(groupMeta.knockoutMaskEntry);
+      groupMeta.knockoutMaskEntry = null;
+    }
+    if (groupMeta.knockoutTempEntry) {
+      this.canvasFactory.destroy(groupMeta.knockoutTempEntry);
+      groupMeta.knockoutTempEntry = null;
+    }
+    if (groupMeta.knockoutBackdropEntry) {
+      this.canvasFactory.destroy(groupMeta.knockoutBackdropEntry);
+      groupMeta.knockoutBackdropEntry = null;
+    }
+  }
+  beginAnnotation(opIdx, id, rect, transform, matrix, hasOwnCanvas, canvasName) {
     this.#restoreInitialState();
     resetCtxToDefault(this.ctx);
     this.ctx.save();
@@ -12163,10 +19076,6 @@ class CanvasGraphics {
         transform = transform.slice();
         transform[4] -= rect[0];
         transform[5] -= rect[1];
-        rect = rect.slice();
-        rect[0] = rect[1] = 0;
-        rect[2] = width;
-        rect[3] = height;
         Util.singularValueDecompose2dScale(getCurrentTransform(this.ctx), XY);
         const {
           viewportScale
@@ -12178,7 +19087,18 @@ class CanvasGraphics {
           canvas,
           context
         } = this.annotationCanvas;
-        this.annotationCanvasMap.set(id, canvas);
+        if (canvasName) {
+          const canvases = this.annotationCanvasMap.getOrInsertComputed(id, makeArr);
+          canvas.setAttribute("data-canvas-name", canvasName);
+          const index = canvases.findIndex(c => c.getAttribute("data-canvas-name") === canvasName);
+          if (index === -1) {
+            canvases.push(canvas);
+          } else {
+            canvases[index] = canvas;
+          }
+        } else {
+          this.annotationCanvasMap.set(id, canvas);
+        }
         this.annotationCanvas.savedCtx = this.ctx;
         this.ctx = context;
         this.ctx.save();
@@ -12193,8 +19113,10 @@ class CanvasGraphics {
       }
     }
     this.current = new CanvasExtraState(this.ctx.canvas.width, this.ctx.canvas.height);
+    this.baseTransformStack.push(this.baseTransform);
     this.transform(opIdx, ...transform);
     this.transform(opIdx, ...matrix);
+    this.baseTransform = getCurrentTransform(this.ctx);
   }
   endAnnotation(opIdx) {
     if (this.annotationCanvas) {
@@ -12204,6 +19126,7 @@ class CanvasGraphics {
       delete this.annotationCanvas.savedCtx;
       delete this.annotationCanvas;
     }
+    this.baseTransform = this.baseTransformStack.pop();
   }
   paintImageMaskXObject(opIdx, img) {
     if (!this.contentVisible) {
@@ -12212,6 +19135,7 @@ class CanvasGraphics {
     const count = img.count;
     img = this.getObject(opIdx, img.data, img);
     img.count = count;
+    const started = this.#beginKnockoutElement(this.current.fillAlpha);
     const ctx = this.ctx;
     const mask = this._createMaskCanvas(opIdx, img);
     const maskCanvas = mask.canvas;
@@ -12224,12 +19148,14 @@ class CanvasGraphics {
       this.canvasFactory.destroy(mask.canvasEntry);
     }
     this.compose();
+    this.#endKnockoutElement(started);
   }
   paintImageMaskXObjectRepeat(opIdx, img, scaleX, skewX = 0, skewY = 0, scaleY, positions) {
     if (!this.contentVisible) {
       return;
     }
     img = this.getObject(opIdx, img.data, img);
+    const started = this.#beginKnockoutElement(this.current.fillAlpha);
     const ctx = this.ctx;
     ctx.save();
     const currentTransform = getCurrentTransform(ctx);
@@ -12248,14 +19174,16 @@ class CanvasGraphics {
     }
     this.compose();
     this.dependencyTracker?.recordOperation(opIdx);
+    this.#endKnockoutElement(started);
   }
   paintImageMaskXObjectGroup(opIdx, images) {
     if (!this.contentVisible) {
       return;
     }
+    const started = this.#beginKnockoutElement(this.current.fillAlpha);
     const ctx = this.ctx;
-    const fillColor = this.current.fillColor;
     const isPatternFill = this.current.patternFill;
+    const fillColor = isPatternFill ? this.current.fillColor : ctx.fillStyle;
     this.dependencyTracker?.resetBBox(opIdx).recordDependencies(opIdx, Dependencies.transformAndFill);
     for (const image of images) {
       const {
@@ -12283,6 +19211,7 @@ class CanvasGraphics {
     }
     this.compose();
     this.dependencyTracker?.recordOperation(opIdx);
+    this.#endKnockoutElement(started);
   }
   paintImageXObject(opIdx, objId) {
     if (!this.contentVisible) {
@@ -12323,11 +19252,17 @@ class CanvasGraphics {
       ctx.filter = this.current.transferMaps;
       ctx.drawImage(ctx.canvas, 0, 0);
       ctx.filter = "none";
+    } else {
+      this.current.transferMapsFallback?.applyToCanvas(ctx);
     }
     return ctx.canvas;
   }
   applyTransferMapsToBitmap(imgData) {
-    if (this.current.transferMaps === "none") {
+    const {
+      transferMaps,
+      transferMapsFallback
+    } = this.current;
+    if (transferMaps === "none" && !transferMapsFallback) {
       return {
         img: imgData.bitmap,
         canvasEntry: null
@@ -12340,9 +19275,10 @@ class CanvasGraphics {
     } = imgData;
     const tmpCanvas = this.canvasFactory.create(width, height);
     const tmpCtx = tmpCanvas.context;
-    tmpCtx.filter = this.current.transferMaps;
+    tmpCtx.filter = transferMaps;
     tmpCtx.drawImage(bitmap, 0, 0);
     tmpCtx.filter = "none";
+    transferMapsFallback?.applyToCanvas(tmpCtx);
     return {
       img: tmpCanvas.canvas,
       canvasEntry: tmpCanvas
@@ -12354,6 +19290,7 @@ class CanvasGraphics {
     }
     const width = imgData.width;
     const height = imgData.height;
+    const started = this.#beginKnockoutElement(this.current.fillAlpha);
     const ctx = this.ctx;
     this.save(opIdx);
     const {
@@ -12369,8 +19306,6 @@ class CanvasGraphics {
       const result = this.applyTransferMapsToBitmap(imgData);
       imgToPaint = result.img;
       inlineImgCanvas = result.canvasEntry;
-    } else if (typeof HTMLElement === "function" && imgData instanceof HTMLElement || !imgData.data) {
-      imgToPaint = imgData;
     } else {
       const tmpCanvas = this.canvasFactory.create(width, height);
       putBinaryImageData(tmpCanvas.context, imgData);
@@ -12392,16 +19327,23 @@ class CanvasGraphics {
     }
     this.compose();
     this.restore(opIdx);
+    this.#endKnockoutElement(started);
   }
   paintInlineImageXObjectGroup(opIdx, imgData, map) {
     if (!this.contentVisible) {
       return;
     }
+    const started = this.#beginKnockoutElement(this.current.fillAlpha);
     const ctx = this.ctx;
     let imgToPaint;
     let inlineImgCanvas = null;
-    if (imgData.bitmap) {
+    if (imgData.bitmap && !this.current.transferMapsFallback) {
       imgToPaint = imgData.bitmap;
+    } else if (imgData.bitmap) {
+      ({
+        img: imgToPaint,
+        canvasEntry: inlineImgCanvas
+      } = this.applyTransferMapsToBitmap(imgData));
     } else {
       const w = imgData.width;
       const h = imgData.height;
@@ -12424,14 +19366,17 @@ class CanvasGraphics {
     }
     this.dependencyTracker?.recordOperation(opIdx);
     this.compose();
+    this.#endKnockoutElement(started);
   }
   paintSolidColorImageMask(opIdx) {
     if (!this.contentVisible) {
       return;
     }
+    const started = this.#beginKnockoutElement(this.current.fillAlpha);
     this.dependencyTracker?.resetBBox(opIdx).recordBBox(opIdx, this.ctx, 0, 1, 0, 1).recordDependencies(opIdx, Dependencies.fill).recordOperation(opIdx);
     this.ctx.fillRect(0, 0, 1, 1);
     this.compose();
+    this.#endKnockoutElement(started);
   }
   markPoint(opIdx, tag) {}
   markPointProps(opIdx, tag, properties) {}
@@ -12486,18 +19431,14 @@ class CanvasGraphics {
     this.current.startNewPathAndClipBox(this.current.clipBox);
   }
   getSinglePixelWidth() {
-    if (!this._cachedGetSinglePixelWidth) {
-      const m = getCurrentTransform(this.ctx);
-      if (m[1] === 0 && m[2] === 0) {
-        this._cachedGetSinglePixelWidth = 1 / Math.min(Math.abs(m[0]), Math.abs(m[3]));
-      } else {
-        const absDet = Math.abs(m[0] * m[3] - m[2] * m[1]);
-        const normX = Math.hypot(m[0], m[2]);
-        const normY = Math.hypot(m[1], m[3]);
-        this._cachedGetSinglePixelWidth = Math.max(normX, normY) / absDet;
-      }
+    const m = getCurrentTransform(this.ctx);
+    if (m[1] === 0 && m[2] === 0) {
+      return 1 / Math.min(Math.abs(m[0]), Math.abs(m[3]));
     }
-    return this._cachedGetSinglePixelWidth;
+    const absDet = Math.abs(m[0] * m[3] - m[2] * m[1]);
+    const normX = Math.hypot(m[0], m[2]);
+    const normY = Math.hypot(m[1], m[3]);
+    return Math.max(normX, normY) / absDet;
   }
   getScaleForStroking() {
     if (this._cachedScaleForStroking[0] === -1) {
@@ -12561,6 +19502,7 @@ class CanvasGraphics {
       ctx.stroke(path);
       return;
     }
+    const SCALE_MATRIX = CanvasGraphics.#SCALE_MATRIX ??= new DOMMatrix();
     const dashes = ctx.getLineDash();
     if (saveRestore) {
       ctx.save();
@@ -12598,6 +19540,13 @@ for (const op in OPS) {
 
 ;// ./src/shared/base_pdf_stream.js
 
+
+
+
+
+
+
+
 class BasePDFStream {
   #PDFStreamReader = null;
   #PDFStreamRangeReader = null;
@@ -12613,7 +19562,7 @@ class BasePDFStream {
     return this._fullReader?._loaded ?? 0;
   }
   getFullReader() {
-    assert(!this._fullReader, "BasePDFStream.getFullReader can only be called once.");
+    util_assert(!this._fullReader, "BasePDFStream.getFullReader can only be called once.");
     return this._fullReader = new this.#PDFStreamReader(this);
   }
   getRangeReader(begin, end) {
@@ -12685,6 +19634,8 @@ class BasePDFStreamRangeReader {
 }
 
 ;// ./src/display/content_disposition.js
+
+
 
 function getFilenameFromContentDispositionHeader(contentDisposition) {
   let needsEncodingFixup = true;
@@ -12798,12 +19749,9 @@ function getFilenameFromContentDispositionHeader(contentDisposition) {
     if (!value.startsWith("=?") || /[\x00-\x19\x80-\xff]/.test(value)) {
       return value;
     }
-    return value.replaceAll(/=\?([\w-]*)\?([QqBb])\?((?:[^?]|\?(?!=))*)\?=/g, function (matches, charset, encoding, text) {
+    return value.replaceAll(/=\?([\w-]*)\?([QB])\?((?:[^?]|\?(?!=))*)\?=/gi, function (matches, charset, encoding, text) {
       if (encoding === "q" || encoding === "Q") {
-        text = text.replaceAll("_", " ");
-        text = text.replaceAll(/=([0-9a-fA-F]{2})/g, function (match, hex) {
-          return String.fromCharCode(parseInt(hex, 16));
-        });
+        text = text.replaceAll("_", " ").replaceAll(/=([0-9a-f]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
         return textdecode(charset, text);
       }
       try {
@@ -12819,6 +19767,8 @@ function getFilenameFromContentDispositionHeader(contentDisposition) {
 
 
 
+
+
 function createHeaders(isHttp, httpHeaders) {
   const headers = new Headers();
   if (!isHttp || !httpHeaders || typeof httpHeaders !== "object") {
@@ -12831,6 +19781,13 @@ function createHeaders(isHttp, httpHeaders) {
     }
   }
   return headers;
+}
+function trimHeadersEnd(str) {
+  let end = str.length;
+  while (end > 0 && str[end - 1] !== " " && /\s/.test(str[end - 1])) {
+    end--;
+  }
+  return str.slice(0, end);
 }
 function getResponseOrigin(url) {
   return URL.parse(url)?.origin ?? null;
@@ -12853,10 +19810,7 @@ function validateRangeRequestCapabilities({
   if (length <= 2 * rangeChunkSize) {
     return rv;
   }
-  if (disableRange || !isHttp) {
-    return rv;
-  }
-  if (responseHeaders.get("Accept-Ranges") !== "bytes") {
+  if (disableRange || !isHttp || responseHeaders.get("Accept-Ranges") !== "bytes") {
     return rv;
   }
   const contentEncoding = responseHeaders.get("Content-Encoding") || "identity";
@@ -12893,6 +19847,11 @@ function ensureResponseOrigin(rangeOrigin, origin) {
 
 
 
+
+
+
+
+
 function fetchUrl(url, headers, withCredentials, abortController) {
   return fetch(url, {
     method: "GET",
@@ -12925,7 +19884,7 @@ class PDFFetchStream extends BasePDFStream {
       httpHeaders,
       url
     } = source;
-    assert(/https?:/.test(url.protocol), "PDFFetchStream only supports http(s):// URLs.");
+    util_assert(/https?:/.test(url.protocol), "PDFFetchStream only supports http(s):// URLs.");
     this.headers = createHeaders(true, httpHeaders);
   }
 }
@@ -13016,13 +19975,10 @@ class PDFFetchStreamRangeReader extends BasePDFStreamRangeReader {
       value,
       done
     } = await this._reader.read();
-    if (done) {
-      return {
-        value,
-        done
-      };
-    }
-    return {
+    return done ? {
+      value,
+      done
+    } : {
       value: getArrayBuffer(value),
       done: false
     };
@@ -13034,6 +19990,14 @@ class PDFFetchStreamRangeReader extends BasePDFStreamRangeReader {
 }
 
 ;// ./src/display/transport_stream.js
+
+
+
+
+
+
+
+
 
 
 
@@ -13066,17 +20030,19 @@ class PDFDataTransportStream extends BasePDFStream {
       this._queuedChunks.push(buffer);
     }
     this._progressiveDone = progressiveDone;
-    pdfDataRangeTransport.addRangeListener((begin, chunk) => {
-      this.#onReceiveData(begin, chunk);
-    });
-    pdfDataRangeTransport.addProgressiveReadListener(chunk => {
-      this.#onReceiveData(undefined, chunk);
-    });
-    pdfDataRangeTransport.addProgressiveDoneListener(() => {
-      this._fullReader?.progressiveDone();
-      this._progressiveDone = true;
-    });
-    pdfDataRangeTransport.transportReady();
+    const listener = args => {
+      switch (args.type) {
+        case "range":
+        case "progressiveRead":
+          this.#onReceiveData(args.begin, args.chunk);
+          break;
+        case "progressiveDone":
+          this._fullReader?.progressiveDone();
+          this._progressiveDone = true;
+          break;
+      }
+    };
+    pdfDataRangeTransport.transportReady(listener);
   }
   #onReceiveData(begin, chunk) {
     const buffer = transport_stream_getArrayBuffer(chunk);
@@ -13088,7 +20054,7 @@ class PDFDataTransportStream extends BasePDFStream {
       }
     } else {
       const rangeReader = this._rangeReaders.keys().find(r => r._begin === begin);
-      assert(rangeReader, "#onReceiveData - no `PDFDataTransportStreamRangeReader` instance found.");
+      util_assert(rangeReader, "#onReceiveData - no `PDFDataTransportStreamRangeReader` instance found.");
       rangeReader._enqueue(buffer);
     }
   }
@@ -13249,6 +20215,11 @@ class PDFDataTransportStreamRangeReader extends BasePDFStreamRangeReader {
 
 
 
+
+
+
+
+
 const OK_RESPONSE = 200;
 const PARTIAL_CONTENT_RESPONSE = 206;
 function network_getArrayBuffer(val) {
@@ -13289,7 +20260,7 @@ class PDFNetworkStream extends BasePDFStream {
       pendingRequest.validateStatus = status => status === OK_RESPONSE;
     }
     xhr.responseType = "arraybuffer";
-    assert(args.onError, "Expected `onError` callback to be provided.");
+    util_assert(args.onError, "Expected `onError` callback to be provided.");
     xhr.onerror = () => args.onError(xhr.status);
     xhr.onreadystatechange = this.#onStateChange.bind(this, xhr);
     xhr.onprogress = this.#onProgress.bind(this, xhr);
@@ -13328,7 +20299,7 @@ class PDFNetworkStream extends BasePDFStream {
     const chunk = network_getArrayBuffer(xhr.response);
     if (xhrStatus === PARTIAL_CONTENT_RESPONSE) {
       const rangeHeader = xhr.getResponseHeader("Content-Range");
-      if (/bytes (\d+)-(\d+)\/(\d+)/.test(rangeHeader)) {
+      if (/bytes \d+-\d+\/\d+/.test(rangeHeader)) {
         pendingRequest.onDone(chunk);
       } else {
         warn(`Missing or invalid "Content-Range" header.`);
@@ -13378,7 +20349,7 @@ class PDFNetworkStreamReader extends BasePDFStreamReader {
     const fullRequestXhr = this._fullRequestXhr;
     stream._responseOrigin = getResponseOrigin(fullRequestXhr.responseURL);
     const rawResponseHeaders = fullRequestXhr.getAllResponseHeaders();
-    const responseHeaders = new Headers(rawResponseHeaders ? rawResponseHeaders.trimStart().replace(/[^\S ]+$/, "").split(/[\r\n]+/).map(x => {
+    const responseHeaders = new Headers(rawResponseHeaders ? trimHeadersEnd(rawResponseHeaders.trimStart()).split(/[\r\n]+/).map(x => {
       const [key, ...val] = x.split(": ");
       return [key, val.join(": ")];
     }) : []);
@@ -13543,16 +20514,13 @@ class PDFNetworkStreamRangeReader extends BasePDFStreamRangeReader {
 
 
 
-function getReadableStream(readStream) {
+function getReadableStream(url, opts = null) {
+  const fs = process.getBuiltinModule("fs");
   const {
     Readable
   } = process.getBuiltinModule("stream");
-  if (typeof Readable.toWeb === "function") {
-    return Readable.toWeb(readStream);
-  }
-  const require = process.getBuiltinModule("module").createRequire(import.meta.url);
-  const polyfill = require("node-readable-to-web-readable-stream");
-  return polyfill.makeDefaultReadableStreamFromNodeReadable(readStream);
+  const readStream = fs.createReadStream(url, opts);
+  return Readable.toWeb(readStream);
 }
 class PDFNodeStream extends BasePDFStream {
   constructor(source) {
@@ -13560,7 +20528,7 @@ class PDFNodeStream extends BasePDFStream {
     const {
       url
     } = source;
-    assert(url.protocol === "file:", "PDFNodeStream only supports file:// URLs.");
+    util_assert(url.protocol === "file:", "PDFNodeStream only supports file:// URLs.");
   }
 }
 class PDFNodeStreamReader extends BasePDFStreamReader {
@@ -13574,10 +20542,9 @@ class PDFNodeStreamReader extends BasePDFStreamReader {
       url
     } = stream._source;
     this._isStreamingSupported = !disableStream;
-    const fs = process.getBuiltinModule("fs");
-    fs.promises.lstat(url).then(stat => {
-      const readStream = fs.createReadStream(url);
-      const readableStream = getReadableStream(readStream);
+    const fs = process.getBuiltinModule("fs/promises");
+    fs.lstat(url).then(stat => {
+      const readableStream = getReadableStream(url);
       this._reader = readableStream.getReader();
       const {
         size
@@ -13626,13 +20593,11 @@ class PDFNodeStreamRangeReader extends BasePDFStreamRangeReader {
     const {
       url
     } = stream._source;
-    const fs = process.getBuiltinModule("fs");
     try {
-      const readStream = fs.createReadStream(url, {
+      const readableStream = getReadableStream(url, {
         start: begin,
         end: end - 1
       });
-      const readableStream = getReadableStream(readStream);
       this._reader = readableStream.getReader();
       this._readCapability.resolve();
     } catch (error) {
@@ -13645,13 +20610,10 @@ class PDFNodeStreamRangeReader extends BasePDFStreamRangeReader {
       value,
       done
     } = await this._reader.read();
-    if (done) {
-      return {
-        value,
-        done
-      };
-    }
-    return {
+    return done ? {
+      value,
+      done
+    } : {
       value: getArrayBuffer(value),
       done: false
     };
@@ -13720,6 +20682,8 @@ class Metadata {
 ;// ./src/display/optional_content_config.js
 
 
+
+
 const INTERNAL = Symbol("INTERNAL");
 class OptionalContentGroup {
   #isDisplay = false;
@@ -13764,16 +20728,24 @@ class OptionalContentGroup {
     this.#userSet = userSet;
     this.#visible = visible;
   }
+  get serializable() {
+    return {
+      userSet: this.#userSet,
+      visible: this.#visible
+    };
+  }
 }
 class OptionalContentConfig {
   #cachedGetHash = null;
   #groups = new Map();
   #initialHash = null;
   #order = null;
-  constructor(data, renderingIntent = RenderingIntentFlag.DISPLAY) {
+  #rawData;
+  creator = null;
+  name = null;
+  constructor(data, renderingIntent = RenderingIntentFlag.DISPLAY, groupState = null) {
+    this.#rawData = data;
     this.renderingIntent = renderingIntent;
-    this.name = null;
-    this.creator = null;
     if (data === null) {
       return;
     }
@@ -13783,16 +20755,25 @@ class OptionalContentConfig {
     for (const group of data.groups) {
       this.#groups.set(group.id, new OptionalContentGroup(renderingIntent, group));
     }
-    if (data.baseState === "OFF") {
-      for (const group of this.#groups.values()) {
-        group._setVisible(INTERNAL, false);
+    if (groupState) {
+      if (groupState.size !== this.#groups.size) {
+        unreachable("Incorrect serialized groupState.");
       }
-    }
-    for (const on of data.on) {
-      this.#groups.get(on)._setVisible(INTERNAL, true);
-    }
-    for (const off of data.off) {
-      this.#groups.get(off)._setVisible(INTERNAL, false);
+      for (const [id, group] of groupState) {
+        this.#groups.get(id)._setVisible(INTERNAL, group.visible, group.userSet);
+      }
+    } else {
+      if (data.baseState === "OFF") {
+        for (const group of this.#groups.values()) {
+          group._setVisible(INTERNAL, false);
+        }
+      }
+      for (const on of data.on) {
+        this.#groups.get(on)._setVisible(INTERNAL, true);
+      }
+      for (const off of data.off) {
+        this.#groups.get(off)._setVisible(INTERNAL, false);
+      }
     }
     this.#initialHash = this.getHash();
   }
@@ -13957,10 +20938,7 @@ class OptionalContentConfig {
     if (!this.#groups.size) {
       return null;
     }
-    if (this.#order) {
-      return this.#order.slice();
-    }
-    return [...this.#groups.keys()];
+    return this.#order ? this.#order.slice() : [...this.#groups.keys()];
   }
   getGroup(id) {
     return this.#groups.get(id) || null;
@@ -13978,9 +20956,42 @@ class OptionalContentConfig {
   [Symbol.iterator]() {
     return this.#groups.entries();
   }
+  get serializable() {
+    const groupState = new Map();
+    for (const [id, group] of this.#groups) {
+      groupState.set(id, group.serializable);
+    }
+    return {
+      data: this.#rawData,
+      renderingIntent: this.renderingIntent,
+      groupState
+    };
+  }
+  static fromSerializable({
+    data,
+    renderingIntent,
+    groupState
+  }) {
+    return new OptionalContentConfig(data, renderingIntent, groupState);
+  }
 }
 
 ;// ./src/display/pages_mapper.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class PagesMapper {
   #pageNumberToId = null;
@@ -14027,7 +21038,6 @@ class PagesMapper {
   movePages(selectedPages, pagesToMove, index) {
     this.#ensureInit();
     const pageNumberToId = this.#pageNumberToId;
-    const prevIdToPageNumber = this.#buildIdToPageNumber();
     const movedCount = pagesToMove.length;
     const mappedPagesToMove = new Uint32Array(movedCount);
     let removedBeforeTarget = 0;
@@ -14040,15 +21050,19 @@ class PagesMapper {
     }
     const pagesNumber = this.#pagesNumber;
     const remainingLen = pagesNumber - movedCount;
+    const prevPageNumbers = new Int32Array(pagesNumber);
     const adjustedTarget = MathClamp(index - removedBeforeTarget, 0, remainingLen);
     for (let i = 0, r = 0; i < pagesNumber; i++) {
       if (!selectedPages.has(i + 1)) {
-        pageNumberToId[r++] = pageNumberToId[i];
+        pageNumberToId[r] = pageNumberToId[i];
+        prevPageNumbers[r++] = i + 1;
       }
     }
     pageNumberToId.copyWithin(adjustedTarget + movedCount, adjustedTarget, remainingLen);
     pageNumberToId.set(mappedPagesToMove, adjustedTarget);
-    this.#updatePrevPageNumbers(prevIdToPageNumber);
+    prevPageNumbers.copyWithin(adjustedTarget + movedCount, adjustedTarget, remainingLen);
+    prevPageNumbers.set(pagesToMove, adjustedTarget);
+    this.#prevPageNumbers = prevPageNumbers;
     if (pageNumberToId.every((id, i) => id === i + 1)) {
       this.#pageNumberToId = null;
     }
@@ -14145,7 +21159,30 @@ class PagesMapper {
   hasBeenAltered() {
     return this.#pageNumberToId !== null;
   }
-  getPageMappingForSaving(idToPageNumber = null) {
+  #buildCopyLevels(extractedPageNumbers = null) {
+    if (!this.#pageNumberToId) {
+      return null;
+    }
+    const copyLevels = new Int32Array(this.#pagesNumber).fill(-1);
+    const counts = new Map();
+    if (extractedPageNumbers) {
+      for (const pageNumber of extractedPageNumbers) {
+        const id = this.getPageId(pageNumber);
+        const level = counts.get(id) ?? 0;
+        counts.set(id, level + 1);
+        copyLevels[pageNumber - 1] = level;
+      }
+    } else {
+      for (let i = 0, ii = this.#pagesNumber; i < ii; i++) {
+        const id = this.#pageNumberToId[i];
+        const level = counts.get(id) ?? 0;
+        counts.set(id, level + 1);
+        copyLevels[i] = level;
+      }
+    }
+    return copyLevels;
+  }
+  getPageMappingForSaving(idToPageNumber = null, copyLevels = this.#buildCopyLevels()) {
     idToPageNumber ??= this.#buildIdToPageNumber();
     let nCopy = 0;
     for (const pageNumbers of idToPageNumber.values()) {
@@ -14174,7 +21211,10 @@ class PagesMapper {
         includePages[i] = includePages[i][0];
       }
     }
-    return extractParams;
+    return {
+      pageInfos: extractParams,
+      copyLevels
+    };
   }
   extractPages(extractedPageNumbers) {
     extractedPageNumbers = Array.from(extractedPageNumbers).sort((a, b) => a - b);
@@ -14184,7 +21224,7 @@ class PagesMapper {
       const usedPageNumbers = usedIds.getOrInsertComputed(id, makeArr);
       usedPageNumbers.push(i + 1);
     }
-    return this.getPageMappingForSaving(usedIds);
+    return this.getPageMappingForSaving(usedIds, this.#buildCopyLevels(extractedPageNumbers));
   }
   getPrevPageNumber(pageNumber) {
     return this.#prevPageNumbers?.[pageNumber - 1] ?? 0;
@@ -14210,6 +21250,8 @@ class PagesMapper {
 }
 
 ;// ./src/display/pdf_objects.js
+
+
 const INITIAL_DATA = Symbol("INITIAL_DATA");
 const dataObj = () => ({
   ...Promise.withResolvers(),
@@ -14271,6 +21313,18 @@ class PDFObjects {
 ;// ./src/display/text_layer.js
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 const MAX_TEXT_DIVS_TO_RENDER = 100000;
 const DEFAULT_FONT_SIZE = 30;
 class TextLayer {
@@ -14283,6 +21337,7 @@ class TextLayer {
   #layoutTextParams = null;
   #pageHeight = 0;
   #pageWidth = 0;
+  #pixelRatio = OutputScale.pixelRatio;
   #reader = null;
   #rootContainer = null;
   #rotation = 0;
@@ -14318,7 +21373,7 @@ class TextLayer {
     }
     this.#container = this.#rootContainer = container;
     this.#imagesHandler = images;
-    this.#scale = viewport.scale * OutputScale.pixelRatio;
+    this.#scale = viewport.scale * this.#pixelRatio;
     this.#rotation = viewport.rotation;
     this.#layoutTextParams = {
       div: null,
@@ -14348,7 +21403,7 @@ class TextLayer {
       isWindows,
       isFirefox
     } = FeatureTest.platform;
-    return shadow(this, "fontFamilyMap", new Map([["sans-serif", `${isWindows && isFirefox ? "Calibri, " : ""}sans-serif`], ["monospace", `${isWindows && isFirefox ? "Lucida Console, " : ""}monospace`]]));
+    return util_shadow(this, "fontFamilyMap", new Map([["sans-serif", `${isWindows && isFirefox ? "Calibri, " : ""}sans-serif`], ["monospace", `${isWindows && isFirefox ? "Lucida Console, " : ""}monospace`]]));
   }
   render() {
     if (this.#imagesHandler) {
@@ -14390,6 +21445,7 @@ class TextLayer {
     if (scale !== this.#scale) {
       onBefore?.();
       this.#scale = scale;
+      this.#pixelRatio = OutputScale.pixelRatio;
       const params = {
         div: null,
         properties: null,
@@ -14433,7 +21489,7 @@ class TextLayer {
           this.#container = document.createElement("span");
           this.#container.classList.add("markedContent");
           if (item.id) {
-            this.#container.setAttribute("id", `${item.id}`);
+            this.#container.setAttribute("id", item.id);
           }
           if (item.tag === "Artifact") {
             this.#container.ariaHidden = true;
@@ -14479,9 +21535,10 @@ class TextLayer {
     const divStyle = textDiv.style;
     divStyle.left = `${(100 * left / this.#pageWidth).toFixed(2)}%`;
     divStyle.top = `${(100 * top / this.#pageHeight).toFixed(2)}%`;
-    divStyle.setProperty("--font-height", `${fontHeight.toFixed(2)}px`);
+    const roundedFontHeight = Math.round(fontHeight * 100) / 100;
+    divStyle.setProperty("--font-height", `${roundedFontHeight}px`);
     divStyle.fontFamily = fontFamily;
-    textDivProperties.fontSize = fontHeight;
+    textDivProperties.fontSize = roundedFontHeight;
     textDiv.setAttribute("role", "presentation");
     textDiv.textContent = geom.str;
     textDiv.dir = geom.dir;
@@ -14526,20 +21583,22 @@ class TextLayer {
     const {
       style
     } = div;
-    if (properties.canvasWidth !== 0 && properties.hasText) {
+    const {
+      canvasWidth,
+      fontSize
+    } = properties;
+    if (canvasWidth !== 0 && fontSize !== 0 && properties.hasText) {
       const {
         fontFamily
       } = style;
-      const {
-        canvasWidth,
-        fontSize
-      } = properties;
-      TextLayer.#ensureCtxFont(ctx, fontSize * this.#scale, fontFamily);
+      const pixelRatio = this.#pixelRatio;
+      const measuredSize = TextLayer.#quantizeFontSize(fontSize * this.#scale / pixelRatio) * pixelRatio;
+      TextLayer.#ensureCtxFont(ctx, measuredSize, fontFamily);
       const {
         width
       } = ctx.measureText(div.textContent);
       if (width > 0) {
-        style.setProperty("--scale-x", canvasWidth * this.#scale / width);
+        style.setProperty("--scale-x", canvasWidth * measuredSize / (width * fontSize));
       }
     }
     if (properties.angle !== 0) {
@@ -14562,7 +21621,7 @@ class TextLayer {
     let ctx = this.#canvasContexts.get(lang ||= "");
     if (!ctx) {
       const canvas = document.createElement("canvas");
-      canvas.className = "hiddenCanvasElement";
+      canvas.style.cssText = "position:absolute;top:0;left:0;width:0;height:0;display:none;" + "letter-spacing:normal;word-spacing:normal";
       canvas.lang = lang;
       document.body.append(canvas);
       ctx = canvas.getContext("2d", {
@@ -14576,6 +21635,11 @@ class TextLayer {
       });
     }
     return ctx;
+  }
+  static #quantizeFontSize(size) {
+    size = Math.fround(size);
+    const d = Math.fround(size * ((1 << 17) + 1));
+    return Math.fround(d - Math.fround(d - size));
   }
   static #ensureCtxFont(ctx, size, family) {
     const cached = this.#canvasCtxFonts.get(ctx);
@@ -14606,12 +21670,10 @@ class TextLayer {
       return cachedAscent;
     }
     const ctx = this.#getCtx(lang);
-    ctx.canvas.width = ctx.canvas.height = DEFAULT_FONT_SIZE;
     this.#ensureCtxFont(ctx, DEFAULT_FONT_SIZE, fontFamily);
     const metrics = ctx.measureText("");
     const ascent = metrics.fontBoundingBoxAscent;
     const descent = Math.abs(metrics.fontBoundingBoxDescent);
-    ctx.canvas.width = ctx.canvas.height = 0;
     let ratio = 0.8;
     if (ascent) {
       ratio = ascent / (ascent + descent);
@@ -14654,17 +21716,32 @@ class TextLayer {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const RENDERING_CANCELLED_TIMEOUT = 100;
 function getDocument(src = {}) {
-  if (typeof src === "string" || src instanceof URL) {
-    src = {
-      url: src
-    };
-  } else if (src instanceof ArrayBuffer || ArrayBuffer.isView(src)) {
-    src = {
-      data: src
-    };
-  }
   const task = new PDFDocumentLoadingTask();
   const {
     docId
@@ -14686,9 +21763,8 @@ function getDocument(src = {}) {
   const wasmUrl = getFactoryUrlProp(src.wasmUrl);
   const ignoreErrors = src.stopAtErrors !== true;
   const maxImageSize = Number.isInteger(src.maxImageSize) && src.maxImageSize > -1 ? src.maxImageSize : -1;
-  const isEvalSupported = src.isEvalSupported !== false;
   const isOffscreenCanvasSupported = typeof src.isOffscreenCanvasSupported === "boolean" ? src.isOffscreenCanvasSupported : !isNodeJS;
-  const isImageDecoderSupported = typeof src.isImageDecoderSupported === "boolean" ? src.isImageDecoderSupported : !isNodeJS && (FeatureTest.platform.isFirefox || !globalThis.chrome);
+  const isImageDecoderSupported = typeof src.isImageDecoderSupported === "boolean" ? src.isImageDecoderSupported : !isNodeJS;
   const canvasMaxAreaInBytes = Number.isInteger(src.canvasMaxAreaInBytes) ? src.canvasMaxAreaInBytes : -1;
   const disableFontFace = typeof src.disableFontFace === "boolean" ? src.disableFontFace : isNodeJS;
   const fontExtraProperties = src.fontExtraProperties === true;
@@ -14703,6 +21779,7 @@ function getDocument(src = {}) {
   const BinaryDataFactory = src.BinaryDataFactory || (isNodeJS ? NodeBinaryDataFactory : DOMBinaryDataFactory);
   const enableHWA = src.enableHWA === true;
   const enableWebGPU = src.enableWebGPU === true;
+  const gpuPromise = enableWebGPU ? initGPU() : Promise.resolve(false);
   const useWasm = src.useWasm !== false;
   const pagesMapper = src.pagesMapper || new PagesMapper();
   const useSystemFonts = typeof src.useSystemFonts === "boolean" ? src.useSystemFonts : !isNodeJS && !disableFontFace;
@@ -14733,7 +21810,7 @@ function getDocument(src = {}) {
   }
   const docParams = {
     docId,
-    apiVersion: "5.6.205",
+    apiVersion: "6.4.299",
     data,
     password,
     disableAutoFetch,
@@ -14744,7 +21821,6 @@ function getDocument(src = {}) {
       maxImageSize,
       disableFontFace,
       ignoreErrors,
-      isEvalSupported,
       isOffscreenCanvasSupported,
       isImageDecoderSupported,
       canvasMaxAreaInBytes,
@@ -14757,7 +21833,7 @@ function getDocument(src = {}) {
       iccUrl,
       standardFontDataUrl,
       wasmUrl,
-      enableWebGPU
+      hasGPU: false
     }
   };
   const transportParams = {
@@ -14770,13 +21846,11 @@ function getDocument(src = {}) {
       enableXfa
     }
   };
-  worker.promise.then(function () {
-    if (task.destroyed) {
-      throw new Error("Loading aborted");
-    }
+  Promise.all([worker.promise, gpuPromise]).then(function ([, hasGPU]) {
     if (worker.destroyed) {
       throw new Error("Worker was destroyed");
     }
+    docParams.evaluatorOptions.hasGPU = hasGPU;
     const workerIdPromise = worker.messageHandler.sendWithPromise("GetDocRequest", docParams, data ? [data.buffer] : null);
     let networkStream;
     if (data) {} else if (rangeTransport) {
@@ -14799,23 +21873,24 @@ function getDocument(src = {}) {
       throw new Error("getDocument - expected either `data`, `range`, or `url` parameter.");
     }
     return workerIdPromise.then(workerId => {
-      if (task.destroyed) {
-        throw new Error("Loading aborted");
-      }
       if (worker.destroyed) {
         throw new Error("Worker was destroyed");
       }
       const messageHandler = new MessageHandler(docId, workerId, worker.port);
       const transport = new WorkerTransport(messageHandler, task, networkStream, transportParams, transportFactory, pagesMapper);
       task._transport = transport;
+      if (task.destroyed) {
+        throw new Error("Loading aborted");
+      }
       messageHandler.send("Ready", null);
     });
-  }).catch(task._capability.reject);
+  }).catch(task._capability.reject).finally(task._setupCapability.resolve);
   return task;
 }
 class PDFDocumentLoadingTask {
   static #docId = 0;
   _capability = Promise.withResolvers();
+  _setupCapability = Promise.withResolvers();
   _transport = null;
   _worker = null;
   docId = `d${PDFDocumentLoadingTask.#docId++}`;
@@ -14827,10 +21902,12 @@ class PDFDocumentLoadingTask {
   }
   async destroy() {
     this.destroyed = true;
+    this._capability.promise.catch(() => {});
     try {
       if (this._worker?.port) {
         this._worker._pendingDestroy = true;
       }
+      await this._setupCapability.promise;
       await this._transport?.destroy();
     } catch (ex) {
       if (this._worker?.port) {
@@ -14848,49 +21925,37 @@ class PDFDocumentLoadingTask {
 }
 class PDFDataRangeTransport {
   #capability = Promise.withResolvers();
-  #progressiveDoneListeners = [];
-  #progressiveReadListeners = [];
-  #rangeListeners = [];
+  #listener = null;
   constructor(length, initialData, progressiveDone = false, contentDispositionFilename = null) {
     this.length = length;
     this.initialData = initialData;
     this.progressiveDone = progressiveDone;
     this.contentDispositionFilename = contentDispositionFilename;
-    Object.defineProperty(this, "onDataProgress", {
-      value: () => {
-        deprecated("`PDFDataRangeTransport.prototype.onDataProgress` - method was " + "removed, since loading progress is now reported automatically " + "through the `PDFDataTransportStream` class (and related code).");
-      }
-    });
-  }
-  addRangeListener(listener) {
-    this.#rangeListeners.push(listener);
-  }
-  addProgressiveReadListener(listener) {
-    this.#progressiveReadListeners.push(listener);
-  }
-  addProgressiveDoneListener(listener) {
-    this.#progressiveDoneListeners.push(listener);
   }
   onDataRange(begin, chunk) {
-    for (const listener of this.#rangeListeners) {
-      listener(begin, chunk);
-    }
+    this.#listener({
+      type: "range",
+      begin,
+      chunk
+    });
   }
   onDataProgressiveRead(chunk) {
     this.#capability.promise.then(() => {
-      for (const listener of this.#progressiveReadListeners) {
-        listener(chunk);
-      }
+      this.#listener({
+        type: "progressiveRead",
+        chunk
+      });
     });
   }
   onDataProgressiveDone() {
     this.#capability.promise.then(() => {
-      for (const listener of this.#progressiveDoneListeners) {
-        listener();
-      }
+      this.#listener({
+        type: "progressiveDone"
+      });
     });
   }
-  transportReady() {
+  transportReady(listener) {
+    this.#listener = listener;
     this.#capability.resolve();
   }
   requestDataRange(begin, end) {
@@ -14922,7 +21987,7 @@ class PDFDocumentProxy {
     return this._pdfInfo.fingerprints;
   }
   get isPureXfa() {
-    return shadow(this, "isPureXfa", !!this._transport._htmlForXfa);
+    return util_shadow(this, "isPureXfa", !!this._transport._htmlForXfa);
   }
   get allXfaHtml() {
     return this._transport._htmlForXfa;
@@ -14957,6 +22022,9 @@ class PDFDocumentProxy {
   getAttachments() {
     return this._transport.getAttachments();
   }
+  getAttachmentContent(id) {
+    return this._transport.getAttachmentContent(id);
+  }
   getAnnotationsByType(types, pageIndexesToSkip) {
     return this._transport.getAnnotationsByType(types, pageIndexesToSkip);
   }
@@ -14986,23 +22054,17 @@ class PDFDocumentProxy {
   getData() {
     return this._transport.getData();
   }
-  saveDocument() {
-    return this._transport.saveDocument();
+  saveDocument(printToPDF) {
+    return this._transport.saveDocument(printToPDF);
   }
-  extractPages(pageInfos) {
-    return this._transport.extractPages(pageInfos);
+  extractPages(pageInfos, copyLevels = null) {
+    return this._transport.extractPages(pageInfos, copyLevels);
   }
   getDownloadInfo() {
     return this._transport.downloadInfoCapability.promise;
   }
-  getRawData(data) {
-    return this._transport.getRawData(data);
-  }
   cleanup(keepLoadedFonts = false) {
     return this._transport.startCleanup(keepLoadedFonts || this.isPureXfa);
-  }
-  destroy() {
-    return this.loadingTask.destroy();
   }
   cachedPageNumber(ref) {
     return this._transport.cachedPageNumber(ref);
@@ -15016,6 +22078,12 @@ class PDFDocumentProxy {
   getFieldObjects() {
     return this._transport.getFieldObjects();
   }
+  getSignatures() {
+    return this._transport.getSignatures();
+  }
+  getSignatureData(id) {
+    return this._transport.getSignatureData(id);
+  }
   hasJSActions() {
     return this._transport.hasJSActions();
   }
@@ -15026,8 +22094,10 @@ class PDFDocumentProxy {
 class PDFPageProxy {
   #pendingCleanup = false;
   #pagesMapper = null;
+  static #idCounter = 0;
   constructor(pageIndex, pageInfo, transport, pagesMapper, pdfBug = false) {
     this._pageIndex = pageIndex;
+    this._id = PDFPageProxy.#idCounter++;
     this._pageInfo = pageInfo;
     this._transport = transport;
     this._stats = pdfBug ? new StatTimer() : null;
@@ -15097,7 +22167,7 @@ class PDFPageProxy {
     return this._transport.filterFactory;
   }
   get isPureXfa() {
-    return shadow(this, "isPureXfa", !!this._transport._htmlForXfa);
+    return util_shadow(this, "isPureXfa", !!this._transport._htmlForXfa);
   }
   async getXfa() {
     return this._transport._htmlForXfa?.children[this._pageIndex] || null;
@@ -15276,9 +22346,7 @@ class PDFPageProxy {
       disableNormalization: disableNormalization === true
     }, {
       highWaterMark: TEXT_CONTENT_CHUNK_SIZE,
-      size(textContent) {
-        return textContent.items.length;
-      }
+      size: textContent => textContent.items.length
     });
   }
   async getTextContent(params = {}) {
@@ -15382,6 +22450,7 @@ class PDFPageProxy {
     const readableStream = this._transport.messageHandler.sendWithStream("GetOperatorList", {
       pageId: this.#pagesMapper.getPageId(this._pageIndex + 1) - 1,
       pageIndex: this._pageIndex,
+      pageProxyId: this._id,
       intent: renderingIntent,
       cacheKey,
       annotationStorage: map,
@@ -15577,9 +22646,9 @@ class PDFWorker {
       }, {
         signal: ac.signal
       });
-      messageHandler.on("test", data => {
+      messageHandler.on("ready", data => {
         ac.abort();
-        if (this.destroyed || !data) {
+        if (this.destroyed || !(data instanceof Uint8Array)) {
           terminateEarly();
           return;
         }
@@ -15588,28 +22657,10 @@ class PDFWorker {
         this.#webWorker = worker;
         this.#resolve();
       });
-      messageHandler.on("ready", data => {
-        ac.abort();
-        if (this.destroyed) {
-          terminateEarly();
-          return;
-        }
-        try {
-          sendTest();
-        } catch {
-          this.#setupFakeWorker();
-        }
-      });
-      const sendTest = () => {
-        const testObj = new Uint8Array();
-        messageHandler.send("test", testObj, [testObj.buffer]);
-      };
-      sendTest();
-      return;
     } catch {
       info("The worker has been disabled.");
+      this.#setupFakeWorker();
     }
-    this.#setupFakeWorker();
   }
   #setupFakeWorker() {
     if (!PDFWorker.#isWorkerDisabled) {
@@ -15675,7 +22726,7 @@ class PDFWorker {
       this.workerSrc);
       return worker.WorkerMessageHandler;
     };
-    return shadow(this, "_setupFakeWorkerGlobal", loader());
+    return util_shadow(this, "_setupFakeWorkerGlobal", loader());
   }
 }
 class WorkerTransport {
@@ -15687,6 +22738,7 @@ class WorkerTransport {
   #pagePromises = new Map();
   #pageRefCache = new Map();
   #passwordCapability = null;
+  #printToPDF = null;
   constructor(messageHandler, loadingTask, networkStream, params, factory, pagesMapper) {
     this.messageHandler = messageHandler;
     this.loadingTask = loadingTask;
@@ -15708,11 +22760,8 @@ class WorkerTransport {
     this.setupMessageHandler();
   }
   updatePage(page) {
-    const {
-      _pageIndex
-    } = page;
-    this.#pageCache.set(_pageIndex, page);
-    this.#pagePromises.set(_pageIndex, Promise.resolve(page));
+    this.#pageCache.set(page._id, page);
+    this.#pagePromises.set(page._pageIndex, Promise.resolve(page));
   }
   #cacheSimpleMethod(name, data = null) {
     return this.#methodPromises.getOrInsertComputed(name, () => this.messageHandler.sendWithPromise(name, data));
@@ -15728,7 +22777,7 @@ class WorkerTransport {
     });
   }
   get annotationStorage() {
-    return shadow(this, "annotationStorage", new AnnotationStorage());
+    return util_shadow(this, "annotationStorage", new AnnotationStorage());
   }
   getRenderingIntent(intent, annotationMode = AnnotationMode.ENABLE, printAnnotationStorage = null, isEditing = false, isOpList = false) {
     let renderingIntent = RenderingIntentFlag.DISPLAY;
@@ -15794,7 +22843,7 @@ class WorkerTransport {
     this.#pageCache.clear();
     this.#pagePromises.clear();
     this.#pageRefCache.clear();
-    if (this.hasOwnProperty("annotationStorage")) {
+    if (Object.hasOwn(this, "annotationStorage")) {
       this.annotationStorage.resetModified();
     }
     const terminated = this.messageHandler.sendWithPromise("Terminate", null);
@@ -15818,7 +22867,7 @@ class WorkerTransport {
       loadingTask
     } = this;
     messageHandler.on("GetReader", (data, sink) => {
-      assert(this.#networkStream, "GetReader - no `BasePDFStream` instance available.");
+      util_assert(this.#networkStream, "GetReader - no `BasePDFStream` instance available.");
       this.#fullReader = this.#networkStream.getFullReader();
       this.#fullReader.onProgress = evt => this.#onProgress(evt);
       sink.onPull = () => {
@@ -15830,7 +22879,7 @@ class WorkerTransport {
             sink.close();
             return;
           }
-          assert(value instanceof ArrayBuffer, "GetReader - expected an ArrayBuffer.");
+          util_assert(value instanceof ArrayBuffer, "GetReader - expected an ArrayBuffer.");
           sink.enqueue(new Uint8Array(value), 1, [value]);
         }).catch(reason => {
           sink.error(reason);
@@ -15863,7 +22912,7 @@ class WorkerTransport {
       };
     });
     messageHandler.on("GetRangeReader", (data, sink) => {
-      assert(this.#networkStream, "GetRangeReader - no `BasePDFStream` instance available.");
+      util_assert(this.#networkStream, "GetRangeReader - no `BasePDFStream` instance available.");
       const rangeReader = this.#networkStream.getRangeReader(data.begin, data.end);
       if (!rangeReader) {
         sink.close();
@@ -15878,7 +22927,7 @@ class WorkerTransport {
             sink.close();
             return;
           }
-          assert(value instanceof ArrayBuffer, "GetRangeReader - expected an ArrayBuffer.");
+          util_assert(value instanceof ArrayBuffer, "GetRangeReader - expected an ArrayBuffer.");
           sink.enqueue(new Uint8Array(value), 1, [value]);
         }).catch(reason => {
           sink.error(reason);
@@ -15938,7 +22987,7 @@ class WorkerTransport {
       if (this.destroyed) {
         return;
       }
-      const page = this.#pageCache.get(data.pageIndex);
+      const page = this.#pageCache.get(data.pageProxyId);
       page._startRenderPage(data.transparency, data.cacheKey);
     });
     messageHandler.on("commonobj", ([id, type, exportedData]) => {
@@ -15956,7 +23005,7 @@ class WorkerTransport {
             this.commonObjs.resolve(id, exportedError);
             break;
           }
-          const fontData = new FontInfo(exportedData);
+          const fontData = new FontInfo(exportedData.buffer);
           const inspectFont = this._params.pdfBug && globalThis.FontInspector?.enabled ? (font, url) => globalThis.FontInspector.fontAdded(font, url) : null;
           const font = new FontFaceObject(fontData, inspectFont, exportedData.charProcOperatorList, exportedData.extra);
           this.fontLoader.bind(font).catch(() => messageHandler.sendWithPromise("FontFallback", {
@@ -15972,7 +23021,7 @@ class WorkerTransport {
           const {
             imageRef
           } = exportedData;
-          assert(imageRef, "The imageRef must be defined.");
+          util_assert(imageRef, "The imageRef must be defined.");
           for (const pageProxy of this.#pageCache.values()) {
             for (const [, data] of pageProxy.objs) {
               if (data?.ref !== imageRef) {
@@ -15981,7 +23030,8 @@ class WorkerTransport {
               if (!data.dataLen) {
                 return null;
               }
-              this.commonObjs.resolve(id, structuredClone(data));
+              const copy = structuredClone(data);
+              this.commonObjs.resolve(id, copy);
               return data.dataLen;
             }
           }
@@ -16001,11 +23051,11 @@ class WorkerTransport {
       }
       return null;
     });
-    messageHandler.on("obj", ([id, pageIndex, type, imageData]) => {
+    messageHandler.on("obj", ([id, pageProxyId, type, imageData]) => {
       if (this.destroyed) {
         return;
       }
-      const pageProxy = this.#pageCache.get(pageIndex);
+      const pageProxy = this.#pageCache.get(pageProxyId);
       if (pageProxy.objs.has(id)) {
         return;
       }
@@ -16028,12 +23078,6 @@ class WorkerTransport {
       }
       this.#onProgress(data);
     });
-    messageHandler.on("PrepareWebGPU", () => {
-      if (this.destroyed) {
-        return;
-      }
-      initWebGPUMesh();
-    });
     messageHandler.on("FetchBinaryData", async data => {
       if (this.destroyed) {
         throw new Error("Worker was destroyed.");
@@ -16047,7 +23091,7 @@ class WorkerTransport {
   getData() {
     return this.messageHandler.sendWithPromise("GetData", null);
   }
-  saveDocument() {
+  saveDocument(printToPDF = null) {
     if (this.annotationStorage.size <= 0) {
       warn("saveDocument called while `annotationStorage` is empty, " + "please use the getData-method instead.");
     }
@@ -16059,23 +23103,60 @@ class WorkerTransport {
       isPureXfa: !!this._htmlForXfa,
       numPages: this._numPages,
       annotationStorage: map,
+      supportsPrintToPDF: this.#printToPDF !== null,
       filename: this.#fullReader?.filename ?? null
     }, transfer).finally(() => {
+      this.#printToPDF = null;
       this.annotationStorage.resetModified();
     });
   }
-  extractPages(pageInfos) {
+  extractPages(pageInfos, copyLevels = null) {
     const params = {
       pageInfos
     };
     let transfer;
+    const ImageBitmapCtor = globalThis.ImageBitmap;
+    if (typeof ImageBitmapCtor === "function") {
+      const infos = Array.isArray(pageInfos) ? pageInfos : [pageInfos];
+      for (const pageInfo of infos) {
+        if (pageInfo?.image instanceof ImageBitmapCtor) {
+          (transfer ||= []).push(pageInfo.image);
+        }
+      }
+    }
     if (this.annotationStorage.size > 0) {
-      const {
-        map,
-        transfer: t
-      } = this.annotationStorage.serializable;
+      const serialized = this.annotationStorage.serializable;
+      let {
+        map
+      } = serialized;
+      if (serialized.transfer?.length) {
+        if (transfer) {
+          transfer.push(...serialized.transfer);
+        } else {
+          transfer = serialized.transfer;
+        }
+      }
+      const mapping = this.pagesMapper.getMapping();
+      if (mapping) {
+        const remapped = new Map();
+        for (const [k, v] of map) {
+          if (v?.pageIndex !== undefined && v.pageIndex >= 0 && v.pageIndex < mapping.length) {
+            const copyLevel = copyLevels?.[v.pageIndex] ?? 0;
+            const sourceIdx = mapping[v.pageIndex] - 1;
+            if (sourceIdx !== v.pageIndex || copyLevel !== 0) {
+              remapped.set(k, {
+                ...v,
+                pageIndex: sourceIdx,
+                copyLevel
+              });
+              continue;
+            }
+          }
+          remapped.set(k, v);
+        }
+        map = remapped;
+      }
       params.annotationStorage = map;
-      transfer = t;
     }
     return this.messageHandler.sendWithPromise("ExtractPages", params, transfer).finally(() => {
       this.annotationStorage.resetModified();
@@ -16101,7 +23182,7 @@ class WorkerTransport {
         this.#pageRefCache.set(pageInfo.refStr, newPageIndex);
       }
       const page = new PDFPageProxy(pageIndex, pageInfo, this, this.pagesMapper, this._params.pdfBug);
-      this.#pageCache.set(pageIndex, page);
+      this.#pageCache.set(page._id, page);
       return page;
     });
     this.#pagePromises.set(pageIndex, promise);
@@ -16130,6 +23211,12 @@ class WorkerTransport {
   getFieldObjects() {
     return this.#cacheSimpleMethod("GetFieldObjects");
   }
+  getSignatures() {
+    return this.#cacheSimpleMethod("GetSignatures");
+  }
+  getSignatureData(id) {
+    return this.messageHandler.sendWithPromise("GetSignatureData", id);
+  }
   hasJSActions() {
     return this.#cacheSimpleMethod("HasJSActions");
   }
@@ -16140,10 +23227,7 @@ class WorkerTransport {
     return this.messageHandler.sendWithPromise("GetDestinations", null);
   }
   getDestination(id) {
-    if (typeof id !== "string") {
-      return Promise.reject(new Error("Invalid destination request."));
-    }
-    return this.messageHandler.sendWithPromise("GetDestination", {
+    return typeof id !== "string" ? Promise.reject(new Error("Invalid destination request.")) : this.messageHandler.sendWithPromise("GetDestination", {
       id
     });
   }
@@ -16164,6 +23248,9 @@ class WorkerTransport {
   }
   getAttachments() {
     return this.messageHandler.sendWithPromise("GetAttachments", null);
+  }
+  getAttachmentContent(id) {
+    return this.messageHandler.sendWithPromise("GetAttachmentContent", id);
   }
   getAnnotationsByType(types, pageIndexesToSkip) {
     return this.messageHandler.sendWithPromise("GetAnnotationsByType", {
@@ -16205,9 +23292,6 @@ class WorkerTransport {
   }
   getMarkInfo() {
     return this.messageHandler.sendWithPromise("GetMarkInfo", null);
-  }
-  getRawData(data) {
-    return this.messageHandler.sendWithPromise("GetRawData", data);
   }
   async startCleanup(keepLoadedFonts = false) {
     if (this.destroyed) {
@@ -16322,7 +23406,7 @@ class InternalRenderTask {
     this._operationsFilter = operationsFilter;
   }
   get completed() {
-    return this.capability.promise.catch(function () {});
+    return this.capability.promise.catch(() => {});
   }
   initializeGraphics({
     transparency = false,
@@ -16427,8 +23511,11 @@ class InternalRenderTask {
     }
   }
 }
-const version = "5.6.205";
-const build = "ada343803";
+const api_version = "6.4.299";
+const build = "d0991a0d5";
+
+;// ./node_modules/core-js/modules/es.math.sum-precise.js
+es_math_sum_precise_namespaceFn();
 
 ;// ./src/display/editor/color_picker.js
 
@@ -16447,7 +23534,7 @@ class ColorPicker {
   #uiManager = null;
   static #l10nColor = null;
   static get _keyboardManager() {
-    return shadow(this, "_keyboardManager", new KeyboardManager([[["Escape", "mac+Escape"], ColorPicker.prototype._hideDropdownFromKeyboard], [[" ", "mac+ "], ColorPicker.prototype._colorSelectFromKeyboard], [["ArrowDown", "ArrowRight", "mac+ArrowDown", "mac+ArrowRight"], ColorPicker.prototype._moveToNext], [["ArrowUp", "ArrowLeft", "mac+ArrowUp", "mac+ArrowLeft"], ColorPicker.prototype._moveToPrevious], [["Home", "mac+Home"], ColorPicker.prototype._moveToBeginning], [["End", "mac+End"], ColorPicker.prototype._moveToEnd]]));
+    return util_shadow(this, "_keyboardManager", new KeyboardManager([[["Escape"], ColorPicker.prototype._hideDropdownFromKeyboard], [["Space"], ColorPicker.prototype._colorSelectFromKeyboard], [["ArrowDown", "ArrowRight"], ColorPicker.prototype._moveToNext], [["ArrowUp", "ArrowLeft"], ColorPicker.prototype._moveToPrevious], [["Home"], ColorPicker.prototype._moveToBeginning], [["End"], ColorPicker.prototype._moveToEnd]]));
   }
   constructor({
     editor = null,
@@ -16542,7 +23629,7 @@ class ColorPicker {
       type: AnnotationEditorParamsType.HIGHLIGHT_COLOR,
       value: color
     });
-    this.updateColor(color);
+    this.update(color);
   }
   _colorSelectFromKeyboard(event) {
     if (event.target === this.#button) {
@@ -16644,7 +23731,7 @@ class ColorPicker {
       focusVisible: this.#dropdownWasFromKeyboard
     });
   }
-  updateColor(color) {
+  update(color) {
     if (this.#buttonSwatch) {
       this.#buttonSwatch.style.backgroundColor = color;
     }
@@ -16666,6 +23753,7 @@ class ColorPicker {
 }
 class BasicColorPicker {
   #input = null;
+  #hasAlpha = false;
   #editor = null;
   #uiManager = null;
   static #l10nColor = null;
@@ -16684,16 +23772,44 @@ class BasicColorPicker {
     const {
       editorType,
       colorType,
-      color
+      colorAndOpacityType,
+      opacityType,
+      color,
+      opacity
     } = this.#editor;
+    const hasAlpha = this.#hasAlpha = FeatureTest.isAlphaColorInputSupported && opacityType !== undefined;
     const input = this.#input = document.createElement("input");
     input.type = "color";
-    input.value = color || "#000000";
+    if (hasAlpha) {
+      input.setAttribute("alpha", "");
+      const alphaHex = Util.hexNums[Math.round((opacity ?? 1) * 255)];
+      input.value = (color || "#000000") + alphaHex;
+    } else {
+      input.value = color || "#000000";
+    }
     input.className = "basicColorPicker";
     input.tabIndex = 0;
     input.setAttribute("data-l10n-id", BasicColorPicker.#l10nColor[editorType]);
     input.addEventListener("input", () => {
-      this.#uiManager.updateParams(colorType, input.value);
+      if (hasAlpha) {
+        const rgba = getRGBA(input.value);
+        if (!rgba) {
+          return;
+        }
+        const [r, g, b, op] = rgba;
+        const hex = Util.makeHexColor(r, g, b);
+        if (colorAndOpacityType !== undefined) {
+          this.#uiManager.updateParams(colorAndOpacityType, {
+            color: hex,
+            opacity: op
+          });
+        } else {
+          this.#uiManager.updateParams(colorType, hex);
+          this.#uiManager.updateParams(opacityType, op);
+        }
+      } else {
+        this.#uiManager.updateParams(colorType, input.value);
+      }
     }, {
       signal: this.#uiManager._signal
     });
@@ -16703,7 +23819,19 @@ class BasicColorPicker {
     if (!this.#input) {
       return;
     }
-    this.#input.value = value;
+    if (this.#hasAlpha) {
+      const alphaHex = Util.hexNums[Math.round(this.#editor.opacity * 255)];
+      this.#input.value = value + alphaHex;
+    } else {
+      this.#input.value = value;
+    }
+  }
+  updateOpacity(value) {
+    if (!this.#input || !this.#hasAlpha) {
+      return;
+    }
+    const alphaHex = Util.hexNums[Math.round(value * 255)];
+    this.#input.value = this.#editor.color + alphaHex;
   }
   destroy() {
     this.#input?.remove();
@@ -16712,12 +23840,18 @@ class BasicColorPicker {
   hideDropdown() {}
 }
 
+;// ./node_modules/core-js/modules/es.iterator.flat-map.js
+es_iterator_flat_map_namespaceFn();
+
 ;// ./src/shared/scripting_utils.js
+
+
+
 function makeColorComp(n) {
-  return Math.floor(Math.max(0, Math.min(1, n)) * 255).toString(16).padStart(2, "0");
+  return Math.floor(MathClamp(n, 0, 1) * 255).toString(16).padStart(2, "0");
 }
 function scaleAndClamp(x) {
-  return Math.max(0, Math.min(255, 255 * x));
+  return MathClamp(x, 0, 1) * 255;
 }
 class ColorConverters {
   static CMYK_G([c, y, m, k]) {
@@ -16775,7 +23909,6 @@ const TimeFormats = (/* unused pure expression or super */ null && (["HH:MM", "h
 
 ;// ./src/display/svg_factory.js
 
-
 class BaseSVGFactory {
   create(width, height, skipDimensions = false) {
     if (width <= 0 || height <= 0) {
@@ -16808,6 +23941,22 @@ class DOMSVGFactory extends BaseSVGFactory {
 }
 
 ;// ./src/display/annotation_layer.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -16872,6 +24021,10 @@ class AnnotationElementFactory {
         return new StampAnnotationElement(parameters);
       case AnnotationType.FILEATTACHMENT:
         return new FileAttachmentAnnotationElement(parameters);
+      case AnnotationType.RICHMEDIA:
+      case AnnotationType.SCREEN:
+      case AnnotationType.SOUND:
+        return new MediaAnnotationElement(parameters);
       default:
         return new AnnotationElement(parameters);
     }
@@ -16925,10 +24078,7 @@ class AnnotationElement {
       data
     } = this;
     const editor = this.annotationStorage?.getEditor(data.id);
-    if (editor) {
-      return editor.getData();
-    }
-    return data;
+    return editor ? editor.getData() : data;
   }
   get hasCommentButton() {
     return this.enableComment && this.hasPopupElement;
@@ -16971,10 +24121,7 @@ class AnnotationElement {
         return [maxX, maxY];
       }
     }
-    if (rect) {
-      return [rect[2], rect[3]];
-    }
-    return null;
+    return rect ? [rect[2], rect[3]] : null;
   }
   _normalizePoint(point) {
     const {
@@ -17108,7 +24255,7 @@ class AnnotationElement {
     } = this;
     const container = document.createElement("section");
     container.setAttribute("data-annotation-id", data.id);
-    if (!(this instanceof WidgetAnnotationElement) && !(this instanceof LinkAnnotationElement)) {
+    if (!(this instanceof WidgetAnnotationElement) && !(this instanceof LinkAnnotationElement) && !(this instanceof MediaAnnotationElement)) {
       container.tabIndex = 0;
     }
     const {
@@ -17142,9 +24289,6 @@ class AnnotationElement {
       if (horizontalRadius > 0 || verticalRadius > 0) {
         const radius = `calc(${horizontalRadius}px * var(--total-scale-factor)) / calc(${verticalRadius}px * var(--total-scale-factor))`;
         style.borderRadius = radius;
-      } else if (this instanceof RadioButtonWidgetAnnotationElement) {
-        const radius = `calc(${width}px * var(--total-scale-factor)) / calc(${height}px * var(--total-scale-factor))`;
-        style.borderRadius = radius;
       }
       switch (data.borderStyle.style) {
         case AnnotationBorderStyleType.SOLID:
@@ -17168,7 +24312,7 @@ class AnnotationElement {
       const borderColor = data.borderColor || null;
       if (borderColor) {
         this.#hasBorder = true;
-        style.borderColor = Util.makeHexColor(borderColor[0] | 0, borderColor[1] | 0, borderColor[2] | 0);
+        style.borderColor = Util.makeHexColor(...borderColor);
       } else {
         style.borderWidth = 0;
       }
@@ -17222,7 +24366,7 @@ class AnnotationElement {
         [styleName]: ColorConverters[`${colorType}_rgb`](colorArray)
       });
     };
-    return shadow(this, "_commonActions", {
+    return util_shadow(this, "_commonActions", {
       display: event => {
         const {
           display
@@ -17330,7 +24474,7 @@ class AnnotationElement {
     if (!quadPoints) {
       return;
     }
-    const [rectBlX, rectBlY, rectTrX, rectTrY] = this.data.rect.map(x => Math.fround(x));
+    const [rectBlX, rectBlY, rectTrX, rectTrY] = this.data.rect.map(Math.fround);
     if (quadPoints.length === 8) {
       const [trX, trY, blX, blY] = quadPoints.subarray(2, 6);
       if (rectTrX === trX && rectTrY === trY && rectBlX === blX && rectBlY === blY) {
@@ -17347,7 +24491,7 @@ class AnnotationElement {
         borderWidth
       } = style;
       style.borderWidth = 0;
-      svgBuffer = ["url('data:image/svg+xml;utf8,", `<svg xmlns="http://www.w3.org/2000/svg"`, ` preserveAspectRatio="none" viewBox="0 0 1 1">`, `<g fill="transparent" stroke="${borderColor}" stroke-width="${borderWidth}">`];
+      svgBuffer = ["url('data:image/svg+xml;utf8,", `<svg xmlns="${SVG_NS}" preserveAspectRatio="none" viewBox="0 0 1 1">`, `<g fill="transparent" stroke="${borderColor}" stroke-width="${borderWidth}">`];
       this.container.classList.add("hasBorder");
     }
     const width = rectTrX - rectBlX;
@@ -17435,31 +24579,26 @@ class AnnotationElement {
   _getElementsByName(name, skipId = null) {
     const fields = [];
     if (this._fieldObjects) {
-      const fieldObj = this._fieldObjects[name];
-      if (fieldObj) {
-        for (const {
-          page,
-          id,
-          exportValues
-        } of fieldObj) {
-          if (page === -1) {
-            continue;
-          }
-          if (id === skipId) {
-            continue;
-          }
-          const exportValue = typeof exportValues === "string" ? exportValues : null;
-          const domElement = document.querySelector(`[data-element-id="${id}"]`);
-          if (domElement && !GetElementsByNameSet.has(domElement)) {
-            warn(`_getElementsByName - element not allowed: ${id}`);
-            continue;
-          }
-          fields.push({
-            id,
-            exportValue,
-            domElement
-          });
+      const fieldObj = this._fieldObjects.get(name) || [];
+      for (const {
+        page,
+        id,
+        exportValues
+      } of fieldObj) {
+        if (page === -1 || id === skipId) {
+          continue;
         }
+        const exportValue = typeof exportValues === "string" ? exportValues : null;
+        const domElement = document.querySelector(`[data-element-id="${id}"]`);
+        if (domElement && !GetElementsByNameSet.has(domElement)) {
+          warn(`_getElementsByName - element not allowed: ${id}`);
+          continue;
+        }
+        fields.push({
+          id,
+          exportValue,
+          domElement
+        });
       }
       return fields;
     }
@@ -17468,10 +24607,7 @@ class AnnotationElement {
         exportValue
       } = domElement;
       const id = domElement.getAttribute("data-element-id");
-      if (id === skipId) {
-        continue;
-      }
-      if (!GetElementsByNameSet.has(domElement)) {
+      if (id === skipId || !GetElementsByNameSet.has(domElement)) {
         continue;
       }
       fields.push({
@@ -17526,11 +24662,26 @@ class AnnotationElement {
       });
     });
   }
+  updateOC(optionalContentConfig) {
+    if (!this.data.oc || !optionalContentConfig) {
+      return;
+    }
+    const isVisible = optionalContentConfig.isVisible(this.data.oc);
+    if (isVisible) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  }
   get width() {
     return this.data.rect[2] - this.data.rect[0];
   }
   get height() {
     return this.data.rect[3] - this.data.rect[1];
+  }
+  _setBackgroundColor(element) {
+    const color = this.data.backgroundColor || null;
+    element.style.backgroundColor = color === null ? "transparent" : Util.makeHexColor(...color);
   }
 }
 class EditorAnnotationElement extends AnnotationElement {
@@ -17603,7 +24754,7 @@ class LinkAnnotationElement extends AnnotationElement {
       this._bindNamedAction(link, data.action, data.overlaidText);
       isBound = true;
     } else if (data.attachment) {
-      this.#bindAttachment(link, data.attachment, data.overlaidText, data.attachmentDest);
+      this.#bindAttachment(link, data.attachmentId, data.attachment, data.overlaidText, data.attachmentDest);
       isBound = true;
     } else if (data.setOCGState) {
       this.#bindSetOCGState(link, data.setOCGState, data.overlaidText);
@@ -17612,7 +24763,7 @@ class LinkAnnotationElement extends AnnotationElement {
       this._bindLink(link, data.dest, data.overlaidText);
       isBound = true;
     } else {
-      if (data.actions && (data.actions.Action || data.actions["Mouse Up"] || data.actions["Mouse Down"]) && this.enableScripting && this.hasJSActions) {
+      if (data.actions && (data.actions.has("Action") || data.actions.has("Mouse Up") || data.actions.has("Mouse Down")) && this.enableScripting && this.hasJSActions) {
         this._bindJSAction(link, data);
         isBound = true;
       }
@@ -17660,15 +24811,21 @@ class LinkAnnotationElement extends AnnotationElement {
     }
     this.#setInternalLink();
   }
-  #bindAttachment(link, attachment, overlaidText = "", dest = null) {
+  #bindAttachment(link, attachmentId, attachment, overlaidText = "", dest = null) {
     link.href = this.linkService.getAnchorUrl("");
     if (attachment.description) {
       link.title = attachment.description;
     } else if (overlaidText) {
       link.title = overlaidText;
     }
+    const openAttachment = async () => {
+      const content = await this.linkService.getAttachmentContent(attachmentId);
+      if (content) {
+        this.downloadManager?.openOrDownloadData(content, attachment.filename, dest);
+      }
+    };
     link.onclick = () => {
-      this.downloadManager?.openOrDownloadData(attachment.content, attachment.filename, dest);
+      openAttachment();
       return false;
     };
     this.#setInternalLink();
@@ -17684,10 +24841,14 @@ class LinkAnnotationElement extends AnnotationElement {
     }
     this.#setInternalLink();
   }
-  _bindJSAction(link, data) {
+  _bindJSAction(link, {
+    actions,
+    id,
+    overlaidText
+  }) {
     link.href = this.linkService.getAnchorUrl("");
     const map = new Map([["Action", "onclick"], ["Mouse Up", "onmouseup"], ["Mouse Down", "onmousedown"]]);
-    for (const name of Object.keys(data.actions)) {
+    for (const name of actions.keys()) {
       const jsName = map.get(name);
       if (!jsName) {
         continue;
@@ -17696,19 +24857,17 @@ class LinkAnnotationElement extends AnnotationElement {
         this.linkService.eventBus?.dispatch("dispatcheventinsandbox", {
           source: this,
           detail: {
-            id: data.id,
+            id,
             name
           }
         });
         return false;
       };
     }
-    if (data.overlaidText) {
-      link.title = data.overlaidText;
+    if (overlaidText) {
+      link.title = overlaidText;
     }
-    if (!link.onclick) {
-      link.onclick = () => false;
-    }
+    link.onclick ||= () => false;
     this.#setInternalLink();
   }
   _bindResetFormAction(link, resetForm) {
@@ -17735,14 +24894,30 @@ class LinkAnnotationElement extends AnnotationElement {
       if (resetFormFields.length !== 0 || resetFormRefs.length !== 0) {
         const fieldIds = new Set(resetFormRefs);
         for (const fieldName of resetFormFields) {
-          const fields = this._fieldObjects[fieldName] || [];
+          const fields = this._fieldObjects.get(fieldName) || [];
           for (const {
             id
           } of fields) {
             fieldIds.add(id);
           }
         }
-        for (const fields of Object.values(this._fieldObjects)) {
+        const kidIdsById = new Map();
+        for (const fields of this._fieldObjects.values()) {
+          for (const {
+            id,
+            kidIds
+          } of fields) {
+            if (kidIds) {
+              kidIdsById.set(id, kidIds);
+            }
+          }
+        }
+        for (const id of fieldIds) {
+          for (const kidId of kidIdsById.get(id) || []) {
+            fieldIds.add(kidId);
+          }
+        }
+        for (const fields of this._fieldObjects.values()) {
           for (const field of fields) {
             if (fieldIds.has(field.id) === include) {
               allFields.push(field);
@@ -17750,7 +24925,7 @@ class LinkAnnotationElement extends AnnotationElement {
           }
         }
       } else {
-        for (const fields of Object.values(this._fieldObjects)) {
+        for (const fields of this._fieldObjects.values()) {
           allFields.push(...fields);
         }
       }
@@ -17840,14 +25015,6 @@ class WidgetAnnotationElement extends AnnotationElement {
   render() {
     return this.container;
   }
-  showElementAndHideCanvas(element) {
-    if (this.data.hasOwnCanvas) {
-      if (element.previousSibling?.nodeName === "CANVAS") {
-        element.previousSibling.hidden = true;
-      }
-      element.hidden = false;
-    }
-  }
   _getKeyModifier(event) {
     return FeatureTest.platform.isMac ? event.metaKey : event.ctrlKey;
   }
@@ -17893,25 +25060,24 @@ class WidgetAnnotationElement extends AnnotationElement {
     }
   }
   _setEventListeners(element, elementData, names, getter) {
+    const {
+      actions
+    } = this.data;
     for (const [baseName, eventName] of names) {
-      if (eventName === "Action" || this.data.actions?.[eventName]) {
+      if (eventName === "Action" || actions?.has(eventName)) {
         if (eventName === "Focus" || eventName === "Blur") {
           elementData ||= {
             focused: false
           };
         }
         this._setEventListener(element, elementData, baseName, eventName, getter);
-        if (eventName === "Focus" && !this.data.actions?.Blur) {
+        if (eventName === "Focus" && !actions?.has("Blur")) {
           this._setEventListener(element, elementData, "blur", "Blur", null);
-        } else if (eventName === "Blur" && !this.data.actions?.Focus) {
+        } else if (eventName === "Blur" && !actions?.has("Focus")) {
           this._setEventListener(element, elementData, "focus", "Focus", null);
         }
       }
     }
-  }
-  _setBackgroundColor(element) {
-    const color = this.data.backgroundColor || null;
-    element.style.backgroundColor = color === null ? "transparent" : Util.makeHexColor(color[0], color[1], color[2]);
   }
   _setTextStyle(element) {
     const TEXT_ALIGNMENT = ["left", "center", "right"];
@@ -17925,16 +25091,16 @@ class WidgetAnnotationElement extends AnnotationElement {
     const roundToOneDecimal = x => Math.round(10 * x) / 10;
     if (this.data.multiLine) {
       const height = Math.abs(this.data.rect[3] - this.data.rect[1] - BORDER_SIZE);
-      const numberOfLines = Math.round(height / (LINE_FACTOR * fontSize)) || 1;
+      const numberOfLines = Math.round(height / ((/* inlined export .LINE_FACTOR */1.35) * fontSize)) || 1;
       const lineHeight = height / numberOfLines;
-      computedFontSize = Math.min(fontSize, roundToOneDecimal(lineHeight / LINE_FACTOR));
+      computedFontSize = Math.min(fontSize, roundToOneDecimal(lineHeight / (/* inlined export .LINE_FACTOR */1.35)));
     } else {
       const height = Math.abs(this.data.rect[3] - this.data.rect[1] - BORDER_SIZE);
-      computedFontSize = Math.min(fontSize, roundToOneDecimal(height / LINE_FACTOR));
+      computedFontSize = Math.min(fontSize, roundToOneDecimal(height / (/* inlined export .LINE_FACTOR */1.35)));
     }
     style.fontSize = `calc(${computedFontSize}px * var(--total-scale-factor))`;
-    style.color = Util.makeHexColor(fontColor[0], fontColor[1], fontColor[2]);
-    if (this.data.textAlignment !== null) {
+    style.color = Util.makeHexColor(...fontColor);
+    if (this.data.textAlignment !== null && !this.data.comb) {
       style.textAlign = TEXT_ALIGNMENT[this.data.textAlignment];
     }
   }
@@ -18007,7 +25173,10 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
         }
       }
       if (this.data.hasOwnCanvas) {
-        element.hidden = true;
+        this.container.classList.add("hasOwnCanvas");
+        if (storage.has(id)) {
+          this.container.classList.add("sandboxModified");
+        }
       }
       GetElementsByNameSet.add(element);
       this.contentElement = element;
@@ -18079,12 +25248,12 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
           }
           elementData.lastCommittedValue = target.value;
           elementData.commitKey = 1;
-          if (!this.data.actions?.Focus) {
+          if (!this.data.actions?.has("Focus")) {
             elementData.focused = true;
           }
         });
         element.addEventListener("updatefromsandbox", jsEvent => {
-          this.showElementAndHideCanvas(jsEvent.target);
+          this.container.classList.add("sandboxModified");
           const actions = {
             value(event) {
               elementData.userValue = event.detail.value ?? "";
@@ -18191,7 +25360,7 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
           if (!elementData.focused || !event.relatedTarget) {
             return;
           }
-          if (!this.data.actions?.Blur) {
+          if (!this.data.actions?.has("Blur")) {
             elementData.focused = false;
           }
           const {
@@ -18230,7 +25399,7 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
           }
           _blurListener(event);
         });
-        if (this.data.actions?.Keystroke) {
+        if (this.data.actions?.has("Keystroke")) {
           element.addEventListener("beforeinput", event => {
             elementData.lastCommittedValue = null;
             const {
@@ -18247,15 +25416,18 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
             switch (event.inputType) {
               case "deleteWordBackward":
                 {
-                  const match = value.substring(0, selectionStart).match(/\w*[^\w]*$/);
-                  if (match) {
-                    selStart -= match[0].length;
+                  const wordCharPattern = /\w/;
+                  while (selStart > 0 && !wordCharPattern.test(value[selStart - 1])) {
+                    selStart--;
+                  }
+                  while (selStart > 0 && wordCharPattern.test(value[selStart - 1])) {
+                    selStart--;
                   }
                   break;
                 }
               case "deleteWordForward":
                 {
-                  const match = value.substring(selectionStart).match(/^[^\w]*\w*/);
+                  const match = value.substring(selectionStart).match(/^\W*\w*/);
                   if (match) {
                     selEnd += match[0].length;
                   }
@@ -18296,7 +25468,18 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
         const fieldWidth = this.data.rect[2] - this.data.rect[0];
         const combWidth = fieldWidth / maxLen;
         element.classList.add("comb");
-        element.style.letterSpacing = `calc(${combWidth}px * var(--total-scale-factor) - 1ch)`;
+        element.style.setProperty("--comb-width", `calc(${combWidth}px * var(--total-scale-factor))`);
+        const alignment = this.data.textAlignment;
+        if (alignment === 1 || alignment === 2) {
+          const setCombOffset = () => {
+            const free = maxLen - element.value.length;
+            element.style.setProperty("--comb-offset", `${alignment === 1 ? free >> 1 : free}`);
+          };
+          setCombOffset();
+          for (const evt of ["input", "blur", "resetform", "updatefromsandbox"]) {
+            element.addEventListener(evt, setCombOffset);
+          }
+        }
       }
     } else {
       element = document.createElement("div");
@@ -18389,7 +25572,6 @@ class CheckboxWidgetAnnotationElement extends WidgetAnnotationElement {
       });
       this._setEventListeners(element, null, [["change", "Validate"], ["change", "Action"], ["focus", "Focus"], ["blur", "Blur"], ["mousedown", "Mouse Down"], ["mouseenter", "Mouse Enter"], ["mouseleave", "Mouse Exit"], ["mouseup", "Mouse Up"]], event => event.target.checked);
     }
-    this._setBackgroundColor(element);
     this._setDefaultPropertiesFromJS(element);
     this.container.append(element);
     return this.container;
@@ -18407,7 +25589,7 @@ class RadioButtonWidgetAnnotationElement extends WidgetAnnotationElement {
     const data = this.data;
     const id = data.id;
     let value = storage.getValue(id, {
-      value: data.fieldValue === data.buttonValue
+      value: data.buttonValue !== null && data.fieldValue === data.buttonValue
     }).value;
     if (typeof value === "string") {
       value = value !== data.buttonValue;
@@ -18472,7 +25654,6 @@ class RadioButtonWidgetAnnotationElement extends WidgetAnnotationElement {
       });
       this._setEventListeners(element, null, [["change", "Validate"], ["change", "Action"], ["focus", "Focus"], ["blur", "Blur"], ["mousedown", "Mouse Down"], ["mouseenter", "Mouse Enter"], ["mouseleave", "Mouse Exit"], ["mouseup", "Mouse Up"]], event => event.target.checked);
     }
-    this._setBackgroundColor(element);
     this._setDefaultPropertiesFromJS(element);
     this.container.append(element);
     return this.container;
@@ -18906,7 +26087,7 @@ class PopupElement {
       const button = this.#commentButton = document.createElement("button");
       button.className = "annotationCommentButton";
       const parentContainer = this.#firstElement.container;
-      button.style.zIndex = parentContainer.style.zIndex + 1;
+      button.style.zIndex = parseInt(parentContainer.style.zIndex, 10) + 1;
       button.tabIndex = 0;
       button.ariaHasPopup = "dialog";
       button.ariaControls = "commentPopup";
@@ -18975,10 +26156,7 @@ class PopupElement {
       color,
       opacity
     } = this.#firstElement.commentData;
-    if (!color) {
-      return null;
-    }
-    return this.#parent._commentManager.makeCommentColor(color, opacity);
+    return !color ? null : this.#parent._commentManager.makeCommentColor(color, opacity);
   }
   focusCommentButton() {
     setTimeout(() => {
@@ -19303,7 +26481,7 @@ class PopupElement {
     if (!this.isVisible) {
       this.#setPosition();
       this.#container.hidden = false;
-      this.#container.style.zIndex = parseInt(this.#container.style.zIndex) + 1000;
+      this.#container.style.zIndex = parseInt(this.#container.style.zIndex, 10) + 1000;
     } else if (this.#pinned) {
       this.#container.classList.add("focused");
     }
@@ -19314,7 +26492,7 @@ class PopupElement {
       return;
     }
     this.#container.hidden = true;
-    this.#container.style.zIndex = parseInt(this.#container.style.zIndex) - 1000;
+    this.#container.style.zIndex = parseInt(this.#container.style.zIndex, 10) - 1000;
   }
   forceHide() {
     this.#wasVisible = this.isVisible;
@@ -19338,10 +26516,7 @@ class PopupElement {
     this.#container.hidden = false;
   }
   get isVisible() {
-    if (this.#commentManager) {
-      return false;
-    }
-    return this.#container.hidden === false;
+    return !this.#commentManager && this.#container.hidden === false;
   }
 }
 class FreeTextAnnotationElement extends AnnotationElement {
@@ -19636,10 +26811,10 @@ class InkAnnotationElement extends AnnotationElement {
     g.setAttribute("stroke", "transparent");
     g.setAttribute("fill", "transparent");
     g.setAttribute("transform", transform);
-    for (let i = 0, ii = inkLists.length; i < ii; i++) {
+    for (const inkList of inkLists) {
       const polyline = this.svgFactory.createElement(this.svgElementName);
       this.#polylines.push(polyline);
-      polyline.setAttribute("points", inkLists[i].join(","));
+      polyline.setAttribute("points", inkList.join(","));
       g.append(polyline);
     }
     if (!popupRef && this.hasPopupData) {
@@ -19828,12 +27003,15 @@ class FileAttachmentAnnotationElement extends AnnotationElement {
       isRenderable: true
     });
     const {
+      fileId,
       file
     } = this.data;
     this.filename = file.filename;
     this.content = file.content;
+    this.fileId = fileId;
     this.linkService.eventBus?.dispatch("fileattachmentannotation", {
       source: this,
+      attachmentId: this.fileId,
       ...file
     });
   }
@@ -19878,8 +27056,134 @@ class FileAttachmentAnnotationElement extends AnnotationElement {
   addHighlightArea() {
     this.container.classList.add("highlightArea");
   }
-  #download() {
-    this.downloadManager?.openOrDownloadData(this.content, this.filename);
+  async #download() {
+    const {
+      fileId,
+      filename,
+      content: fallbackContent
+    } = this;
+    const content = (await this.linkService.getAttachmentContent(fileId)) || fallbackContent;
+    if (content) {
+      this.downloadManager?.openOrDownloadData(content, filename);
+    }
+  }
+}
+class MediaAnnotationElement extends AnnotationElement {
+  #abortController = new AbortController();
+  #contentUrl = null;
+  #media = null;
+  constructor(parameters) {
+    super(parameters, {
+      isRenderable: !!parameters.data.richMedia
+    });
+  }
+  render() {
+    this.container.classList.add("mediaAnnotation");
+    const {
+      filename
+    } = this.data.richMedia;
+    const button = document.createElement("button");
+    button.className = "mediaPlayButton";
+    button.type = "button";
+    button.title = button.ariaLabel = filename;
+    button.addEventListener("click", () => this.#load(button), {
+      signal: this.#abortController.signal
+    });
+    this.container.append(button);
+    return this.container;
+  }
+  async #load(button) {
+    const {
+      fileId,
+      filename,
+      contentType
+    } = this.data.richMedia;
+    button.disabled = true;
+    let content;
+    try {
+      content = await this.linkService.getAttachmentContent(fileId);
+    } catch {
+      return;
+    } finally {
+      button.disabled = false;
+    }
+    if (!content || !button.isConnected) {
+      return;
+    }
+    const {
+      signal
+    } = this.#abortController;
+    const blob = new Blob([content], {
+      type: contentType
+    });
+    if (!/^(?:video|audio)\//.test(blob.type)) {
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    this.#contentUrl = url;
+    const isAudio = blob.type.startsWith("audio/");
+    const media = document.createElement(isAudio ? "audio" : "video");
+    this.#media = media;
+    media.className = "mediaContent";
+    this._setBackgroundColor(media);
+    media.src = url;
+    media.title = filename;
+    media.controls = true;
+    media.autoplay = true;
+    media.tabIndex = 0;
+    if (isAudio) {
+      let hovered = false;
+      let focused = false;
+      const updateControls = () => {
+        media.controls = hovered || focused;
+      };
+      this.container.addEventListener("pointerenter", () => {
+        hovered = true;
+        updateControls();
+      }, {
+        signal
+      });
+      this.container.addEventListener("pointerleave", () => {
+        hovered = false;
+        updateControls();
+      }, {
+        signal
+      });
+      this.container.addEventListener("focusin", () => {
+        focused = true;
+        updateControls();
+      }, {
+        signal
+      });
+      this.container.addEventListener("focusout", () => {
+        focused = false;
+        updateControls();
+      }, {
+        signal
+      });
+    }
+    media.addEventListener("emptied", () => this.#revokeContentUrl(url), {
+      once: true,
+      signal
+    });
+    button.replaceWith(media);
+    media.play().catch(() => {});
+  }
+  #revokeContentUrl(url = this.#contentUrl) {
+    if (url && url === this.#contentUrl) {
+      URL.revokeObjectURL(url);
+      this.#contentUrl = null;
+    }
+  }
+  destroy() {
+    this.#abortController.abort();
+    if (this.#media) {
+      this.#media.pause();
+      this.#media.removeAttribute("src");
+      this.#media.load();
+      this.#media = null;
+    }
+    this.#revokeContentUrl();
   }
 }
 class AnnotationLayer {
@@ -19891,6 +27195,7 @@ class AnnotationLayer {
   #linkService = null;
   #elements = [];
   #hasAriaAttributesFromStructTree = false;
+  zIndex = 0;
   constructor({
     div,
     accessibilityManager,
@@ -19911,7 +27216,6 @@ class AnnotationLayer {
     this.#annotationStorage = annotationStorage || new AnnotationStorage();
     this.page = page;
     this.viewport = viewport;
-    this.zIndex = 0;
     this._annotationEditorUIManager = annotationEditorUIManager;
     this._commentManager = commentManager || null;
   }
@@ -19920,7 +27224,8 @@ class AnnotationLayer {
   }
   async render(params) {
     const {
-      annotations
+      annotations,
+      optionalContentConfig
     } = params;
     const layer = this.div;
     setLayerDimensions(layer, this.viewport);
@@ -19977,6 +27282,7 @@ class AnnotationLayer {
       if (data.hidden) {
         rendered.style.visibility = "hidden";
       }
+      element.updateOC(optionalContentConfig);
       if (element._isEditable) {
         this.#editableAnnotations.set(element.data.id, element);
         this._annotationEditorUIManager?.renderAnnotationElement(element);
@@ -20010,11 +27316,16 @@ class AnnotationLayer {
       for (const {
         contentElement,
         data: {
-          id
+          hidden,
+          id,
+          oc
         }
       } of this.#elements) {
         const annotationId = contentElement.id = `${AnnotationPrefix}${id}`;
-        promises.push(this.#structTreeLayer?.getAriaAttributes(annotationId).then(ariaAttributes => {
+        const enableLinkOwnership = contentElement.localName === "a" && !hidden && !oc;
+        promises.push(this.#structTreeLayer?.getAriaAttributes(annotationId, {
+          enableLinkOwnership
+        }).then(ariaAttributes => {
           if (ariaAttributes) {
             for (const [key, value] of ariaAttributes) {
               contentElement.setAttribute(key, value);
@@ -20066,8 +27377,14 @@ class AnnotationLayer {
     this.div.append(fragment);
     await Promise.all(promises);
     if (this.#accessibilityManager) {
-      for (const element of this.#elements) {
-        this.#accessibilityManager.addPointerInTextLayer(element.contentElement, false);
+      const annotationIds = await this.#structTreeLayer?.getAnnotationIds();
+      for (const {
+        contentElement
+      } of this.#elements) {
+        if (annotationIds?.has(contentElement.id)) {
+          continue;
+        }
+        this.#accessibilityManager.addPointerInTextLayer(contentElement, false);
       }
     }
   }
@@ -20093,15 +27410,28 @@ class AnnotationLayer {
     await this.#addElementsToDOM();
   }
   update({
-    viewport
+    viewport,
+    optionalContentConfig
   }) {
     const layer = this.div;
     this.viewport = viewport;
     setLayerDimensions(layer, {
       rotation: viewport.rotation
     });
+    for (const element of this.#elements) {
+      element.updateOC(optionalContentConfig);
+    }
     this.#setAnnotationCanvasMap();
     layer.hidden = false;
+  }
+  destroy() {
+    for (const element of this.#elements) {
+      element.destroy?.();
+      this.#accessibilityManager?.removePointerInTextLayer(element.contentElement);
+    }
+    this.#elements.length = 0;
+    this.#editableAnnotations.clear();
+    this.div.replaceChildren();
   }
   #setAnnotationCanvasMap() {
     if (!this.#annotationCanvasMap) {
@@ -20113,19 +27443,43 @@ class AnnotationLayer {
       if (!element) {
         continue;
       }
-      canvas.className = "annotationContent";
+      if (Array.isArray(canvas)) {
+        for (const cvs of canvas) {
+          cvs.className = "annotationContent";
+          cvs.ariaHidden = true;
+        }
+      } else {
+        canvas.className = "annotationContent";
+        canvas.ariaHidden = true;
+      }
+      const toRemove = [];
+      for (const child of element.children) {
+        if (child.nodeName === "CANVAS") {
+          toRemove.push(child);
+        }
+      }
+      for (const child of toRemove) {
+        child.remove();
+      }
+      const firstCanvas = Array.isArray(canvas) ? canvas[0] : canvas;
       const {
         firstChild
       } = element;
       if (!firstChild) {
-        element.append(canvas);
-      } else if (firstChild.nodeName === "CANVAS") {
-        firstChild.replaceWith(canvas);
+        element.append(firstCanvas);
       } else if (!firstChild.classList.contains("annotationContent")) {
-        firstChild.before(canvas);
+        firstChild.before(firstCanvas);
       } else {
-        firstChild.after(canvas);
+        firstChild.after(firstCanvas);
       }
+      if (Array.isArray(canvas)) {
+        let lastCanvas = firstCanvas;
+        for (let i = 1, ii = canvas.length; i < ii; i++) {
+          lastCanvas.after(canvas[i]);
+          lastCanvas = canvas[i];
+        }
+      }
+      this.#annotationCanvasMap.delete(id);
       const editableAnnotation = this.#editableAnnotations.get(id);
       if (!editableAnnotation) {
         continue;
@@ -20137,7 +27491,9 @@ class AnnotationLayer {
         editableAnnotation.canvas = canvas;
       }
     }
-    this.#annotationCanvasMap.clear();
+  }
+  refreshCanvases() {
+    this.#setAnnotationCanvasMap();
   }
   getEditableAnnotations() {
     return this.#editableAnnotations.values();
@@ -20193,7 +27549,7 @@ class AnnotationLayer {
     this.div.classList.toggle("disabled", !enabled);
   }
   static get _defaultBorderStyle() {
-    return shadow(this, "_defaultBorderStyle", Object.freeze({
+    return util_shadow(this, "_defaultBorderStyle", Object.freeze({
       width: 1,
       rawWidth: 1,
       style: AnnotationBorderStyleType.SOLID,
@@ -20205,6 +27561,11 @@ class AnnotationLayer {
 }
 
 ;// ./src/display/editor/freetext.js
+
+
+
+
+
 
 
 
@@ -20226,27 +27587,27 @@ class FreeTextEditor extends AnnotationEditor {
     const arrowChecker = self => self.isEmpty();
     const small = AnnotationEditorUIManager.TRANSLATE_SMALL;
     const big = AnnotationEditorUIManager.TRANSLATE_BIG;
-    return shadow(this, "_keyboardManager", new KeyboardManager([[["ctrl+s", "mac+meta+s", "ctrl+p", "mac+meta+p"], proto.commitOrRemove, {
+    return util_shadow(this, "_keyboardManager", new KeyboardManager([[["ctrl+s", "mac+meta+s", "ctrl+p", "mac+meta+p"], proto.commitOrRemove, {
       bubbles: true
-    }], [["ctrl+Enter", "mac+meta+Enter", "Escape", "mac+Escape"], proto.commitOrRemove], [["ArrowLeft", "mac+ArrowLeft"], proto._translateEmpty, {
+    }], [["ctrl+Enter", "mac+meta+Enter"], proto.commitOrRemove], [["Escape"], proto.commitOrRemove], [["ArrowLeft"], proto._translateEmpty, {
       args: [-small, 0],
       checker: arrowChecker
     }], [["ctrl+ArrowLeft", "mac+shift+ArrowLeft"], proto._translateEmpty, {
       args: [-big, 0],
       checker: arrowChecker
-    }], [["ArrowRight", "mac+ArrowRight"], proto._translateEmpty, {
+    }], [["ArrowRight"], proto._translateEmpty, {
       args: [small, 0],
       checker: arrowChecker
     }], [["ctrl+ArrowRight", "mac+shift+ArrowRight"], proto._translateEmpty, {
       args: [big, 0],
       checker: arrowChecker
-    }], [["ArrowUp", "mac+ArrowUp"], proto._translateEmpty, {
+    }], [["ArrowUp"], proto._translateEmpty, {
       args: [0, -small],
       checker: arrowChecker
     }], [["ctrl+ArrowUp", "mac+shift+ArrowUp"], proto._translateEmpty, {
       args: [0, -big],
       checker: arrowChecker
-    }], [["ArrowDown", "mac+ArrowDown"], proto._translateEmpty, {
+    }], [["ArrowDown"], proto._translateEmpty, {
       args: [0, small],
       checker: arrowChecker
     }], [["ctrl+ArrowDown", "mac+shift+ArrowDown"], proto._translateEmpty, {
@@ -20264,7 +27625,7 @@ class FreeTextEditor extends AnnotationEditor {
     this.color = params.color || FreeTextEditor._defaultColor || AnnotationEditor._defaultLineColor;
     this.#fontSize = params.fontSize || FreeTextEditor._defaultFontSize;
     if (!this.annotationElementId) {
-      this._uiManager.a11yAlert("pdfjs-editor-freetext-added-alert");
+      this._uiManager.a11yAlert(AnnotationEditor._l10nAlert.freetext);
     }
     this.canAddComment = false;
   }
@@ -20751,7 +28112,7 @@ class FreeTextEditor extends AnnotationEditor {
           }
         }
       } = data;
-      if (!textContent || textContent.length === 0) {
+      if (!textContent?.length) {
         return null;
       }
       initialData = data = {
@@ -20846,10 +28207,865 @@ class FreeTextEditor extends AnnotationEditor {
   }
 }
 
+;// ./src/display/editor/draw.js
+
+
+
+
+
+
+
+
+
+
+
+
+class DrawingOptions {
+  #svgProperties = Object.create(null);
+  updateProperty(name, value) {
+    this[name] = value;
+    this.updateSVGProperty(name, value);
+  }
+  updateProperties(properties) {
+    if (!properties) {
+      return;
+    }
+    for (const [name, value] of Object.entries(properties)) {
+      if (!name.startsWith("_")) {
+        this.updateProperty(name, value);
+      }
+    }
+  }
+  updateSVGProperty(name, value) {
+    this.#svgProperties[name] = value;
+  }
+  toSVGProperties() {
+    const root = this.#svgProperties;
+    this.#svgProperties = Object.create(null);
+    return {
+      root
+    };
+  }
+  reset() {
+    this.#svgProperties = Object.create(null);
+  }
+  updateAll(options = this) {
+    this.updateProperties(options);
+  }
+  clone() {
+    unreachable("Not implemented");
+  }
+}
+class DrawingEditor extends AnnotationEditor {
+  #internalDiv = null;
+  #mustBeCommitted;
+  _clipPathId = null;
+  _colorPicker = null;
+  _drawId = null;
+  _drawOutlines = null;
+  _focusDrawId = null;
+  static _currentDrawId = -1;
+  static _currentParent = null;
+  static #currentDraw = null;
+  static #currentDrawingAC = null;
+  static #currentDrawingOptions = null;
+  static #currentClipPathId = null;
+  static _INNER_MARGIN = 3;
+  constructor(params) {
+    super(params);
+    this.#mustBeCommitted = params.mustBeCommitted || false;
+    this._addOutlines(params);
+  }
+  onUpdatedColor() {
+    this._colorPicker?.update(this.color);
+    super.onUpdatedColor();
+  }
+  onUpdatedOpacity() {
+    this._colorPicker?.updateOpacity?.(this.opacity);
+  }
+  _addOutlines(params) {
+    if (params.drawOutlines) {
+      this.#createDrawOutlines(params);
+      this.#addToDrawLayer();
+    }
+  }
+  #createDrawOutlines({
+    drawOutlines,
+    drawId,
+    drawingOptions,
+    clipPathId
+  }) {
+    this._drawOutlines = drawOutlines;
+    this._drawingOptions ||= drawingOptions;
+    if (!this.annotationElementId) {
+      this._uiManager.a11yAlert(AnnotationEditor._l10nAlert[this.editorType]);
+    }
+    if (drawId >= 0) {
+      this._drawId = drawId;
+      this._clipPathId = clipPathId ?? null;
+      this.parent.drawLayer.finalizeDraw(drawId, drawOutlines.defaultProperties);
+      this.#createFocusOutline(this.parent);
+    } else {
+      this._drawId = this.#createDrawing(drawOutlines, this.parent);
+    }
+    this.#updateBbox(drawOutlines.box);
+  }
+  #createDrawing(drawOutlines, parent) {
+    const {
+      id,
+      clipPathId
+    } = parent.drawLayer.draw(DrawingEditor._mergeSVGProperties(this._drawingOptions.toSVGProperties(), drawOutlines.defaultSVGProperties), false, this.constructor._hasClipPath);
+    if (this.constructor._hasClipPath) {
+      this._clipPathId = clipPathId;
+    }
+    this.#createFocusOutline(parent);
+    return id;
+  }
+  #createFocusOutline(parent) {
+    const properties = this._drawOutlines.getFocusSVGProperties(this.#rotationAngle);
+    if (properties) {
+      this._focusDrawId = parent.drawLayer.drawOutline(properties, this._drawOutlines.focusMustRemoveSelfIntersections);
+    }
+  }
+  #updateFocusOutline(angle = this.#rotationAngle) {
+    if (this._focusDrawId === null) {
+      return;
+    }
+    this.parent?.drawLayer.updateProperties(this._focusDrawId, this._drawOutlines.getFocusSVGProperties(angle));
+  }
+  #toggleFocusOutlineClass(rootClass) {
+    if (this._focusDrawId !== null) {
+      this.parent?.drawLayer.updateProperties(this._focusDrawId, {
+        rootClass
+      });
+    }
+  }
+  #updateVisibility() {
+    const {
+      parent,
+      _drawId,
+      _focusDrawId,
+      _isVisible
+    } = this;
+    if (!parent || _drawId === null) {
+      return;
+    }
+    const rootClass = {
+      hidden: !_isVisible
+    };
+    parent.drawLayer.updateProperties(_drawId, {
+      rootClass
+    });
+    if (_focusDrawId !== null) {
+      parent.drawLayer.updateProperties(_focusDrawId, {
+        rootClass
+      });
+    }
+  }
+  static _mergeSVGProperties(p1, p2) {
+    const p1Keys = new Set(Object.keys(p1));
+    for (const [key, value] of Object.entries(p2)) {
+      if (p1Keys.has(key)) {
+        Object.assign(p1[key], value);
+      } else {
+        p1[key] = value;
+      }
+    }
+    return p1;
+  }
+  static getDefaultDrawingOptions(_options) {
+    unreachable("Not implemented");
+  }
+  static get typesMap() {
+    unreachable("Not implemented");
+  }
+  static get isDrawer() {
+    return true;
+  }
+  static get _hasClipPath() {
+    return false;
+  }
+  static get _hasDrawClass() {
+    return true;
+  }
+  static get supportMultipleDrawings() {
+    return false;
+  }
+  get _drawRotation() {
+    return this.rotation;
+  }
+  get _opacityName() {
+    return this.constructor.typesMap.get(this.opacityType);
+  }
+  get #rotationAngle() {
+    return (this.parentRotation - this._drawRotation + 360) % 360;
+  }
+  static updateDefaultParams(type, value) {
+    const propertyName = this.typesMap.get(type);
+    if (propertyName) {
+      this._defaultDrawingOptions.updateProperty(propertyName, value);
+    }
+    if (this._currentParent) {
+      DrawingEditor.#currentDraw.updateProperty(propertyName, value);
+      this._currentParent.drawLayer.updateProperties(this._currentDrawId, this._defaultDrawingOptions.toSVGProperties());
+    }
+  }
+  updateParams(type, value) {
+    const propertyName = this.constructor.typesMap.get(type);
+    if (propertyName) {
+      this._updateProperty(type, propertyName, value);
+    }
+  }
+  static get defaultPropertiesToUpdate() {
+    const properties = [];
+    const options = this._defaultDrawingOptions;
+    for (const [type, name] of this.typesMap) {
+      properties.push([type, options[name]]);
+    }
+    return properties;
+  }
+  get propertiesToUpdate() {
+    const properties = [];
+    const {
+      _drawingOptions
+    } = this;
+    for (const [type, name] of this.constructor.typesMap) {
+      properties.push([type, _drawingOptions[name]]);
+    }
+    return properties;
+  }
+  _updateProperty(type, name, value) {
+    const options = this._drawingOptions;
+    const savedValue = options[name];
+    const setter = val => {
+      options.updateProperty(name, val);
+      const bbox = this._drawOutlines.updateProperty(name, val);
+      if (bbox) {
+        this.#updateBbox(bbox);
+      }
+      this.parent?.drawLayer.updateProperties(this._drawId, options.toSVGProperties());
+      if (type === this.colorType) {
+        this.onUpdatedColor();
+      } else if (type === this.opacityType) {
+        this.onUpdatedOpacity();
+      }
+    };
+    this.addCommands({
+      cmd: setter.bind(this, value),
+      undo: setter.bind(this, savedValue),
+      post: this._uiManager.updateUI.bind(this._uiManager, this),
+      mustExec: true,
+      type,
+      overwriteIfSameType: true,
+      keepUndo: true
+    });
+  }
+  _updateColorAndOpacity(color, opacity, type = this.colorAndOpacityType) {
+    const colorName = this.constructor.typesMap.get(this.colorType);
+    const opacityName = this._opacityName;
+    const options = this._drawingOptions;
+    const savedColor = options[colorName];
+    const savedOpacity = options[opacityName];
+    const setter = (c, op) => {
+      options.updateProperty(colorName, c);
+      options.updateProperty(opacityName, op);
+      this._drawOutlines.updateProperty(colorName, c);
+      this._drawOutlines.updateProperty(opacityName, op);
+      this.parent?.drawLayer.updateProperties(this._drawId, options.toSVGProperties());
+      this.onUpdatedColor();
+      this.onUpdatedOpacity();
+    };
+    this.addCommands({
+      cmd: setter.bind(this, color, opacity),
+      undo: setter.bind(this, savedColor, savedOpacity),
+      post: this._uiManager.updateUI.bind(this._uiManager, this),
+      mustExec: true,
+      type,
+      overwriteIfSameType: true,
+      keepUndo: true
+    });
+  }
+  _onResizing() {
+    this.parent?.drawLayer.updateProperties(this._drawId, DrawingEditor._mergeSVGProperties(this._drawOutlines.getPathResizingSVGProperties(this.#convertToDrawSpace()), {
+      bbox: this.#rotateBox()
+    }));
+  }
+  _onResized() {
+    this.parent?.drawLayer.updateProperties(this._drawId, DrawingEditor._mergeSVGProperties(this._drawOutlines.getPathResizedSVGProperties(this.#convertToDrawSpace()), {
+      bbox: this.#rotateBox()
+    }));
+    this.#updateFocusOutline();
+  }
+  _onTranslating(_x, _y) {
+    this.parent?.drawLayer.updateProperties(this._drawId, {
+      bbox: this.#rotateBox()
+    });
+  }
+  _onTranslated() {
+    this.parent?.drawLayer.updateProperties(this._drawId, DrawingEditor._mergeSVGProperties(this._drawOutlines.getPathTranslatedSVGProperties(this.#convertToDrawSpace(), this.parentDimensions), {
+      bbox: this.#rotateBox()
+    }));
+  }
+  _onStartDragging() {
+    this.parent?.drawLayer.updateProperties(this._drawId, {
+      rootClass: {
+        moving: true
+      }
+    });
+  }
+  _onStopDragging() {
+    this.parent?.drawLayer.updateProperties(this._drawId, {
+      rootClass: {
+        moving: false
+      }
+    });
+  }
+  get _mustBeDisabledOnCommit() {
+    return true;
+  }
+  commit() {
+    super.commit();
+    if (this._mustBeDisabledOnCommit) {
+      this.disableEditMode();
+      this.disableEditing();
+    }
+  }
+  disableEditing() {
+    super.disableEditing();
+    this.div.classList.toggle("disabled", true);
+  }
+  enableEditing() {
+    super.enableEditing();
+    this.div.classList.toggle("disabled", false);
+  }
+  getBaseTranslation() {
+    return [0, 0];
+  }
+  get isResizable() {
+    return true;
+  }
+  onceAdded(focus) {
+    if (!this.annotationElementId) {
+      this.parent.addUndoableEditor(this);
+    }
+    this._isDraggable = true;
+    if (this.#mustBeCommitted) {
+      this.#mustBeCommitted = false;
+      this.commit();
+      this.parent.setSelected(this);
+      if (focus && this.isOnScreen) {
+        this.div.focus();
+      }
+    }
+  }
+  remove() {
+    this._uiManager.removeShouldRescale(this);
+    this.#cleanDrawLayer();
+    super.remove();
+  }
+  rebuild() {
+    if (!this.parent) {
+      return;
+    }
+    super.rebuild();
+    if (this.div === null) {
+      return;
+    }
+    this.#addToDrawLayer();
+    this.#updateBbox(this._drawOutlines.box);
+    if (!this.isAttachedToDOM) {
+      this.parent.add(this);
+    }
+  }
+  setParent(parent) {
+    let mustBeSelected = false;
+    if (this.parent && !parent) {
+      this._uiManager.removeShouldRescale(this);
+      this.#cleanDrawLayer();
+    } else if (parent) {
+      this._uiManager.addShouldRescale(this);
+      this.#addToDrawLayer(parent);
+      mustBeSelected = !this.parent && this.div?.classList.contains("selectedEditor");
+    }
+    super.setParent(parent);
+    this.#updateVisibility();
+    if (mustBeSelected) {
+      this.select();
+    }
+  }
+  #cleanDrawLayer() {
+    if (this._drawId === null || !this.parent) {
+      return;
+    }
+    const {
+      drawLayer
+    } = this.parent;
+    drawLayer.remove(this._drawId);
+    this._drawId = null;
+    if (this._focusDrawId !== null) {
+      drawLayer.remove(this._focusDrawId);
+      this._focusDrawId = null;
+    }
+    this._drawingOptions.reset();
+  }
+  #addToDrawLayer(parent = this.parent) {
+    if (this._drawId !== null && this.parent === parent) {
+      return;
+    }
+    if (this._drawId !== null) {
+      const {
+        drawLayer
+      } = this.parent;
+      drawLayer.updateParent(this._drawId, parent.drawLayer);
+      if (this._focusDrawId !== null) {
+        drawLayer.updateParent(this._focusDrawId, parent.drawLayer);
+      }
+      return;
+    }
+    this._drawingOptions.updateAll();
+    this._drawId = this.#createDrawing(this._drawOutlines, parent);
+    if (this._clipPathId && this.#internalDiv) {
+      this.#internalDiv.style.clipPath = this._clipPathId;
+    }
+  }
+  #convertToParentSpace([x, y, width, height]) {
+    const {
+      parentDimensions: [pW, pH],
+      _drawRotation: rotation
+    } = this;
+    switch (rotation) {
+      case 90:
+        return [y, 1 - x, width * (pH / pW), height * (pW / pH)];
+      case 180:
+        return [1 - x, 1 - y, width, height];
+      case 270:
+        return [1 - y, x, width * (pH / pW), height * (pW / pH)];
+      default:
+        return [x, y, width, height];
+    }
+  }
+  #convertToDrawSpace() {
+    const {
+      x,
+      y,
+      width,
+      height,
+      parentDimensions: [pW, pH],
+      _drawRotation: rotation
+    } = this;
+    switch (rotation) {
+      case 90:
+        return [1 - y, x, width * (pW / pH), height * (pH / pW)];
+      case 180:
+        return [1 - x, 1 - y, width, height];
+      case 270:
+        return [y, 1 - x, width * (pW / pH), height * (pH / pW)];
+      default:
+        return [x, y, width, height];
+    }
+  }
+  #updateBbox(bbox) {
+    [this.x, this.y, this.width, this.height] = this.#convertToParentSpace(bbox);
+    if (this.div) {
+      this.fixAndSetPosition();
+      this.setDims();
+    }
+    this._onResized();
+  }
+  #rotateBox(parentRotation = this.parentRotation) {
+    const {
+      x,
+      y,
+      width,
+      height,
+      _drawRotation: rotation,
+      parentDimensions: [pW, pH]
+    } = this;
+    switch ((rotation * 4 + parentRotation) / 90) {
+      case 1:
+        return [1 - y - height, x, height, width];
+      case 2:
+        return [1 - x - width, 1 - y - height, width, height];
+      case 3:
+        return [y, 1 - x - width, height, width];
+      case 4:
+        return [x, y - width * (pW / pH), height * (pH / pW), width * (pW / pH)];
+      case 5:
+        return [1 - y, x, width * (pW / pH), height * (pH / pW)];
+      case 6:
+        return [1 - x - height * (pH / pW), 1 - y, height * (pH / pW), width * (pW / pH)];
+      case 7:
+        return [y - width * (pW / pH), 1 - x - height * (pH / pW), width * (pW / pH), height * (pH / pW)];
+      case 8:
+        return [x - width, y - height, width, height];
+      case 9:
+        return [1 - y, x - width, height, width];
+      case 10:
+        return [1 - x, 1 - y, width, height];
+      case 11:
+        return [y - height, 1 - x, height, width];
+      case 12:
+        return [x - height * (pH / pW), y, height * (pH / pW), width * (pW / pH)];
+      case 13:
+        return [1 - y - width * (pW / pH), x - height * (pH / pW), width * (pW / pH), height * (pH / pW)];
+      case 14:
+        return [1 - x, 1 - y - width * (pW / pH), height * (pH / pW), width * (pW / pH)];
+      case 15:
+        return [y, 1 - x, width * (pW / pH), height * (pH / pW)];
+      default:
+        return [x, y, width, height];
+    }
+  }
+  rotate(parentRotation = this.parentRotation) {
+    if (!this.parent || this._drawId === null) {
+      return;
+    }
+    const angle = (parentRotation - this._drawRotation + 360) % 360;
+    this.parent.drawLayer.updateProperties(this._drawId, DrawingEditor._mergeSVGProperties({
+      bbox: this.#rotateBox(parentRotation)
+    }, this._drawOutlines.updateRotation(angle)));
+    this.#updateFocusOutline(angle);
+  }
+  show(visible = this._isVisible) {
+    super.show(visible);
+    this.#updateVisibility();
+  }
+  select() {
+    super.select();
+    this.#toggleFocusOutlineClass({
+      hovered: false,
+      selected: true
+    });
+  }
+  unselect() {
+    super.unselect();
+    this.#toggleFocusOutlineClass({
+      selected: false
+    });
+  }
+  pointerover() {
+    if (!this.isSelected) {
+      this.#toggleFocusOutlineClass({
+        hovered: true
+      });
+    }
+  }
+  pointerleave() {
+    if (!this.isSelected) {
+      this.#toggleFocusOutlineClass({
+        hovered: false
+      });
+    }
+  }
+  onScaleChanging() {
+    if (!this.parent) {
+      return;
+    }
+    const bbox = this._drawOutlines.updateParentDimensions(this.parentDimensions, this.parent.scale);
+    if (bbox) {
+      this.#updateBbox(bbox);
+    }
+  }
+  static onScaleChangingWhenDrawing() {}
+  render() {
+    if (this.div) {
+      return this.div;
+    }
+    let baseX, baseY;
+    if (this._isCopy) {
+      baseX = this.x;
+      baseY = this.y;
+    }
+    const div = super.render();
+    if (this.constructor._hasDrawClass) {
+      div.classList.add("draw");
+    }
+    const drawDiv = this.#internalDiv = document.createElement("div");
+    div.append(drawDiv);
+    drawDiv.setAttribute("aria-hidden", "true");
+    drawDiv.className = "internal";
+    if (this._clipPathId) {
+      drawDiv.style.clipPath = this._clipPathId;
+    }
+    bindEvents(this, drawDiv, ["pointerover", "pointerleave"]);
+    this.setDims();
+    this._uiManager.addShouldRescale(this);
+    this.disableEditing();
+    if (this._isCopy) {
+      this._moveAfterPaste(baseX, baseY);
+    }
+    return div;
+  }
+  static createDrawerInstance(_params) {
+    unreachable("Not implemented");
+  }
+  static _getDrawingTarget(_parent, {
+    target
+  }) {
+    return target;
+  }
+  static _getPointerCoords({
+    offsetX,
+    offsetY,
+    clientX,
+    clientY
+  }, referenceEvent = null) {
+    if (!referenceEvent) {
+      return [offsetX, offsetY];
+    }
+    let deltaX = clientX - referenceEvent.clientX;
+    let deltaY = clientY - referenceEvent.clientY;
+    switch (this._currentParent.viewport.rotation) {
+      case 90:
+        [deltaX, deltaY] = [deltaY, -deltaX];
+        break;
+      case 180:
+        [deltaX, deltaY] = [-deltaX, -deltaY];
+        break;
+      case 270:
+        [deltaX, deltaY] = [-deltaY, deltaX];
+        break;
+    }
+    return [referenceEvent.offsetX + deltaX, referenceEvent.offsetY + deltaY];
+  }
+  static _addDrawingListeners(_target, _signal) {}
+  static _endDrawingSession(isAborted = false) {
+    return this._currentParent.endDrawingSession(isAborted);
+  }
+  static startDrawing(parent, uiManager, isLTR, event) {
+    const {
+      pointerId,
+      pointerType
+    } = event;
+    if (CurrentPointers.isInitializedAndDifferentPointerType(pointerType)) {
+      return;
+    }
+    const target = this._getDrawingTarget(parent, event);
+    const [x, y] = this._getPointerCoords(event);
+    const {
+      viewport: {
+        rotation
+      }
+    } = parent;
+    const {
+      x: boxX,
+      y: boxY,
+      width: parentWidth,
+      height: parentHeight
+    } = target.getBoundingClientRect();
+    const ac = DrawingEditor.#currentDrawingAC = new AbortController();
+    const signal = parent.combinedSignal(ac);
+    CurrentPointers.setPointer(pointerType, pointerId);
+    window.addEventListener("pointerup", e => {
+      if (CurrentPointers.isSamePointerIdOrRemove(e.pointerId)) {
+        this._endDraw(e);
+      }
+    }, {
+      signal
+    });
+    window.addEventListener("pointercancel", e => {
+      if (CurrentPointers.isSamePointerIdOrRemove(e.pointerId)) {
+        this._endDrawingSession();
+      }
+    }, {
+      signal
+    });
+    window.addEventListener("pointerdown", e => {
+      if (!CurrentPointers.isSamePointerType(e.pointerType)) {
+        return;
+      }
+      CurrentPointers.initializeAndAddPointerId(e.pointerId);
+      if (DrawingEditor.#currentDraw.isCancellable()) {
+        DrawingEditor.#currentDraw.removeLastElement();
+        if (DrawingEditor.#currentDraw.isEmpty()) {
+          this._endDrawingSession(true);
+        } else {
+          this._endDraw(null);
+        }
+      }
+    }, {
+      capture: true,
+      passive: false,
+      signal
+    });
+    window.addEventListener("contextmenu", noContextMenu, {
+      signal
+    });
+    target.addEventListener("pointermove", this._drawMove.bind(this), {
+      signal
+    });
+    target.addEventListener("touchmove", e => {
+      if (CurrentPointers.isSameTimeStamp(e.timeStamp)) {
+        stopEvent(e);
+      }
+    }, {
+      signal
+    });
+    this._addDrawingListeners(target, signal);
+    parent.toggleDrawing();
+    uiManager._editorUndoBar?.hide();
+    if (DrawingEditor.#currentDraw) {
+      parent.drawLayer.updateProperties(this._currentDrawId, DrawingEditor.#currentDraw.startNew(x, y, parentWidth, parentHeight, rotation));
+      return;
+    }
+    uiManager.updateUIForDefaultProperties(this);
+    DrawingEditor.#currentDraw = this.createDrawerInstance({
+      x,
+      y,
+      box: [boxX, boxY, parentWidth, parentHeight],
+      rotation,
+      parent,
+      isLTR
+    });
+    DrawingEditor.#currentDrawingOptions = this.getDefaultDrawingOptions();
+    this._currentParent = parent;
+    const {
+      id,
+      clipPathId
+    } = parent.drawLayer.draw(this._mergeSVGProperties(DrawingEditor.#currentDrawingOptions.toSVGProperties(), DrawingEditor.#currentDraw.defaultSVGProperties), true, this._hasClipPath);
+    this._currentDrawId = id;
+    DrawingEditor.#currentClipPathId = this._hasClipPath ? clipPathId : null;
+  }
+  static _drawMove(event) {
+    CurrentPointers.isSameTimeStamp(event.timeStamp);
+    if (!DrawingEditor.#currentDraw || !CurrentPointers.isSamePointerId(event.pointerId)) {
+      return;
+    }
+    if (CurrentPointers.isUsingMultiplePointers()) {
+      this._endDraw(event);
+      return;
+    }
+    let properties;
+    const coalesced = event.getCoalescedEvents?.();
+    if (coalesced?.length) {
+      const points = [];
+      for (const sample of coalesced) {
+        points.push(...this._getPointerCoords(sample, event));
+      }
+      properties = DrawingEditor.#currentDraw.addPoints(points);
+    } else {
+      properties = DrawingEditor.#currentDraw.add(...this._getPointerCoords(event));
+    }
+    this._currentParent.drawLayer.updateProperties(this._currentDrawId, properties);
+    CurrentPointers.setTimeStamp(event.timeStamp);
+    stopEvent(event);
+  }
+  static _cleanup(all) {
+    if (all) {
+      this._currentDrawId = -1;
+      this._currentParent = null;
+      DrawingEditor.#currentDraw = null;
+      DrawingEditor.#currentDrawingOptions = null;
+      DrawingEditor.#currentClipPathId = null;
+      CurrentPointers.clearTimeStamp();
+    }
+    if (DrawingEditor.#currentDrawingAC) {
+      DrawingEditor.#currentDrawingAC.abort();
+      DrawingEditor.#currentDrawingAC = null;
+      CurrentPointers.clearPointerIds();
+    }
+  }
+  static _endDraw(event) {
+    const parent = this._currentParent;
+    if (!parent) {
+      return;
+    }
+    parent.toggleDrawing(true);
+    this._cleanup(false);
+    parent.drawLayer.updateProperties(this._currentDrawId, event?.target === parent.div ? DrawingEditor.#currentDraw.end(...this._getPointerCoords(event)) : DrawingEditor.#currentDraw.end());
+    if (this.supportMultipleDrawings) {
+      const draw = DrawingEditor.#currentDraw;
+      const drawId = this._currentDrawId;
+      const lastElement = draw.getLastElement();
+      parent.addCommands({
+        cmd: () => {
+          parent.drawLayer.updateProperties(drawId, draw.setLastElement(lastElement));
+        },
+        undo: () => {
+          parent.drawLayer.updateProperties(drawId, draw.removeLastElement());
+        },
+        mustExec: false,
+        type: AnnotationEditorParamsType.DRAW_STEP
+      });
+      return;
+    }
+    this.endDrawing(false);
+  }
+  static endDrawing(isAborted) {
+    const parent = this._currentParent;
+    if (!parent) {
+      return null;
+    }
+    parent.toggleDrawing(true);
+    parent.cleanUndoStack(AnnotationEditorParamsType.DRAW_STEP);
+    if (!DrawingEditor.#currentDraw.isEmpty()) {
+      const {
+        pageDimensions: [pageWidth, pageHeight],
+        scale
+      } = parent;
+      const editor = parent.createAndAddNewEditor({
+        offsetX: 0,
+        offsetY: 0
+      }, false, {
+        drawId: this._currentDrawId,
+        clipPathId: DrawingEditor.#currentClipPathId,
+        drawOutlines: DrawingEditor.#currentDraw.getOutlines(pageWidth * scale, pageHeight * scale, scale, this._INNER_MARGIN),
+        drawingOptions: DrawingEditor.#currentDrawingOptions,
+        mustBeCommitted: !isAborted
+      });
+      this._cleanup(true);
+      return editor;
+    }
+    parent.drawLayer.remove(this._currentDrawId);
+    this._cleanup(true);
+    return null;
+  }
+  createDrawingOptions(_data) {}
+  static deserializeDraw(_pageX, _pageY, _pageWidth, _pageHeight, _innerMargin, _data, _uiManager) {
+    unreachable("Not implemented");
+  }
+  static async deserialize(data, parent, uiManager) {
+    const {
+      rawDims: {
+        pageWidth,
+        pageHeight,
+        pageX,
+        pageY
+      }
+    } = parent.viewport;
+    const drawOutlines = this.deserializeDraw(pageX, pageY, pageWidth, pageHeight, this._INNER_MARGIN, data, uiManager);
+    const editor = await super.deserialize(data, parent, uiManager);
+    editor.createDrawingOptions(data);
+    editor.#createDrawOutlines({
+      drawOutlines
+    });
+    editor.#addToDrawLayer();
+    editor.onScaleChanging();
+    editor.rotate();
+    return editor;
+  }
+  serializeDraw(isForCopying) {
+    const [pageX, pageY] = this.pageTranslation;
+    const [pageWidth, pageHeight] = this.pageDimensions;
+    return this._drawOutlines.serialize([pageX, pageY, pageWidth, pageHeight], isForCopying);
+  }
+  renderAnnotationElement(annotation) {
+    annotation.updateEdited({
+      rect: this.getPDFRect()
+    });
+    return null;
+  }
+  static canCreateNewEmptyEditor() {
+    return false;
+  }
+}
+
 ;// ./src/display/editor/drawers/outline.js
+
 
 class Outline {
   static PRECISION = 1e-4;
+  focusOutline = null;
   toSVGPath() {
     unreachable("Abstract method `toSVGPath` must be implemented.");
   }
@@ -20858,6 +29074,50 @@ class Outline {
   }
   serialize(_bbox, _rotation) {
     unreachable("Abstract method `serialize` must be implemented.");
+  }
+  get defaultSVGProperties() {
+    unreachable("Abstract getter `defaultSVGProperties` must be implemented.");
+  }
+  get defaultProperties() {
+    return this.defaultSVGProperties;
+  }
+  getFocusSVGProperties(_rotation) {
+    return null;
+  }
+  get focusMustRemoveSelfIntersections() {
+    return false;
+  }
+  updateProperty(_name, _value) {
+    return null;
+  }
+  updateParentDimensions(_dimensions, _scale) {
+    return null;
+  }
+  serializeQuadPoints(_pageTranslation, _pageDimensions) {
+    return null;
+  }
+  updateRotation(_rotation) {
+    return {};
+  }
+  getPathResizingSVGProperties(_bbox) {
+    return {};
+  }
+  getPathResizedSVGProperties(_bbox) {
+    return {};
+  }
+  getPathTranslatedSVGProperties(_bbox, _parentDimensions) {
+    return {};
+  }
+  static _rotateBox([x, y, width, height], angle) {
+    switch (angle) {
+      case 90:
+        return [1 - y - height, x, height, width];
+      case 180:
+        return [1 - x - width, 1 - y - height, width, height];
+      case 270:
+        return [y, 1 - x - width, height, width];
+    }
+    return [x, y, width, height];
   }
   static _rescale(src, tx, ty, sx, sy, dest) {
     dest ||= new Float32Array(src.length);
@@ -20898,24 +29158,14 @@ class Outline {
         return [x / parentWidth, y / parentHeight];
     }
   }
-  static _normalizePagePoint(x, y, rotation) {
-    switch (rotation) {
-      case 90:
-        return [1 - y, x];
-      case 180:
-        return [1 - x, 1 - y];
-      case 270:
-        return [y, 1 - x];
-      default:
-        return [x, y];
-    }
-  }
   static createBezierPoints(x1, y1, x2, y2, x3, y3) {
     return [(x1 + 5 * x2) / 6, (y1 + 5 * y2) / 6, (5 * x2 + x3) / 6, (5 * y2 + y3) / 6, (x2 + x3) / 2, (y2 + y3) / 2];
   }
 }
 
 ;// ./src/display/editor/drawers/freedraw.js
+
+
 
 
 class FreeDrawOutliner {
@@ -20935,10 +29185,7 @@ class FreeDrawOutliner {
   static #MIN_DIST = 8;
   static #MIN_DIFF = 2;
   static #MIN = FreeDrawOutliner.#MIN_DIST + FreeDrawOutliner.#MIN_DIFF;
-  constructor({
-    x,
-    y
-  }, box, scaleFactor, thickness, isLTR, innerMargin = 0) {
+  constructor(x, y, box, scaleFactor, thickness, isLTR, innerMargin = 0) {
     this.#box = box;
     this.#thickness = thickness * scaleFactor;
     this.#isLTR = isLTR;
@@ -20952,16 +29199,25 @@ class FreeDrawOutliner {
   isEmpty() {
     return isNaN(this.#last[8]);
   }
+  isCancellable() {
+    return this.#points.length <= 10;
+  }
+  removeLastElement() {
+    this.#last.fill(NaN);
+    this.#top.length = this.#bottom.length = this.#points.length = 0;
+    return {
+      path: {
+        d: ""
+      }
+    };
+  }
   #getLastCoords() {
     const lastTop = this.#last.subarray(4, 6);
     const lastBottom = this.#last.subarray(16, 18);
     const [x, y, width, height] = this.#box;
     return [(this.#lastX + (lastTop[0] - lastBottom[0]) / 2 - x) / width, (this.#lastY + (lastTop[1] - lastBottom[1]) / 2 - y) / height, (this.#lastX + (lastBottom[0] - lastTop[0]) / 2 - x) / width, (this.#lastY + (lastBottom[1] - lastTop[1]) / 2 - y) / height];
   }
-  add({
-    x,
-    y
-  }) {
+  add(x, y) {
     this.#lastX = x;
     this.#lastY = y;
     const [layerX, layerY, layerWidth, layerHeight] = this.#box;
@@ -21225,10 +29481,9 @@ class FreeDrawOutline extends Outline {
           lastPointX = ltrCallback(lastPointX, x);
         }
       } else {
-        bezierBbox[0] = bezierBbox[1] = Infinity;
-        bezierBbox[2] = bezierBbox[3] = -Infinity;
+        bezierBbox.set(BBOX_INIT, 0);
         Util.bezierBoundingBox(lastX, lastY, ...outline.slice(i, i + 6), bezierBbox);
-        Util.rectBoundingBox(bezierBbox[0], bezierBbox[1], bezierBbox[2], bezierBbox[3], minMax);
+        Util.rectBoundingBox(...bezierBbox, minMax);
         if (firstPointY > bezierBbox[1]) {
           firstPointX = bezierBbox[0];
           firstPointY = bezierBbox[1];
@@ -21256,8 +29511,17 @@ class FreeDrawOutline extends Outline {
   get box() {
     return this.#bbox;
   }
-  newOutliner(point, box, scaleFactor, thickness, isLTR, innerMargin = 0) {
-    return new FreeDrawOutliner(point, box, scaleFactor, thickness, isLTR, innerMargin);
+  newOutliner(x, y, box, scaleFactor, thickness, isLTR, innerMargin = 0) {
+    return new FreeDrawOutliner(x, y, box, scaleFactor, thickness, isLTR, innerMargin);
+  }
+  updateThickness(thickness) {
+    const outline = this.getNewOutline(thickness);
+    this.#outline = outline.#outline;
+    this.#points = outline.#points;
+    this.#bbox.set(outline.#bbox);
+    this.firstPoint = outline.firstPoint;
+    this.lastPoint = outline.lastPoint;
+    return this.#bbox;
   }
   getNewOutline(thickness, innerMargin) {
     const [x, y, width, height] = this.#bbox;
@@ -21266,15 +29530,10 @@ class FreeDrawOutline extends Outline {
     const sy = height * layerHeight;
     const tx = x * layerWidth + layerX;
     const ty = y * layerHeight + layerY;
-    const outliner = this.newOutliner({
-      x: this.#points[0] * sx + tx,
-      y: this.#points[1] * sy + ty
-    }, this.#box, this.#scaleFactor, thickness, this.#isLTR, innerMargin ?? this.#innerMargin);
-    for (let i = 2; i < this.#points.length; i += 2) {
-      outliner.add({
-        x: this.#points[i] * sx + tx,
-        y: this.#points[i + 1] * sy + ty
-      });
+    const points = this.#points;
+    const outliner = this.newOutliner(points[0] * sx + tx, points[1] * sy + ty, this.#box, this.#scaleFactor, thickness, this.#isLTR, innerMargin ?? this.#innerMargin);
+    for (let i = 2, ii = points.length; i < ii; i += 2) {
+      outliner.add(points[i] * sx + tx, points[i + 1] * sy + ty);
     }
     return outliner.getOutlines();
   }
@@ -21284,6 +29543,48 @@ class FreeDrawOutline extends Outline {
 
 
 
+
+
+
+
+
+
+
+
+
+function getHighlightSVGProperties(outline) {
+  return {
+    bbox: outline.box,
+    root: {
+      viewBox: "0 0 1 1"
+    },
+    rootClass: {
+      highlight: true,
+      free: outline.isFree
+    },
+    path: {
+      d: outline.toSVGPath()
+    }
+  };
+}
+function getHighlightFocusSVGProperties(outline, rotation) {
+  const {
+    focusOutline
+  } = outline;
+  return {
+    bbox: Outline._rotateBox(focusOutline.box, rotation),
+    root: {
+      "data-main-rotation": rotation
+    },
+    rootClass: {
+      highlightOutline: true,
+      free: outline.isFree
+    },
+    path: {
+      d: focusOutline.toSVGPath()
+    }
+  };
+}
 class HighlightOutliner {
   #box;
   #firstPoint;
@@ -21291,7 +29592,7 @@ class HighlightOutliner {
   #verticalEdges = [];
   #intervals = [];
   constructor(boxes, borderWidth = 0, innerMargin = 0, isLTR = true) {
-    const minMax = [Infinity, Infinity, -Infinity, -Infinity];
+    const minMax = BBOX_INIT.slice();
     const NUMBER_OF_DIGITS = 4;
     const EPSILON = 10 ** -NUMBER_OF_DIGITS;
     for (const {
@@ -21373,14 +29674,13 @@ class HighlightOutliner {
       allEdges.add(edge2);
     }
     const outlines = [];
-    let outline;
     while (allEdges.size > 0) {
       const edge = allEdges.values().next().value;
       let [x, y1, y2, edge1, edge2] = edge;
       allEdges.delete(edge);
       let lastPointX = x;
       let lastPointY = y1;
-      outline = [x, y2];
+      const outline = [x, y2];
       outlines.push(outline);
       while (true) {
         let e;
@@ -21483,6 +29783,7 @@ class HighlightOutliner {
 }
 class HighlightOutline extends Outline {
   #box;
+  #boxes = null;
   #outlines;
   constructor(outlines, box, firstPoint, lastPoint) {
     super();
@@ -21490,6 +29791,48 @@ class HighlightOutline extends Outline {
     this.#box = box;
     this.firstPoint = firstPoint;
     this.lastPoint = lastPoint;
+  }
+  static build(boxes, isLTR) {
+    const outline = new HighlightOutliner(boxes, 0.001).getOutlines();
+    outline.#boxes = boxes;
+    outline.focusOutline = new HighlightOutliner(boxes, 0.0025, 0.001, isLTR).getOutlines();
+    return outline;
+  }
+  get isFree() {
+    return false;
+  }
+  get defaultSVGProperties() {
+    return getHighlightSVGProperties(this);
+  }
+  getFocusSVGProperties(rotation) {
+    return getHighlightFocusSVGProperties(this, rotation);
+  }
+  updateRotation(rotation) {
+    return {
+      root: {
+        "data-main-rotation": rotation
+      }
+    };
+  }
+  serializeQuadPoints([pageX, pageY], [pageWidth, pageHeight]) {
+    const boxes = this.#boxes;
+    const quadPoints = new Float32Array(boxes.length * 8);
+    let i = 0;
+    for (const {
+      x,
+      y,
+      width,
+      height
+    } of boxes) {
+      const sx = x * pageWidth + pageX;
+      const sy = (1 - y) * pageHeight + pageY;
+      quadPoints[i] = quadPoints[i + 4] = sx;
+      quadPoints[i + 1] = quadPoints[i + 3] = sy;
+      quadPoints[i + 2] = quadPoints[i + 6] = sx + width * pageWidth;
+      quadPoints[i + 5] = quadPoints[i + 7] = sy - height * pageHeight;
+      i += 8;
+    }
+    return quadPoints;
   }
   toSVGPath() {
     const buffer = [];
@@ -21528,18 +29871,114 @@ class HighlightOutline extends Outline {
   get box() {
     return this.#box;
   }
-  get classNamesForOutlining() {
-    return ["highlightOutline"];
-  }
 }
 class FreeHighlightOutliner extends FreeDrawOutliner {
   newFreeDrawOutline(outline, points, box, scaleFactor, innerMargin, isLTR) {
     return new FreeHighlightOutline(outline, points, box, scaleFactor, innerMargin, isLTR);
   }
 }
+class FreeHighlightDrawer {
+  #outliner;
+  #thickness;
+  constructor(x, y, box, scaleFactor, thickness, isLTR, innerMargin) {
+    this.#outliner = new FreeHighlightOutliner(x, y, box, scaleFactor, thickness, isLTR, innerMargin);
+    this.#thickness = thickness;
+  }
+  add(x, y) {
+    return this.#outliner.add(x, y) ? {
+      path: {
+        d: this.#outliner.toSVGPath()
+      }
+    } : null;
+  }
+  addPoints(points) {
+    let hasChanged = false;
+    for (let i = 0, ii = points.length; i < ii; i += 2) {
+      hasChanged = this.#outliner.add(points[i], points[i + 1]) || hasChanged;
+    }
+    return hasChanged ? {
+      path: {
+        d: this.#outliner.toSVGPath()
+      }
+    } : null;
+  }
+  end(x, y) {
+    return x === undefined ? null : this.add(x, y);
+  }
+  isEmpty() {
+    return this.#outliner.isEmpty();
+  }
+  isCancellable() {
+    return this.#outliner.isCancellable();
+  }
+  removeLastElement() {
+    return this.#outliner.removeLastElement();
+  }
+  updateProperty(_name, _value) {
+    return null;
+  }
+  getOutlines() {
+    const outlines = this.#outliner.getOutlines();
+    outlines.buildFocusOutline(2 * this.#thickness);
+    return outlines;
+  }
+  get defaultSVGProperties() {
+    return {
+      bbox: [0, 0, 1, 1],
+      root: {
+        viewBox: "0 0 1 1"
+      },
+      rootClass: {
+        highlight: true,
+        free: true
+      },
+      path: {
+        d: this.#outliner.toSVGPath()
+      }
+    };
+  }
+}
 class FreeHighlightOutline extends FreeDrawOutline {
-  newOutliner(point, box, scaleFactor, thickness, isLTR, innerMargin = 0) {
-    return new FreeHighlightOutliner(point, box, scaleFactor, thickness, isLTR, innerMargin);
+  static #EXTRA_THICKNESS = 1.5;
+  newOutliner(x, y, box, scaleFactor, thickness, isLTR, innerMargin = 0) {
+    return new FreeHighlightOutliner(x, y, box, scaleFactor, thickness, isLTR, innerMargin);
+  }
+  get isFree() {
+    return true;
+  }
+  buildFocusOutline(thickness) {
+    this.focusOutline = this.getNewOutline(thickness / 2 + FreeHighlightOutline.#EXTRA_THICKNESS, 0.0025);
+  }
+  get defaultSVGProperties() {
+    return getHighlightSVGProperties(this);
+  }
+  getFocusSVGProperties(rotation) {
+    return getHighlightFocusSVGProperties(this, rotation);
+  }
+  get focusMustRemoveSelfIntersections() {
+    return true;
+  }
+  updateRotation(rotation) {
+    return {
+      root: {
+        "data-main-rotation": rotation
+      }
+    };
+  }
+  updateProperty(name, value) {
+    if (name !== "thickness") {
+      return null;
+    }
+    const bbox = this.updateThickness(value / 2);
+    this.buildFocusOutline(value);
+    return bbox;
+  }
+  getPathResizedSVGProperties() {
+    return {
+      path: {
+        d: this.toSVGPath()
+      }
+    };
   }
 }
 
@@ -21551,42 +29990,49 @@ class FreeHighlightOutline extends FreeDrawOutline {
 
 
 
-class HighlightEditor extends AnnotationEditor {
+
+
+
+
+
+
+class HighlightDrawingOptions extends DrawingOptions {
+  constructor(properties = null) {
+    super();
+    super.updateProperties(properties);
+  }
+  updateSVGProperty(name, value) {
+    if (name !== "thickness") {
+      super.updateSVGProperty(name, value);
+    }
+  }
+  clone() {
+    const clone = new HighlightDrawingOptions();
+    clone.updateAll(this);
+    return clone;
+  }
+}
+class HighlightEditor extends DrawingEditor {
   #anchorNode = null;
   #anchorOffset = 0;
-  #boxes;
-  #clipPathId = null;
-  #colorPicker = null;
-  #focusOutlines = null;
   #focusNode = null;
   #focusOffset = 0;
-  #highlightDiv = null;
-  #highlightOutlines = null;
-  #id = null;
-  #isFreeHighlight = false;
-  #firstPoint = null;
-  #lastPoint = null;
-  #outlineId = null;
-  #text = "";
-  #thickness;
   #methodOfCreation = "";
-  static _defaultColor = null;
-  static _defaultOpacity = 1;
-  static _defaultThickness = 12;
+  #text = "";
+  static _DEFAULT_OPACITY = 1;
+  static _DEFAULT_THICKNESS = 12;
+  static _defaultDrawingOptions = null;
   static _type = "highlight";
   static _editorType = AnnotationEditorType.HIGHLIGHT;
-  static _freeHighlightId = -1;
-  static _freeHighlight = null;
-  static _freeHighlightClipId = "";
   static get _keyboardManager() {
     const proto = HighlightEditor.prototype;
-    return shadow(this, "_keyboardManager", new KeyboardManager([[["ArrowLeft", "mac+ArrowLeft"], proto._moveCaret, {
+    return util_shadow(this, "_keyboardManager", new KeyboardManager([[["ArrowLeft"], proto._moveCaret, {
       args: [0]
-    }], [["ArrowRight", "mac+ArrowRight"], proto._moveCaret, {
+    }], [["ArrowRight"], proto._moveCaret, {
       args: [1]
-    }], [["ArrowUp", "mac+ArrowUp"], proto._moveCaret, {
+    }], [["ArrowUp"], proto._moveCaret, {
       args: [2]
-    }], [["ArrowDown", "mac+ArrowDown"], proto._moveCaret, {
+    }], [["ArrowDown"], proto._moveCaret, {
       args: [3]
     }]]));
   }
@@ -21595,37 +30041,88 @@ class HighlightEditor extends AnnotationEditor {
       ...params,
       name: "highlightEditor"
     });
-    this.color = params.color || HighlightEditor._defaultColor;
-    this.#thickness = params.thickness || HighlightEditor._defaultThickness;
-    this.opacity = params.opacity || HighlightEditor._defaultOpacity;
-    this.#boxes = params.boxes || null;
-    this.#methodOfCreation = params.methodOfCreation || "";
+    this.#anchorNode = params.anchorNode || null;
+    this.#anchorOffset = params.anchorOffset || 0;
+    this.#focusNode = params.focusNode || null;
+    this.#focusOffset = params.focusOffset || 0;
+    this.#methodOfCreation = params.methodOfCreation || (this._drawOutlines?.isFree ? "main_toolbar" : "");
     this.#text = params.text || "";
     this._isDraggable = false;
     this.defaultL10nId = "pdfjs-editor-highlight-editor";
-    if (params.highlightId > -1) {
-      this.#isFreeHighlight = true;
-      this.#createFreeOutlines(params);
-      this.#addToDrawLayer();
-    } else if (this.#boxes) {
-      this.#anchorNode = params.anchorNode;
-      this.#anchorOffset = params.anchorOffset;
-      this.#focusNode = params.focusNode;
-      this.#focusOffset = params.focusOffset;
-      this.#createOutlines();
-      this.#addToDrawLayer();
-      this.rotate(this.rotation);
+    this.rotate();
+  }
+  static initialize(l10n, uiManager) {
+    AnnotationEditor.initialize(l10n, uiManager);
+    this._defaultDrawingOptions ||= new HighlightDrawingOptions({
+      fill: uiManager.highlightColors?.values().next().value || "#fff066",
+      "fill-opacity": HighlightEditor._DEFAULT_OPACITY,
+      thickness: HighlightEditor._DEFAULT_THICKNESS
+    });
+  }
+  static getDefaultDrawingOptions(options) {
+    const clone = this._defaultDrawingOptions.clone();
+    clone.updateProperties(options);
+    return clone;
+  }
+  static get typesMap() {
+    return util_shadow(this, "typesMap", new Map([[AnnotationEditorParamsType.HIGHLIGHT_COLOR, "fill"], [AnnotationEditorParamsType.HIGHLIGHT_THICKNESS, "thickness"]]));
+  }
+  static get isDrawer() {
+    return false;
+  }
+  static get _hasClipPath() {
+    return true;
+  }
+  static get _hasDrawClass() {
+    return false;
+  }
+  _addOutlines(params) {
+    const {
+      boxes,
+      drawOutlines
+    } = params;
+    if (!boxes && !drawOutlines) {
+      return;
     }
-    if (!this.annotationElementId) {
-      this._uiManager.a11yAlert("pdfjs-editor-highlight-added-alert");
+    this._drawingOptions ||= params.drawingOptions || HighlightEditor.getDefaultDrawingOptions();
+    if (boxes) {
+      params = {
+        ...params,
+        drawOutlines: HighlightOutline.build(boxes, this._uiManager.direction === "ltr")
+      };
     }
+    super._addOutlines(params);
+  }
+  get colorType() {
+    return AnnotationEditorParamsType.HIGHLIGHT_COLOR;
+  }
+  get color() {
+    return this._drawingOptions.fill;
+  }
+  get opacity() {
+    return this._drawingOptions["fill-opacity"];
+  }
+  get _opacityName() {
+    return "fill-opacity";
+  }
+  get _drawRotation() {
+    return this._drawOutlines?.isFree ? this.rotation : 0;
+  }
+  get isResizable() {
+    return false;
+  }
+  get _mustBeDisabledOnCommit() {
+    return false;
+  }
+  get _mustFixPosition() {
+    return !this._drawOutlines?.isFree;
   }
   get telemetryInitialData() {
     return {
       action: "added",
-      type: this.#isFreeHighlight ? "free_highlight" : "highlight",
+      type: this._drawOutlines.isFree ? "free_highlight" : "highlight",
       color: this._uiManager.getNonHCMColorName(this.color),
-      thickness: this.#thickness,
+      thickness: this._drawingOptions.thickness,
       methodOfCreation: this.#methodOfCreation
     };
   }
@@ -21640,219 +30137,54 @@ class HighlightEditor extends AnnotationEditor {
       numberOfColors: data.get("color").size
     };
   }
-  #createOutlines() {
-    const outliner = new HighlightOutliner(this.#boxes, 0.001);
-    this.#highlightOutlines = outliner.getOutlines();
-    [this.x, this.y, this.width, this.height] = this.#highlightOutlines.box;
-    const outlinerForOutline = new HighlightOutliner(this.#boxes, 0.0025, 0.001, this._uiManager.direction === "ltr");
-    this.#focusOutlines = outlinerForOutline.getOutlines();
-    const {
-      firstPoint
-    } = this.#highlightOutlines;
-    this.#firstPoint = [(firstPoint[0] - this.x) / this.width, (firstPoint[1] - this.y) / this.height];
-    const {
-      lastPoint
-    } = this.#focusOutlines;
-    this.#lastPoint = [(lastPoint[0] - this.x) / this.width, (lastPoint[1] - this.y) / this.height];
-  }
-  #createFreeOutlines({
-    highlightOutlines,
-    highlightId,
-    clipPathId
-  }) {
-    this.#highlightOutlines = highlightOutlines;
-    const extraThickness = 1.5;
-    this.#focusOutlines = highlightOutlines.getNewOutline(this.#thickness / 2 + extraThickness, 0.0025);
-    if (highlightId >= 0) {
-      this.#id = highlightId;
-      this.#clipPathId = clipPathId;
-      this.parent.drawLayer.finalizeDraw(highlightId, {
-        bbox: highlightOutlines.box,
-        path: {
-          d: highlightOutlines.toSVGPath()
-        }
-      });
-      this.#outlineId = this.parent.drawLayer.drawOutline({
-        rootClass: {
-          highlightOutline: true,
-          free: true
-        },
-        bbox: this.#focusOutlines.box,
-        path: {
-          d: this.#focusOutlines.toSVGPath()
-        }
-      }, true);
-    } else if (this.parent) {
-      const angle = this.parent.viewport.rotation;
-      this.parent.drawLayer.updateProperties(this.#id, {
-        bbox: HighlightEditor.#rotateBbox(this.#highlightOutlines.box, (angle - this.rotation + 360) % 360),
-        path: {
-          d: highlightOutlines.toSVGPath()
-        }
-      });
-      this.parent.drawLayer.updateProperties(this.#outlineId, {
-        bbox: HighlightEditor.#rotateBbox(this.#focusOutlines.box, angle),
-        path: {
-          d: this.#focusOutlines.toSVGPath()
-        }
-      });
-    }
-    const [x, y, width, height] = highlightOutlines.box;
-    switch (this.rotation) {
-      case 0:
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        break;
-      case 90:
-        {
-          const [pageWidth, pageHeight] = this.parentDimensions;
-          this.x = y;
-          this.y = 1 - x;
-          this.width = width * pageHeight / pageWidth;
-          this.height = height * pageWidth / pageHeight;
-          break;
-        }
-      case 180:
-        this.x = 1 - x;
-        this.y = 1 - y;
-        this.width = width;
-        this.height = height;
-        break;
-      case 270:
-        {
-          const [pageWidth, pageHeight] = this.parentDimensions;
-          this.x = 1 - y;
-          this.y = x;
-          this.width = width * pageHeight / pageWidth;
-          this.height = height * pageWidth / pageHeight;
-          break;
-        }
-    }
-    const {
-      firstPoint
-    } = highlightOutlines;
-    this.#firstPoint = [(firstPoint[0] - x) / width, (firstPoint[1] - y) / height];
-    const {
-      lastPoint
-    } = this.#focusOutlines;
-    this.#lastPoint = [(lastPoint[0] - x) / width, (lastPoint[1] - y) / height];
-  }
-  static initialize(l10n, uiManager) {
-    AnnotationEditor.initialize(l10n, uiManager);
-    HighlightEditor._defaultColor ||= uiManager.highlightColors?.values().next().value || "#fff066";
-  }
-  static updateDefaultParams(type, value) {
-    switch (type) {
-      case AnnotationEditorParamsType.HIGHLIGHT_COLOR:
-        HighlightEditor._defaultColor = value;
-        break;
-      case AnnotationEditorParamsType.HIGHLIGHT_THICKNESS:
-        HighlightEditor._defaultThickness = value;
-        break;
-    }
-  }
   translateInPage(x, y) {}
   get toolbarPosition() {
-    return this.#lastPoint;
+    return this.#relativeToBox(this._drawOutlines.focusOutline.lastPoint);
   }
   get commentButtonPosition() {
-    return this.#firstPoint;
+    return this.#relativeToBox(this._drawOutlines.firstPoint);
+  }
+  #relativeToBox([pointX, pointY]) {
+    const [x, y, width, height] = this._drawOutlines.box;
+    return [(pointX - x) / width, (pointY - y) / height];
   }
   updateParams(type, value) {
     switch (type) {
       case AnnotationEditorParamsType.HIGHLIGHT_COLOR:
-        this.#updateColor(value);
+        this._updateColorAndOpacity(value, HighlightEditor._DEFAULT_OPACITY, type);
+        this._reportTelemetry({
+          action: "color_changed",
+          color: this._uiManager.getNonHCMColorName(value)
+        }, true);
         break;
       case AnnotationEditorParamsType.HIGHLIGHT_THICKNESS:
-        this.#updateThickness(value);
+        super.updateParams(type, value);
+        this._reportTelemetry({
+          action: "thickness_changed",
+          thickness: value
+        }, true);
         break;
     }
   }
-  static get defaultPropertiesToUpdate() {
-    return [[AnnotationEditorParamsType.HIGHLIGHT_COLOR, HighlightEditor._defaultColor], [AnnotationEditorParamsType.HIGHLIGHT_THICKNESS, HighlightEditor._defaultThickness]];
-  }
   get propertiesToUpdate() {
-    return [[AnnotationEditorParamsType.HIGHLIGHT_COLOR, this.color || HighlightEditor._defaultColor], [AnnotationEditorParamsType.HIGHLIGHT_THICKNESS, this.#thickness || HighlightEditor._defaultThickness], [AnnotationEditorParamsType.HIGHLIGHT_FREE, this.#isFreeHighlight]];
-  }
-  onUpdatedColor() {
-    this.parent?.drawLayer.updateProperties(this.#id, {
-      root: {
-        fill: this.color,
-        "fill-opacity": this.opacity
-      }
-    });
-    this.#colorPicker?.updateColor(this.color);
-    super.onUpdatedColor();
-  }
-  #updateColor(color) {
-    const setColorAndOpacity = (col, opa) => {
-      this.color = col;
-      this.opacity = opa;
-      this.onUpdatedColor();
-    };
-    const savedColor = this.color;
-    const savedOpacity = this.opacity;
-    this.addCommands({
-      cmd: setColorAndOpacity.bind(this, color, HighlightEditor._defaultOpacity),
-      undo: setColorAndOpacity.bind(this, savedColor, savedOpacity),
-      post: this._uiManager.updateUI.bind(this._uiManager, this),
-      mustExec: true,
-      type: AnnotationEditorParamsType.HIGHLIGHT_COLOR,
-      overwriteIfSameType: true,
-      keepUndo: true
-    });
-    this._reportTelemetry({
-      action: "color_changed",
-      color: this._uiManager.getNonHCMColorName(color)
-    }, true);
-  }
-  #updateThickness(thickness) {
-    const savedThickness = this.#thickness;
-    const setThickness = th => {
-      this.#thickness = th;
-      this.#changeThickness(th);
-    };
-    this.addCommands({
-      cmd: setThickness.bind(this, thickness),
-      undo: setThickness.bind(this, savedThickness),
-      post: this._uiManager.updateUI.bind(this._uiManager, this),
-      mustExec: true,
-      type: AnnotationEditorParamsType.INK_THICKNESS,
-      overwriteIfSameType: true,
-      keepUndo: true
-    });
-    this._reportTelemetry({
-      action: "thickness_changed",
-      thickness
-    }, true);
+    const properties = super.propertiesToUpdate;
+    properties.push([AnnotationEditorParamsType.HIGHLIGHT_FREE, this._drawOutlines.isFree]);
+    return properties;
   }
   get toolbarButtons() {
     if (this._uiManager.highlightColors) {
-      const colorPicker = this.#colorPicker = new ColorPicker({
+      this._colorPicker = new ColorPicker({
         editor: this
       });
-      return [["colorPicker", colorPicker]];
+      return [["colorPicker", this._colorPicker]];
     }
     return super.toolbarButtons;
   }
-  disableEditing() {
-    super.disableEditing();
-    this.div.classList.toggle("disabled", true);
-  }
-  enableEditing() {
-    super.enableEditing();
-    this.div.classList.toggle("disabled", false);
-  }
   fixAndSetPosition() {
-    return super.fixAndSetPosition(this.#getRotation());
-  }
-  getBaseTranslation() {
-    return [0, 0];
+    return super.fixAndSetPosition(this._drawRotation);
   }
   getRect(tx, ty) {
-    return super.getRect(tx, ty, this.#getRotation());
+    return super.getRect(tx, ty, this._drawRotation);
   }
   onceAdded(focus) {
     if (!this.annotationElementId) {
@@ -21863,128 +30195,10 @@ class HighlightEditor extends AnnotationEditor {
     }
   }
   remove() {
-    this.#cleanDrawLayer();
     this._reportTelemetry({
       action: "deleted"
     });
     super.remove();
-  }
-  rebuild() {
-    if (!this.parent) {
-      return;
-    }
-    super.rebuild();
-    if (this.div === null) {
-      return;
-    }
-    this.#addToDrawLayer();
-    if (!this.isAttachedToDOM) {
-      this.parent.add(this);
-    }
-  }
-  setParent(parent) {
-    let mustBeSelected = false;
-    if (this.parent && !parent) {
-      this.#cleanDrawLayer();
-    } else if (parent) {
-      this.#addToDrawLayer(parent);
-      mustBeSelected = !this.parent && this.div?.classList.contains("selectedEditor");
-    }
-    super.setParent(parent);
-    this.show(this._isVisible);
-    if (mustBeSelected) {
-      this.select();
-    }
-  }
-  #changeThickness(thickness) {
-    if (!this.#isFreeHighlight) {
-      return;
-    }
-    this.#createFreeOutlines({
-      highlightOutlines: this.#highlightOutlines.getNewOutline(thickness / 2)
-    });
-    this.fixAndSetPosition();
-    this.setDims();
-  }
-  #cleanDrawLayer() {
-    if (this.#id === null || !this.parent) {
-      return;
-    }
-    this.parent.drawLayer.remove(this.#id);
-    this.#id = null;
-    this.parent.drawLayer.remove(this.#outlineId);
-    this.#outlineId = null;
-  }
-  #addToDrawLayer(parent = this.parent) {
-    if (this.#id !== null) {
-      return;
-    }
-    ({
-      id: this.#id,
-      clipPathId: this.#clipPathId
-    } = parent.drawLayer.draw({
-      bbox: this.#highlightOutlines.box,
-      root: {
-        viewBox: "0 0 1 1",
-        fill: this.color,
-        "fill-opacity": this.opacity
-      },
-      rootClass: {
-        highlight: true,
-        free: this.#isFreeHighlight
-      },
-      path: {
-        d: this.#highlightOutlines.toSVGPath()
-      }
-    }, false, true));
-    this.#outlineId = parent.drawLayer.drawOutline({
-      rootClass: {
-        highlightOutline: true,
-        free: this.#isFreeHighlight
-      },
-      bbox: this.#focusOutlines.box,
-      path: {
-        d: this.#focusOutlines.toSVGPath()
-      }
-    }, this.#isFreeHighlight);
-    if (this.#highlightDiv) {
-      this.#highlightDiv.style.clipPath = this.#clipPathId;
-    }
-  }
-  static #rotateBbox([x, y, width, height], angle) {
-    switch (angle) {
-      case 90:
-        return [1 - y - height, x, height, width];
-      case 180:
-        return [1 - x - width, 1 - y - height, width, height];
-      case 270:
-        return [y, 1 - x - width, height, width];
-    }
-    return [x, y, width, height];
-  }
-  rotate(angle) {
-    const {
-      drawLayer
-    } = this.parent;
-    let box;
-    if (this.#isFreeHighlight) {
-      angle = (angle - this.rotation + 360) % 360;
-      box = HighlightEditor.#rotateBbox(this.#highlightOutlines.box, angle);
-    } else {
-      box = HighlightEditor.#rotateBbox([this.x, this.y, this.width, this.height], angle);
-    }
-    drawLayer.updateProperties(this.#id, {
-      bbox: box,
-      root: {
-        "data-main-rotation": angle
-      }
-    });
-    drawLayer.updateProperties(this.#outlineId, {
-      bbox: HighlightEditor.#rotateBbox(this.#focusOutlines.box, angle),
-      root: {
-        "data-main-rotation": angle
-      }
-    });
   }
   render() {
     if (this.div) {
@@ -21995,40 +30209,15 @@ class HighlightEditor extends AnnotationEditor {
       div.setAttribute("aria-label", this.#text);
       div.setAttribute("role", "mark");
     }
-    if (this.#isFreeHighlight) {
+    if (this._drawOutlines.isFree) {
       div.classList.add("free");
     } else {
-      this.div.addEventListener("keydown", this.#keydown.bind(this), {
+      div.addEventListener("keydown", this.#keydown.bind(this), {
         signal: this._uiManager._signal
       });
     }
-    const highlightDiv = this.#highlightDiv = document.createElement("div");
-    div.append(highlightDiv);
-    highlightDiv.setAttribute("aria-hidden", "true");
-    highlightDiv.className = "internal";
-    highlightDiv.style.clipPath = this.#clipPathId;
-    this.setDims();
-    bindEvents(this, this.#highlightDiv, ["pointerover", "pointerleave"]);
     this.enableEditing();
     return div;
-  }
-  pointerover() {
-    if (!this.isSelected) {
-      this.parent?.drawLayer.updateProperties(this.#outlineId, {
-        rootClass: {
-          hovered: true
-        }
-      });
-    }
-  }
-  pointerleave() {
-    if (!this.isSelected) {
-      this.parent?.drawLayer.updateProperties(this.#outlineId, {
-        rootClass: {
-          hovered: false
-        }
-      });
-    }
   }
   #keydown(event) {
     HighlightEditor._keyboardManager.exec(this, event);
@@ -22057,102 +30246,38 @@ class HighlightEditor extends AnnotationEditor {
       selection.setPosition(this.#focusNode, this.#focusOffset);
     }
   }
-  select() {
-    super.select();
-    if (!this.#outlineId) {
-      return;
-    }
-    this.parent?.drawLayer.updateProperties(this.#outlineId, {
-      rootClass: {
-        hovered: false,
-        selected: true
-      }
-    });
-  }
   unselect() {
     super.unselect();
-    if (!this.#outlineId) {
-      return;
-    }
-    this.parent?.drawLayer.updateProperties(this.#outlineId, {
-      rootClass: {
-        selected: false
-      }
-    });
-    if (!this.#isFreeHighlight) {
+    if (!this._drawOutlines.isFree) {
       this.#setCaret(false);
     }
   }
-  get _mustFixPosition() {
-    return !this.#isFreeHighlight;
+  static createDrawerInstance({
+    x,
+    y,
+    box,
+    parent,
+    isLTR
+  }) {
+    return new FreeHighlightDrawer(x, y, box, parent.scale, this._defaultDrawingOptions.thickness / 2, isLTR, 0.001);
   }
-  show(visible = this._isVisible) {
-    super.show(visible);
-    if (this.parent) {
-      this.parent.drawLayer.updateProperties(this.#id, {
-        rootClass: {
-          hidden: !visible
-        }
-      });
-      this.parent.drawLayer.updateProperties(this.#outlineId, {
-        rootClass: {
-          hidden: !visible
-        }
-      });
-    }
+  static _getDrawingTarget(parent, {
+    target
+  }) {
+    return target.closest(".textLayer");
   }
-  #getRotation() {
-    return this.#isFreeHighlight ? this.rotation : 0;
-  }
-  #serializeBoxes() {
-    if (this.#isFreeHighlight) {
-      return null;
-    }
-    const [pageWidth, pageHeight] = this.pageDimensions;
-    const [pageX, pageY] = this.pageTranslation;
-    const boxes = this.#boxes;
-    const quadPoints = new Float32Array(boxes.length * 8);
-    let i = 0;
-    for (const {
-      x,
-      y,
-      width,
-      height
-    } of boxes) {
-      const sx = x * pageWidth + pageX;
-      const sy = (1 - y) * pageHeight + pageY;
-      quadPoints[i] = quadPoints[i + 4] = sx;
-      quadPoints[i + 1] = quadPoints[i + 3] = sy;
-      quadPoints[i + 2] = quadPoints[i + 6] = sx + width * pageWidth;
-      quadPoints[i + 5] = quadPoints[i + 7] = sy - height * pageHeight;
-      i += 8;
-    }
-    return quadPoints;
-  }
-  #serializeOutlines(rect) {
-    return this.#highlightOutlines.serialize(rect, this.#getRotation());
-  }
-  static startHighlighting(parent, isLTR, {
-    target: textLayer,
+  static _getPointerCoords({
     x,
     y
   }) {
-    const {
-      x: layerX,
-      y: layerY,
-      width: parentWidth,
-      height: parentHeight
-    } = textLayer.getBoundingClientRect();
-    const ac = new AbortController();
-    const signal = parent.combinedSignal(ac);
-    const pointerUpCallback = e => {
-      ac.abort();
-      this.#endHighlight(parent, e);
-    };
-    window.addEventListener("blur", pointerUpCallback, {
-      signal
+    return [x, y];
+  }
+  static _addDrawingListeners(target, signal) {
+    target.classList.add("free");
+    signal.addEventListener("abort", () => target.classList.remove("free"), {
+      once: true
     });
-    window.addEventListener("pointerup", pointerUpCallback, {
+    window.addEventListener("blur", () => this._endDraw(null), {
       signal
     });
     window.addEventListener("pointerdown", stopEvent, {
@@ -22160,58 +30285,50 @@ class HighlightEditor extends AnnotationEditor {
       passive: false,
       signal
     });
-    window.addEventListener("contextmenu", noContextMenu, {
-      signal
+  }
+  static _endDrawingSession(isAborted = false) {
+    return this.endDrawing(isAborted);
+  }
+  createDrawingOptions({
+    color,
+    opacity,
+    thickness
+  }) {
+    const {
+      _defaultDrawingOptions: defaults,
+      _DEFAULT_OPACITY
+    } = HighlightEditor;
+    this._drawingOptions = HighlightEditor.getDefaultDrawingOptions({
+      fill: Util.makeHexColor(...color),
+      "fill-opacity": opacity || _DEFAULT_OPACITY,
+      thickness: thickness || defaults.thickness
     });
-    textLayer.addEventListener("pointermove", this.#highlightMove.bind(this, parent), {
-      signal
-    });
-    this._freeHighlight = new FreeHighlightOutliner({
-      x,
-      y
-    }, [layerX, layerY, parentWidth, parentHeight], parent.scale, this._defaultThickness / 2, isLTR, 0.001);
-    ({
-      id: this._freeHighlightId,
-      clipPathId: this._freeHighlightClipId
-    } = parent.drawLayer.draw({
-      bbox: [0, 0, 1, 1],
-      root: {
-        viewBox: "0 0 1 1",
-        fill: this._defaultColor,
-        "fill-opacity": this._defaultOpacity
-      },
-      rootClass: {
-        highlight: true,
-        free: true
-      },
-      path: {
-        d: this._freeHighlight.toSVGPath()
+  }
+  static deserializeDraw(pageX, pageY, pageWidth, pageHeight, _innerMargin, data, uiManager) {
+    const {
+      quadPoints
+    } = data;
+    if (quadPoints) {
+      const boxes = [];
+      for (let i = 0, ii = quadPoints.length; i < ii; i += 8) {
+        boxes.push({
+          x: (quadPoints[i] - pageX) / pageWidth,
+          y: 1 - (quadPoints[i + 1] - pageY) / pageHeight,
+          width: (quadPoints[i + 2] - quadPoints[i]) / pageWidth,
+          height: (quadPoints[i + 1] - quadPoints[i + 5]) / pageHeight
+        });
       }
-    }, true, true));
-  }
-  static #highlightMove(parent, event) {
-    if (this._freeHighlight.add(event)) {
-      parent.drawLayer.updateProperties(this._freeHighlightId, {
-        path: {
-          d: this._freeHighlight.toSVGPath()
-        }
-      });
+      return HighlightOutline.build(boxes, uiManager.direction === "ltr");
     }
-  }
-  static #endHighlight(parent, event) {
-    if (!this._freeHighlight.isEmpty()) {
-      parent.createAndAddNewEditor(event, false, {
-        highlightId: this._freeHighlightId,
-        highlightOutlines: this._freeHighlight.getOutlines(),
-        clipPathId: this._freeHighlightClipId,
-        methodOfCreation: "main_toolbar"
-      });
-    } else {
-      parent.drawLayer.remove(this._freeHighlightId);
+    const thickness = data.thickness || this._defaultDrawingOptions.thickness;
+    const points = (data.inkLists || data.outlines.points)[0];
+    const outliner = new FreeHighlightOutliner(points[0] - pageX, pageHeight - (points[1] - pageY), [0, 0, pageWidth, pageHeight], 1, thickness / 2, true, 0.001);
+    for (let i = 0, ii = points.length; i < ii; i += 2) {
+      outliner.add(points[i] - pageX, pageHeight - (points[i + 1] - pageY));
     }
-    this._freeHighlightId = -1;
-    this._freeHighlight = null;
-    this._freeHighlightClipId = "";
+    const outlines = outliner.getOutlines();
+    outlines.buildFocusOutline(thickness);
+    return outlines;
   }
   static async deserialize(data, parent, uiManager) {
     let initialData = null;
@@ -22241,7 +30358,6 @@ class HighlightEditor extends AnnotationEditor {
         color: Array.from(color),
         opacity,
         quadPoints,
-        boxes: null,
         pageIndex: pageNumber - 1,
         rect: rect.slice(0),
         rotation,
@@ -22282,7 +30398,6 @@ class HighlightEditor extends AnnotationEditor {
         color: Array.from(color),
         thickness,
         inkLists,
-        boxes: null,
         pageIndex: pageNumber - 1,
         rect: rect.slice(0),
         rotation,
@@ -22296,76 +30411,10 @@ class HighlightEditor extends AnnotationEditor {
         modificationDate
       };
     }
-    const {
-      color,
-      quadPoints,
-      inkLists,
-      outlines,
-      opacity
-    } = data;
     const editor = await super.deserialize(data, parent, uiManager);
-    editor.color = Util.makeHexColor(...color);
-    editor.opacity = opacity || 1;
-    if (inkLists) {
-      editor.#thickness = data.thickness;
-    }
     editor._initialData = initialData;
     if (data.comment) {
       editor.setCommentData(data);
-    }
-    const [pageWidth, pageHeight] = editor.pageDimensions;
-    const [pageX, pageY] = editor.pageTranslation;
-    if (quadPoints) {
-      const boxes = editor.#boxes = [];
-      for (let i = 0; i < quadPoints.length; i += 8) {
-        boxes.push({
-          x: (quadPoints[i] - pageX) / pageWidth,
-          y: 1 - (quadPoints[i + 1] - pageY) / pageHeight,
-          width: (quadPoints[i + 2] - quadPoints[i]) / pageWidth,
-          height: (quadPoints[i + 1] - quadPoints[i + 5]) / pageHeight
-        });
-      }
-      editor.#createOutlines();
-      editor.#addToDrawLayer();
-      editor.rotate(editor.rotation);
-    } else if (inkLists || outlines) {
-      editor.#isFreeHighlight = true;
-      const points = (inkLists || outlines.points)[0];
-      const point = {
-        x: points[0] - pageX,
-        y: pageHeight - (points[1] - pageY)
-      };
-      const outliner = new FreeHighlightOutliner(point, [0, 0, pageWidth, pageHeight], 1, editor.#thickness / 2, true, 0.001);
-      for (let i = 0, ii = points.length; i < ii; i += 2) {
-        point.x = points[i] - pageX;
-        point.y = pageHeight - (points[i + 1] - pageY);
-        outliner.add(point);
-      }
-      const {
-        id,
-        clipPathId
-      } = parent.drawLayer.draw({
-        bbox: [0, 0, 1, 1],
-        root: {
-          viewBox: "0 0 1 1",
-          fill: editor.color,
-          "fill-opacity": editor._defaultOpacity
-        },
-        rootClass: {
-          highlight: true,
-          free: true
-        },
-        path: {
-          d: outliner.toSVGPath()
-        }
-      }, true, true);
-      editor.#createFreeOutlines({
-        highlightOutlines: outliner.getOutlines(),
-        highlightId: id,
-        clipPathId
-      });
-      editor.#addToDrawLayer();
-      editor.rotate(editor.parentRotation);
     }
     return editor;
   }
@@ -22376,14 +30425,13 @@ class HighlightEditor extends AnnotationEditor {
     if (this.deleted) {
       return this.serializeDeleted();
     }
-    const color = AnnotationEditor._colorManager.convert(this._uiManager.getNonHCMColor(this.color));
     const serialized = super.serialize(isForCopying);
     Object.assign(serialized, {
-      color,
+      color: AnnotationEditor._colorManager.convert(this._uiManager.getNonHCMColor(this.color)),
       opacity: this.opacity,
-      thickness: this.#thickness,
-      quadPoints: this.#serializeBoxes(),
-      outlines: this.#serializeOutlines(serialized.rect)
+      thickness: this._drawingOptions.thickness,
+      quadPoints: this._drawOutlines.serializeQuadPoints(this.pageTranslation, this.pageDimensions),
+      outlines: this._drawOutlines.serialize(serialized.rect, this._drawRotation)
     });
     this.addComment(serialized);
     if (this.annotationElementId && !this.#hasElementChanged(serialized)) {
@@ -22409,650 +30457,19 @@ class HighlightEditor extends AnnotationEditor {
     });
     return null;
   }
-  static canCreateNewEmptyEditor() {
-    return false;
-  }
-}
-
-;// ./src/display/editor/draw.js
-
-
-
-
-class DrawingOptions {
-  #svgProperties = Object.create(null);
-  updateProperty(name, value) {
-    this[name] = value;
-    this.updateSVGProperty(name, value);
-  }
-  updateProperties(properties) {
-    if (!properties) {
-      return;
-    }
-    for (const [name, value] of Object.entries(properties)) {
-      if (!name.startsWith("_")) {
-        this.updateProperty(name, value);
-      }
-    }
-  }
-  updateSVGProperty(name, value) {
-    this.#svgProperties[name] = value;
-  }
-  toSVGProperties() {
-    const root = this.#svgProperties;
-    this.#svgProperties = Object.create(null);
-    return {
-      root
-    };
-  }
-  reset() {
-    this.#svgProperties = Object.create(null);
-  }
-  updateAll(options = this) {
-    this.updateProperties(options);
-  }
-  clone() {
-    unreachable("Not implemented");
-  }
-}
-class DrawingEditor extends AnnotationEditor {
-  #drawOutlines = null;
-  #mustBeCommitted;
-  _colorPicker = null;
-  _drawId = null;
-  static _currentDrawId = -1;
-  static _currentParent = null;
-  static #currentDraw = null;
-  static #currentDrawingAC = null;
-  static #currentDrawingOptions = null;
-  static _INNER_MARGIN = 3;
-  constructor(params) {
-    super(params);
-    this.#mustBeCommitted = params.mustBeCommitted || false;
-    this._addOutlines(params);
-  }
-  onUpdatedColor() {
-    this._colorPicker?.update(this.color);
-    super.onUpdatedColor();
-  }
-  _addOutlines(params) {
-    if (params.drawOutlines) {
-      this.#createDrawOutlines(params);
-      this.#addToDrawLayer();
-    }
-  }
-  #createDrawOutlines({
-    drawOutlines,
-    drawId,
-    drawingOptions
-  }) {
-    this.#drawOutlines = drawOutlines;
-    this._drawingOptions ||= drawingOptions;
-    if (!this.annotationElementId) {
-      this._uiManager.a11yAlert(`pdfjs-editor-${this.editorType}-added-alert`);
-    }
-    if (drawId >= 0) {
-      this._drawId = drawId;
-      this.parent.drawLayer.finalizeDraw(drawId, drawOutlines.defaultProperties);
-    } else {
-      this._drawId = this.#createDrawing(drawOutlines, this.parent);
-    }
-    this.#updateBbox(drawOutlines.box);
-  }
-  #createDrawing(drawOutlines, parent) {
-    const {
-      id
-    } = parent.drawLayer.draw(DrawingEditor._mergeSVGProperties(this._drawingOptions.toSVGProperties(), drawOutlines.defaultSVGProperties), false, false);
-    return id;
-  }
-  static _mergeSVGProperties(p1, p2) {
-    const p1Keys = new Set(Object.keys(p1));
-    for (const [key, value] of Object.entries(p2)) {
-      if (p1Keys.has(key)) {
-        Object.assign(p1[key], value);
-      } else {
-        p1[key] = value;
-      }
-    }
-    return p1;
-  }
-  static getDefaultDrawingOptions(_options) {
-    unreachable("Not implemented");
-  }
-  static get typesMap() {
-    unreachable("Not implemented");
-  }
-  static get isDrawer() {
-    return true;
-  }
-  static get supportMultipleDrawings() {
-    return false;
-  }
-  static updateDefaultParams(type, value) {
-    const propertyName = this.typesMap.get(type);
-    if (propertyName) {
-      this._defaultDrawingOptions.updateProperty(propertyName, value);
-    }
-    if (this._currentParent) {
-      DrawingEditor.#currentDraw.updateProperty(propertyName, value);
-      this._currentParent.drawLayer.updateProperties(this._currentDrawId, this._defaultDrawingOptions.toSVGProperties());
-    }
-  }
-  updateParams(type, value) {
-    const propertyName = this.constructor.typesMap.get(type);
-    if (propertyName) {
-      this._updateProperty(type, propertyName, value);
-    }
-  }
-  static get defaultPropertiesToUpdate() {
-    const properties = [];
-    const options = this._defaultDrawingOptions;
-    for (const [type, name] of this.typesMap) {
-      properties.push([type, options[name]]);
-    }
-    return properties;
-  }
-  get propertiesToUpdate() {
-    const properties = [];
-    const {
-      _drawingOptions
-    } = this;
-    for (const [type, name] of this.constructor.typesMap) {
-      properties.push([type, _drawingOptions[name]]);
-    }
-    return properties;
-  }
-  _updateProperty(type, name, value) {
-    const options = this._drawingOptions;
-    const savedValue = options[name];
-    const setter = val => {
-      options.updateProperty(name, val);
-      const bbox = this.#drawOutlines.updateProperty(name, val);
-      if (bbox) {
-        this.#updateBbox(bbox);
-      }
-      this.parent?.drawLayer.updateProperties(this._drawId, options.toSVGProperties());
-      if (type === this.colorType) {
-        this.onUpdatedColor();
-      }
-    };
-    this.addCommands({
-      cmd: setter.bind(this, value),
-      undo: setter.bind(this, savedValue),
-      post: this._uiManager.updateUI.bind(this._uiManager, this),
-      mustExec: true,
-      type,
-      overwriteIfSameType: true,
-      keepUndo: true
-    });
-  }
-  _onResizing() {
-    this.parent?.drawLayer.updateProperties(this._drawId, DrawingEditor._mergeSVGProperties(this.#drawOutlines.getPathResizingSVGProperties(this.#convertToDrawSpace()), {
-      bbox: this.#rotateBox()
-    }));
-  }
-  _onResized() {
-    this.parent?.drawLayer.updateProperties(this._drawId, DrawingEditor._mergeSVGProperties(this.#drawOutlines.getPathResizedSVGProperties(this.#convertToDrawSpace()), {
-      bbox: this.#rotateBox()
-    }));
-  }
-  _onTranslating(_x, _y) {
-    this.parent?.drawLayer.updateProperties(this._drawId, {
-      bbox: this.#rotateBox()
-    });
-  }
-  _onTranslated() {
-    this.parent?.drawLayer.updateProperties(this._drawId, DrawingEditor._mergeSVGProperties(this.#drawOutlines.getPathTranslatedSVGProperties(this.#convertToDrawSpace(), this.parentDimensions), {
-      bbox: this.#rotateBox()
-    }));
-  }
-  _onStartDragging() {
-    this.parent?.drawLayer.updateProperties(this._drawId, {
-      rootClass: {
-        moving: true
-      }
-    });
-  }
-  _onStopDragging() {
-    this.parent?.drawLayer.updateProperties(this._drawId, {
-      rootClass: {
-        moving: false
-      }
-    });
-  }
-  commit() {
-    super.commit();
-    this.disableEditMode();
-    this.disableEditing();
-  }
-  disableEditing() {
-    super.disableEditing();
-    this.div.classList.toggle("disabled", true);
-  }
-  enableEditing() {
-    super.enableEditing();
-    this.div.classList.toggle("disabled", false);
-  }
-  getBaseTranslation() {
-    return [0, 0];
-  }
-  get isResizable() {
-    return true;
-  }
-  onceAdded(focus) {
-    if (!this.annotationElementId) {
-      this.parent.addUndoableEditor(this);
-    }
-    this._isDraggable = true;
-    if (this.#mustBeCommitted) {
-      this.#mustBeCommitted = false;
-      this.commit();
-      this.parent.setSelected(this);
-      if (focus && this.isOnScreen) {
-        this.div.focus();
-      }
-    }
-  }
-  remove() {
-    this.#cleanDrawLayer();
-    super.remove();
-  }
-  rebuild() {
-    if (!this.parent) {
-      return;
-    }
-    super.rebuild();
-    if (this.div === null) {
-      return;
-    }
-    this.#addToDrawLayer();
-    this.#updateBbox(this.#drawOutlines.box);
-    if (!this.isAttachedToDOM) {
-      this.parent.add(this);
-    }
-  }
-  setParent(parent) {
-    let mustBeSelected = false;
-    if (this.parent && !parent) {
-      this._uiManager.removeShouldRescale(this);
-      this.#cleanDrawLayer();
-    } else if (parent) {
-      this._uiManager.addShouldRescale(this);
-      this.#addToDrawLayer(parent);
-      mustBeSelected = !this.parent && this.div?.classList.contains("selectedEditor");
-    }
-    super.setParent(parent);
-    if (mustBeSelected) {
-      this.select();
-    }
-  }
-  #cleanDrawLayer() {
-    if (this._drawId === null || !this.parent) {
-      return;
-    }
-    this.parent.drawLayer.remove(this._drawId);
-    this._drawId = null;
-    this._drawingOptions.reset();
-  }
-  #addToDrawLayer(parent = this.parent) {
-    if (this._drawId !== null && this.parent === parent) {
-      return;
-    }
-    if (this._drawId !== null) {
-      this.parent.drawLayer.updateParent(this._drawId, parent.drawLayer);
-      return;
-    }
-    this._drawingOptions.updateAll();
-    this._drawId = this.#createDrawing(this.#drawOutlines, parent);
-  }
-  #convertToParentSpace([x, y, width, height]) {
-    const {
-      parentDimensions: [pW, pH],
-      rotation
-    } = this;
-    switch (rotation) {
-      case 90:
-        return [y, 1 - x, width * (pH / pW), height * (pW / pH)];
-      case 180:
-        return [1 - x, 1 - y, width, height];
-      case 270:
-        return [1 - y, x, width * (pH / pW), height * (pW / pH)];
-      default:
-        return [x, y, width, height];
-    }
-  }
-  #convertToDrawSpace() {
-    const {
-      x,
-      y,
-      width,
-      height,
-      parentDimensions: [pW, pH],
-      rotation
-    } = this;
-    switch (rotation) {
-      case 90:
-        return [1 - y, x, width * (pW / pH), height * (pH / pW)];
-      case 180:
-        return [1 - x, 1 - y, width, height];
-      case 270:
-        return [y, 1 - x, width * (pW / pH), height * (pH / pW)];
-      default:
-        return [x, y, width, height];
-    }
-  }
-  #updateBbox(bbox) {
-    [this.x, this.y, this.width, this.height] = this.#convertToParentSpace(bbox);
-    if (this.div) {
-      this.fixAndSetPosition();
-      this.setDims();
-    }
-    this._onResized();
-  }
-  #rotateBox() {
-    const {
-      x,
-      y,
-      width,
-      height,
-      rotation,
-      parentRotation,
-      parentDimensions: [pW, pH]
-    } = this;
-    switch ((rotation * 4 + parentRotation) / 90) {
-      case 1:
-        return [1 - y - height, x, height, width];
-      case 2:
-        return [1 - x - width, 1 - y - height, width, height];
-      case 3:
-        return [y, 1 - x - width, height, width];
-      case 4:
-        return [x, y - width * (pW / pH), height * (pH / pW), width * (pW / pH)];
-      case 5:
-        return [1 - y, x, width * (pW / pH), height * (pH / pW)];
-      case 6:
-        return [1 - x - height * (pH / pW), 1 - y, height * (pH / pW), width * (pW / pH)];
-      case 7:
-        return [y - width * (pW / pH), 1 - x - height * (pH / pW), width * (pW / pH), height * (pH / pW)];
-      case 8:
-        return [x - width, y - height, width, height];
-      case 9:
-        return [1 - y, x - width, height, width];
-      case 10:
-        return [1 - x, 1 - y, width, height];
-      case 11:
-        return [y - height, 1 - x, height, width];
-      case 12:
-        return [x - height * (pH / pW), y, height * (pH / pW), width * (pW / pH)];
-      case 13:
-        return [1 - y - width * (pW / pH), x - height * (pH / pW), width * (pW / pH), height * (pH / pW)];
-      case 14:
-        return [1 - x, 1 - y - width * (pW / pH), height * (pH / pW), width * (pW / pH)];
-      case 15:
-        return [y, 1 - x, width * (pW / pH), height * (pH / pW)];
-      default:
-        return [x, y, width, height];
-    }
-  }
-  rotate() {
-    if (!this.parent) {
-      return;
-    }
-    this.parent.drawLayer.updateProperties(this._drawId, DrawingEditor._mergeSVGProperties({
-      bbox: this.#rotateBox()
-    }, this.#drawOutlines.updateRotation((this.parentRotation - this.rotation + 360) % 360)));
-  }
-  onScaleChanging() {
-    if (!this.parent) {
-      return;
-    }
-    this.#updateBbox(this.#drawOutlines.updateParentDimensions(this.parentDimensions, this.parent.scale));
-  }
-  static onScaleChangingWhenDrawing() {}
-  render() {
-    if (this.div) {
-      return this.div;
-    }
-    let baseX, baseY;
-    if (this._isCopy) {
-      baseX = this.x;
-      baseY = this.y;
-    }
-    const div = super.render();
-    div.classList.add("draw");
-    const drawDiv = document.createElement("div");
-    div.append(drawDiv);
-    drawDiv.setAttribute("aria-hidden", "true");
-    drawDiv.className = "internal";
-    this.setDims();
-    this._uiManager.addShouldRescale(this);
-    this.disableEditing();
-    if (this._isCopy) {
-      this._moveAfterPaste(baseX, baseY);
-    }
-    return div;
-  }
-  static createDrawerInstance(_x, _y, _parentWidth, _parentHeight, _rotation) {
-    unreachable("Not implemented");
-  }
-  static startDrawing(parent, uiManager, _isLTR, event) {
-    const {
-      target,
-      offsetX: x,
-      offsetY: y,
-      pointerId,
-      pointerType
-    } = event;
-    if (CurrentPointers.isInitializedAndDifferentPointerType(pointerType)) {
-      return;
-    }
-    const {
-      viewport: {
-        rotation
-      }
-    } = parent;
-    const {
-      width: parentWidth,
-      height: parentHeight
-    } = target.getBoundingClientRect();
-    const ac = DrawingEditor.#currentDrawingAC = new AbortController();
-    const signal = parent.combinedSignal(ac);
-    CurrentPointers.setPointer(pointerType, pointerId);
-    window.addEventListener("pointerup", e => {
-      if (CurrentPointers.isSamePointerIdOrRemove(e.pointerId)) {
-        this._endDraw(e);
-      }
-    }, {
-      signal
-    });
-    window.addEventListener("pointercancel", e => {
-      if (CurrentPointers.isSamePointerIdOrRemove(e.pointerId)) {
-        this._currentParent.endDrawingSession();
-      }
-    }, {
-      signal
-    });
-    window.addEventListener("pointerdown", e => {
-      if (!CurrentPointers.isSamePointerType(e.pointerType)) {
-        return;
-      }
-      CurrentPointers.initializeAndAddPointerId(e.pointerId);
-      if (DrawingEditor.#currentDraw.isCancellable()) {
-        DrawingEditor.#currentDraw.removeLastElement();
-        if (DrawingEditor.#currentDraw.isEmpty()) {
-          this._currentParent.endDrawingSession(true);
-        } else {
-          this._endDraw(null);
-        }
-      }
-    }, {
-      capture: true,
-      passive: false,
-      signal
-    });
-    window.addEventListener("contextmenu", noContextMenu, {
-      signal
-    });
-    target.addEventListener("pointermove", this._drawMove.bind(this), {
-      signal
-    });
-    target.addEventListener("touchmove", e => {
-      if (CurrentPointers.isSameTimeStamp(e.timeStamp)) {
-        stopEvent(e);
-      }
-    }, {
-      signal
-    });
-    parent.toggleDrawing();
-    uiManager._editorUndoBar?.hide();
-    if (DrawingEditor.#currentDraw) {
-      parent.drawLayer.updateProperties(this._currentDrawId, DrawingEditor.#currentDraw.startNew(x, y, parentWidth, parentHeight, rotation));
-      return;
-    }
-    uiManager.updateUIForDefaultProperties(this);
-    DrawingEditor.#currentDraw = this.createDrawerInstance(x, y, parentWidth, parentHeight, rotation);
-    DrawingEditor.#currentDrawingOptions = this.getDefaultDrawingOptions();
-    this._currentParent = parent;
-    ({
-      id: this._currentDrawId
-    } = parent.drawLayer.draw(this._mergeSVGProperties(DrawingEditor.#currentDrawingOptions.toSVGProperties(), DrawingEditor.#currentDraw.defaultSVGProperties), true, false));
-  }
-  static _drawMove(event) {
-    CurrentPointers.isSameTimeStamp(event.timeStamp);
-    if (!DrawingEditor.#currentDraw) {
-      return;
-    }
-    const {
-      offsetX,
-      offsetY,
-      pointerId
-    } = event;
-    if (!CurrentPointers.isSamePointerId(pointerId)) {
-      return;
-    }
-    if (CurrentPointers.isUsingMultiplePointers()) {
-      this._endDraw(event);
-      return;
-    }
-    this._currentParent.drawLayer.updateProperties(this._currentDrawId, DrawingEditor.#currentDraw.add(offsetX, offsetY));
-    CurrentPointers.setTimeStamp(event.timeStamp);
-    stopEvent(event);
-  }
-  static _cleanup(all) {
-    if (all) {
-      this._currentDrawId = -1;
-      this._currentParent = null;
-      DrawingEditor.#currentDraw = null;
-      DrawingEditor.#currentDrawingOptions = null;
-      CurrentPointers.clearTimeStamp();
-    }
-    if (DrawingEditor.#currentDrawingAC) {
-      DrawingEditor.#currentDrawingAC.abort();
-      DrawingEditor.#currentDrawingAC = null;
-      CurrentPointers.clearPointerIds();
-    }
-  }
-  static _endDraw(event) {
-    const parent = this._currentParent;
-    if (!parent) {
-      return;
-    }
-    parent.toggleDrawing(true);
-    this._cleanup(false);
-    if (event?.target === parent.div) {
-      parent.drawLayer.updateProperties(this._currentDrawId, DrawingEditor.#currentDraw.end(event.offsetX, event.offsetY));
-    }
-    if (this.supportMultipleDrawings) {
-      const draw = DrawingEditor.#currentDraw;
-      const drawId = this._currentDrawId;
-      const lastElement = draw.getLastElement();
-      parent.addCommands({
-        cmd: () => {
-          parent.drawLayer.updateProperties(drawId, draw.setLastElement(lastElement));
-        },
-        undo: () => {
-          parent.drawLayer.updateProperties(drawId, draw.removeLastElement());
-        },
-        mustExec: false,
-        type: AnnotationEditorParamsType.DRAW_STEP
-      });
-      return;
-    }
-    this.endDrawing(false);
-  }
-  static endDrawing(isAborted) {
-    const parent = this._currentParent;
-    if (!parent) {
-      return null;
-    }
-    parent.toggleDrawing(true);
-    parent.cleanUndoStack(AnnotationEditorParamsType.DRAW_STEP);
-    if (!DrawingEditor.#currentDraw.isEmpty()) {
-      const {
-        pageDimensions: [pageWidth, pageHeight],
-        scale
-      } = parent;
-      const editor = parent.createAndAddNewEditor({
-        offsetX: 0,
-        offsetY: 0
-      }, false, {
-        drawId: this._currentDrawId,
-        drawOutlines: DrawingEditor.#currentDraw.getOutlines(pageWidth * scale, pageHeight * scale, scale, this._INNER_MARGIN),
-        drawingOptions: DrawingEditor.#currentDrawingOptions,
-        mustBeCommitted: !isAborted
-      });
-      this._cleanup(true);
-      return editor;
-    }
-    parent.drawLayer.remove(this._currentDrawId);
-    this._cleanup(true);
-    return null;
-  }
-  createDrawingOptions(_data) {}
-  static deserializeDraw(_pageX, _pageY, _pageWidth, _pageHeight, _innerWidth, _data) {
-    unreachable("Not implemented");
-  }
-  static async deserialize(data, parent, uiManager) {
-    const {
-      rawDims: {
-        pageWidth,
-        pageHeight,
-        pageX,
-        pageY
-      }
-    } = parent.viewport;
-    const drawOutlines = this.deserializeDraw(pageX, pageY, pageWidth, pageHeight, this._INNER_MARGIN, data);
-    const editor = await super.deserialize(data, parent, uiManager);
-    editor.createDrawingOptions(data);
-    editor.#createDrawOutlines({
-      drawOutlines
-    });
-    editor.#addToDrawLayer();
-    editor.onScaleChanging();
-    editor.rotate();
-    return editor;
-  }
-  serializeDraw(isForCopying) {
-    const [pageX, pageY] = this.pageTranslation;
-    const [pageWidth, pageHeight] = this.pageDimensions;
-    return this.#drawOutlines.serialize([pageX, pageY, pageWidth, pageHeight], isForCopying);
-  }
-  renderAnnotationElement(annotation) {
-    annotation.updateEdited({
-      rect: this.getPDFRect()
-    });
-    return null;
-  }
-  static canCreateNewEmptyEditor() {
-    return false;
-  }
 }
 
 ;// ./src/display/editor/drawers/inkdraw.js
 
 
+
+
+
+
+
 class InkDrawOutliner {
   #last = new Float64Array(6);
+  #tip = new Float64Array(2);
   #line;
   #lines;
   #rotation;
@@ -23076,6 +30493,7 @@ class InkDrawOutliner {
       points: this.#points
     }];
     this.#last.set(line, 0);
+    this.#tip.set([x, y], 0);
   }
   updateProperty(name, value) {
     if (name === "stroke-width") {
@@ -23086,45 +30504,72 @@ class InkDrawOutliner {
     return Outline._normalizePoint(x, y, this.#parentWidth, this.#parentHeight, this.#rotation);
   }
   isEmpty() {
-    return !this.#lines || this.#lines.length === 0;
+    return !this.#lines?.length;
   }
   isCancellable() {
     return this.#points.length <= 10;
   }
   add(x, y) {
+    if (this.#add(x, y)) {
+      this.toSVGPath();
+    }
+    return {
+      path: {
+        d: this.#toSVGPathWithTip()
+      }
+    };
+  }
+  addPoints(points) {
+    let needsPathUpdate = false;
+    for (let i = 0, ii = points.length; i < ii; i += 2) {
+      if (!this.#add(points[i], points[i + 1])) {
+        continue;
+      }
+      needsPathUpdate = true;
+      if (this.#points.length <= 6) {
+        this.toSVGPath();
+        needsPathUpdate = false;
+      }
+    }
+    if (needsPathUpdate) {
+      this.toSVGPath();
+    }
+    return {
+      path: {
+        d: this.#toSVGPathWithTip()
+      }
+    };
+  }
+  #add(x, y) {
     [x, y] = this.#normalizePoint(x, y);
+    this.#tip.set([x, y], 0);
     const [x1, y1, x2, y2] = this.#last.subarray(2, 6);
     const diffX = x - x2;
     const diffY = y - y2;
     const d = Math.hypot(this.#parentWidth * diffX, this.#parentHeight * diffY);
     if (d <= 2) {
-      return null;
+      return false;
     }
     this.#points.push(x, y);
     if (isNaN(x1)) {
       this.#last.set([x2, y2, x, y], 2);
       this.#line.push(NaN, NaN, NaN, NaN, x, y);
-      return {
-        path: {
-          d: this.toSVGPath()
-        }
-      };
+      return true;
     }
     if (isNaN(this.#last[0])) {
       this.#line.splice(6, 6);
     }
     this.#last.set([x1, y1, x2, y2, x, y], 0);
     this.#line.push(...Outline.createBezierPoints(x1, y1, x2, y2, x, y));
-    return {
-      path: {
-        d: this.toSVGPath()
-      }
-    };
+    return true;
   }
   end(x, y) {
-    const change = this.add(x, y);
-    if (change) {
-      return change;
+    if (x !== undefined && this.#add(x, y)) {
+      return {
+        path: {
+          d: this.toSVGPath()
+        }
+      };
     }
     if (this.#points.length === 2) {
       return {
@@ -23133,7 +30578,11 @@ class InkDrawOutliner {
         }
       };
     }
-    return null;
+    return {
+      path: {
+        d: this.#lastSVGPath
+      }
+    };
   }
   startNew(x, y, parentWidth, parentHeight, rotation) {
     this.#parentWidth = parentWidth;
@@ -23142,6 +30591,7 @@ class InkDrawOutliner {
     [x, y] = this.#normalizePoint(x, y);
     const line = this.#line = [NaN, NaN, NaN, NaN, x, y];
     this.#points = [x, y];
+    this.#tip.set([x, y], 0);
     const last = this.#lines.at(-1);
     if (last) {
       last.line = new Float32Array(last.line);
@@ -23194,6 +30644,16 @@ class InkDrawOutliner {
         d: this.#lastSVGPath
       }
     };
+  }
+  #toSVGPathWithTip() {
+    const tipX = Outline.svgRound(this.#tip[0]);
+    const tipY = Outline.svgRound(this.#tip[1]);
+    if (this.#points.length === 2) {
+      const firstX = Outline.svgRound(this.#line[4]);
+      const firstY = Outline.svgRound(this.#line[5]);
+      return `${this.#lastSVGPath} M ${firstX} ${firstY} L ${tipX} ${tipY}`;
+    }
+    return `${this.#lastSVGPath} L ${tipX} ${tipY}`;
   }
   toSVGPath() {
     const firstX = Outline.svgRound(this.#line[4]);
@@ -23458,7 +30918,7 @@ class InkDrawOutline extends Outline {
     return [x + marginX, y + marginY, width - 2 * marginX, height - 2 * marginY];
   }
   #computeBbox() {
-    const bbox = this.#bbox = new Float32Array([Infinity, Infinity, -Infinity, -Infinity]);
+    const bbox = this.#bbox = F32_BBOX_INIT.slice();
     for (const {
       line
     } of this.#lines) {
@@ -23489,10 +30949,7 @@ class InkDrawOutline extends Outline {
     return this.#bbox;
   }
   updateProperty(name, value) {
-    if (name === "stroke-width") {
-      return this.#updateThickness(value);
-    }
-    return null;
+    return name === "stroke-width" ? this.#updateThickness(value) : null;
   }
   #updateThickness(thickness) {
     const [oldMarginX, oldMarginY] = this.#getMarginComponents();
@@ -23716,6 +31173,10 @@ class InkDrawOutline extends Outline {
 
 
 
+
+
+
+
 class InkDrawingOptions extends DrawingOptions {
   constructor(viewerParameters) {
     super();
@@ -23768,10 +31229,15 @@ class InkEditor extends DrawingEditor {
     return true;
   }
   static get typesMap() {
-    return shadow(this, "typesMap", new Map([[AnnotationEditorParamsType.INK_THICKNESS, "stroke-width"], [AnnotationEditorParamsType.INK_COLOR, "stroke"], [AnnotationEditorParamsType.INK_OPACITY, "stroke-opacity"]]));
+    return util_shadow(this, "typesMap", new Map([[AnnotationEditorParamsType.INK_THICKNESS, "stroke-width"], [AnnotationEditorParamsType.INK_COLOR, "stroke"], [AnnotationEditorParamsType.INK_OPACITY, "stroke-opacity"]]));
   }
-  static createDrawerInstance(x, y, parentWidth, parentHeight, rotation) {
-    return new InkDrawOutliner(x, y, parentWidth, parentHeight, rotation, this._defaultDrawingOptions["stroke-width"]);
+  static createDrawerInstance({
+    x,
+    y,
+    box: [,, width, height],
+    rotation
+  }) {
+    return new InkDrawOutliner(x, y, width, height, rotation, this._defaultDrawingOptions["stroke-width"]);
   }
   static deserializeDraw(pageX, pageY, pageWidth, pageHeight, innerMargin, data) {
     return InkDrawOutline.deserialize(pageX, pageY, pageWidth, pageHeight, innerMargin, data);
@@ -23837,6 +31303,27 @@ class InkEditor extends DrawingEditor {
   }
   get colorType() {
     return AnnotationEditorParamsType.INK_COLOR;
+  }
+  get colorAndOpacityType() {
+    return AnnotationEditorParamsType.INK_COLOR_AND_OPACITY;
+  }
+  get opacityType() {
+    return AnnotationEditorParamsType.INK_OPACITY;
+  }
+  updateParams(type, value) {
+    if (type === AnnotationEditorParamsType.INK_COLOR_AND_OPACITY) {
+      this._updateColorAndOpacity(value.color, value.opacity);
+      return;
+    }
+    super.updateParams(type, value);
+  }
+  static updateDefaultParams(type, value) {
+    if (type === AnnotationEditorParamsType.INK_COLOR_AND_OPACITY) {
+      super.updateDefaultParams(AnnotationEditorParamsType.INK_COLOR, value.color);
+      super.updateDefaultParams(AnnotationEditorParamsType.INK_OPACITY, value.opacity);
+      return;
+    }
+    super.updateDefaultParams(type, value);
   }
   get color() {
     return this._drawingOptions.stroke;
@@ -23955,7 +31442,19 @@ class ContourDrawOutline extends InkDrawOutline {
   }
 }
 
+;// ./node_modules/core-js/modules/es.uint8-array.from-base64.js
+es_uint8_array_from_base64_namespaceFn();
+
 ;// ./src/display/editor/drawers/signaturedraw.js
+
+
+
+
+
+
+
+
+
 
 
 
@@ -23975,10 +31474,7 @@ class SignatureExtractor {
     if (i === 0) {
       return j > 0 ? 0 : 4;
     }
-    if (i === 1) {
-      return j + 6;
-    }
-    return 2 - j;
+    return i === 1 ? j + 6 : 2 - j;
   }
   static #neighborIdToIndex = new Int32Array([0, 1, -1, 1, -1, 0, -1, -1, 0, -1, 1, -1, 1, 0, 1, 1]);
   static #clockwiseNonZero(buf, width, i0, j0, i, j, offset) {
@@ -24580,6 +32076,11 @@ class SignatureExtractor {
 
 
 
+
+
+
+
+
 class SignatureOptions extends DrawingOptions {
   constructor() {
     super();
@@ -24641,7 +32142,7 @@ class SignatureEditor extends DrawingEditor {
     return false;
   }
   static get typesMap() {
-    return shadow(this, "typesMap", new Map());
+    return util_shadow(this, "typesMap", new Map());
   }
   static get isDrawer() {
     return false;
@@ -24780,10 +32281,7 @@ class SignatureEditor extends DrawingEditor {
     };
   }
   get toolbarButtons() {
-    if (this._uiManager.signatureManager) {
-      return [["editSignature", this._uiManager.signatureManager]];
-    }
-    return super.toolbarButtons;
+    return this._uiManager.signatureManager ? [["editSignature", this._uiManager.signatureManager]] : super.toolbarButtons;
   }
   addSignature(data, heightInPage, description, uuid) {
     const {
@@ -24944,6 +32442,11 @@ class SignatureEditor extends DrawingEditor {
 
 
 
+
+
+
+
+
 class StampEditor extends AnnotationEditor {
   #bitmap = null;
   #bitmapId = null;
@@ -24971,7 +32474,7 @@ class StampEditor extends AnnotationEditor {
     AnnotationEditor.initialize(l10n, uiManager);
   }
   static isHandlingMimeForPasting(mime) {
-    return SupportedImageMimeTypes.includes(mime);
+    return SupportedImageMimeTypes.has(mime);
   }
   static paste(item, parent) {
     parent.pasteEditor({
@@ -25112,7 +32615,7 @@ class StampEditor extends AnnotationEditor {
     }
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = SupportedImageMimeTypes.join(",");
+    input.accept = SupportedImageMimeTypes.keys().join(",");
     const signal = this._uiManager._signal;
     this.#bitmapPromise = new Promise(resolve => {
       input.addEventListener("change", async () => {
@@ -25290,13 +32793,11 @@ class StampEditor extends AnnotationEditor {
       this.div.setAttribute("aria-description", this.#bitmapFileName);
     }
     if (!this.annotationElementId) {
-      this._uiManager.a11yAlert("pdfjs-editor-stamp-added-alert");
+      this._uiManager.a11yAlert(AnnotationEditor._l10nAlert.stamp);
     }
   }
   copyCanvas(maxDataDimension, maxPreviewDimension, createImageData = false) {
-    if (!maxDataDimension) {
-      maxDataDimension = 224;
-    }
+    maxDataDimension ||= 224;
     const {
       width: bitmapWidth,
       height: bitmapHeight
@@ -25389,10 +32890,10 @@ class StampEditor extends AnnotationEditor {
       const prevWidth = newWidth;
       const prevHeight = newHeight;
       if (newWidth > 2 * width) {
-        newWidth = newWidth >= 16384 ? Math.floor(newWidth / 2) - 1 : Math.ceil(newWidth / 2);
+        newWidth = Math.ceil(newWidth / 2);
       }
       if (newHeight > 2 * height) {
-        newHeight = newHeight >= 16384 ? Math.floor(newHeight / 2) - 1 : Math.ceil(newHeight / 2);
+        newHeight = Math.ceil(newHeight / 2);
       }
       const offscreen = new OffscreenCanvas(newWidth, newHeight);
       const ctx = offscreen.getContext("2d");
@@ -25642,6 +33143,16 @@ class StampEditor extends AnnotationEditor {
 
 
 
+
+
+
+
+
+
+
+
+
+
 class AnnotationEditorLayer {
   #accessibilityManager;
   #allowClick = false;
@@ -25785,10 +33296,7 @@ class AnnotationEditorLayer {
     if (annotationLayer) {
       for (const editable of annotationLayer.getEditableAnnotations()) {
         editable.hide();
-        if (this.#uiManager.isDeletedAnnotationElement(editable.data.id)) {
-          continue;
-        }
-        if (annotationElementIds.has(editable.data.id)) {
+        if (this.#uiManager.isDeletedAnnotationElement(editable.data.id) || annotationElementIds.has(editable.data.id)) {
           continue;
         }
         const editor = await this.deserialize(editable);
@@ -25848,8 +33356,7 @@ class AnnotationEditorLayer {
         }
         const editor = this.#editors.get(id);
         if (editor?.annotationElementId === null) {
-          e.stopPropagation();
-          e.preventDefault();
+          stopEvent(e);
           editor.dblclick(e);
         }
       }, {
@@ -25953,7 +33460,7 @@ class AnnotationEditorLayer {
     const {
       target
     } = event;
-    if (target === this.#textLayer.div || (target.getAttribute("role") === "img" || target.classList.contains("endOfContent")) && this.#textLayer.div.contains(target)) {
+    if (target === this.#textLayer.div || (target.getAttribute("role") === "img" || target.classList.contains("endOfContent") || target.classList.contains("textLayerImages") || target.classList.contains("textLayerImagePlaceholder")) && this.#textLayer.div.contains(target)) {
       const {
         isMac
       } = FeatureTest.platform;
@@ -25961,20 +33468,7 @@ class AnnotationEditorLayer {
         return;
       }
       this.#uiManager.showAllEditors("highlight", true, true);
-      this.#textLayer.div.classList.add("free");
-      this.toggleDrawing();
-      HighlightEditor.startHighlighting(this, this.#uiManager.direction === "ltr", {
-        target: this.#textLayer.div,
-        x: event.x,
-        y: event.y
-      });
-      this.#textLayer.div.addEventListener("pointerup", () => {
-        this.#textLayer.div.classList.remove("free");
-        this.toggleDrawing(true);
-      }, {
-        once: true,
-        signal: this.#uiManager._signal
-      });
+      HighlightEditor.startDrawing(this, this.#uiManager, this.#uiManager.direction === "ltr", event);
       event.preventDefault();
     }
   }
@@ -26389,17 +33883,160 @@ class AnnotationEditorLayer {
   }
 }
 
+;// ./node_modules/core-js/modules/es.iterator.to-array.js
+es_iterator_to_array_namespaceFn();
+
 ;// ./src/display/draw_layer.js
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function compareTextLayers(a, b) {
+  if (a === b) {
+    return 0;
+  }
+  return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+}
+function getTextLayer(node) {
+  if (!node) {
+    return null;
+  }
+  return node.nodeType === Node.ELEMENT_NODE ? node.closest(".textLayer") : node.parentElement?.closest(".textLayer") || null;
+}
+function isPointBefore(nodeA, offsetA, nodeB, offsetB) {
+  if (nodeA === nodeB) {
+    return offsetA <= offsetB;
+  }
+  const relation = nodeA.compareDocumentPosition(nodeB);
+  if (relation & Node.DOCUMENT_POSITION_FOLLOWING) {
+    return true;
+  }
+  if (relation & Node.DOCUMENT_POSITION_PRECEDING) {
+    return false;
+  }
+  return null;
+}
+function normalizeEdgeBoundary(container, offset, textLayer) {
+  if (container.nodeType !== Node.ELEMENT_NODE || !container.classList.contains("textLayer") || offset !== container.childNodes.length) {
+    return {
+      container,
+      offset
+    };
+  }
+  let lastNode = container.lastChild;
+  if (lastNode?.nodeType === Node.ELEMENT_NODE && lastNode.classList.contains("endOfContent")) {
+    lastNode = lastNode.previousSibling;
+  }
+  if (!lastNode || !textLayer.contains(lastNode)) {
+    return null;
+  }
+  return lastNode.nodeType === Node.TEXT_NODE ? {
+    container: lastNode,
+    offset: lastNode.textContent.length
+  } : {
+    container: lastNode,
+    offset: lastNode.childNodes.length
+  };
+}
 class DrawLayer {
   #parent = null;
   #mapping = new Map();
+  #textLayer = null;
+  #filterFactory = null;
+  #pageColors = null;
+  #textLayerObserver = null;
   #toUpdate = new Map();
   static #id = 0;
+  static #selectionId = 0;
+  static #selectionChangeAC = null;
+  static #selections = new Set();
+  static #isSelecting = false;
+  static #textLayerSet = new Set();
+  static #textLayers = new WeakMap();
+  constructor({
+    filterFactory = null,
+    pageColors = null,
+    pageIndex,
+    textLayer = null
+  }) {
+    this.pageIndex = pageIndex;
+    this.#filterFactory = filterFactory;
+    this.#pageColors = pageColors;
+    if (textLayer) {
+      const previousData = DrawLayer.#textLayers.get(textLayer);
+      if (previousData?.selectionDiv) {
+        previousData.selectionDiv.remove();
+        DrawLayer.#selections.delete(previousData.selectionDiv);
+      }
+      DrawLayer.#textLayers.set(textLayer, {
+        drawLayer: this
+      });
+      DrawLayer.#textLayerSet.add(textLayer);
+      this.#textLayer = textLayer;
+      this.#textLayerObserver = new MutationObserver(records => {
+        if (!this.#parent || !this.#textLayer?.isConnected || !DrawLayer.#hasSelection()) {
+          return;
+        }
+        for (const {
+          addedNodes
+        } of records) {
+          for (const node of addedNodes) {
+            if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains("endOfContent")) {
+              DrawLayer.#selectionChange();
+              return;
+            }
+          }
+        }
+      });
+      this.#textLayerObserver.observe(textLayer, {
+        childList: true
+      });
+      if (DrawLayer.#selectionChangeAC === null) {
+        DrawLayer.#selectionChangeAC = new AbortController();
+        const {
+          signal
+        } = DrawLayer.#selectionChangeAC;
+        document.addEventListener("selectionchange", DrawLayer.#selectionChange.bind(DrawLayer), {
+          signal
+        });
+        document.addEventListener("pointerdown", () => {
+          DrawLayer.#isSelecting = true;
+        }, {
+          signal
+        });
+        document.addEventListener("pointerup", () => {
+          DrawLayer.#isSelecting = false;
+        }, {
+          signal
+        });
+        window.addEventListener("blur", () => {
+          DrawLayer.#isSelecting = false;
+        }, {
+          signal
+        });
+      }
+    }
+  }
   setParent(parent) {
     if (!this.#parent) {
       this.#parent = parent;
+      if (this.#textLayer?.isConnected && DrawLayer.#hasSelection()) {
+        DrawLayer.#selectionChange();
+      }
       return;
     }
     if (this.#parent !== parent) {
@@ -26412,8 +34049,243 @@ class DrawLayer {
       this.#parent = parent;
     }
   }
+  static #cleanupTextLayerSelection(textLayer) {
+    const textLayerData = this.#textLayers.get(textLayer);
+    if (!textLayerData?.selectionDiv) {
+      return;
+    }
+    textLayerData.selectionDiv.remove();
+    this.#selections.delete(textLayerData.selectionDiv);
+    textLayerData.selectionDiv = null;
+    textLayerData.path = null;
+  }
+  static #hasSelection() {
+    const selection = document.getSelection();
+    return !!selection && !selection.isCollapsed;
+  }
+  static #getOrderedTextLayers() {
+    return this.#textLayerSet.keys().filter(textLayer => textLayer.isConnected).toArray().sort(compareTextLayers);
+  }
+  static #selectionChange() {
+    const selection = document.getSelection();
+    if (!selection || selection.isCollapsed) {
+      for (const root of this.#selections) {
+        root.remove();
+      }
+      this.#selections.clear();
+      return;
+    }
+    const rotators = new WeakMap();
+    const orderedTextLayers = this.#getOrderedTextLayers();
+    const ranges = [];
+    for (let i = 0, ii = selection.rangeCount; i < ii; i++) {
+      const range = selection.getRangeAt(i);
+      if (range.collapsed) {
+        continue;
+      }
+      let {
+        startContainer,
+        startOffset,
+        endContainer,
+        endOffset
+      } = range;
+      let startTextLayer = getTextLayer(startContainer);
+      let endTextLayer = getTextLayer(endContainer);
+      const startMissing = startTextLayer === null;
+      const endMissing = endTextLayer === null;
+      if (this.#isSelecting && startMissing !== endMissing) {
+        return;
+      }
+      if (selection.rangeCount === 1) {
+        const {
+          anchorNode,
+          anchorOffset,
+          focusNode,
+          focusOffset
+        } = selection;
+        const anchorLayer = getTextLayer(anchorNode);
+        const focusLayer = getTextLayer(focusNode);
+        const anchorBeforeFocus = isPointBefore(anchorNode, anchorOffset, focusNode, focusOffset);
+        if (anchorLayer && focusLayer && anchorBeforeFocus !== null) {
+          if (anchorBeforeFocus) {
+            startContainer = anchorNode;
+            startOffset = anchorOffset;
+            startTextLayer = anchorLayer;
+            endContainer = focusNode;
+            endOffset = focusOffset;
+            endTextLayer = focusLayer;
+          } else {
+            startContainer = focusNode;
+            startOffset = focusOffset;
+            startTextLayer = focusLayer;
+            endContainer = anchorNode;
+            endOffset = anchorOffset;
+            endTextLayer = anchorLayer;
+          }
+        }
+      }
+      const activeTextLayers = orderedTextLayers.filter(textLayer => range.intersectsNode(textLayer));
+      if (activeTextLayers.length === 0) {
+        continue;
+      }
+      let boundarySubstituted = false;
+      if (!startTextLayer) {
+        startTextLayer = activeTextLayers[0];
+        startContainer = startTextLayer;
+        startOffset = 0;
+        boundarySubstituted = true;
+      }
+      if (!endTextLayer) {
+        endTextLayer = activeTextLayers.at(-1);
+        endContainer = endTextLayer;
+        endOffset = endTextLayer.childNodes.length;
+        boundarySubstituted = true;
+      }
+      if (endContainer.nodeType === Node.ELEMENT_NODE) {
+        if (endContainer.classList.contains("endOfContent")) {
+          const previousNode = endContainer.previousSibling;
+          if (!previousNode) {
+            continue;
+          }
+          endContainer = previousNode;
+          endOffset = previousNode.nodeType === Node.TEXT_NODE ? previousNode.textContent.length : previousNode.childNodes.length;
+        } else if (endContainer.classList.contains("textLayer") && endContainer.childNodes.length === endOffset) {
+          const normalizedEnd = normalizeEdgeBoundary(endContainer, endOffset, endTextLayer);
+          if (!normalizedEnd) {
+            continue;
+          }
+          endContainer = normalizedEnd.container;
+          endOffset = normalizedEnd.offset;
+        }
+      }
+      if (startContainer.nodeType === Node.ELEMENT_NODE) {
+        const normalizedStart = normalizeEdgeBoundary(startContainer, startOffset, startTextLayer);
+        if (!normalizedStart) {
+          continue;
+        }
+        startContainer = normalizedStart.container;
+        startOffset = normalizedStart.offset;
+      }
+      if (startTextLayer === endTextLayer && !boundarySubstituted && activeTextLayers.includes(startTextLayer)) {
+        ranges.push([range, startTextLayer]);
+        continue;
+      }
+      for (const textLayer of activeTextLayers) {
+        const firstNode = textLayer.firstChild;
+        if (!firstNode) {
+          continue;
+        }
+        const subRange = document.createRange();
+        if (textLayer === startTextLayer) {
+          subRange.setStart(startContainer, startOffset);
+        } else {
+          subRange.setStartBefore(firstNode);
+        }
+        if (textLayer === endTextLayer) {
+          subRange.setEnd(endContainer, endOffset);
+        } else {
+          const lastNode = textLayer.lastChild;
+          if (!lastNode) {
+            continue;
+          }
+          if (lastNode.nodeType === Node.ELEMENT_NODE && lastNode.classList.contains("endOfContent")) {
+            const lastTextNode = lastNode.previousSibling;
+            if (!lastTextNode) {
+              continue;
+            }
+            subRange.setEndAfter(lastTextNode);
+          } else {
+            subRange.setEndAfter(lastNode);
+          }
+        }
+        if (!subRange.collapsed) {
+          ranges.push([subRange, textLayer]);
+        }
+      }
+    }
+    const selectedTextLayers = new Set(ranges.map(range => range[1]));
+    for (const textLayer of this.#textLayerSet) {
+      if (!selectedTextLayers.has(textLayer)) {
+        this.#cleanupTextLayerSelection(textLayer);
+      }
+    }
+    for (const [range, textLayer] of ranges) {
+      const textLayerData = DrawLayer.#textLayers.get(textLayer);
+      if (!textLayerData) {
+        continue;
+      }
+      let rotator = rotators.get(textLayer);
+      if (!rotator) {
+        const clientRect = textLayer.getBoundingClientRect();
+        rotator = (x, y, w, h) => ({
+          x: (x - clientRect.x) / clientRect.width,
+          y: (y - clientRect.y) / clientRect.height,
+          width: w / clientRect.width,
+          height: h / clientRect.height
+        });
+        rotators.set(textLayer, rotator);
+      }
+      const boxes = [];
+      for (let {
+        x,
+        y,
+        width,
+        height
+      } of range.getClientRects()) {
+        if (width === 0 || height === 0) {
+          continue;
+        }
+        ({
+          x,
+          y,
+          width,
+          height
+        } = rotator(x, y, width, height));
+        if (width === 1 && height === 1) {
+          continue;
+        }
+        boxes.push(`M${x} ${y} h${width} v${height} h-${width} Z`);
+      }
+      if (boxes.length === 0) {
+        continue;
+      }
+      const drawLayer = textLayerData.drawLayer;
+      let div = textLayerData.selectionDiv;
+      let path = textLayerData.path;
+      if (!div) {
+        const clipPathId = `clip_selection_${DrawLayer.#selectionId++}`;
+        div = document.createElement("div");
+        div.className = "selection";
+        div.style.clipPath = `url(#${clipPathId})`;
+        const selectionStyle = drawLayer.#filterFactory?.createSelectionStyle(drawLayer.#pageColors);
+        if (selectionStyle) {
+          for (const [name, value] of Object.entries(selectionStyle)) {
+            div.style.setProperty(name, value);
+          }
+        }
+        const svg = DrawLayer._svgFactory.create(1, 1, true);
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("width", "100%");
+        svg.setAttribute("height", "100%");
+        const clipPath = DrawLayer._svgFactory.createElement("clipPath");
+        clipPath.setAttribute("id", clipPathId);
+        clipPath.setAttribute("clipPathUnits", "objectBoundingBox");
+        path = DrawLayer._svgFactory.createElement("path");
+        clipPath.append(path);
+        svg.append(clipPath);
+        div.append(svg);
+        textLayerData.path = path;
+        textLayerData.selectionDiv = div;
+      }
+      if (drawLayer.#parent && div.parentNode !== drawLayer.#parent) {
+        drawLayer.#parent.append(div);
+        this.#selections.add(div);
+      }
+      path.setAttribute("d", boxes.join(" "));
+    }
+  }
   static get _svgFactory() {
-    return shadow(this, "_svgFactory", new DOMSVGFactory());
+    return util_shadow(this, "_svgFactory", new DOMSVGFactory());
   }
   static #setBox(element, [x, y, width, height]) {
     const {
@@ -26427,7 +34299,7 @@ class DrawLayer {
   #createSVG() {
     const svg = DrawLayer._svgFactory.create(1, 1, true);
     this.#parent.append(svg);
-    svg.setAttribute("aria-hidden", true);
+    svg.setAttribute("aria-hidden", "true");
     return svg;
   }
   #createClipPath(defs, pathId) {
@@ -26584,10 +34456,28 @@ class DrawLayer {
     }
     this.#mapping.clear();
     this.#toUpdate.clear();
+    this.#textLayerObserver?.disconnect();
+    this.#textLayerObserver = null;
+    if (this.#textLayer) {
+      const data = DrawLayer.#textLayers.get(this.#textLayer);
+      if (data?.drawLayer === this) {
+        DrawLayer.#cleanupTextLayerSelection(this.#textLayer);
+        DrawLayer.#textLayers.delete(this.#textLayer);
+        DrawLayer.#textLayerSet.delete(this.#textLayer);
+        if (DrawLayer.#textLayerSet.size === 0) {
+          DrawLayer.#selectionChangeAC?.abort();
+          DrawLayer.#selectionChangeAC = null;
+          DrawLayer.#isSelecting = false;
+        }
+      }
+      this.#textLayer = null;
+    }
   }
 }
 
 ;// ./src/display/text_layer_images.js
+
+
 
 function percentage(value) {
   return `${(value * 100).toFixed(2)}%`;
@@ -26706,6 +34596,7 @@ class TextLayerImages {
 
 
 
+
 {
   globalThis._pdfjsTestingUtils = {
     HighlightOutliner: HighlightOutliner
@@ -26734,8 +34625,8 @@ globalThis.pdfjsLib = {
   getFilenameFromUrl: getFilenameFromUrl,
   getPdfFilenameFromUrl: getPdfFilenameFromUrl,
   getRGB: getRGB,
+  getRGBA: getRGBA,
   getUuid: getUuid,
-  getXfaPageViewport: getXfaPageViewport,
   GlobalWorkerOptions: GlobalWorkerOptions,
   ImageKind: ImageKind,
   InvalidPDFException: InvalidPDFException,
@@ -26745,11 +34636,13 @@ globalThis.pdfjsLib = {
   makeArr: makeArr,
   makeMap: makeMap,
   makeObj: makeObj,
+  makeSet: makeSet,
   MathClamp: MathClamp,
   noContextMenu: noContextMenu,
   normalizeUnicode: normalizeUnicode,
   OPS: OPS,
   OutputScale: OutputScale,
+  PasswordException: PasswordException,
   PasswordResponses: PasswordResponses,
   PDFDataRangeTransport: PDFDataRangeTransport,
   PDFDateString: PDFDateString,
@@ -26760,7 +34653,7 @@ globalThis.pdfjsLib = {
   renderRichText: renderRichText,
   ResponseException: ResponseException,
   setLayerDimensions: setLayerDimensions,
-  shadow: shadow,
+  shadow: util_shadow,
   SignatureExtractor: SignatureExtractor,
   stopEvent: stopEvent,
   SupportedImageMimeTypes: SupportedImageMimeTypes,
@@ -26770,10 +34663,10 @@ globalThis.pdfjsLib = {
   updateUrlHash: updateUrlHash,
   Util: Util,
   VerbosityLevel: VerbosityLevel,
-  version: version,
+  version: api_version,
   XfaLayer: XfaLayer
 };
 
-export { AbortException, AnnotationEditorLayer, AnnotationEditorParamsType, AnnotationEditorType, AnnotationEditorUIManager, AnnotationLayer, AnnotationMode, AnnotationType, CSSConstants, ColorPicker, DOMSVGFactory, DrawLayer, FeatureTest, GlobalWorkerOptions, ImageKind, InvalidPDFException, MathClamp, OPS, OutputScale, PDFDataRangeTransport, PDFDateString, PDFWorker, PasswordResponses, PermissionFlag, PixelsPerInch, RenderingCancelledException, ResponseException, SignatureExtractor, SupportedImageMimeTypes, TextLayer, TextLayerImages, TouchManager, Util, VerbosityLevel, XfaLayer, applyOpacity, build, createValidAbsoluteUrl, fetchData, findContrastColor, getDocument, getFilenameFromUrl, getPdfFilenameFromUrl, getRGB, getUuid, getXfaPageViewport, isDataScheme, isPdfFile, isValidExplicitDest, makeArr, makeMap, makeObj, noContextMenu, normalizeUnicode, renderRichText, setLayerDimensions, shadow, stopEvent, updateUrlHash, version };
+export { AbortException, AnnotationEditorLayer, AnnotationEditorParamsType, AnnotationEditorType, AnnotationEditorUIManager, AnnotationLayer, AnnotationMode, AnnotationType, CSSConstants, ColorPicker, DOMSVGFactory, DrawLayer, FeatureTest, GlobalWorkerOptions, ImageKind, InvalidPDFException, MathClamp, OPS, OutputScale, PDFDataRangeTransport, PDFDateString, PDFWorker, PasswordException, PasswordResponses, PermissionFlag, PixelsPerInch, RenderingCancelledException, ResponseException, SignatureExtractor, SupportedImageMimeTypes, TextLayer, TextLayerImages, TouchManager, Util, VerbosityLevel, XfaLayer, applyOpacity, build, createValidAbsoluteUrl, fetchData, findContrastColor, getDocument, getFilenameFromUrl, getPdfFilenameFromUrl, getRGB, getRGBA, getUuid, isDataScheme, isPdfFile, isValidExplicitDest, makeArr, makeMap, makeObj, makeSet, noContextMenu, normalizeUnicode, renderRichText, setLayerDimensions, util_shadow as shadow, stopEvent, updateUrlHash, api_version as version };
 
 //# sourceMappingURL=pdf.mjs.map

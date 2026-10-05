@@ -150,7 +150,7 @@ $buildViewerUrl = static function (string $viewerBaseUrl, string $demoPdf, strin
         'file' => $demoPdf,
         'toolbarPreset' => $preset,
         'toolbarHiddenGroups' => implode(',', $hiddenGroups),
-        'viewerVersion' => '10.4.0',
+        'viewerVersion' => rex_addon::get('pdfout')->getVersion(),
     ];
 
     return $viewerBaseUrl . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);

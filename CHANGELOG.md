@@ -1,5 +1,19 @@
 # Changelog
 
+## 10.5.0 – 05.10.2026
+
+### Update
+
+- PDF.js 6.4.299 (vorher 5.6.205) – jetzt als **Legacy-Build**: der Viewer läuft damit auch auf iPhones/iPads mit älterem iOS und in älteren Browsern; die moderne Variante blieb dort leer
+- Vendor-Pakete aktualisiert: masterminds/html5 2.11.0, sabberworm/php-css-parser 9.5.0, tecnickcom/tcpdf 6.11.4; `thecodingmachine/safe` entfällt (wird von php-css-parser nicht mehr benötigt)
+- Composer-Plattform auf PHP 8.1 festgelegt (entspricht der Mindestanforderung des Addons)
+
+### Verbesserungen
+
+- Update-Skript: Build-Variante wählbar (`pdfjs.build`: `legacy`/`modern`), eine angegebene Version wird jetzt wirklich geladen (bisher immer die neueste), Zielordner werden vor dem Kopieren geleert
+- Cache-Busting (`viewerVersion`, Toolbar-Skript) folgt automatisch der Addon-Version statt einer fest eingetragenen Nummer
+
+
 ## 10.4.0 – 29.07.2026
 
 ### Neue Features

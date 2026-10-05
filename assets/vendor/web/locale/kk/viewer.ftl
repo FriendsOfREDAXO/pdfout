@@ -153,6 +153,27 @@ pdfjs-document-properties-linearized = Жылдам Web көрінісі:
 pdfjs-document-properties-linearized-yes = Иә
 pdfjs-document-properties-linearized-no = Жоқ
 pdfjs-document-properties-close-button = Жабу
+pdfjs-digital-signature-properties-view-certificate = Сертификатты қарау
+# Shown beneath an invalid signature card to explain why verification
+# failed. The text comes from NSS (e.g. "Signature integrity has been
+# compromised", "PKCS#7 signature could not be parsed") and is not
+# itself localized — it is the underlying error message produced by
+# the verification backend.
+# Variables:
+#   $reason (String) - error message describing why the signature
+#                      could not be verified.
+pdfjs-digital-signature-properties-reason = Себебі: { $reason }
+# Variables:
+#   $dateObj (Date) - the signing time from the /Sig dict's /M entry.
+pdfjs-digital-signature-properties-timestamp = Күн мен уақыт белгісі: { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
+# Variables:
+#   $count (Number) - number of nested sub-signatures (one per earlier
+#                     incremental revision of the document).
+pdfjs-digital-signature-properties-sub-signatures =
+    { $count ->
+        [one] Ішкі қолтаңба ({ $count })
+       *[other] Ішкі қолтаңбалар ({ $count })
+    }
 
 ## Print
 
@@ -166,23 +187,6 @@ pdfjs-printing-not-ready = Ескерту: Баспаға шығару үшін,
 
 ## Tooltips and alt text for side panel toolbar buttons
 
-pdfjs-toggle-sidebar-button =
-    .title = Бүйір панелін көрсету/жасыру
-pdfjs-toggle-sidebar-notification-button =
-    .title = Бүйір панелін көрсету/жасыру (құжатта құрылымы/салынымдар/қабаттар бар)
-pdfjs-toggle-sidebar-button-label = Бүйір панелін көрсету/жасыру
-pdfjs-document-outline-button =
-    .title = Құжат құрылымын көрсету (барлық нәрселерді жазық қылу/жинау үшін қос шерту керек)
-pdfjs-document-outline-button-label = Құжат құрамасы
-pdfjs-attachments-button =
-    .title = Салынымдарды көрсету
-pdfjs-attachments-button-label = Салынымдар
-pdfjs-layers-button =
-    .title = Қабаттарды көрсету (барлық қабаттарды бастапқы күйге келтіру үшін екі рет шертіңіз)
-pdfjs-layers-button-label = Қабаттар
-pdfjs-thumbs-button =
-    .title = Кіші көріністерді көрсету
-pdfjs-thumbs-button-label = Кіші көріністер
 pdfjs-current-outline-item-button =
     .title = Құрылымның ағымдағы элементін табу
 pdfjs-current-outline-item-button-label = Құрылымның ағымдағы элементі
@@ -195,20 +199,12 @@ pdfjs-additional-layers = Қосымша қабаттар
 
 # Variables:
 #   $page (Number) - the page number
-pdfjs-thumb-page-title =
-    .title = { $page } парағы
-# Variables:
-#   $page (Number) - the page number
 pdfjs-thumb-page-canvas =
     .aria-label = { $page } парағы үшін кіші көрінісі
 # Variables:
 #   $page (Number) - the page number
 pdfjs-thumb-page-checkbox1 =
     .title = { $page } бетін таңдау
-# Variables:
-#   $page (Number) - the page number
-pdfjs-thumb-page-checkbox =
-    .aria-label = { $page } бетін таңдау
 # Variables:
 #   $page (Number) - the page number
 #   $total (Number) - the number of pages
@@ -218,8 +214,8 @@ pdfjs-thumb-page-title1 =
 ## Find panel button title and messages
 
 pdfjs-find-input =
-    .title = Табу
     .placeholder = Құжаттан табу…
+    .title = Табу
 pdfjs-find-previous-button =
     .title = Осы сөздердің мәтіннен алдыңғы кездесуін табу
 pdfjs-find-previous-button-label = Алдыңғысы
@@ -314,16 +310,16 @@ pdfjs-editor-highlight-button =
     .title = Ерекшелеу
 pdfjs-editor-highlight-button-label = Ерекшелеу
 pdfjs-highlight-floating-button1 =
-    .title = Ерекшелеу
     .aria-label = Ерекшелеу
+    .title = Ерекшелеу
 pdfjs-highlight-floating-button-label = Ерекшелеу
 pdfjs-comment-floating-button =
-    .title = Түсіндірме
     .aria-label = Түсіндірме
+    .title = Түсіндірме
 pdfjs-comment-floating-button-label = Түсіндірме
 pdfjs-editor-comment-button =
-    .title = Түсіндірме
     .aria-label = Түсіндірме
+    .title = Түсіндірме
 pdfjs-editor-comment-button-label = Түсіндірме
 pdfjs-editor-signature-button =
     .title = Қолтаңбаны қосу
@@ -396,8 +392,8 @@ pdfjs-editor-comments-sidebar-title =
        *[other] Түсіндірмелер
     }
 pdfjs-editor-comments-sidebar-close-button =
-    .title = Бүйір панелін жабу
     .aria-label = Бүйір панелін жабу
+    .title = Бүйір панелін жабу
 pdfjs-editor-comments-sidebar-close-button-label = Бүйір панелін жабу
 # Instructional copy to add a comment by selecting text or an annotations.
 pdfjs-editor-comments-sidebar-no-comments1 = Назар аударарлық бірдеңе көрдіңіз бе? Оны ерекшелеп, түсіндірме қалдырыңыз.
@@ -520,13 +516,6 @@ pdfjs-editor-alt-text-settings-dialog-label = Суреттің балама мә
 pdfjs-editor-alt-text-settings-automatic-title = Автоматты балама мәтін
 pdfjs-editor-alt-text-settings-create-model-button-label = Балама мәтінді автоматты түрде жасау
 pdfjs-editor-alt-text-settings-create-model-description = Суретті көре алмайтын адамдар үшін немесе сурет жүктелмеген кезіне арналған сипаттамаларды ұсынады.
-# Variables:
-#   $totalSize (Number) - the total size (in MB) of the AI model.
-pdfjs-editor-alt-text-settings-download-model-label = Баламалы мәтіннің ЖИ моделі ({ $totalSize } МБ)
-pdfjs-editor-alt-text-settings-ai-model-description = Деректеріңіз жеке болып қалуы үшін құрылғыңызда жергілікті түрде жұмыс істейді. Автоматты балама мәтін үшін қажет.
-pdfjs-editor-alt-text-settings-delete-model-button = Өшіру
-pdfjs-editor-alt-text-settings-download-model-button = Жүктеп алу
-pdfjs-editor-alt-text-settings-downloading-model-button = Жүктеліп алынуда…
 pdfjs-editor-alt-text-settings-editor-title = Баламалы мәтін редакторы
 pdfjs-editor-alt-text-settings-show-dialog-button-label = Суретті қосқанда балама мәтін редакторын бірден көрсету
 pdfjs-editor-alt-text-settings-show-dialog-description = Барлық суреттерде балама мәтін бар екеніне көз жеткізуге көмектеседі.
@@ -654,12 +643,9 @@ pdfjs-editor-add-comment-button =
 ##  - layers.
 ## The thumbnails view is used to edit the pdf: remove/insert pages, ...
 
-pdfjs-toggle-views-manager-button =
-    .title = Бүйір панелін көрсету/жасыру
 pdfjs-toggle-views-manager-notification-button =
     .title = Бүйір панелін көрсету/жасыру (құжатта кіші көріністер/құрылымы/салынымдар/қабаттар бар)
 pdfjs-toggle-views-manager-button1-label = Беттерді басқару
-pdfjs-toggle-views-manager-button-label = Бүйір панелін көрсету/жасыру
 pdfjs-views-manager-sidebar =
     .aria-label = Бүйір панелі
 pdfjs-views-manager-sidebar-resizer =
@@ -668,9 +654,11 @@ pdfjs-views-manager-view-selector-button =
     .title = Көріністер
 pdfjs-views-manager-view-selector-button-label = Көріністер
 pdfjs-views-manager-pages-title = Беттер
-pdfjs-views-manager-outlines-title = Құжаттың құрылымы
+pdfjs-views-manager-outlines-title1 = Құжат құрылымы
+    .title = Құжат құрылымы (барлық нәрселерді жаю/жию үшін қос шерту)
 pdfjs-views-manager-attachments-title = Салынымдар
-pdfjs-views-manager-layers-title = Қабаттар
+pdfjs-views-manager-layers-title1 = Қабаттар
+    .title = Қабаттар (барлық нәрселерді жаю/жию үшін қос шерту)
 pdfjs-views-manager-pages-option-label = Беттер
 pdfjs-views-manager-outlines-option-label = Құжаттың құрылымы
 pdfjs-views-manager-attachments-option-label = Салынымдар
@@ -690,7 +678,7 @@ pdfjs-views-manager-pages-status-action-button-label = Басқару
 pdfjs-views-manager-pages-status-copy-button-label = Көшіріп алу
 pdfjs-views-manager-pages-status-cut-button-label = Қиып алу
 pdfjs-views-manager-pages-status-delete-button-label = Өшіру
-pdfjs-views-manager-pages-status-save-as-button-label = Қалайша сақтау…
+pdfjs-views-manager-pages-status-export-selected-button-label = Таңдалғанды экспорттау…
 # Variables:
 #   $count (Number) - the number of selected pages to be cut.
 pdfjs-views-manager-status-undo-cut-label =
@@ -730,8 +718,80 @@ pdfjs-views-manager-paste-button-before =
 #   $page (Number) - the page number after which the paste button is.
 pdfjs-views-manager-paste-button-after =
     .title = { $page } бетінен кейін кірістіру
+# Badge used to promote a new feature in the UI, keep it as short as possible.
+# It's spelled uppercase for English, but it can be translated as usual.
+pdfjs-new-badge-content = ЖАҢА
+pdfjs-views-manager-waiting-for-file = Файл жүктеп салынуда…
 pdfjs-toggle-views-manager-button1 =
     .title = Беттерді басқару
+
+## Digital signature properties (signature verification panel)
+
+pdfjs-digital-signature-properties-button =
+    .aria-label = Цифрлық қолтаңба қасиеттері
+    .title = Цифрлық қолтаңба қасиеттері
+pdfjs-digital-signature-properties-button-label = Цифрлық қолтаңба қасиеттері
+
+## Banner shown above the signature list summarising the overall
+## verification state of the document. Each variant is selected by the
+## viewer based on the worst per-signature status; one signature is
+## enough to lower the banner.
+##
+## Variables:
+##   $count (Number) - number of signatures at the worst level.
+
+pdfjs-digital-signature-properties-banner-verified = Құжатқа жарамды цифрлық қолтаңбамен қол қойылған
+pdfjs-digital-signature-properties-banner-unknown =
+    { $count ->
+        [one] Құжатқа қол қойылған, бірақ { $count } цифрлық қолтаңбаны тексеру мүмкін болмады
+       *[other] Құжатқа қол қойылған, бірақ { $count } цифрлық қолтаңбаны тексеру мүмкін болмады
+    }
+pdfjs-digital-signature-properties-banner-untrusted =
+    { $count ->
+        [one] Құжатқа сенімсіз { $count } сертификатпен қол қойылған
+       *[other] Құжатқа сенімсіз { $count } сертификатпен қол қойылған
+    }
+pdfjs-digital-signature-properties-banner-expired =
+    { $count ->
+        [one] Құжатқа мерзімі өткен { $count } сертификатпен қол қойылған
+       *[other] Құжатқа мерзімі өткен { $count } сертификатпен қол қойылған
+    }
+pdfjs-digital-signature-properties-banner-invalid =
+    { $count ->
+        [one] Құжатта { $count } жарамсыз цифрлық қолтаңба бар
+       *[other] Құжатта { $count } жарамсыз цифрлық қолтаңба бар
+    }
+pdfjs-digital-signature-properties-banner-revoked =
+    { $count ->
+        [one] Құжатқа қайтарылған { $count } сертификатпен қол қойылған
+       *[other] Құжатқа қайтарылған { $count } сертификатпен қол қойылған
+    }
+
+## Per-signature status row. Only three distinct strings are needed:
+## the signature crypto either verified (the cert chain may still be
+## untrusted/expired/revoked, but that's surfaced on the cert row
+## below), or it failed, or its sub-format isn't supported.
+
+pdfjs-digital-signature-properties-status-verified = Қалып-күй: Қолтаңба тексерілді
+pdfjs-digital-signature-properties-status-invalid = Қалып-күй: Қолтаңба жарамсыз
+pdfjs-digital-signature-properties-status-unknown = Қалып-күй: Тексеру мүмкін емес (қолдау көрсетілмейді)
+
+## Per-signature certificate row. The variants with an issuer / date in
+## parentheses embed fully-localized context — no English fall-through.
+##
+## Variables:
+##   $issuer (String) - issuer or subject common name from the cert.
+##   $dateObj (Date)  - notAfter date for the expired-with-date form.
+
+pdfjs-digital-signature-properties-certificate-trusted = Сертификат: Сенімді ({ $issuer })
+pdfjs-digital-signature-properties-certificate-unknown = Сертификат: Қолжетімсіз
+pdfjs-digital-signature-properties-certificate-untrusted = Сертификат: Сенімсіз
+pdfjs-digital-signature-properties-certificate-untrusted-unknown-issuer = Сертификат: Белгісіз шығарушы ({ $issuer })
+pdfjs-digital-signature-properties-certificate-untrusted-self-signed = Сертификат: Өздігінен қол қойылған ({ $issuer })
+pdfjs-digital-signature-properties-certificate-untrusted-untrusted-issuer = Сертификат: Сенімсіз шығарушы ({ $issuer })
+pdfjs-digital-signature-properties-certificate-expired = Сертификат: Мерзімі өткен
+pdfjs-digital-signature-properties-certificate-expired-with-date = Сертификат: Мерзімі өткен ({ DATETIME($dateObj, dateStyle: "medium") })
+pdfjs-digital-signature-properties-certificate-revoked = Сертификат: Қайтарылған
 
 ## Main menu for adding/removing signatures
 
