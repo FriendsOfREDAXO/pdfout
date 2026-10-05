@@ -1,579 +1,135 @@
-# PdfOut AddOn - Best Practices
+# Best Practices
 
-## 🎯 Übersicht
-
-Diese Anleitung enthält bewährte Praktiken, Tipps und Empfehlungen für die optimale Nutzung des PdfOut AddOns in REDAXO-Projekten.
-
-## ⚠️ Wichtiger Hinweis: use-Statement
-
-**Für alle Code-Beispiele in dieser Dokumentation gilt:** Am Anfang jeder PHP-Datei die benötigten Klassen einbinden:
+Bewährte Vorgehensweisen für pdfout 11. Alle Beispiele setzen voraus:
 
 ```php
 use FriendsOfRedaxo\PdfOut\{PdfOut, PdfDocument, Certificate, SignatureField, Permission};
 ```
 
-## 🚀 Grundlegende Best Practices
+## Grundsätze
 
-### 1. **Verkettete API nutzen**
+**Eine Kette vom Inhalt bis zur Ausgabe.** Inhalt, Weiterverarbeitung und Ausgabe in einem Ausdruck halten das Vorgehen lesbar:
 
-#### ✅ Empfohlen: ein Ausdruck vom Inhalt bis zur Ausgabe
 ```php
 PdfOut::create()
     ->html($html)
     ->sign(Certificate::fromAddon(), reason: 'Freigabe')
-    ->protect('user123', 'owner456', allow: [Permission::Print])
+    ->protect('lesen', 'verwalten', allow: [Permission::Print])
     ->download('dokument.pdf');
 ```
 
-#### ✅ Vorhandene PDFs mit `PdfDocument` bearbeiten
+**Vorhandene PDFs mit `PdfDocument` bearbeiten**, nicht neu erzeugen:
+
 ```php
 PdfDocument::fromMedia('vertrag.pdf')->stamp('ENTWURF')->pageNumbers()->inline();
 ```
 
-#### ❌ Vermeiden: PDF-Bibliotheken direkt ansprechen
-Direkter Zugriff auf tc-lib-pdf oder dompdf-Interna ist nicht nötig und bricht bei Updates. Fehlt eine Funktion, gerne ein Issue anlegen.
+**Nur bearbeiten, was nötig ist.** Ohne Bearbeitungsschritt bleibt ein PDF unverändert. Jeder Schritt baut die Seiten neu auf – dabei gehen Links, Formularfelder, Lesezeichen und eine Tag-Struktur (Barrierefreiheit) verloren. Barrierefreie oder interaktive PDFs daher nicht stempeln oder zusammenführen.
 
-#### ✅ Fehler gezielt behandeln
+**Bibliotheken nicht direkt ansprechen.** dompdf- und tc-lib-pdf-Interna ändern sich bei Updates. Fehlt eine Funktion, ein Issue anlegen.
+
+**Fehler gezielt behandeln:**
+
 ```php
 try {
-    $pfad = PdfOut::create()->html($html)->sign(Certificate::fromAddon('firma.p12', $pw))->save($ziel);
+    $pfad = PdfOut::create()
+        ->html($html)
+        ->sign(Certificate::fromAddon('firma.p12', $passwort))
+        ->save($ziel);
 } catch (InvalidArgumentException $e) {
-    // Eingabe falsch: Zertifikat/Passwort, Seitenauswahl …
+    // Eingabe falsch: Zertifikat oder Passwort, Seitenauswahl, kein PDF …
+    rex_logger::logException($e);
 } catch (RuntimeException $e) {
     // Verarbeitung fehlgeschlagen
+    rex_logger::logException($e);
 }
 ```
 
-### 2. **HTML/CSS-Optimierung für PDFs**
+## HTML und CSS für dompdf
 
-#### ✅ PDF-freundliches CSS
+dompdf unterstützt CSS 2.1 und Teile von CSS 3. Bewährt:
+
 ```css
-/* Basis-Styling für PDFs */
-@page {
-    margin: 2cm;
-    size: A4 portrait;
-}
+@page { margin: 2cm 2cm 2.5cm; size: A4 portrait; }
+body { font-family: "Dejavu Sans", sans-serif; font-size: 11pt; line-height: 1.4; }
+h1, h2, h3 { page-break-after: avoid; }
+table, figure, .zusammen { page-break-inside: avoid; }
+.neue-seite { page-break-before: always; }
+.footer { position: fixed; bottom: -1.5cm; left: 0; right: 0; text-align: center; font-size: 9pt; }
+```
 
-body {
-    font-family: 'Dejavu Sans', Arial, sans-serif;
-    font-size: 12px;
-    line-height: 1.4;
-    color: #000;
-}
+- **Schriften:** „Dejavu Sans“ deckt Umlaute und Sonderzeichen ab. Eigene Schriften per `@font-face` mit absolutem Pfad oder absoluter Adresse.
+- **Layout:** Tabellen und Blöcke statt Flexbox und Grid – beides unterstützt dompdf nicht.
+- **Bilder:** absolute Adressen oder Pfade, passende Größe vorab über den Media Manager (große Bilder verlangsamen die Erzeugung).
+- **Seitenzahlen:** `DOMPDF_PAGE_COUNT_PLACEHOLDER` im HTML oder nachträglich `->with(fn ($d) => $d->pageNumbers())`.
 
-/* Seitenumbrüche kontrollieren */
-.page-break {
-    page-break-before: always;
-}
+## Vorlagen
 
-.no-break {
-    page-break-inside: avoid;
-}
+Wiederkehrendes Layout (Kopf, Fuß, Schriften) in eine Vorlage mit Platzhalter auslagern, z. B. als Datei im Projekt-Addon:
 
-/* Druckspezifische Stile */
-@media print {
-    .no-print { display: none; }
-    a { color: #000; text-decoration: none; }
-}
+```php
+$vorlage = rex_file::get(rex_path::addon('project', 'pdf/vorlage.html'));
 
-/* Tabellen optimieren */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 11px;
-}
+PdfOut::create()
+    ->template($vorlage, '{{CONTENT}}')
+    ->article($artikelId)
+    ->download('artikel.pdf');
+```
 
-th, td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
+## Signaturen
+
+- **Zertifikat:** Für Dokumente nach außen ein Zertifikat einer anerkannten Stelle verwenden. Selbst ausgestellte Zertifikate (Seite *Zertifikate*) eignen sich für interne Zwecke und Tests – PDF-Reader zeigen „Aussteller unbekannt“.
+- **Ablage:** Zertifikate liegen in `data/addons/pdfout/certificates/`, außerhalb des Web-Roots. Nie im öffentlichen Ordner ablegen.
+- **Passwort:** nicht im Code. Umgebungsvariable oder Addon-Konfiguration nutzen – die REDAXO-Konfiguration liegt unverschlüsselt in der Datenbank.
+- **Ablauf überwachen:**
+
+```php
+$zertifikat = Certificate::fromAddon('firma.p12', getenv('PDF_CERT_PASSWORD') ?: null);
+if ($zertifikat->validTo() < new DateTimeImmutable('+30 days')) {
+    rex_logger::factory()->warning('Signatur-Zertifikat läuft ab am ' . $zertifikat->validTo()->format('d.m.Y'));
 }
 ```
 
-#### ❌ Problematische CSS-Eigenschaften
-```css
-/* 👎 Nicht verwenden in PDFs */
-position: fixed;     /* Außer für Header/Footer */
-float: left;         /* Kann Layout brechen */
-transform: rotate(); /* Wird nicht unterstützt */
-box-shadow: ...;     /* Schlechte Performance */
-border-radius: ...;  /* Kann unscharf werden */
-```
+- **Signieren als letzter Schritt.** Jede spätere Änderung macht die Signatur ungültig – auch Anmerkungen aus dem Editor. `PdfDocument` und `PdfOut` signieren automatisch zuletzt.
+- **Prüfen:** Nach dem Erzeugen mit `->signatures()` oder auf der Seite *Werkzeuge → Prüfen* kontrollieren.
 
-### 3. **Template-System nutzen**
+## Passwortschutz
 
-#### ✅ Wiederverwendbare Templates
-```php
-// Template einmal definieren
-$baseTemplate = '
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <style>
-        ' . file_get_contents(rex_path::assets('css/pdf-styles.css')) . '
-    </style>
-</head>
-<body>
-    <header class="pdf-header">
-        <img src="' . rex_url::assets('images/logo.png') . '" alt="Logo">
-        <h1>{{DOCUMENT_TITLE}}</h1>
-    </header>
-    
-    <main class="pdf-content">
-        {{CONTENT}}
-    </main>
-    
-    <footer class="pdf-footer">
-        Seite {{PAGE_NUM}} von {{PAGE_COUNT}} | Erstellt: ' . date('d.m.Y H:i') . '
-    </footer>
-</body>
-</html>';
+- `allow` nennt die erlaubten Rechte. Nur freigeben, was gebraucht wird – meist `Permission::Print`.
+- Ein eigenes Besitzer-Passwort setzen, wenn die Rechte später geändert werden sollen; sonst wird ein zufälliges vergeben.
+- Passwortschutz ist kein Kopierschutz im strengen Sinn: Rechte werden von seriösen Readern beachtet, lassen sich aber umgehen. Vertrauliches zusätzlich mit einem Benutzer-Passwort verschlüsseln.
 
-// Für verschiedene Dokumente verwenden
-$pdf = new PdfOut();
-$pdf->setBaseTemplate($baseTemplate)
-    ->setHtml('<h2>Rechnungsinhalt</h2><p>...</p>')
-    ->run();
-```
+## Leistung
 
-### 4. **PDF.js Toolbar-Profile als Betriebsmodi nutzen**
-
-Definiere die Toolbar nicht pro Template, sondern zentral über Profile im Backend.
-
-#### ✅ Empfohlen: Klare Profile pro Einsatzkontext
-
-- `lesemodus`: Fokus auf Lesen, Navigation und Zoom
-- `redaktion`: inkl. Kommentar-/Editor-Werkzeuge
-- `kiosk`: minimal, ohne Druck/Download/sekundäre Leiste
-
-Vorgehen:
-
-1. In **PdfOut → Toolbar** ein Preset wählen oder benutzerdefiniert konfigurieren.
-2. Mit **Profil speichern** als benannten Modus ablegen.
-3. Mit **Profil aktivieren** als globalen Standard setzen.
-4. Im Frontend/Backend weiter normal `PdfOut::viewer(...)` nutzen.
+- **DPI nach Zweck:** 96–100 für Bildschirm, 150 für Büro-Druck, 300 nur für hochwertigen Druck (Dateigröße und Laufzeit steigen deutlich).
+- **Erzeugte PDFs zwischenspeichern**, wenn sich der Inhalt selten ändert:
 
 ```php
-use FriendsOfRedaxo\PdfOut\PdfOut;
-
-echo '<iframe src="' . PdfOut::viewer('manual.pdf') . '" width="100%" height="900"></iframe>';
-```
-
-#### ✅ Vorteil
-
-- Zentrale Steuerung der Viewer-UX ohne Codeänderungen in Templates
-- Einheitliches Verhalten über alle Einbindungsstellen
-- Schnelles Umschalten zwischen Betriebsmodi über das Backend
-
-#### ❌ Vermeiden: Manuelle URL-Bastelei in Templates
-
-```php
-// 👎 Unnötig fragil: Parameter manuell zusammenbauen
-$url = rex_url::assets('addons/pdfout/vendor/web/viewer.html')
-    . '?file=manual.pdf&toolbarPreset=compact&toolbarHiddenGroups=download,print';
-```
-
-Besser: Profile einmal im Backend pflegen und den Viewer immer über `PdfOut::viewer(...)` beziehen.
-
-Wenn du ausnahmsweise pro Einbindung ein anderes Profil brauchst, nutze gezielt:
-
-```php
-use FriendsOfRedaxo\PdfOut\PdfOut;
-
-echo '<iframe src="' . PdfOut::viewerWithProfile('manual.pdf', 'kiosk') . '" width="100%" height="900"></iframe>';
-```
-
-Damit bleibt das globale aktive Profil unverändert.
-
-## 🔒 Sicherheits-Best Practices
-
-### 1. **Zertifikats-Management**
-
-#### ✅ Sichere Zertifikat-Verwaltung
-```php
-// Zertifikate liegen außerhalb des Web-Roots (data/addons/pdfout/certificates/)
-// Passwort nicht im Code: z. B. Umgebungsvariable oder Addon-Konfiguration.
-// Achtung: die REDAXO-Konfiguration liegt unverschlüsselt in der Datenbank.
-$certificate = Certificate::fromAddon('firmen_cert.p12', getenv('PDF_CERT_PASSWORD') ?: null);
-
-// Certificate prüft beim Laden, ob Datei, Passwort und Schlüssel passen (InvalidArgumentException)
-if ($certificate->validTo() < new DateTimeImmutable('+30 days')) {
-    rex_logger::factory()->warning('Signatur-Zertifikat läuft bald ab: ' . $certificate->validTo()->format('d.m.Y'));
+$datei = rex_path::addonCache('project', 'preisliste-' . $artikel->getUpdatedate() . '.pdf');
+if (!is_file($datei)) {
+    PdfOut::create()->article($artikel->getId())->save($datei);
 }
+PdfDocument::fromFile($datei)->inline('preisliste.pdf');
 ```
 
-#### ❌ Unsichere Praktiken
-```php
-// 👎 Passwörter im Code
-$password = 'geheim123'; // Hart codiert - unsicher!
+- **Entfernte Ressourcen** nur erlauben, wenn nötig (Einstellung „entfernte Dateien“) – jede externe Adresse wird beim Erzeugen geladen.
 
-// 👎 Zertifikate im Web-Root
-$certPath = rex_path::frontend('certificates/cert.p12'); // Öffentlich zugänglich!
-```
+## Ausgabe
 
-### 2. **Passwort-Strategien**
+- `inline()` und `download()` senden das PDF und beenden die Anfrage. Davor keine Ausgabe erzeugen; in Modulen besser einen eigenen Endpunkt (z. B. `rex_api_function`) nutzen.
+- Dateinamen ohne Pfad und Sonderzeichen übergeben; pdfout bereinigt sie zusätzlich.
+- Für die Anzeige im Browser den Viewer nutzen: `PdfOut::viewer(rex_url::media($datei))`. Auf iPhone und iPad den Viewer als eigene Seite öffnen (mit `returnUrl` für den Rückweg), nicht im iframe.
 
-#### ✅ Starke Passwort-Richtlinien
-```php
-// Verschiedene Passwörter für verschiedene Zwecke
-function generateSecurePassword($type = 'user') {
-    switch ($type) {
-        case 'user':    // Zum Öffnen des PDFs
-            return bin2hex(random_bytes(4)); // 8 Zeichen
-        case 'owner':   // Vollzugriff auf PDF
-            return bin2hex(random_bytes(8)); // 16 Zeichen
-        default:
-            return bin2hex(random_bytes(6)); // 12 Zeichen
-    }
-}
+## Typische Probleme
 
-$pdf->enablePasswordProtection(
-    generateSecurePassword('user'),
-    generateSecurePassword('owner'),
-    ['print'] // Minimale Berechtigungen
-);
-```
+| Problem | Lösung |
+| --- | --- |
+| Bilder fehlen | Adresse absolut? Datei erreichbar? Bei externen Adressen „entfernte Dateien“ erlauben |
+| Umlaute als Fragezeichen | Schrift „Dejavu Sans“ verwenden oder eigene Unicode-Schrift einbinden |
+| Layout bricht | Flexbox/Grid durch Tabellen oder Blöcke ersetzen, `position: fixed` nur für Kopf und Fuß |
+| Erzeugung langsam | DPI senken, Bilder verkleinern, Ergebnis zwischenspeichern |
+| „Poppler-Programm nicht gefunden“ | poppler-utils installieren oder Ordner unter *Einstellungen → Allgemein* eintragen |
+| Signatur „ungültig“ | Wurde das PDF nach dem Signieren geändert? Signieren als letzten Schritt |
+| Viewer bleibt leer | Server liefert `.js` mit falschem Typ? Browser-Konsole prüfen |
 
-## 📊 Performance-Optimierung
-
-### 1. **DPI und Dateigröße**
-
-#### ✅ DPI nach Verwendungszweck wählen
-```php
-// Bildschirm-Anzeige (kleinere Dateien)
-$pdf->setDpi(150);
-
-// Standard-Druck
-$pdf->setDpi(200); 
-
-// Hochqualitätsdruck (größere Dateien)
-$pdf->setDpi(300);
-
-// Archivierung (Balance zwischen Qualität und Größe)
-$pdf->setDpi(180);
-```
-
-### 2. **Caching-Strategien**
-
-#### ✅ Intelligentes Caching
-```php
-// Cache-Key basierend auf Content generieren
-$cacheKey = md5($htmlContent . $userId . date('Y-m-d'));
-$cacheFile = rex_path::addonCache('pdfout', 'generated/' . $cacheKey . '.pdf');
-
-if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < 3600) {
-    // Cache ist gültig - verwende gespeicherte Datei
-    header('Content-Type: application/pdf');
-    readfile($cacheFile);
-    exit;
-}
-
-// Neu generieren und cachen
-$pdf = new PdfOut();
-$pdf->setHtml($htmlContent)
-    ->setSaveToPath(dirname($cacheFile) . '/')
-    ->setName(basename($cacheFile, '.pdf'))
-    ->setSaveAndSend(true)
-    ->run();
-```
-
-### 3. **Ressourcen-Management**
-
-#### ✅ Bilder optimieren
-```php
-// Media Manager für optimierte Bildgrößen nutzen
-$optimizedImage = rex_media_manager::getUrl('pdf_optimized', 'grosses_bild.jpg');
-
-$html = '<img src="' . $optimizedImage . '" style="max-width: 100%; height: auto;">';
-
-// CSS für Bildoptimierung
-$css = '
-img {
-    max-width: 100%;
-    height: auto;
-    image-rendering: optimizeQuality;
-}';
-```
-
-## 📋 Anwendungsfall-spezifische Tipps
-
-### 1. **Rechnungen & Geschäftsdokumente**
-
-#### ✅ Professionelle Rechnungen
-```php
-function createInvoicePdf($invoiceData) {
-    $html = generateInvoiceHtml($invoiceData);
-    
-    $pdf = new PdfOut();
-    $pdf->setPaperSize('A4', 'portrait')
-        ->setFont('Dejavu Sans')
-        ->setDpi(200)
-        ->setName('rechnung_' . $invoiceData['number']);
-    
-    // Signierung für Rechtsgültigkeit
-    $pdf->createSignedWorkflow(
-        $html,
-        getCompanyCertificate(),
-        getCompanyCertificatePassword(),
-        [
-            'Name' => 'Meine Firma GmbH',
-            'Location' => 'Deutschland',
-            'Reason' => 'Rechnung digital signiert',
-            'ContactInfo' => 'buchhaltung@firma.de'
-        ],
-        'rechnung_' . $invoiceData['number'] . '.pdf',
-        '',
-        rex_path::addonData('pdfout', 'rechnungen/'),
-        false
-    );
-}
-```
-
-### 2. **Zertifikate & Urkunden**
-
-#### ✅ Hochwertige Zertifikate
-```php
-function createCertificatePdf($recipientData) {
-    $pdf = new PdfOut();
-    $pdf->setPaperSize('A4', 'landscape') // Querformat für Zertifikate
-        ->setFont('Dejavu Sans')
-        ->setDpi(300)                     // Hohe Auflösung
-        ->setAttachment(false);           // Inline-Anzeige
-    
-    $html = generateCertificateHtml($recipientData);
-    
-    // Sichtbare Signatur für Authentizität
-    $pdf->enableSigning($cert, $password)
-        ->setVisibleSignature([
-            'enabled' => true,
-            'x' => 200,
-            'y' => 50,
-            'width' => 50,
-            'height' => 25,
-            'page' => 1,
-            'name' => 'Zertifizierungsstelle',
-            'reason' => 'Zertifikat ausgestellt'
-        ]);
-    
-    $pdf->setHtml($html)->run();
-}
-```
-
-### 3. **Berichte & Dokumentation**
-
-#### ✅ Strukturierte Berichte
-```php
-function createReportPdf($reportData) {
-    // Template mit Inhaltsverzeichnis
-    $template = '
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            .toc { page-break-after: always; }
-            .chapter { page-break-before: always; }
-            @page { @bottom-right { content: "Seite " counter(page); } }
-        </style>
-    </head>
-    <body>
-        <div class="toc">
-            <h1>Inhaltsverzeichnis</h1>
-            <ul>
-                <li>1. Zusammenfassung</li>
-                <li>2. Detailanalyse</li>
-                <li>3. Empfehlungen</li>
-            </ul>
-        </div>
-        {{CONTENT}}
-    </body>
-    </html>';
-    
-    $pdf = new PdfOut();
-    $pdf->setBaseTemplate($template)
-        ->setPaperSize('A4', 'portrait')
-        ->setDpi(150)
-        ->setHtml(generateReportContent($reportData))
-        ->setSaveToPath(rex_path::addonData('pdfout', 'reports/'))
-        ->run();
-}
-```
-
-## 🛠️ Debugging & Fehlerbehandlung
-
-### 1. **Systematisches Debugging**
-
-#### ✅ Debug-Workflow
-```php
-function debugPdfGeneration($html) {
-    // 1. HTML-Validierung
-    if (empty(trim($html))) {
-        throw new Exception('HTML-Inhalt ist leer');
-    }
-    
-    // 2. CSS-Validierung (vereinfacht)
-    if (strpos($html, 'position: fixed') !== false) {
-        rex_logger::factory()->warning('PDF enthält position:fixed - kann Probleme verursachen');
-    }
-    
-    // 3. Ressourcen-Check
-    preg_match_all('/src=["\']([^"\']+)["\']/', $html, $matches);
-    foreach ($matches[1] as $src) {
-        if (!file_exists(rex_path::frontend($src))) {
-            rex_logger::factory()->warning('Bild nicht gefunden: ' . $src);
-        }
-    }
-    
-    // 4. PDF-Generierung mit Fehlerbehandlung
-    try {
-        $pdf = new PdfOut();
-        $pdf->setHtml($html)
-            ->setName('debug_pdf_' . date('Y-m-d_H-i-s'))
-            ->setSaveToPath(rex_path::addonCache('pdfout', 'debug/'))
-            ->run();
-    } catch (Exception $e) {
-        rex_logger::factory()->error('PDF-Debug fehlgeschlagen', [
-            'error' => $e->getMessage(),
-            'html_length' => strlen($html),
-            'memory_usage' => memory_get_usage(true)
-        ]);
-        throw $e;
-    }
-}
-```
-
-### 2. **Häufige Probleme & Lösungen**
-
-#### ❌ Problem: "Undefined array key" Fehler
-```php
-// 👎 Fehlerhaft
-$certInfo = rex_addon::get('pdfout')->getConfig('certificates');
-$name = $certInfo['selected']['name']; // Kann undefined sein
-
-// ✅ Sicher
-$certInfo = rex_addon::get('pdfout')->getConfig('certificates', []);
-$name = $certInfo['selected']['name'] ?? 'Standard-Zertifikat';
-```
-
-#### ❌ Problem: Bilder werden nicht angezeigt
-```php
-// 👎 Relative URLs
-$html = '<img src="../media/bild.jpg">';
-
-// ✅ Absolute URLs oder Media Manager
-$mediaUrl = rex_media_manager::getUrl('rex_media_medium', 'bild.jpg');
-$html = '<img src="' . $mediaUrl . '">';
-```
-
-#### ❌ Problem: Langsame PDF-Generierung
-```php
-// 👎 Hohe DPI für alle PDFs
-$pdf->setDpi(300); // Immer langsam
-
-// ✅ Angemessene DPI nach Zweck
-$dpi = ($purpose === 'print') ? 300 : 150;
-$pdf->setDpi($dpi);
-```
-
-## 🔄 Workflow-Empfehlungen
-
-### 1. **Entwicklungsphase**
-
-```php
-// Debug-Modus während Entwicklung
-if (rex::isDebugMode()) {
-    $pdf->setDpi(100)  // Schnellere Generierung
-        ->setSaveToPath(rex_path::addonCache('pdfout', 'dev/'))
-        ->setSaveAndSend(false); // Nur speichern, nicht senden
-}
-```
-
-### 2. **Produktionsphase**
-
-```php
-// Produktion: Optimiert und gesichert
-$pdf = new PdfOut();
-$pdf->setDpi(200)
-    ->enableSigning($cert, $password)
-    ->setSaveToPath(rex_path::addonData('pdfout', 'archive/'))
-    ->setSaveAndSend(true);
-```
-
-### 3. **Monitoring & Maintenance**
-
-```php
-// PDF-Statistiken sammeln
-function logPdfStats($name, $size, $generationTime) {
-    rex_logger::factory()->info('PDF generiert', [
-        'name' => $name,
-        'size_kb' => round($size / 1024, 2),
-        'generation_time_ms' => round($generationTime * 1000, 2),
-        'memory_peak_mb' => round(memory_get_peak_usage() / 1024 / 1024, 2)
-    ]);
-}
-
-// Cache-Cleanup implementieren
-function cleanupPdfCache($maxAge = 86400) { // 24 Stunden
-    $cacheDir = rex_path::addonCache('pdfout');
-    $files = glob($cacheDir . '*.pdf');
-    
-    foreach ($files as $file) {
-        if (time() - filemtime($file) > $maxAge) {
-            unlink($file);
-        }
-    }
-}
-```
-
-## 📱 Mobile & Responsive Considerations
-
-### 1. **Mobile-freundliche PDFs**
-
-```php
-// Kompakte PDFs für mobile Anzeige
-$pdf = new PdfOut();
-$pdf->setPaperSize('A4', 'portrait')
-    ->setDpi(150)  // Balance zwischen Qualität und Dateigröße
-    ->setFont('Dejavu Sans'); // Gut lesbar auf kleinen Bildschirmen
-
-$mobileCss = '
-body { font-size: 11px; line-height: 1.3; }
-table { font-size: 9px; }
-.mobile-hidden { display: none; }
-';
-```
-
-## 🌍 Internationalisierung
-
-### 1. **Multi-Language Support**
-
-```php
-function createMultiLanguagePdf($content, $lang = 'de') {
-    $fonts = [
-        'de' => 'Dejavu Sans',
-        'en' => 'Helvetica', 
-        'ar' => 'Dejavu Sans', // Für RTL-Sprachen
-        'zh' => 'Dejavu Sans'  // Für asiatische Zeichen
-    ];
-    
-    $pdf = new PdfOut();
-    $pdf->setFont($fonts[$lang] ?? 'Dejavu Sans')
-        ->setHtml($content)
-        ->run();
-}
-```
-
-## 🎯 Zusammenfassung der wichtigsten Empfehlungen
-
-1. **Nutze die neuen Workflow-Methoden** - `createSignedDocument()` und `createPasswordProtectedWorkflow()`
-2. **Optimiere CSS für PDFs** - Vermeide problematische Properties, nutze `@page` Rules
-3. **Wähle angemessene DPI** - 150 für Bildschirm, 200-300 für Druck
-4. **Implementiere Caching** - Für häufig generierte PDFs
-5. **Sichere Zertifikat-Verwaltung** - Außerhalb Web-Root, verschlüsselte Passwörter
-6. **Strukturierte Fehlerbehandlung** - Logging und systematisches Debugging
-7. **Performance-Monitoring** - Überwache Generierungszeiten und Speicherverbrauch
-8. **Template-System nutzen** - Für konsistente Layouts
-9. **Mobile-Optimierung** - Kompakte, gut lesbare PDFs
-10. **Regelmäßige Wartung** - Cache-Cleanup und Archivierung
-
-Diese Best Practices helfen dabei, professionelle, sichere und performante PDF-Lösungen mit dem PdfOut AddOn zu entwickeln.
+Für die Fehlersuche in den Einstellungen den Debug-Modus und das Protokollieren der Erzeugung aktivieren – nicht im Live-Betrieb.

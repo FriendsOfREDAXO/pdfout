@@ -57,11 +57,11 @@ if ([] !== $popplerMissing) {
     $body .= rex_view::warning(
         'Die poppler-utils fehlen (' . rex_escape(implode(', ', $popplerMissing)) . '). Ohne sie funktionieren Prüfen, Seitenvorschau und Thumbnails nicht. '
         . 'Installation z. B. mit <code>apt install poppler-utils</code> oder <code>brew install poppler</code>; '
-        . 'liegen die Programme in einem eigenen Ordner, den Pfad in den <a href="' . rex_url::backendPage('pdfout/config') . '">Einstellungen</a> eintragen.',
+        . 'liegen die Programme in einem eigenen Ordner, den Pfad in den <a href="' . rex_url::backendPage('pdfout/settings/general') . '">Einstellungen</a> eintragen.',
     );
 }
 if (0 === $certificateCount) {
-    $body .= '<p>Zum Signieren wird ein Zertifikat benötigt: <a href="' . rex_url::backendPage('pdfout/certificates') . '" style="text-decoration: underline">Zertifikate verwalten</a>.</p>';
+    $body .= '<p>Zum Signieren wird ein Zertifikat benötigt: <a href="' . rex_url::backendPage('pdfout/settings/certificates') . '" style="text-decoration: underline">Zertifikate verwalten</a>.</p>';
 }
 
 $statusFragment = new rex_fragment();
@@ -105,7 +105,7 @@ foreach ($examples as $title => $code) {
     $quick .= '<h2 class="h5"><strong>' . rex_escape($title) . '</strong></h2>'
         . '<pre tabindex="0" aria-label="' . rex_escape('Beispiel: ' . $title) . '"><code>' . rex_escape($code) . '</code></pre>';
 }
-$quick .= '<p><a href="' . rex_url::backendPage('pdfout/api') . '">API-Dokumentation</a> · <a href="' . rex_url::backendPage('pdfout/docs') . '">Handbuch</a></p>';
+$quick .= '<p><a href="' . rex_url::backendPage('pdfout/help/api') . '">API-Dokumentation</a> · <a href="' . rex_url::backendPage('pdfout/help/docs') . '">Handbuch</a></p>';
 
 $quickFragment = new rex_fragment();
 $quickFragment->setVar('title', 'Schnellstart', false);
@@ -115,13 +115,13 @@ $quickHtml = $quickFragment->parse('core/page/section.php');
 // ------------------------------------------------------------------ Bereiche
 
 $tiles = [
-    ['pdfout/tools', 'fa-wrench', 'Werkzeuge', 'PDFs aus dem Medienpool zusammenführen, signieren, schützen.', 'pdfout[tools]'],
-    ['pdfout/editor', 'fa-pencil', 'Editor', 'Seiten auswählen, sortieren, Stempel und Seitenzahlen.', 'pdfout[tools]'],
-    ['pdfout/verify', 'fa-check-circle', 'Prüfen', 'Signaturen, Verschlüsselung und Metadaten anzeigen.', 'pdfout[]'],
-    ['pdfout/demo', 'fa-play-circle', 'Demos', 'Ausführbare Beispiele mit Code zum Kopieren.', 'pdfout[demo]'],
-    ['pdfout/certificates', 'fa-certificate', 'Zertifikate', 'Zertifikate hochladen, erzeugen, Standard festlegen.', 'pdfout[certificates]'],
-    ['pdfout/toolbar', 'fa-sliders', 'PDF.js-Toolbar', 'Funktionen des Viewers ein- und ausblenden.', 'pdfout[config]'],
-    ['pdfout/config', 'fa-cog', 'Einstellungen', 'Papierformat, Schrift, Signatur- und Poppler-Vorgaben.', 'pdfout[config]'],
+    ['pdfout/tools/edit', 'fa-wrench', 'Bearbeiten', 'Zusammenführen, Seiten wählen, Stempel, Seitenzahlen, signieren, schützen.', 'pdfout[tools]'],
+    ['pdfout/tools/editor', 'fa-pencil', 'Editor', 'Text, Zeichnungen, Unterschriften und Bilder in ein PDF einfügen.', 'pdfout[tools]'],
+    ['pdfout/tools/verify', 'fa-check-circle', 'Prüfen', 'Signaturen, Verschlüsselung und Metadaten anzeigen.', 'pdfout[]'],
+    ['pdfout/help/demo', 'fa-play-circle', 'Demos', 'Ausführbare Beispiele mit Code zum Kopieren.', 'pdfout[demo]'],
+    ['pdfout/settings/certificates', 'fa-certificate', 'Zertifikate', 'Zertifikate hochladen, erzeugen, Standard festlegen.', 'pdfout[certificates]'],
+    ['pdfout/settings/toolbar', 'fa-sliders', 'PDF.js-Toolbar', 'Funktionen des Viewers ein- und ausblenden.', 'pdfout[config]'],
+    ['pdfout/settings/general', 'fa-cog', 'Einstellungen', 'Papierformat, Schrift, Signatur- und Poppler-Vorgaben.', 'pdfout[config]'],
 ];
 
 $tileHtml = '';

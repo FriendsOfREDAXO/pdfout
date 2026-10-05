@@ -213,7 +213,7 @@ foreach ($availableCerts as $filename => $certData) {
 
 $select->setSelected($config['default_certificate_selection'] ?? '');
 $n['field'] = $select->get();
-$n['note'] = 'Zertifikat für Standard-Signierung. <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '">Zertifikate verwalten</a>';
+$n['note'] = 'Zertifikat für Standard-Signierung. <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/settings/certificates']) . '">Zertifikate verwalten</a>';
 $formElements[] = $n;
 
 // Passwort für Standard-Zertifikat
@@ -470,7 +470,7 @@ $demoInfo = '
         <div class="alert alert-info">
             <h4><i class="fa fa-info-circle"></i> Demo & Test Funktionen</h4>
             <p>Für Demo- und Testzwecke (Test-Zertifikat Generator, Test-PDF etc.) besuchen Sie die 
-            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="alert-link">
+            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/help/demo']) . '" class="alert-link">
                 <i class="fa fa-play"></i> Demo-Seite
             </a>.</p>
             <p><small>Dort finden Sie am Ende der Seite alle Tools zum Testen und Entwickeln.</small></p>
@@ -480,7 +480,7 @@ $demoInfo = '
         <div class="alert alert-success">
             <h4><i class="fa fa-certificate"></i> Zertifikats-Verwaltung</h4> 
             <p>Zertifikate für digitale Signaturen können hier verwaltet werden:
-            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '" class="alert-link">
+            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/settings/certificates']) . '" class="alert-link">
                 <i class="fa fa-key"></i> Zertifikate verwalten
             </a>.</p>
             <p><small>Hier können Sie Zertifikate hochladen, generieren und als Standard auswählen.</small></p>

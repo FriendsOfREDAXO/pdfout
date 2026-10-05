@@ -146,7 +146,7 @@ class rex_api_pdfout_editor_save extends rex_api_function
             'ok' => true,
             'filename' => $filename,
             'url' => rex_url::media($filename),
-            'editor' => rex_url::backendPage('pdfout/editor', ['file' => $filename], false),
+            'editor' => rex_url::backendPage('pdfout/tools/editor', ['file' => $filename], false),
             'message' => $message,
         ];
     }

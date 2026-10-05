@@ -1,6 +1,6 @@
 # Changelog
 
-## 11.0.0 – 2026
+## 11.0.0 – 05.10.2026
 
 pdfout wird zum PDF-Werkzeug für REDAXO: erzeugen, bearbeiten, absichern, prüfen, anzeigen.
 
@@ -12,6 +12,7 @@ pdfout wird zum PDF-Werkzeug für REDAXO: erzeugen, bearbeiten, absichern, prüf
 - Entfernte geschützte Methoden (nur für Unterklassen): `runWithTcpdf()`, `addDigitalSignature()`, `addDigitalSignatureFinal()`, `addPasswordProtection()`, `processTcpdfOutput()`, `drawSignatureArea()`, `addSignatureAreaToFpdi()`, `addCleanSignatureArea()`
 - Signaturen nach PAdES (`ETSI.CAdES.detached`, SHA-256) statt `adbe.pkcs7.detached`; Passwortschutz mit AES-256
 - Sichtbare Signatur: Position und Größe in Millimetern ab links oben; neue Standardwerte (unten links, 70 × 25 mm)
+- Backend-Navigation in vier Bereiche gegliedert: Übersicht, Werkzeuge (Bearbeiten, Editor, Prüfen), Einstellungen (Allgemein, Zertifikate, PDF.js-Toolbar), Hilfe (Dokumentation, API, Best Practices, Demos) – Adressen lauten jetzt z. B. `pdfout/tools/verify`
 
 ### Neue Features
 
@@ -19,7 +20,8 @@ pdfout wird zum PDF-Werkzeug für REDAXO: erzeugen, bearbeiten, absichern, prüf
 - **`PdfDocument`**: jedes PDF bearbeiten – `fromMedia()`, `fromFile()`, `fromString()`, `fromHtml()`; `append()`, `pages('1-3,-1')`, `stamp()` (Wasserzeichen), `pageNumbers()`, `metadata()`, `sign()`, `protect()`; lesen mit `pageCount()`, `info()`, `text()`, `signatures()`. Ohne Bearbeitung bleibt das PDF byte-identisch
 - **`Certificate`** (P12/PFX/PEM, Prüfung von Passwort und Schlüssel), **`SignatureField`**, **`Permission`** (Enum der erlaubten Rechte), **`Poppler`** (ohne Shell aufgerufen)
 - **Echte Signaturprüfung**: `validateSignedPdf()` prüft jetzt mit `pdfsig` (bisher wurde immer „gültig“ gemeldet)
-- Backend-Seiten **Werkzeuge** (zusammenführen, Seiten wählen, stempeln, nummerieren, signieren, schützen; herunterladen oder in den Medienpool), **Editor** (PDF.js-Editor: Text, Zeichnen, Unterschrift, Bilder – speichern in den Medienpool), **Prüfen** (Metadaten, Signaturen, Text); neue **Übersicht** und **Demos** mit der neuen API
+- Backend-Seiten **Werkzeuge → Bearbeiten** (zusammenführen, Seiten wählen, stempeln, nummerieren, signieren, schützen; herunterladen oder in den Medienpool), **Werkzeuge → Editor** (PDF.js-Editor: Text, Zeichnen, Unterschrift, Bilder – speichern in den Medienpool), **Werkzeuge → Prüfen** (Metadaten, Signaturen, Text); neue **Übersicht** und **Demos** mit der neuen API
+- Dokumentation (README, API-Referenz, Best Practices, PDF.js-Update) neu geschrieben und auf den Stand von 11.0 gebracht
 - Schriften für tc-lib-pdf werden mit `scripts/build-fonts.php` erzeugt und unter `fonts/` mitgeliefert (Standard-Schriften)
 
 ### Fixes

@@ -45,7 +45,7 @@ if ('' !== $runError) {
 
 // ------------------------------------------------------------------ Einleitung
 
-$certificatesUrl = rex_url::backendPage('pdfout/certificates');
+$certificatesUrl = rex_url::backendPage('pdfout/settings/certificates');
 $intro = '
 <p>Jede Demo zeigt den Code, der beim Klick auf „Ausführen“ läuft. Das Ergebnis öffnet sich in einem neuen Tab.
 Am Ende steht jeweils ein Objekt, das mit <code>-&gt;inline(\'name.pdf\')</code> angezeigt wird –
@@ -59,7 +59,7 @@ ebenso möglich: <code>-&gt;download()</code>, <code>-&gt;save($pfad)</code> ode
     <dt><code>Poppler</code></dt><dd>PDFs prüfen: Infos, Text, Signaturen (poppler-utils)</dd>
 </dl>
 <p>Alle Klassen liegen im Namespace <code>FriendsOfRedaxo\PdfOut</code>.
-<a href="' . rex_url::backendPage('pdfout/api') . '" style="text-decoration: underline">Zur API-Dokumentation</a></p>';
+<a href="' . rex_url::backendPage('pdfout/help/api') . '" style="text-decoration: underline">Zur API-Dokumentation</a></p>';
 
 $fragment = new rex_fragment();
 $fragment->setVar('class', 'info', false);
@@ -82,7 +82,7 @@ foreach ($demos as $key => $demo) {
             . '<a href="' . $certificatesUrl . '">Zertifikat auf der Seite „Zertifikate“ anlegen oder hochladen</a> und als Standard festlegen.');
     } elseif ($demo['poppler'] && [] !== $popplerMissing) {
         $hint = rex_view::warning('Poppler-Programme fehlen: ' . rex_escape(implode(', ', $popplerMissing)) . '. '
-            . '<a href="' . rex_url::backendPage('pdfout/config') . '">Pfad in den Einstellungen prüfen</a>.');
+            . '<a href="' . rex_url::backendPage('pdfout/settings/general') . '">Pfad in den Einstellungen prüfen</a>.');
     }
 
     $buttons = '';

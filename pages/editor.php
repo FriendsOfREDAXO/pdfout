@@ -77,7 +77,7 @@ foreach ($pdfs as $filename => $title) {
 }
 
 $selectForm = '<form action="' . rex_url::backendController() . '" method="get">'
-    . '<input type="hidden" name="page" value="pdfout/editor">'
+    . '<input type="hidden" name="page" value="pdfout/tools/editor">'
     . '<div class="form-group">'
     . '<label for="pdfout-editor-file">PDF wählen</label>'
     . '<select id="pdfout-editor-file" name="file" class="form-control selectpicker" data-live-search="true" data-width="100%" required>'
@@ -104,7 +104,7 @@ $filename = $media->getFileName();
 // Cache-Buster: Änderungsdatum im Medienpool + Größe (filemtime bleibt beim Ersetzen teils erhalten)
 $fileUrl = rex_url::media($filename) . '?v=' . $media->getUpdateDate() . '-' . $media->getSize();
 $viewerUrl = rex_url::assets('addons/pdfout/vendor/web/viewer.html');
-$saveUrl = rex_url::backendController(['page' => 'pdfout/editor'] + rex_api_pdfout_editor_save::getUrlParams(), false);
+$saveUrl = rex_url::backendController(['page' => 'pdfout/tools/editor'] + rex_api_pdfout_editor_save::getUrlParams(), false);
 $suggested = rex_api_pdfout_editor_save::targetFilename('', $filename);
 $maxSize = rex_api_pdfout_editor_save::maxUploadSize();
 

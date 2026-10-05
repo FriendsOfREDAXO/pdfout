@@ -3,7 +3,7 @@
 /**
  * pdfout – Prüfen: Metadaten, Signaturen, Text und Vorschau eines PDFs (über die poppler-utils).
  *
- * Auswahl aus dem Medienpool (auch per Link: ?page=pdfout/verify&file=datei.pdf) oder Upload.
+ * Auswahl aus dem Medienpool (auch per Link: ?page=pdfout/tools/verify&file=datei.pdf) oder Upload.
  * Hochgeladene Dateien liegen nur während der Prüfung im Cache des Addons.
  */
 
@@ -28,7 +28,7 @@ if ([] !== $missing) {
         '<strong>Die poppler-utils fehlen</strong> – ohne sie lassen sich PDFs nicht prüfen. Nicht gefunden: <code>' . rex_escape(implode(', ', $missing)) . '</code>'
         . '<br>Installation: Debian/Ubuntu <code>apt install poppler-utils</code>, Alpine <code>apk add poppler-utils</code>, '
         . 'macOS <code>brew install poppler</code>. Liegen die Programme in einem anderen Ordner, ihn in den '
-        . '<a href="' . rex_url::backendPage('pdfout/config') . '">Einstellungen</a> eintragen.',
+        . '<a href="' . rex_url::backendPage('pdfout/settings/general') . '">Einstellungen</a> eintragen.',
     );
     return;
 }

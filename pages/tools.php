@@ -55,7 +55,7 @@ if ('post' === rex_request_method() && rex_post('pdfout_tools_run', 'bool')) {
                 . ($saved['renamed'] ? ' (Name angepasst, vorhandene Dateien bleiben unverändert)' : '')
                 . '<br><a href="' . rex_url::media($saved['filename']) . '" target="_blank" rel="noopener">PDF öffnen</a>'
                 . ' · <a href="' . rex_url::backendPage('mediapool/media', ['file_name' => $saved['filename']]) . '">Im Medienpool anzeigen</a>'
-                . ' · <a href="' . rex_url::backendPage('pdfout/verify', ['file' => $saved['filename']]) . '">Prüfen</a>',
+                . ' · <a href="' . rex_url::backendPage('pdfout/tools/verify', ['file' => $saved['filename']]) . '">Prüfen</a>',
             );
         } catch (InvalidArgumentException | RuntimeException $e) {
             $message = rex_view::error(rex_escape($e->getMessage()));
@@ -198,7 +198,7 @@ $form .= $section('Metadaten', $body);
 
 $body = '';
 if ([] === $certificates) {
-    $body .= rex_view::warning('Keine Zertifikate vorhanden. Zertifikate lassen sich auf der Seite <a href="' . rex_url::backendPage('pdfout/certificates') . '">Zertifikate</a> hochladen oder erzeugen.');
+    $body .= rex_view::warning('Keine Zertifikate vorhanden. Zertifikate lassen sich auf der Seite <a href="' . rex_url::backendPage('pdfout/settings/certificates') . '">Zertifikate</a> hochladen oder erzeugen.');
 } else {
     $certificateOptions = ['' => '– Zertifikat wählen –'];
     foreach ($certificates as $certificate) {
