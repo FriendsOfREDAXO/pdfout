@@ -13,7 +13,8 @@ use FriendsOfRedaxo\PdfOut\{PdfOut, PdfDocument, Certificate, SignatureField, Pe
 | `Certificate` | Signatur-Zertifikat laden (P12/PFX oder PEM) |
 | `SignatureField` | sichtbares Signaturfeld platzieren |
 | `Permission` | erlaubte Rechte bei Passwortschutz (Enum) |
-| `Poppler` | PDFs lesen und prüfen (pdfinfo, pdfsig, pdftotext, pdftoppm) |
+| `Poppler` | PDFs lesen und prüfen (pdfinfo, pdfsig, pdftotext, pdftoppm) – optional |
+| `PopplerUnavailableException` | wird geworfen, wenn eine Funktion Poppler braucht, es aber fehlt oder abgeschaltet ist |
 | `PdfThumbnail` | Vorschaubilder (auch als Media-Manager-Effekt „PDF-Thumbnail“) |
 
 ---
@@ -102,9 +103,10 @@ Schritte werden gesammelt und beim Ausgeben in einem Durchgang angewendet. Ohne 
 | `toString()` | PDF-Daten |
 | `save(string $path, bool $overwrite = true)` | Pfad |
 | `inline(?string $filename = null)` / `download(...)` | sendet und beendet |
-| `pageCount()` | Seitenzahl |
-| `info()` | Metadaten (`Pages`, `Title`, `Page size`, `Encrypted` …) |
-| `text(bool $layout = false)` | Text |
+| `PdfDocument::canInspect()` | stehen `info()`, `text()`, `signatures()` zur Verfügung (Poppler)? |
+| `pageCount()` | Seitenzahl – mit Poppler oder über tc-lib-pdf |
+| `info()` | Metadaten (`Pages`, `Title`, `Page size`, `Encrypted` …) – Poppler |
+| `text(bool $layout = false)` | Text – Poppler |
 | `signatures()` | Prüfergebnis je Signatur: `signer`, `signed_at`, `hash`, `type`, `valid`, `status`, `certificate`, `certificate_trusted`, `whole_document` |
 | `PdfDocument::resolvePages(array\|string $selection, int $total)` | Seitenauswahl in Seitennummern auflösen |
 
@@ -144,13 +146,20 @@ Erlaubte Rechte: `Print`, `PrintHigh`, `Modify`, `Copy`, `Annotate`, `FillForms`
 | Methode | Beschreibung |
 | --- | --- |
 | `Poppler::isAvailable()`, `Poppler::missing()`, `Poppler::version()` | Verfügbarkeit |
+| `Poppler::isEnabled()` | in den Einstellungen eingeschaltet? (`poppler_enabled`) |
 | `Poppler::info(string $file, string $password = '')` | Metadaten |
 | `Poppler::pageCount(string $file, string $password = '')` | Seitenzahl |
 | `Poppler::signatures(string $file, string $password = '')` | Signaturprüfung |
 | `Poppler::text(string $file, string $password = '', bool $layout = false)` | Text |
 | `Poppler::run(string $tool, array $args, int $timeout = 60)` | beliebiges Poppler-Programm ohne Shell |
 
-Der Ordner der Programme lässt sich in den Einstellungen festlegen (`poppler_path`).
+Poppler ist optional. Der Ordner der Programme lässt sich in den Einstellungen festlegen (`poppler_path`), die Funktionen lassen sich dort auch abschalten (`poppler_enabled`). Ohne Poppler werfen die Lese-Methoden `PopplerUnavailableException`:
+
+```php
+if (PdfDocument::canInspect()) {
+    $signaturen = PdfDocument::fromFile($pfad)->signatures();
+}
+```
 
 ---
 

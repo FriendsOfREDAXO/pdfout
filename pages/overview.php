@@ -37,15 +37,15 @@ $status = [
     'dompdf (HTML → PDF)' => $packageVersion('dompdf/dompdf'),
     'tc-lib-pdf (Bearbeiten, Signatur)' => $packageVersion('tecnickcom/tc-lib-pdf'),
     'pdf.js (Viewer)' => (string) $addon->getProperty('pdfjs', '–'),
-    'Poppler (Prüfen, Vorschau)' => [] === $popplerMissing
+    'Poppler (optional: Prüfen, Auslesen)' => [] === $popplerMissing
         ? '<span class="text-success"><i class="rex-icon fa-check" aria-hidden="true"></i> ' . rex_escape($popplerVersion ?? 'verfügbar') . '</span>'
-        : '<span class="text-danger"><i class="rex-icon fa-times" aria-hidden="true"></i> fehlt: ' . rex_escape(implode(', ', $popplerMissing)) . '</span>',
+        : '<span class="text-muted"><i class="rex-icon fa-minus" aria-hidden="true"></i> nicht installiert</span>',
     'Zertifikate' => $certificateCount > 0
         ? (string) $certificateCount
         : '<span class="text-warning">keine</span>',
     'PHP' => PHP_VERSION,
 ];
-$rawStatus = ['Poppler (Prüfen, Vorschau)', 'Zertifikate'];
+$rawStatus = ['Poppler (optional: Prüfen, Auslesen)', 'Zertifikate'];
 
 $rows = '';
 foreach ($status as $label => $value) {
@@ -54,8 +54,9 @@ foreach ($status as $label => $value) {
 $body = '<table class="table table-condensed pdfout-status"><tbody>' . $rows . '</tbody></table>';
 
 if ([] !== $popplerMissing) {
-    $body .= rex_view::warning(
-        'Die poppler-utils fehlen (' . rex_escape(implode(', ', $popplerMissing)) . '). Ohne sie funktionieren Prüfen, Seitenvorschau und Thumbnails nicht. '
+    $body .= rex_view::info(
+        'Ohne die poppler-utils sind Prüfen und Auslesen ausgeblendet (Signaturprüfung, Metadaten, Text). Erzeugen, Bearbeiten, Signieren, Schützen und Anzeigen funktionieren. '
+        . 'Vorschaubilder nutzen dann Ghostscript oder Imagick, falls vorhanden. '
         . 'Installation z. B. mit <code>apt install poppler-utils</code> oder <code>brew install poppler</code>; '
         . 'liegen die Programme in einem eigenen Ordner, den Pfad in den <a href="' . rex_url::backendPage('pdfout/settings/general') . '">Einstellungen</a> eintragen.',
     );
@@ -128,6 +129,9 @@ $tileHtml = '';
 foreach ($tiles as [$page, $icon, $title, $text, $perm]) {
     if (!$user->isAdmin() && !$user->hasPerm($perm)) {
         continue;
+    }
+    if ('pdfout/tools/verify' === $page && [] !== $popplerMissing) {
+        continue; // Prüfen benötigt Poppler
     }
     $tileHtml .= '<div class="col-sm-6 col-md-4 col-lg-3">'
         . '<a class="pdfout-tile" href="' . rex_url::backendPage($page) . '">'

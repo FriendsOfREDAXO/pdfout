@@ -1,5 +1,5 @@
 package: pdfout
-version: '11.0.0'
+version: '11.1.0'
 pdfjs: '6.4.299'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout

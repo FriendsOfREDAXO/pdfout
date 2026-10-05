@@ -1,5 +1,24 @@
 # Changelog
 
+## 11.1.0 – 05.10.2026
+
+### Poppler ist optional
+
+- Installation und Update laufen auch ohne die poppler-utils (bisher Abbruch); ein Hinweis nennt, was fehlt
+- Ohne Poppler (oder wenn in den Einstellungen abgeschaltet) werden ausgeblendet: Seite *Werkzeuge → Prüfen*, die Prüf-Kachel der Übersicht, die Demo „Signatur prüfen“, der Link „Prüfen“ nach dem Speichern und der Media-Manager-Effekt „PDF-Thumbnail“ (bereits eingerichtete Medientypen laufen weiter, über Ghostscript oder Imagick)
+- Erzeugen, Bearbeiten, Signieren, Schützen, Viewer und Editor funktionieren ohne Poppler unverändert
+- `PdfDocument::pageCount()` funktioniert ohne Poppler (über tc-lib-pdf bzw. die bekannte Seitenzahl nach dem Bearbeiten)
+- `info()`, `text()`, `signatures()` werfen ohne Poppler die neue `PopplerUnavailableException` mit Installationshinweis; vorab prüfen mit `PdfDocument::canInspect()`
+- `validateSignedPdf()` meldet ohne Poppler einen verständlichen Fehler statt einer Ausnahme
+- Neue Einstellung „Poppler-Funktionen verwenden“ (`poppler_enabled`), `Poppler::isEnabled()`, `Poppler::reset()`
+- `proc_open()` wird nur noch für Poppler benötigt
+
+### Fixes
+
+- Dokumentation: der Konsolen-Befehl zum Setzen des Poppler-Ordners funktionierte nicht – der Ordner wird in den Einstellungen gepflegt
+- `info()` berücksichtigt bei geschützten PDFs das gesetzte Passwort
+
+
 ## 11.0.0 – 05.10.2026
 
 pdfout wird zum PDF-Werkzeug für REDAXO: erzeugen, bearbeiten, absichern, prüfen, anzeigen.

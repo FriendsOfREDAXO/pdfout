@@ -70,6 +70,9 @@ final class PdfDocument
 
     private ?string $rendered = null;
 
+    /** Seitenzahl des zuletzt erzeugten Dokuments (ohne Poppler bekannt) */
+    private ?int $renderedPages = null;
+
     private function __construct()
     {
     }
@@ -243,21 +246,48 @@ final class PdfDocument
         $this->send($filename ?? $this->filename, true);
     }
 
-    // ------------------------------------------------------------------ Lesen (Poppler)
+    // ------------------------------------------------------------------ Lesen
 
+    /** Stehen info(), text() und signatures() zur Verfügung? (benötigen die poppler-utils) */
+    public static function canInspect(): bool
+    {
+        return Poppler::isAvailable();
+    }
+
+    /** Seitenzahl – funktioniert auch ohne Poppler */
     public function pageCount(): int
     {
-        return $this->withTempFile(static fn (string $file): int => Poppler::pageCount($file), true);
+        if ($this->hasChanges()) {
+            $this->toString();
+            return (int) $this->renderedPages;
+        }
+        if (Poppler::isAvailable()) {
+            return $this->withTempFile(static fn (string $file): int => Poppler::pageCount($file), true);
+        }
+        $pdf = new Tcpdf();
+        return $pdf->getSourcePageCount($pdf->setImportSourceData($this->sources[0]));
     }
 
-    /** @return array<string, string> */
+    /**
+     * Metadaten (benötigt Poppler)
+     *
+     * @return array<string, string>
+     * @throws PopplerUnavailableException
+     */
     public function info(): array
     {
-        return $this->withTempFile(static fn (string $file): array => Poppler::info($file), true);
+        self::requirePoppler('Das Auslesen der Metadaten');
+        return $this->withTempFile(fn (string $file): array => Poppler::info($file, $this->userPassword ?? ''));
     }
 
+    /**
+     * Text (benötigt Poppler)
+     *
+     * @throws PopplerUnavailableException
+     */
     public function text(bool $layout = false): string
     {
+        self::requirePoppler('Das Auslesen des Textes');
         return $this->withTempFile(fn (string $file): string => Poppler::text($file, $this->userPassword ?? '', $layout));
     }
 
@@ -268,6 +298,7 @@ final class PdfDocument
      */
     public function signatures(): array
     {
+        self::requirePoppler('Die Signaturprüfung');
         return $this->withTempFile(fn (string $file): array => Poppler::signatures($file, $this->userPassword ?? ''));
     }
 
@@ -276,7 +307,15 @@ final class PdfDocument
     private function changed(): self
     {
         $this->rendered = null;
+        $this->renderedPages = null;
         return $this;
+    }
+
+    private static function requirePoppler(string $feature): void
+    {
+        if (!Poppler::isAvailable()) {
+            throw PopplerUnavailableException::forFeature($feature);
+        }
     }
 
     private function hasChanges(): bool
@@ -328,6 +367,7 @@ final class PdfDocument
             throw new RuntimeException('Die Seitenauswahl ergibt keine Seiten.');
         }
         $total = count($pages);
+        $this->renderedPages = $total;
         $stampPages = null !== $this->stamp ? self::stampPages($this->stamp['pages'], $total) : [];
         $signaturePage = null !== $this->signatureField ? ($this->signatureField->page < 0 ? $total + 1 + $this->signatureField->page : $this->signatureField->page) : 0;
 
