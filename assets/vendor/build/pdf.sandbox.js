@@ -2499,4 +2499,4 @@ globalThis.pdfjsSandbox = {
 
 export { QuickJSSandbox };
 
-//# sourceMappingURL=pdf.sandbox.mjs.map
+//# sourceMappingURL=pdf.sandbox.js.map

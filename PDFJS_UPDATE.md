@@ -96,6 +96,15 @@ in älteren Safari-, Chrome- und Firefox-Versionen. Darum ist `"build": "legacy"
 `"modern"` spart etwas Größe, wenn nur aktuelle Browser unterstützt werden müssen. Welche Variante
 installiert ist, steht in `pdfjs.currentBuild`.
 
+### Dateiendung der Module: `.js` (Standard) oder `.mjs`
+
+PDF.js liefert seine Module als `.mjs`. Viele Server kennen diese Endung nicht und senden
+`application/octet-stream` – Browser verweigern dann die Ausführung, der Viewer bleibt leer
+(betrifft z. B. nginx unter Plesk, der statische Dateien direkt ausliefert und `AddType` in der
+`.htaccess` ignoriert). Darum speichert das Update-Skript die Module als `.js` und passt die
+Verweise in `viewer.html`, `viewer.js` und `pdf.js` an. Mit `"moduleExtension": "mjs"` bleibt es
+bei den Original-Dateien.
+
 ### Was wird ausgeschlossen?
 
 - **`cmaps/`** (1.6MB): Character Maps für asiatische Schriften - nicht benötigt für deutsche/europäische PDFs

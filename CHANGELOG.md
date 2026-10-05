@@ -8,6 +8,10 @@
 - Vendor-Pakete aktualisiert: masterminds/html5 2.11.0, sabberworm/php-css-parser 9.5.0, tecnickcom/tcpdf 6.11.4; `thecodingmachine/safe` entfällt (wird von php-css-parser nicht mehr benötigt)
 - Composer-Plattform auf PHP 8.1 festgelegt (entspricht der Mindestanforderung des Addons)
 
+### Fixes
+
+- **Viewer blieb auf manchen Servern leer:** pdf.js-Module werden jetzt als `.js` statt `.mjs` ausgeliefert. Server, die `.mjs` nicht kennen (z. B. nginx unter Plesk, der statische Dateien selbst ausliefert und die `.htaccess` nicht beachtet), senden sonst `application/octet-stream` – Browser führen Module mit diesem Typ nicht aus (abschaltbar über `pdfjs.moduleExtension: "mjs"`)
+
 ### Verbesserungen
 
 - Update-Skript: Build-Variante wählbar (`pdfjs.build`: `legacy`/`modern`), eine angegebene Version wird jetzt wirklich geladen (bisher immer die neueste), Zielordner werden vor dem Kopieren geleert

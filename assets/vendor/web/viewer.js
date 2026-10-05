@@ -5387,7 +5387,7 @@ const defaultOptions = new Map([["allowedGlobalEvents", {
   value: 0,
   kind: OptionKind.VIEWER + OptionKind.PREFERENCE
 }], ["debuggerSrc", {
-  value: "./debugger.mjs",
+  value: "./debugger.js",
   kind: OptionKind.VIEWER
 }], ...[["defaultUrl", {
   value: "compressed.tracemonkey-pldi-09.pdf",
@@ -5513,7 +5513,7 @@ const defaultOptions = new Map([["allowedGlobalEvents", {
   value: 150,
   kind: OptionKind.VIEWER
 }], ...[["sandboxBundleSrc", {
-  value: "../build/pdf.sandbox.mjs",
+  value: "../build/pdf.sandbox.js",
   kind: OptionKind.VIEWER
 }]], ["sidebarViewOnLoad", {
   value: -1,
@@ -5595,7 +5595,7 @@ const defaultOptions = new Map([["allowedGlobalEvents", {
   value: null,
   kind: OptionKind.WORKER
 }], ["workerSrc", {
-  value: "../build/pdf.worker.mjs",
+  value: "../build/pdf.worker.js",
   kind: OptionKind.WORKER
 }]]);
 class AppOptions {
@@ -26434,4 +26434,4 @@ if (document.readyState === "interactive" || document.readyState === "complete")
 
 export { PDFViewerApplication, AppConstants as PDFViewerApplicationConstants, AppOptions as PDFViewerApplicationOptions };
 
-//# sourceMappingURL=viewer.mjs.map
+//# sourceMappingURL=viewer.js.map

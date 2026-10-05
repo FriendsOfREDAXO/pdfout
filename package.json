@@ -20,6 +20,7 @@
       "iccs"
     ],
     "build": "legacy",
-    "currentBuild": "legacy"
+    "currentBuild": "legacy",
+    "moduleExtension": "js"
   }
 }

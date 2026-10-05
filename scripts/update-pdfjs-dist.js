@@ -174,6 +174,43 @@ class PdfJsUpdater {
         }
     }
 
+    /**
+     * Module als .js statt .mjs (package.json: pdfjs.moduleExtension, Standard "js").
+     * Viele Server (z. B. nginx unter Plesk, der statische Dateien selbst ausliefert) kennen .mjs nicht und
+     * senden "application/octet-stream" – Browser führen Module mit falschem Typ nicht aus, der Viewer bleibt leer.
+     */
+    async convertModulesToJs() {
+        let extension = 'js';
+        try {
+            extension = require(path.join(__dirname, '..', 'package.json')).pdfjs?.moduleExtension === 'mjs' ? 'mjs' : 'js';
+        } catch (error) {
+            // Standard
+        }
+        if (extension === 'mjs') {
+            return;
+        }
+        const rewrite = (code) => code
+            // Verweise zwischen den pdf.js-Dateien (Viewer, Bibliothek, Worker, Sandbox, Debugger)
+            .replace(/((?:\.\.\/build\/|\.\/)?(?:pdf|pdf\.worker|pdf\.sandbox|viewer|debugger))\.mjs(?=["'`])/g, '$1.js')
+            .replace(/sourceMappingURL=([\w.-]+)\.mjs\.map/g, 'sourceMappingURL=$1.js.map');
+        for (const dir of ['build', 'web']) {
+            const dirPath = path.join(ASSETS_TARGET, dir);
+            for (const name of await fs.readdir(dirPath)) {
+                const filePath = path.join(dirPath, name);
+                if (name.endsWith('.mjs')) {
+                    const code = await fs.readFile(filePath, 'utf8');
+                    await fs.writeFile(filePath.replace(/\.mjs$/, '.js'), rewrite(code), 'utf8');
+                    await fs.unlink(filePath);
+                } else if (name.endsWith('.mjs.map')) {
+                    await fs.rename(filePath, filePath.replace(/\.mjs\.map$/, '.js.map'));
+                } else if (name === 'viewer.html') {
+                    await fs.writeFile(filePath, rewrite(await fs.readFile(filePath, 'utf8')), 'utf8');
+                }
+            }
+        }
+        console.log('✓ Module als .js gespeichert (Server ohne .mjs-MIME-Typ)');
+    }
+
     async patchViewerHtml() {
         const viewerHtmlPath = path.join(ASSETS_TARGET, 'web', 'viewer.html');
 
@@ -182,11 +219,12 @@ class PdfJsUpdater {
             const ymlContent = await fs.readFile(path.join(__dirname, '..', 'package.yml'), 'utf8');
             const addonVersion = (ymlContent.match(/^version:\s*'([^']+)'/m) || [])[1] || Date.now();
             const scriptTag = `  <script src="../../viewer-toolbar.js?v=${addonVersion}"></script>\n`;
+            const viewerScript = viewerHtml.includes('src="viewer.js"') ? 'viewer.js' : 'viewer.mjs';
 
             if (!viewerHtml.includes('viewer-toolbar.js')) {
                 viewerHtml = viewerHtml.replace(
-                    '  <script src="viewer.mjs" type="module"></script>\n',
-                    '  <script src="viewer.mjs" type="module"></script>\n' + scriptTag,
+                    `  <script src="${viewerScript}" type="module"></script>\n`,
+                    `  <script src="${viewerScript}" type="module"></script>\n` + scriptTag,
                 );
 
                 await fs.writeFile(viewerHtmlPath, viewerHtml, 'utf8');
@@ -321,6 +359,7 @@ class PdfJsUpdater {
                 console.warn('⚠ LICENSE file not found or failed to copy');
             }
 
+            await this.convertModulesToJs();
             await this.patchViewerHtml();
 
             // Update version info
