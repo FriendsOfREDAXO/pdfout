@@ -1,37 +1,44 @@
 package: pdfout
-version: '10.6.0'
+version: '11.0.0'
 pdfjs: '6.4.299'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout
 requires:
     redaxo: '^5.15.1'
     php:
-        version: '>=8.1'
-        extensions: [gd]
+        version: '>=8.4'
+        extensions: [gd, openssl, mbstring, zlib, dom]
 
 page:
     title: 'translate:title'
     perm: pdfout[]
     icon: rex-icon fa-file-pdf-o
     subpages:
-        overview: 
+        overview:
             title: 'translate:pdfout_overview'
             perm: pdfout[]
-        config: 
-            title: 'translate:pdfout_config'
-            perm: pdfout[config]
-        demo: 
-            title: 'translate:pdfout_demo'
-            perm: pdfout[demo]
-        toolbar:
-            title: 'translate:pdfout_toolbar'
-            perm: pdfout[config]
-        certificates: 
-            title: 'translate:pdfout_certificates'
-            perm: pdfout[certificates]
-        docs:  
-             { title: 'translate:pdfout_docs',  icon: "rex-icon fa-question-circle", subPath: README.md}
-        api:  
-             { title: 'API Referenz',  icon: "rex-icon fa-code", subPath: API.md}
-        bestpractices:  
-             { title: 'Best Practices',  icon: "rex-icon fa-lightbulb-o", subPath: BEST_PRACTICES.md} 
+        tools:
+            title: 'translate:pdfout_tools'
+            icon: rex-icon fa-wrench
+            perm: pdfout[]
+            subpages:
+                edit: { title: 'translate:pdfout_tools_edit', icon: rex-icon fa-wrench, perm: 'pdfout[tools]', subPath: pages/tools.php }
+                editor: { title: 'translate:pdfout_editor', icon: rex-icon fa-pencil, perm: 'pdfout[tools]', subPath: pages/editor.php }
+                verify: { title: 'translate:pdfout_verify', icon: rex-icon fa-check-circle, perm: 'pdfout[]', subPath: pages/verify.php }
+        settings:
+            title: 'translate:pdfout_settings'
+            icon: rex-icon fa-cog
+            perm: pdfout[]
+            subpages:
+                general: { title: 'translate:pdfout_settings_general', icon: rex-icon fa-cog, perm: 'pdfout[config]', subPath: pages/config.php }
+                certificates: { title: 'translate:pdfout_certificates', icon: rex-icon fa-certificate, perm: 'pdfout[certificates]', subPath: pages/certificates.php }
+                toolbar: { title: 'translate:pdfout_toolbar', icon: rex-icon fa-sliders, perm: 'pdfout[config]', subPath: pages/toolbar.php }
+        help:
+            title: 'translate:pdfout_help'
+            icon: rex-icon fa-question-circle
+            perm: pdfout[]
+            subpages:
+                docs: { title: 'translate:pdfout_docs', icon: rex-icon fa-book, subPath: README.md }
+                api: { title: 'translate:pdfout_api', icon: rex-icon fa-code, subPath: API.md }
+                bestpractices: { title: 'translate:pdfout_bestpractices', icon: rex-icon fa-lightbulb-o, subPath: BEST_PRACTICES.md }
+                demo: { title: 'translate:pdfout_demo', icon: rex-icon fa-play-circle, perm: 'pdfout[demo]', subPath: pages/demo.php }

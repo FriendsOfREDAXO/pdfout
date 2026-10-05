@@ -1,239 +1,71 @@
-# PDF.js Update Workflow
+# PDF.js aktualisieren
 
-Dieses Dokument beschreibt den automatisierten Workflow zum Aktualisieren von PDF.js 5.x in diesem REDAXO-Addon.
+pdfout liefert den PDF.js-Viewer unter `assets/vendor/` aus. Aktualisiert wird er aus den offiziellen
+[GitHub-Releases](https://github.com/mozilla/pdf.js/releases) – mit einem Befehl.
 
-## 🎯 Überblick
+## Aktualisieren
 
-Statt PDF.js manuell herunterzuladen, verwenden wir jetzt **GitHub Releases** für automatisierte Updates. Dies stellt sicher, dass wir immer die vollständige Distribution (inkl. Viewer) erhalten und macht Updates einfacher, sicherer und nachvollziehbarer.
-
-## 🚀 Schnellstart
-
-### Ein-Befehl Update (empfohlen)
 ```bash
-# Update auf die neueste Version
-./scripts/update-pdfjs.sh
-
-# Update auf eine spezifische Version
-./scripts/update-pdfjs.sh 5.4.394
+./scripts/update-pdfjs.sh            # neueste Version
+./scripts/update-pdfjs.sh 6.4.299    # bestimmte Version
+npm run check-updates                # nur prüfen, ob es eine neue Version gibt
 ```
 
-### NPM-Scripts
-```bash
-# 1. Aktuelle Version prüfen und Updates suchen
-npm run check-updates
+Voraussetzungen: Node.js 14 oder neuer, `curl`, `unzip`.
 
-# 2. PDF.js auf neueste Version aktualisieren  
-npm run update-pdfjs
+Danach den Viewer testen (Desktop und iPhone/iPad), `CHANGELOG.md` ergänzen und die Addon-Version in
+`package.yml` erhöhen – die Version dient dem Viewer als Cache-Busting.
 
-# 3. PDF.js installieren (erste Einrichtung)
-npm run install-pdfjs
-```
+## Was das Skript macht
 
-## 📋 Verfügbare Scripts
+1. Release ermitteln: neueste oder die angegebene Version
+2. ZIP der gewählten Variante herunterladen (`legacy` oder `modern`)
+3. `assets/vendor/build` und `assets/vendor/web` leeren und neu befüllen (keine Reste alter Versionen)
+4. Module von `.mjs` in `.js` umbenennen und die Verweise anpassen
+5. `viewer.html` um das Toolbar-Skript `assets/viewer-toolbar.js` ergänzen
+6. Version in `package.json` und `package.yml` (`pdfjs`) eintragen
 
-| Script | Beschreibung |
-|--------|-------------|
-| `npm run update-pdfjs` | Lädt neueste PDF.js Distribution von GitHub |
-| `npm run check-updates` | Zeigt verfügbare Updates an |
-| `npm run install-pdfjs` | Installiert PDF.js (erste Einrichtung) |
-| `./scripts/update-pdfjs.sh` | Shell-Script für manuelle Updates |
-
-## 📁 Dateistruktur
-
-```
-├── package.json              # Konfiguration + Exclusion-Liste
-├── scripts/
-│   ├── update-pdfjs-dist.js  # GitHub Release Downloader
-│   ├── check-pdfjs-updates.js # Update-Checker
-│   ├── update-pdfjs.sh       # Shell-Wrapper
-│   └── build-pdfjs.js        # Legacy-Wrapper (deprecated)
-└── assets/vendor/            # PDF.js 5.x Distribution (optimiert)
-    ├── build/                # Core PDF.js Library
-    │   ├── pdf.mjs
-    │   ├── pdf.worker.mjs
-    │   └── pdf.sandbox.mjs
-    ├── web/                  # Kompletter Viewer
-    │   ├── viewer.html       # Hauptviewer
-    │   ├── viewer.css
-    │   ├── viewer.mjs
-    │   ├── debugger.css
-    │   ├── debugger.mjs
-    │   ├── images/           # Toolbar-Icons
-    │   ├── locale/           # Übersetzungen
-    │   │   └── locale.json
-    │   ├── standard_fonts/   # Embedded Fonts
-    │   └── wasm/            # WebAssembly Module
-    └── LICENSE
-
-# Ausgeschlossen für europäische PDFs:
-# ├── cmaps/              # Character Maps (CJK-Schriften) - 1.6MB gespart
-# └── iccs/               # Color Profiles (Druckindustrie) - zusätzlich gespart
-```
-
-## 🎛️ Konfiguration
-
-Die Exclusion-Liste in `package.json` steuert, welche Komponenten übersprungen werden:
+## Einstellungen (`package.json` → `pdfjs`)
 
 ```json
 {
   "pdfjs": {
-    "currentVersion": "6.4.299",
     "build": "legacy",
-    "source": "github-releases",
-    "excludeComponents": [
-      "cmaps",  // Character Maps für CJK-Schriften (Chinesisch/Japanisch/Koreanisch)
-      "iccs"    // ICC Color Profiles für Druckindustrie
-    ]
+    "moduleExtension": "js",
+    "excludeComponents": ["cmaps", "iccs"],
+    "currentVersion": "6.4.299",
+    "currentBuild": "legacy"
   }
 }
 ```
 
-### Build-Variante: `legacy` (Standard) oder `modern`
+| Schlüssel | Bedeutung |
+| --- | --- |
+| `build` | `legacy` (Standard) läuft auch in älteren Browsern, etwa auf iPhones mit älterem iOS. `modern` ist etwas kleiner, läuft aber nur in aktuellen Browsern. |
+| `moduleExtension` | `js` (Standard): Module werden als `.js` ausgeliefert. Viele Server kennen `.mjs` nicht und senden den falschen Dateityp – Browser führen die Module dann nicht aus und der Viewer bleibt leer (z. B. nginx unter Plesk, das statische Dateien selbst ausliefert und `AddType` in der `.htaccess` nicht beachtet). `mjs` behält die Originaldateien. |
+| `excludeComponents` | Ordner oder Dateien, die nicht übernommen werden. `cmaps` (Zeichentabellen für chinesische, japanische und koreanische Schriften, ca. 1,6 MB) und `iccs` (Farbprofile für den Druck). Wer CJK-PDFs anzeigt, entfernt `cmaps` aus der Liste. |
+| `currentVersion`, `currentBuild` | vom Skript gepflegt |
 
-PDF.js erscheint in zwei Varianten. Die **moderne** läuft nur in aktuellen Browsern – auf iPhones/iPads
-mit älterem iOS bleibt der Viewer dann leer. Die **Legacy**-Variante bringt Polyfills mit und läuft auch
-in älteren Safari-, Chrome- und Firefox-Versionen. Darum ist `"build": "legacy"` voreingestellt;
-`"modern"` spart etwas Größe, wenn nur aktuelle Browser unterstützt werden müssen. Welche Variante
-installiert ist, steht in `pdfjs.currentBuild`.
+## Dateien
 
-### Dateiendung der Module: `.js` (Standard) oder `.mjs`
-
-PDF.js liefert seine Module als `.mjs`. Viele Server kennen diese Endung nicht und senden
-`application/octet-stream` – Browser verweigern dann die Ausführung, der Viewer bleibt leer
-(betrifft z. B. nginx unter Plesk, der statische Dateien direkt ausliefert und `AddType` in der
-`.htaccess` ignoriert). Darum speichert das Update-Skript die Module als `.js` und passt die
-Verweise in `viewer.html`, `viewer.js` und `pdf.js` an. Mit `"moduleExtension": "mjs"` bleibt es
-bei den Original-Dateien.
-
-### Was wird ausgeschlossen?
-
-- **`cmaps/`** (1.6MB): Character Maps für asiatische Schriften - nicht benötigt für deutsche/europäische PDFs
-- **`iccs/`** (klein): ICC Color Profiles für professionellen Druck - meist nicht erforderlich
-
-### Exclusions anpassen
-
-Wenn du doch CJK-Unterstützung brauchst, entferne einfach `"cmaps"` aus der Liste:
-
-```json
-"excludeComponents": [
-  "iccs"  // Nur Color Profiles ausschließen
-]
+```
+assets/
+├── viewer-toolbar.js    # blendet Leisten-Gruppen aus, Rücksprung-Knopf (returnUrl)
+├── toolbar-builder.js   # Backend-Seite „PDF.js-Toolbar“
+└── vendor/              # PDF.js – wird vom Skript ersetzt, nicht von Hand ändern
+    ├── build/           # pdf.js, pdf.worker.js, pdf.sandbox.js
+    └── web/             # viewer.html, viewer.js, viewer.css, locale/, images/, …
 ```
 
-## 🔄 Update-Prozess im Detail
+Eigene Anpassungen gehören in `viewer-toolbar.js`, nicht in `assets/vendor/`. Die Leisten-Gruppen werden über
+Element-IDs des Viewers ausgeblendet; nach einem größeren Update prüfen, ob die IDs in `viewer.html` noch existieren
+(Liste in `viewer-toolbar.js`, `FEATURE_MAP`).
 
-1. **GitHub API-Abfrage**: Neueste (oder angegebene) Release-Version ermitteln
-2. **Distribution-Download**: ZIP der gewählten Variante (`legacy`/`modern`) von GitHub herunterladen
-3. **Extraktion**: ZIP in temporäres Verzeichnis entpacken
-4. **Asset-Kopie**: `assets/vendor/build` und `assets/vendor/web` werden geleert und neu befüllt (keine Reste alter Versionen), `viewer.html` bekommt das Toolbar-Skript
-5. **Version-Update**: `package.json` und `package.yml` aktualisieren
-6. **Aufräumen**: Temporäre Dateien entfernen
+## Fehlersuche
 
-## 🆕 Was ist neu in PDF.js 5.x?
-
-### ✅ Neue Features
-- **Erweiterte Annotation-Tools**: Neue Editor-Funktionen
-- **Verbesserte Performance**: Optimierte Rendering-Engine  
-- **WebAssembly-Module**: Bessere Decoder für spezielle Formate
-- **Neue Icons**: Aktualisierte Toolbar-Icons
-- **Erweiterte Lokalisierung**: Mehr Sprachen unterstützt
-
-### ⚠️ Breaking Changes
-- **Neue Dateistruktur**: `pdf_viewer.*` für neue APIs, `viewer.*` für Legacy
-- **Entfernte Legacy-Files**: Einige alte Debugger-Dateien nicht mehr verfügbar
-- **Geänderte Pfade**: Standard-Fonts jetzt im Root-Verzeichnis
-- **Neue WASM-Module**: Zusätzliche WebAssembly-Dateien erforderlich
-
-### 🔧 Automatische Migration
-Unser Build-System behandelt alle Breaking Changes automatisch:
-- ✅ Erkennt neue vs. alte Dateistrukturen
-- ✅ Kopiert Dateien von korrekten Quellen  
-- ✅ Behält Backward-Kompatibilität bei
-- ✅ Aktualisiert Versionsinformationen
-
-## 🛠️ Systemvoraussetzungen
-
-```bash
-# Erforderlich
-node --version    # >= 14.0.0
-curl --version    # Für Downloads
-unzip --version   # Für Extraktion
-
-# Optional (für Shell-Script)
-bash --version    # Moderne Shell
-```
-
-## 🔍 Version prüfen
-
-```bash
-# Aktuelle Version anzeigen
-node -p "require('./package.json').pdfjs.currentVersion"
-
-# Oder in package.yml
-grep "pdfjs:" package.yml
-
-# Verfügbare Updates prüfen
-npm run check-updates
-```
-
-## 🚨 Troubleshooting
-
-### Problem: "curl not found"
-```bash
-# macOS (mit Homebrew)
-brew install curl
-
-# Ubuntu/Debian  
-sudo apt update && sudo apt install curl
-
-# Windows (Git Bash empfohlen)
-# curl ist in Git Bash enthalten
-```
-
-### Problem: "unzip not found"
-```bash
-# macOS
-# unzip ist standardmäßig installiert
-
-# Ubuntu/Debian
-sudo apt update && sudo apt install unzip
-
-# Windows
-# Verwende Git Bash oder installiere 7-Zip
-```
-
-### Problem: "Download failed"
-```bash
-# Netzwerk-Konnektivität prüfen
-curl -I https://github.com
-
-# Manuelle GitHub-URL testen
-curl -L -I https://github.com/mozilla/pdf.js/releases/latest
-```
-
-### Problem: "Node.js version"
-```bash
-# Node.js Version prüfen
-node --version
-
-# Sollte >= 14.0.0 sein
-# Neuere Version installieren falls nötig
-```
-
-## 🎯 Vorteile des neuen Systems
-
-- ✅ **Komplette Distribution**: Immer vollständiger Viewer mit allen Dateien
-- ✅ **Ein-Befehl Updates**: `./scripts/update-pdfjs.sh`
-- ✅ **Automatische Erkennung**: Neue vs. alte Dateistrukturen
-- ✅ **GitHub Integration**: Direkt von offiziellen Releases
-- ✅ **Versionskontrolle**: Exakte Versionen dokumentiert
-- ✅ **Zukunftssicher**: Unterstützt alle kommenden PDF.js Versionen
-- ✅ **REDAXO-optimiert**: Hält bestehende Asset-Struktur bei
-- ✅ **Keine NPM-Dependencies**: Kein node_modules Overhead
-
-## 🔗 Weiterführende Informationen
-
-- [PDF.js GitHub Repository](https://github.com/mozilla/pdf.js)
-- [PDF.js Releases](https://github.com/mozilla/pdf.js/releases)
-- [PDF.js 5.x Migration Guide](https://github.com/mozilla/pdf.js/wiki/Migration-Guide)
-- [REDAXO Addon Entwicklung](https://redaxo.org/doku/master/addon-entwicklung)
+| Meldung | Lösung |
+| --- | --- |
+| `curl` oder `unzip` nicht gefunden | installieren (`apt install curl unzip`, unter macOS vorhanden) |
+| Download fehlgeschlagen | Netzwerk prüfen; die Release-Seite auf GitHub muss erreichbar sein |
+| Release nicht gefunden | Versionsnummer ohne „v“ angeben, z. B. `6.4.299` |
+| Viewer bleibt nach dem Update leer | Browser-Konsole prüfen: Dateityp der `.js`-Dateien, Fehlermeldungen von PDF.js |

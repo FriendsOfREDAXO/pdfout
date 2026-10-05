@@ -198,7 +198,7 @@ class rex_effect_pdf_thumbnail extends rex_effect_abstract
                 'label' => rex_i18n::msg('pdfout_effect_pdf_thumbnail_gamma'),
                 'name' => 'gamma',
                 'type' => 'select',
-                'options' => self::GAMMA_OPTIONS,
+                'options' => array_map(static fn (float $gamma): string => number_format($gamma, 1, '.', ''), self::GAMMA_OPTIONS),
                 'default' => self::GAMMA_DEFAULT,
                 'notice' => rex_i18n::msg('pdfout_effect_pdf_thumbnail_gamma_notice'),
             ],

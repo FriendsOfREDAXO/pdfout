@@ -3,11 +3,21 @@
  * PDFOut Konfigurationsseite
  */
 
+use FriendsOfRedaxo\PdfOut\Poppler;
+
 $addon = rex_addon::get('pdfout');
+$csrf = rex_csrf_token::factory('pdfout_config');
 
 // Formulardaten verarbeiten
-if (rex_post('config-submit', 'bool')) {
-    $this->setConfig([
+if (rex_post('config-submit', 'bool') && !$csrf->isValid()) {
+    echo rex_view::error(rex_i18n::msg('csrf_token_invalid'));
+} elseif (rex_post('config-submit', 'bool')) {
+    $popplerPath = trim(rex_post('poppler_path', 'string', ''));
+    if ('' !== $popplerPath && !is_dir($popplerPath)) {
+        echo rex_view::warning('Der Poppler-Ordner existiert nicht: ' . rex_escape($popplerPath));
+    }
+    $addon->setConfig([
+        'poppler_path' => $popplerPath,
         // PDF Grundeinstellungen
         'default_paper_size' => rex_post('default_paper_size', 'string', 'A4'),
         'default_orientation' => rex_post('default_orientation', 'string', 'portrait'),
@@ -26,10 +36,10 @@ if (rex_post('config-submit', 'bool')) {
         'enable_password_protection_by_default' => rex_post('enable_password_protection_by_default', 'bool', false),
         'default_user_password' => rex_post('default_user_password', 'string', ''),
         'default_owner_password' => rex_post('default_owner_password', 'string', ''),
-        'default_signature_position_x' => rex_post('default_signature_position_x', 'int', 180),
-        'default_signature_position_y' => rex_post('default_signature_position_y', 'int', 60),
-        'default_signature_width' => rex_post('default_signature_width', 'int', 15),
-        'default_signature_height' => rex_post('default_signature_height', 'int', 15),
+        'default_signature_position_x' => rex_post('default_signature_position_x', 'int', 15),
+        'default_signature_position_y' => rex_post('default_signature_position_y', 'int', 257),
+        'default_signature_width' => rex_post('default_signature_width', 'int', 70),
+        'default_signature_height' => rex_post('default_signature_height', 'int', 25),
         
         // System Einstellungen
         'enable_debug_mode' => rex_post('enable_debug_mode', 'bool', false),
@@ -42,13 +52,13 @@ if (rex_post('config-submit', 'bool')) {
     if (empty($permissions)) {
         $permissions = ['print']; // Standard-Berechtigung
     }
-    $this->setConfig('default_pdf_permissions', $permissions);
+    $addon->setConfig('default_pdf_permissions', $permissions);
     
     echo rex_view::success('Konfiguration wurde gespeichert!');
 }
 
 // Aktuelle Konfiguration laden
-$config = $this->getConfig();
+$config = $addon->getConfig();
 
 // ========================================
 // ALLGEMEINE KONFIGURATION
@@ -203,7 +213,7 @@ foreach ($availableCerts as $filename => $certData) {
 
 $select->setSelected($config['default_certificate_selection'] ?? '');
 $n['field'] = $select->get();
-$n['note'] = 'Zertifikat für Standard-Signierung. <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '">Zertifikate verwalten</a>';
+$n['note'] = 'Zertifikat für Standard-Signierung. <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/settings/certificates']) . '">Zertifikate verwalten</a>';
 $formElements[] = $n;
 
 // Passwort für Standard-Zertifikat
@@ -242,7 +252,7 @@ $permissionOptions = [
     'modify' => 'Dokument bearbeiten',
     'annot-forms' => 'Kommentare und Formulare',
     'fill-forms' => 'Formulare ausfüllen',
-    'extract' => 'Seiten extrahieren',
+    'extract' => 'Inhalte für Screenreader auslesen (immer erlaubt)',
     'assemble' => 'Seiten zusammenfügen',
     'print-high' => 'Hochwertiges Drucken'
 ];
@@ -285,25 +295,25 @@ $formElements = [];
 
 $n = [];
 $n['label'] = '<label for="default_signature_position_x"><i class="fa fa-arrows-h"></i> Standard Signatur Position X (mm)</label>';
-$n['field'] = '<input class="form-control" type="number" id="default_signature_position_x" name="default_signature_position_x" value="' . rex_escape($config['default_signature_position_x'] ?? 180) . '" min="0" max="300"/>';
+$n['field'] = '<input class="form-control" type="number" id="default_signature_position_x" name="default_signature_position_x" value="' . rex_escape($config['default_signature_position_x'] ?? 15) . '" min="0" max="300"/>';
 $n['note'] = 'X-Position der sichtbaren Signatur vom linken Rand (in Millimetern).';
 $formElements[] = $n;
 
 $n = [];
 $n['label'] = '<label for="default_signature_position_y"><i class="fa fa-arrows-v"></i> Standard Signatur Position Y (mm)</label>';
-$n['field'] = '<input class="form-control" type="number" id="default_signature_position_y" name="default_signature_position_y" value="' . rex_escape($config['default_signature_position_y'] ?? 60) . '" min="0" max="400"/>';
+$n['field'] = '<input class="form-control" type="number" id="default_signature_position_y" name="default_signature_position_y" value="' . rex_escape($config['default_signature_position_y'] ?? 257) . '" min="0" max="400"/>';
 $n['note'] = 'Y-Position der sichtbaren Signatur vom oberen Rand (in Millimetern).';
 $formElements[] = $n;
 
 $n = [];
 $n['label'] = '<label for="default_signature_width"><i class="fa fa-resize-horizontal"></i> Standard Signatur Breite (mm)</label>';
-$n['field'] = '<input class="form-control" type="number" id="default_signature_width" name="default_signature_width" value="' . rex_escape($config['default_signature_width'] ?? 15) . '" min="5" max="100"/>';
+$n['field'] = '<input class="form-control" type="number" id="default_signature_width" name="default_signature_width" value="' . rex_escape($config['default_signature_width'] ?? 70) . '" min="5" max="100"/>';
 $n['note'] = 'Breite der sichtbaren Signatur (in Millimetern).';
 $formElements[] = $n;
 
 $n = [];
 $n['label'] = '<label for="default_signature_height"><i class="fa fa-resize-vertical"></i> Standard Signatur Höhe (mm)</label>';
-$n['field'] = '<input class="form-control" type="number" id="default_signature_height" name="default_signature_height" value="' . rex_escape($config['default_signature_height'] ?? 15) . '" min="5" max="50"/>';
+$n['field'] = '<input class="form-control" type="number" id="default_signature_height" name="default_signature_height" value="' . rex_escape($config['default_signature_height'] ?? 25) . '" min="5" max="50"/>';
 $n['note'] = 'Höhe der sichtbaren Signatur (in Millimetern).';
 $formElements[] = $n;
 
@@ -313,6 +323,15 @@ $signatureSettings = $fragment->parse('core/form/form.php');
 
 // System-Einstellungen
 $formElements = [];
+
+$missingPoppler = Poppler::missing();
+$n = [];
+$n['label'] = '<label for="poppler_path"><i class="fa fa-terminal"></i> Ordner der Poppler-Programme</label>';
+$n['field'] = '<input class="form-control" type="text" id="poppler_path" name="poppler_path" value="' . rex_escape((string) ($config['poppler_path'] ?? '')) . '" placeholder="leer = automatisch suchen (z. B. /usr/bin)"/>';
+$n['note'] = [] === $missingPoppler
+    ? '<span class="text-success"><i class="fa fa-check"></i> Poppler ' . rex_escape((string) Poppler::version()) . ' gefunden (' . rex_escape((string) Poppler::binary('pdfinfo')) . ').</span>'
+    : '<span class="text-danger"><i class="fa fa-exclamation-triangle"></i> Nicht gefunden: ' . rex_escape(implode(', ', $missingPoppler)) . ' – installieren mit „apt install poppler-utils“ bzw. „brew install poppler“ oder Ordner angeben.</span>';
+$formElements[] = $n;
 
 $n = [];
 $n['label'] = '<label for="enable_debug_mode"><i class="fa fa-bug"></i> Debug-Modus aktivieren</label>';
@@ -441,7 +460,7 @@ $(document).ready(function() {
 
 $fragment = new rex_fragment();
 $fragment->setVar('title', 'Allgemeine Konfiguration');
-$fragment->setVar('body', '<form action="' . rex_url::currentBackendPage() . '" method="post">' . $generalConfigContent . '</form>', false);
+$fragment->setVar('body', '<form action="' . rex_url::currentBackendPage() . '" method="post">' . $csrf->getHiddenField() . $generalConfigContent . '</form>', false);
 echo $fragment->parse('core/page/section.php');
 
 // Hinweis auf Demo & Test Bereich und Verwaltung
@@ -451,7 +470,7 @@ $demoInfo = '
         <div class="alert alert-info">
             <h4><i class="fa fa-info-circle"></i> Demo & Test Funktionen</h4>
             <p>Für Demo- und Testzwecke (Test-Zertifikat Generator, Test-PDF etc.) besuchen Sie die 
-            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="alert-link">
+            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/help/demo']) . '" class="alert-link">
                 <i class="fa fa-play"></i> Demo-Seite
             </a>.</p>
             <p><small>Dort finden Sie am Ende der Seite alle Tools zum Testen und Entwickeln.</small></p>
@@ -461,7 +480,7 @@ $demoInfo = '
         <div class="alert alert-success">
             <h4><i class="fa fa-certificate"></i> Zertifikats-Verwaltung</h4> 
             <p>Zertifikate für digitale Signaturen können hier verwaltet werden:
-            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/certificates']) . '" class="alert-link">
+            <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/settings/certificates']) . '" class="alert-link">
                 <i class="fa fa-key"></i> Zertifikate verwalten
             </a>.</p>
             <p><small>Hier können Sie Zertifikate hochladen, generieren und als Standard auswählen.</small></p>

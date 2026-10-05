@@ -11,11 +11,7 @@ if (file_exists($readmePath)) {
     $readme = file_get_contents($readmePath);
     
     // Markdown zu HTML konvertieren
-    [$readmeToc, $readmeContent] = rex_markdown::factory()->parseWithToc($readme, 1, 3, [
-        'html' => true,
-        'breaks' => true,
-        'linkify' => true,
-    ]);
+    [$readmeToc, $readmeContent] = rex_markdown::factory()->parseWithToc($readme, 1, 3, ['soft_line_breaks' => false]);
     
     // README-Inhalt anzeigen
     $fragment = new rex_fragment();
