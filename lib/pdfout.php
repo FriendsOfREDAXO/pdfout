@@ -874,6 +874,10 @@ class PdfOut extends Dompdf
             $results['errors'][] = 'PDF-Datei nicht gefunden: ' . $pdfPath;
             return $results;
         }
+        if (!Poppler::isAvailable()) {
+            $results['errors'][] = PopplerUnavailableException::forFeature('Die Signaturprüfung')->getMessage();
+            return $results;
+        }
         try {
             $signatures = Poppler::signatures($pdfPath, $password);
         } catch (Throwable $e) {

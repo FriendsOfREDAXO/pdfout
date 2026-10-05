@@ -11,18 +11,11 @@ $addon = rex_addon::get('pdfout');
 
 require_once $addon->getPath('vendor/autoload.php');
 
-// Poppler (pdfinfo, pdfsig, pdftoppm, pdftotext) ist Voraussetzung: Prüfen, Seitenzahlen, Vorschaubilder
-if (!function_exists('proc_open')) {
-    throw new rex_functional_exception('pdfout benötigt die PHP-Funktion proc_open() (in disable_functions freigeben).');
-}
-$missing = Poppler::missing();
+// Poppler ist optional: ohne die poppler-utils fehlen nur Prüfen und Auslesen (Signaturen, Metadaten, Text)
+$missing = function_exists('proc_open') ? Poppler::missing() : Poppler::REQUIRED;
 if ([] !== $missing) {
-    throw new rex_functional_exception(
-        'pdfout benötigt die poppler-utils – nicht gefunden: ' . implode(', ', $missing) . '. '
-        . 'Installation: Debian/Ubuntu „apt install poppler-utils“, macOS „brew install poppler“. '
-        . 'Liegen die Programme in einem anderen Ordner, diesen vorher per Konsole setzen: '
-        . 'php bin/console config:set --type=string pdfout poppler_path /pfad/zu/bin',
-    );
+    $addon->setProperty('successmsg', 'pdfout ist installiert. Hinweis: die poppler-utils fehlen (' . implode(', ', $missing) . ') – '
+        . 'Prüfen und Auslesen von PDFs sind deshalb ausgeblendet. Nachrüsten z. B. mit „apt install poppler-utils“ oder „brew install poppler“.');
 }
 
 rex_dir::create($addon->getCachePath());
@@ -40,6 +33,7 @@ $defaults = [
     'default_signature_width' => 70,
     'default_signature_height' => 25,
     'poppler_path' => '',
+    'poppler_enabled' => true,
     'toolbar_preset' => 'balanced',
     'toolbar_hidden_groups' => ['open_file', 'presentation', 'rotation', 'cursor_tools', 'scroll_mode', 'spread_mode', 'document_properties', 'editor_tools'],
     'toolbar_profiles' => [],

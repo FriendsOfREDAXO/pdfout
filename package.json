@@ -1,6 +1,6 @@
 {
   "name": "redaxo-addon-pdfout",
-  "version": "11.0.0",
+  "version": "11.1.0",
   "description": "PDF.js GitHub Release distribution manager for REDAXO pdfout addon",
   "private": true,
   "scripts": {

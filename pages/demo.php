@@ -56,7 +56,7 @@ ebenso möglich: <code>-&gt;download()</code>, <code>-&gt;save($pfad)</code> ode
     <dt><code>Certificate</code></dt><dd>Zertifikat zum Signieren, z. B. <code>Certificate::fromAddon()</code> aus der Seite „Zertifikate“</dd>
     <dt><code>SignatureField</code></dt><dd>Position des sichtbaren Signaturfelds (mm ab links oben)</dd>
     <dt><code>Permission</code></dt><dd>erlaubte Rechte bei Passwortschutz (Drucken, Kopieren …)</dd>
-    <dt><code>Poppler</code></dt><dd>PDFs prüfen: Infos, Text, Signaturen (poppler-utils)</dd>
+    <dt><code>Poppler</code></dt><dd>PDFs prüfen: Infos, Text, Signaturen (optional, benötigt die poppler-utils)</dd>
 </dl>
 <p>Alle Klassen liegen im Namespace <code>FriendsOfRedaxo\PdfOut</code>.
 <a href="' . rex_url::backendPage('pdfout/help/api') . '" style="text-decoration: underline">Zur API-Dokumentation</a></p>';
@@ -72,6 +72,9 @@ echo $fragment->parse('core/page/section.php');
 $mediaPdf = Demo::firstMediaPdf();
 $cards = [];
 foreach ($demos as $key => $demo) {
+    if ($demo['poppler'] && [] !== $popplerMissing) {
+        continue; // Demo benötigt Poppler – ohne die poppler-utils ausgeblendet
+    }
     $id = 'pdfout-demo-' . $key;
     $body = '<p>' . rex_escape($demo['description']) . '</p>';
     $body .= '<pre tabindex="0" aria-label="' . rex_escape('Code: ' . $demo['title']) . '"><code>' . rex_escape(Demo::source($demo['method'])) . '</code></pre>';
@@ -80,9 +83,6 @@ foreach ($demos as $key => $demo) {
     if ($demo['certificate'] && null !== $certificateProblem) {
         $hint = rex_view::warning('Kein nutzbares Zertifikat (' . rex_escape($certificateProblem) . '). '
             . '<a href="' . $certificatesUrl . '">Zertifikat auf der Seite „Zertifikate“ anlegen oder hochladen</a> und als Standard festlegen.');
-    } elseif ($demo['poppler'] && [] !== $popplerMissing) {
-        $hint = rex_view::warning('Poppler-Programme fehlen: ' . rex_escape(implode(', ', $popplerMissing)) . '. '
-            . '<a href="' . rex_url::backendPage('pdfout/settings/general') . '">Pfad in den Einstellungen prüfen</a>.');
     }
 
     $buttons = '';

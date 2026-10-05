@@ -18,6 +18,7 @@ if (rex_post('config-submit', 'bool') && !$csrf->isValid()) {
     }
     $addon->setConfig([
         'poppler_path' => $popplerPath,
+        'poppler_enabled' => rex_post('poppler_enabled', 'bool', false),
         // PDF Grundeinstellungen
         'default_paper_size' => rex_post('default_paper_size', 'string', 'A4'),
         'default_orientation' => rex_post('default_orientation', 'string', 'portrait'),
@@ -324,13 +325,22 @@ $signatureSettings = $fragment->parse('core/form/form.php');
 // System-Einstellungen
 $formElements = [];
 
+Poppler::reset();
+$n = [];
+$n['label'] = '<label for="poppler_enabled"><i class="fa fa-check-square-o"></i> Poppler-Funktionen verwenden</label>';
+$n['field'] = '<input type="checkbox" id="poppler_enabled" name="poppler_enabled" value="1"' . (($config['poppler_enabled'] ?? true) ? ' checked="checked"' : '') . '/>';
+$n['note'] = 'Prüfen und Auslesen von PDFs (Signaturen, Metadaten, Text) mit den poppler-utils. Abgeschaltet oder ohne Poppler wird die Seite „Prüfen“ ausgeblendet; alles andere funktioniert weiter.';
+$formElements[] = $n;
+
 $missingPoppler = Poppler::missing();
 $n = [];
 $n['label'] = '<label for="poppler_path"><i class="fa fa-terminal"></i> Ordner der Poppler-Programme</label>';
 $n['field'] = '<input class="form-control" type="text" id="poppler_path" name="poppler_path" value="' . rex_escape((string) ($config['poppler_path'] ?? '')) . '" placeholder="leer = automatisch suchen (z. B. /usr/bin)"/>';
-$n['note'] = [] === $missingPoppler
+$n['note'] = !Poppler::isEnabled()
+    ? '<span class="text-muted">Poppler-Funktionen sind abgeschaltet.</span>'
+    : ([] === $missingPoppler
     ? '<span class="text-success"><i class="fa fa-check"></i> Poppler ' . rex_escape((string) Poppler::version()) . ' gefunden (' . rex_escape((string) Poppler::binary('pdfinfo')) . ').</span>'
-    : '<span class="text-danger"><i class="fa fa-exclamation-triangle"></i> Nicht gefunden: ' . rex_escape(implode(', ', $missingPoppler)) . ' – installieren mit „apt install poppler-utils“ bzw. „brew install poppler“ oder Ordner angeben.</span>';
+    : '<span class="text-danger"><i class="fa fa-exclamation-triangle"></i> Nicht gefunden: ' . rex_escape(implode(', ', $missingPoppler)) . ' – installieren mit „apt install poppler-utils“ bzw. „brew install poppler“ oder Ordner angeben.</span>');
 $formElements[] = $n;
 
 $n = [];

@@ -5,7 +5,7 @@ Das PDF-Werkzeug für REDAXO:
 - **Erzeugen** – HTML und REDAXO-Artikel als PDF ([dompdf](https://github.com/dompdf/dompdf))
 - **Bearbeiten** – zusammenführen, Seiten auswählen, Stempel, Seitenzahlen, Metadaten ([tc-lib-pdf](https://github.com/tecnickcom/tc-lib-pdf))
 - **Absichern** – digitale Signatur nach PAdES, Passwortschutz mit AES-256
-- **Prüfen** – Signaturen, Metadaten und Text auslesen ([Poppler](https://poppler.freedesktop.org/))
+- **Prüfen** – Signaturen, Metadaten und Text auslesen ([Poppler](https://poppler.freedesktop.org/), optional)
 - **Anzeigen** – [PDF.js](https://github.com/mozilla/pdf.js)-Viewer mit einstellbarer Leiste und Editor
 - **Vorschaubilder** – Media-Manager-Effekt für PDF-Thumbnails
 
@@ -31,11 +31,22 @@ Alle Klassen und Methoden im Detail: [API-Referenz](API.md). Tipps für den Eins
 
 Installation über den REDAXO-Installer oder von [GitHub](https://github.com/FriendsOfREDAXO/pdfout).
 
-- PHP 8.4 oder neuer mit den Erweiterungen dom, mbstring, gd, openssl, zlib und der Funktion `proc_open()`
+- PHP 8.4 oder neuer mit den Erweiterungen dom, mbstring, gd, openssl und zlib
 - REDAXO 5.15 oder neuer
-- **poppler-utils** (`pdfinfo`, `pdfsig`, `pdftoppm`, `pdftotext`)
+- optional: **poppler-utils** (`pdfinfo`, `pdfsig`, `pdftoppm`, `pdftotext`) und die PHP-Funktion `proc_open()`
 
-Fehlt Poppler, bricht die Installation mit einem Hinweis ab.
+### Mit und ohne Poppler
+
+| Funktion | ohne Poppler | mit Poppler |
+| --- | --- | --- |
+| PDF aus HTML erzeugen, bearbeiten, signieren, schützen | ja | ja |
+| Viewer, Editor, Seitenzahl (`pageCount()`) | ja | ja |
+| Signaturen prüfen (`signatures()`, `validateSignedPdf()`) | – | ja |
+| Metadaten und Text auslesen (`info()`, `text()`) | – | ja |
+| Backend-Seite *Werkzeuge → Prüfen* | ausgeblendet | ja |
+| Media-Manager-Effekt „PDF-Thumbnail“ | nicht angeboten | ja |
+
+Ohne Poppler werfen `info()`, `text()` und `signatures()` eine `PopplerUnavailableException`; vorab prüfen mit `PdfDocument::canInspect()`. Unter *Einstellungen → Allgemein* lassen sich die Poppler-Funktionen auch bewusst abschalten. Bereits eingerichtete Medientypen mit dem Thumbnail-Effekt laufen weiter und nutzen dann Ghostscript oder Imagick, falls vorhanden.
 
 | System | Befehl |
 | --- | --- |
@@ -46,11 +57,7 @@ Fehlt Poppler, bricht die Installation mit einem Hinweis ab.
 | openSUSE | `zypper install poppler-tools` |
 | macOS | `brew install poppler` |
 
-Liegen die Programme außerhalb des Suchpfads, den Ordner vor der Installation setzen und später unter *Einstellungen → Allgemein* pflegen:
-
-```bash
-php bin/console config:set --type=string pdfout poppler_path /pfad/zu/bin
-```
+Liegen die Programme außerhalb des Suchpfads (`/usr/bin`, `/usr/local/bin`, `/opt/homebrew/bin` …), den Ordner unter *Einstellungen → Allgemein* eintragen.
 
 ## Schnellstart
 
@@ -209,7 +216,7 @@ foreach ($doc->signatures() as $signatur) {
 }
 ```
 
-Die Signaturprüfung nutzt `pdfsig`: Unversehrtheit, Hash-Verfahren, Typ, Zertifikatsstatus und ob die Signatur das ganze Dokument abdeckt. Für einzelne Poppler-Aufrufe gibt es die Klasse `Poppler` (`info()`, `signatures()`, `text()`, `run()`).
+Prüfen und Auslesen benötigen die poppler-utils (`PdfDocument::canInspect()`), die Seitenzahl funktioniert immer. Die Signaturprüfung nutzt `pdfsig`: Unversehrtheit, Hash-Verfahren, Typ, Zertifikatsstatus und ob die Signatur das ganze Dokument abdeckt. Für einzelne Poppler-Aufrufe gibt es die Klasse `Poppler` (`info()`, `signatures()`, `text()`, `run()`).
 
 ## Anzeigen im PDF.js-Viewer
 
@@ -230,7 +237,7 @@ Der Viewer ist der Legacy-Build von PDF.js und läuft damit auch in älteren Bro
 
 ## Vorschaubilder
 
-Der Media-Manager-Effekt **„PDF-Thumbnail (pdfout)“** erzeugt Vorschaubilder mit `pdftoppm`. Er ist nicht von der ImageMagick-Sperre für PDFs betroffen, die viele Linux-Systeme setzen.
+Der Media-Manager-Effekt **„PDF-Thumbnail (pdfout)“** erzeugt Vorschaubilder mit `pdftoppm` und wird nur angeboten, wenn Poppler verfügbar ist. Er ist nicht von der ImageMagick-Sperre für PDFs betroffen, die viele Linux-Systeme setzen.
 
 1. Unter *Media Manager* einen Typ anlegen, z. B. `pdf_thumb`
 2. Effekt „PDF-Thumbnail (pdfout)“ hinzufügen, danach z. B. `resize`
@@ -286,7 +293,7 @@ Die bisherigen Methoden bleiben erhalten und nutzen intern die neue Technik.
 
 Was sich ändert:
 
-- PHP 8.4 ist Mindestversion, Poppler ist Voraussetzung.
+- PHP 8.4 ist Mindestversion. Poppler ist optional (ab 11.1, in 11.0 noch Voraussetzung).
 - TCPDF und FPDI sind entfernt. Wer sie im eigenen Code direkt nutzt, bindet sie selbst per Composer ein oder stellt auf `PdfDocument` um.
 - Entfernte geschützte Methoden (nur für Unterklassen relevant): `runWithTcpdf()`, `addDigitalSignature()`, `addDigitalSignatureFinal()`, `addPasswordProtection()`, `processTcpdfOutput()`, `drawSignatureArea()`, `addSignatureAreaToFpdi()`, `addCleanSignatureArea()`.
 - Passwortschutz: Die Liste nennt die erlaubten Rechte, wie dokumentiert. Bisher wurden die genannten Rechte versehentlich gesperrt – mit `['print']` war Drucken verboten.

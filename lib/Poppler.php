@@ -8,7 +8,10 @@ use RuntimeException;
 use rex_addon;
 
 /**
- * Anbindung an die poppler-utils (pdfinfo, pdfsig, pdftoppm, pdftotext).
+ * Anbindung an die poppler-utils (pdfinfo, pdfsig, pdftoppm, pdftotext) – optional.
+ *
+ * Ohne Poppler funktioniert pdfout weiter (erzeugen, bearbeiten, signieren, schützen, anzeigen);
+ * nur Prüfen und Auslesen (Signaturen, Metadaten, Text) stehen dann nicht zur Verfügung.
  *
  * Programme werden ohne Shell aufgerufen (proc_open mit Argument-Liste) – Dateinamen und
  * Passwörter können also keine Befehle einschleusen. Der Ordner der Programme lässt sich in den
@@ -16,7 +19,7 @@ use rex_addon;
  */
 final class Poppler
 {
-    /** Programme, die pdfout voraussetzt */
+    /** Programme, die pdfout für Prüfen und Auslesen nutzt */
     public const REQUIRED = ['pdfinfo', 'pdfsig', 'pdftoppm', 'pdftotext'];
 
     /** übliche Installationsorte (Linux-Pakete, Homebrew, MacPorts) */
@@ -29,6 +32,9 @@ final class Poppler
     {
         if (array_key_exists($tool, self::$binaries)) {
             return self::$binaries[$tool];
+        }
+        if (!self::isEnabled()) {
+            return self::$binaries[$tool] = null;
         }
         $dirs = [];
         $configured = trim((string) rex_addon::get('pdfout')->getConfig('poppler_path', ''));
@@ -49,9 +55,21 @@ final class Poppler
         return self::$binaries[$tool] = null;
     }
 
+    /** in den Einstellungen abschaltbar („Poppler-Funktionen verwenden“) */
+    public static function isEnabled(): bool
+    {
+        return (bool) rex_addon::get('pdfout')->getConfig('poppler_enabled', true);
+    }
+
     public static function isAvailable(): bool
     {
-        return [] === self::missing();
+        return function_exists('proc_open') && [] === self::missing();
+    }
+
+    /** Zwischenspeicher leeren, z. B. nach Änderung der Einstellungen */
+    public static function reset(): void
+    {
+        self::$binaries = [];
     }
 
     /** @return list<string> fehlende Programme */
@@ -154,7 +172,7 @@ final class Poppler
     {
         $binary = self::binary($tool);
         if (null === $binary) {
-            throw new RuntimeException(sprintf('Poppler-Programm „%s“ nicht gefunden. pdfout setzt die poppler-utils voraus (siehe Einstellungen).', $tool));
+            throw PopplerUnavailableException::forFeature(sprintf('Das Programm „%s“', $tool));
         }
         $process = proc_open([$binary, ...$args], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
         if (!is_resource($process)) {

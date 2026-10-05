@@ -24,8 +24,8 @@ $section = static function (string $title, string $body, string $class = 'edit',
 
 $missing = Poppler::missing();
 if ([] !== $missing) {
-    echo rex_view::error(
-        '<strong>Die poppler-utils fehlen</strong> – ohne sie lassen sich PDFs nicht prüfen. Nicht gefunden: <code>' . rex_escape(implode(', ', $missing)) . '</code>'
+    echo rex_view::info(
+        '<strong>Prüfen ist nicht verfügbar</strong> – dafür werden die poppler-utils benötigt. Nicht gefunden: <code>' . rex_escape(implode(', ', $missing)) . '</code>'
         . '<br>Installation: Debian/Ubuntu <code>apt install poppler-utils</code>, Alpine <code>apk add poppler-utils</code>, '
         . 'macOS <code>brew install poppler</code>. Liegen die Programme in einem anderen Ordner, ihn in den '
         . '<a href="' . rex_url::backendPage('pdfout/settings/general') . '">Einstellungen</a> eintragen.',
