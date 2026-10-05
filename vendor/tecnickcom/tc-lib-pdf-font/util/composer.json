@@ -1,0 +1,53 @@
+{
+  "name": "tecnickcom/tc-lib-pdf-font",
+  "description": "Import TTF font files to be converted for tc-lib-pdf",
+  "type": "library",
+  "homepage": "https://tcpdf.org",
+  "license": "LGPL-3.0-or-later",
+  "keywords": [
+    "tc-lib-pdf-font-data",
+    "PDF",
+    "font",
+    "TTF",
+    "AFM",
+    "PFB",
+    "import"
+  ],
+  "authors": [
+    {
+      "name": "Nicola Asuni",
+      "email": "info@tecnick.com",
+      "role": "lead"
+    }
+  ],
+  "require": {
+    "tecnickcom/tc-font-mirror": "^2.4"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "tecnickcom/tc-font-mirror",
+        "version": "2.4.0",
+        "dist": {
+          "type": "zip",
+          "url": "https://github.com/tecnickcom/tc-font-mirror/archive/refs/tags/2.4.0.zip"
+        },
+        "autoload": {
+          "classmap": [
+            "."
+          ]
+        }
+      }
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/tecnickcom/tc-lib-pdf-font/issues",
+    "source": "https://github.com/tecnickcom/tc-lib-pdf-font"
+  },
+  "scripts": {
+    "build": "@php bulk_convert.php"
+  }
+}

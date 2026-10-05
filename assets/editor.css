@@ -1,0 +1,28 @@
+/* pdfout – PDF-Editor (Backend-Seite „Editor“) */
+#pdfout-editor .pdfout-editor-frame {
+    display: block;
+    width: 100%;
+    height: 80vh;
+    min-height: 420px;
+    border: 1px solid #c1c9d4;
+    border-radius: 2px;
+    background: #f4f4f4;
+}
+
+#pdfout-editor .pdfout-editor-save {
+    margin-top: 15px;
+}
+
+#pdfout-editor .pdfout-editor-status {
+    min-height: 1.5em;
+    font-weight: 600;
+}
+
+#pdfout-editor .pdfout-editor-status a {
+    margin-left: 0.5em;
+    text-decoration: underline;
+}
+
+#pdfout-editor .pdfout-editor-meta a {
+    text-decoration: underline;
+}

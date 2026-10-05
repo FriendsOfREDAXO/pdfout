@@ -1,0 +1,33 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "b93405785b8d2743c934c62503ac863c",
+    "packages": [
+        {
+            "name": "tecnickcom/tc-font-mirror",
+            "version": "2.4.0",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/tecnickcom/tc-font-mirror/archive/refs/tags/2.4.0.zip"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "."
+                ]
+            }
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}

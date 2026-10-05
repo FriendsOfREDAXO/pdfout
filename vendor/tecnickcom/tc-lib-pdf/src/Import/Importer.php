@@ -1,0 +1,704 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Importer.php
+ *
+ * @since     2026-05-03
+ * @category  Library
+ * @package   Pdf
+ * @author    Nicola Asuni <info@tecnick.com>
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
+ * @link      https://github.com/tecnickcom/tc-lib-pdf
+ *
+ * This file is part of tc-lib-pdf software library.
+ */
+
+namespace Com\Tecnick\Pdf\Import;
+
+use Com\Tecnick\File\Exception as FileException;
+use Com\Tecnick\File\File as ObjFile;
+use Com\Tecnick\Pdf\Encrypt\Encrypt as ObjEncrypt;
+
+/**
+ * Com\Tecnick\Pdf\Import\Importer
+ *
+ * Orchestrates PDF import: loads source documents, resolves pages, clones resources,
+ * builds Form XObjects, and registers them for deferred output via getOutImportedObjects().
+ *
+ * @since     2026-05-03
+ * @category  Library
+ * @package   Pdf
+ * @author    Nicola Asuni <info@tecnick.com>
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
+ * @link      https://github.com/tecnickcom/tc-lib-pdf
+ *
+ * @phpstan-import-type TXOBject from \Com\Tecnick\Pdf\Base
+ *
+ * @phpstan-type ImportOptions array{
+ *     box?:           string,
+ *     respectRotation?: bool,
+ *     groupXObject?:  bool,
+ *     cache?:         bool,
+ * }
+ *
+ * @phpstan-type ParserOptions array{
+ *     ignore_filter_errors?: bool,
+ *     decode_streams?:       bool,
+ *     strict_limits?:        bool,
+ *     max_stream_size?:      int,
+ *     max_resolution_depth?: int,
+ *     max_nesting_depth?:    int,
+ * }
+ *
+ * @SuppressWarnings("CouplingBetweenObjects")
+ */
+class Importer implements ImporterInterface
+{
+    /**
+     * Registered source documents keyed by source ID.
+     *
+     * @var array<string, SourceDocument>
+     */
+    private array $sources = [];
+
+    /**
+     * Object map keyed by source ID (one map per source for cross-page dedup).
+     *
+     * @var array<string, ObjectMap>
+     */
+    private array $objectMaps = [];
+
+    /**
+     * Cache of already-imported templates keyed by "sourceId:pageNum:box".
+     *
+     * @var array<string, PageTemplate>
+     */
+    private array $templateCache = [];
+
+    /**
+     * Flattened page index per source ID: one effective page dictionary per
+     * reachable page, in document order (sources are immutable after parsing).
+     *
+     * @var array<string, array<int, array<string, mixed>>>
+     */
+    private array $pageIndexes = [];
+
+    /**
+     * Raw PDF object bytes queued for deferred write, keyed by XObject template ID.
+     *
+     * @var array<string, string>
+     */
+    private array $rawObjects = [];
+
+    /**
+     * Reference to the destination xobjects registry (same reference as $pdf->xobjects).
+     * Written via PHP reference binding; phpstan cannot track reference writes as reads.
+     *
+     * @var array<string, mixed>
+     */
+
+    private array $xobjects;
+
+    /**
+     * Reference to the destination PDF object-number counter.
+     *
+     * @var int
+     */
+    private int $pon;
+
+    /**
+     * File helper used for validated local file reads.
+     */
+    private ObjFile $file;
+
+    /**
+     * PDF/A part of the destination document (0 when PDF/A is not active).
+     *
+     * @var int
+     */
+    private int $pdfa;
+
+    /**
+     * Encryption object of the destination document.
+     */
+    private ObjEncrypt $encrypt;
+
+    /**
+     * True when the conformance mode of the destination document requires every
+     * font to be embedded.
+     */
+    private bool $requireEmbeddedFonts;
+
+    /**
+     * Conformance warnings raised while pages were imported.
+     *
+     * @var array<int, string>
+     */
+    private array $warnings = [];
+
+    /**
+     * Constructor.
+     *
+     * @param array<string, mixed> $xobjects Reference to the destination document's xobjects array.
+     * @param int                  $pon      Reference to the PDF object number counter.
+     * @param ObjFile              $file     Shared file helper instance.
+     * @param int                  $pdfa     PDF/A part of the destination document (0 when not active).
+     * @param ?ObjEncrypt          $encrypt  Encryption object of the destination document; a disabled
+     *                                       one is used when null.
+     * @param bool                 $requireEmbeddedFonts True when the destination document requires
+     *                                       every font to be embedded.
+     *
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function __construct(
+        array &$xobjects,
+        int &$pon,
+        ObjFile $file,
+        int $pdfa = 0,
+        ?ObjEncrypt $encrypt = null,
+        bool $requireEmbeddedFonts = false,
+    ) {
+        // Bind by reference so importPage() writes directly into $pdf->xobjects.
+
+        $this->xobjects = &$xobjects;
+        $this->pon = &$pon;
+        $this->file = $file;
+        $this->pdfa = $pdfa;
+        $this->encrypt = $encrypt ?? new ObjEncrypt();
+        $this->requireEmbeddedFonts = $requireEmbeddedFonts;
+    }
+
+    /**
+     * Return the conformance warnings raised while pages were imported.
+     *
+     * @return array<int, string>
+     */
+    public function getWarnings(): array
+    {
+        return $this->warnings;
+    }
+
+    /**
+     * Record a warning for each font of an imported page whose program is not
+     * embedded in the source document.
+     *
+     * The source page is copied into a Form XObject as it stands, so a font the
+     * source does not carry cannot be embedded by the destination document.
+     *
+     * @param array<string, mixed> $resources Resolved page resource dictionary.
+     * @param SourceDocument       $src       Source document.
+     * @param int                  $pageNum   1-based page number of the imported page.
+     */
+    private function checkImportedFonts(array $resources, SourceDocument $src, int $pageNum): void
+    {
+        if (!$this->requireEmbeddedFonts || $resources === []) {
+            return;
+        }
+
+        $inspector = new FontInspector();
+        foreach ($inspector->findNonEmbeddedFonts($resources, $src) as $name) {
+            $message =
+                'The active conformance mode requires embedded fonts: the imported page '
+                . $pageNum
+                . ' uses the font '
+                . $name
+                . ', whose program is not embedded in the source document';
+            if (\in_array($message, $this->warnings, true)) {
+                continue;
+            }
+
+            $this->warnings[] = $message;
+        }
+
+        if ($inspector->walkWasTruncated()) {
+            $this->addWarning(
+                'The embedded font check of the imported page '
+                . $pageNum
+                . ' stopped after '
+                . FontInspector::MAX_RESOURCE_NODES
+                . ' resource dictionaries: the source may use further non-embedded fonts',
+            );
+        }
+    }
+
+    /**
+     * Record a warning when a page declares /Contents but no content stream could be located.
+     *
+     * A stream that is present but empty is legal and is not reported. The page
+     * is imported as an empty Form XObject either way, so the condition is
+     * reported instead of thrown.
+     *
+     * @param array<string, mixed> $pageDict Effective page dictionary.
+     * @param bool                 $found    True when at least one content stream was located.
+     * @param int                  $pageNum  1-based page number of the imported page.
+     */
+    private function checkImportedContent(array $pageDict, bool $found, int $pageNum): void
+    {
+        if ($found || !isset($pageDict['Contents'])) {
+            return;
+        }
+
+        $this->addWarning(
+            'The imported page '
+            . $pageNum
+            . ' has a /Contents entry but no content stream could be extracted: the page will be blank',
+        );
+    }
+
+    /**
+     * Record a warning, ignoring duplicates.
+     */
+    private function addWarning(string $message): void
+    {
+        if (\in_array($message, $this->warnings, true)) {
+            return;
+        }
+
+        $this->warnings[] = $message;
+    }
+
+    /**
+     * Register a source PDF file.
+     *
+     * @param string               $path File path to a readable PDF.
+     * @param array<string, mixed> $cfg  Optional parser configuration.
+     *
+     * @phpstan-param ParserOptions|array<string, mixed> $cfg
+     *
+     * @return string Source document identifier.
+     *
+     * @throws ImportSourceNotFoundException   If the file cannot be read.
+     * @throws ImportCorruptedSourceException  If the file cannot be parsed.
+     * @throws ImportResourceLimitException    If the nesting depth limit is exceeded, or
+     *                                         any limit is reached with 'strict_limits'.
+     * @throws ImportUnsupportedFeatureException If the source is encrypted.
+     */
+    public function setImportSourceFile(string $path, array $cfg = []): string
+    {
+        $realPath = \realpath($path);
+        if ($realPath === false || !\is_readable($realPath)) {
+            throw new ImportSourceNotFoundException('Source PDF file not found or not readable: ' . $path);
+        }
+
+        try {
+            $data = $this->file->getFileData($realPath);
+        } catch (FileException $e) {
+            throw new ImportSourceNotFoundException('Unable to read source PDF file: ' . $realPath, 0, $e);
+        }
+
+        if ($data === false) {
+            throw new ImportSourceNotFoundException('Unable to read source PDF file: ' . $realPath);
+        }
+
+        return $this->setImportSourceData($data, $cfg);
+    }
+
+    /**
+     * Register a source PDF from raw binary data.
+     *
+     * @param string              $data Raw PDF binary data.
+     * @param array<string, mixed> $cfg  Optional parser configuration.
+     *
+     * @phpstan-param ParserOptions|array<string, mixed> $cfg
+     *
+     * @return string Source document identifier (SHA-256 of the data).
+     *
+     * @throws ImportCorruptedSourceException    If the data cannot be parsed.
+     * @throws ImportResourceLimitException      If the nesting depth limit is exceeded, or
+     *                                         any limit is reached with 'strict_limits'.
+     * @throws ImportUnsupportedFeatureException If the source is encrypted.
+     */
+    public function setImportSourceData(string $data, array $cfg = []): string
+    {
+        $doc = new SourceDocument($data, $cfg);
+        $srcId = $doc->getId();
+        if (!isset($this->sources[$srcId])) {
+            $this->sources[$srcId] = $doc;
+            $this->objectMaps[$srcId] = new ObjectMap();
+            $this->collectParserWarnings($doc);
+        }
+
+        return $srcId;
+    }
+
+    /**
+     * Record a warning for each parsing limit reached while a source was parsed.
+     *
+     * @param SourceDocument $doc Registered source document.
+     */
+    private function collectParserWarnings(SourceDocument $doc): void
+    {
+        foreach ($doc->getParserWarnings() as $warning) {
+            $this->addWarning(
+                'The source document '
+                . \substr($doc->getId(), 0, 8)
+                . ' was not fully resolved while parsing: '
+                . $warning,
+            );
+        }
+    }
+
+    /**
+     * Return the total number of pages in a registered source document.
+     *
+     * The count is derived from the page tree reachable through /Kids. The
+     * declared /Count entry is ignored: it is controlled by the source file and
+     * never sizes an allocation or bounds a loop.
+     *
+     * @param string $sourceId Source document identifier.
+     *
+     * @return int Total page count.
+     *
+     * @throws ImportSourceNotFoundException If the source ID is not registered.
+     * @throws ImportCorruptedSourceException If the page tree is malformed.
+     */
+    public function getSourcePageCount(string $sourceId): int
+    {
+        return \count($this->getPageIndex($sourceId));
+    }
+
+    /**
+     * Import one page from a registered source document and return a PageTemplate.
+     *
+     * @param string        $sourceId  Source document identifier.
+     * @param int           $pageNum   1-based page number.
+     * @param array<string, mixed> $options Import options (box, groupXObject, cache, respectRotation).
+     *
+     * @return PageTemplateInterface Imported page template.
+     *
+     * @throws ImportSourceNotFoundException     If the source ID is not registered.
+     * @throws ImportPageOutOfRangeException     If the page number is out of range.
+     * @throws ImportCorruptedSourceException    If the page tree is malformed.
+     * @throws ImportException                   If object mapping or cloning fails.
+     * @throws ImportUnsupportedFeatureException If an unsupported feature is encountered.
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function importPage(string $sourceId, int $pageNum, array $options = []): PageTemplateInterface
+    {
+        $useBox = \is_string($options['box'] ?? null) ? $options['box'] : 'CropBox';
+        $respectRotation =
+            ($options['respectRotation'] ?? true) === true
+            || ($options['respectRotation'] ?? true) === 1
+            || ($options['respectRotation'] ?? true) === '1'
+            || ($options['respectRotation'] ?? true) === 'true';
+        $useGroup =
+            ($options['groupXObject'] ?? true) === true
+            || ($options['groupXObject'] ?? true) === 1
+            || ($options['groupXObject'] ?? true) === '1'
+            || ($options['groupXObject'] ?? true) === 'true';
+        $useCache =
+            ($options['cache'] ?? true) === true
+            || ($options['cache'] ?? true) === 1
+            || ($options['cache'] ?? true) === '1'
+            || ($options['cache'] ?? true) === 'true';
+
+        $cacheKey = $sourceId . ':' . $pageNum . ':' . $useBox . ':' . ($respectRotation ? 'R1' : 'R0');
+        if ($useCache && isset($this->templateCache[$cacheKey])) {
+            return $this->templateCache[$cacheKey];
+        }
+
+        $src = $this->requireSource($sourceId);
+        $resolver = new PageResolver();
+        $resolved = $resolver->resolveFromIndex($src, $this->getPageIndex($sourceId), $pageNum);
+
+        $this->checkImportedFonts($resolved['resources'], $src, $pageNum);
+
+        $box = $this->selectBox($resolved, $useBox);
+        $rotate = $respectRotation ? $resolved['rotate'] : 0;
+        $map = $this->objectMaps[$sourceId] ?? null;
+        if (!$map instanceof ObjectMap) {
+            $map = new ObjectMap();
+            $this->objectMaps[$sourceId] = $map;
+        }
+
+        // Allocate object number for the Form XObject.
+        $xobjNum = ++$this->pon;
+        $tid = 'IMP' . $xobjNum;
+
+        // Clone resources.
+        $cloner = new ResourceCloner($this->pon, $this->pdfa, $this->encrypt);
+        $resDict = $cloner->cloneResources($resolved['resources'], $src, $map, $xobjNum);
+        $this->pon = $cloner->getPon();
+
+        // Extract content stream.
+        $contentStream = $cloner->getContentStream($resolved['dict'], $src);
+        $this->pon = $cloner->getPon();
+        $this->checkImportedContent($resolved['dict'], $contentStream['found'], $pageNum);
+
+        // Flush cloned auxiliary objects.
+        $rawAuxObjects = $map->flush();
+        if ($rawAuxObjects !== '') {
+            $this->rawObjects[$tid . '_aux'] = $rawAuxObjects;
+        }
+
+        // Compute BBox and Matrix.
+        [$xMin, $yMin, $xMax, $yMax] = $box;
+        $rawW = $xMax - $xMin;
+        $rawH = $yMax - $yMin;
+        $bboxW = $rawW;
+        $bboxH = $rawH;
+        $normRotate = (($rotate % 360) + 360) % 360;
+        if ($normRotate === 90 || $normRotate === 270) {
+            $bboxW = $rawH;
+            $bboxH = $rawW;
+        }
+
+        $matrix = $this->rotationMatrix($rotate, $rawW, $rawH);
+        $matrixStr = \implode(' ', $matrix);
+
+        // Serialize the Form XObject: the content is filtered first and encrypted last.
+        $streamBytes = $this->encrypt->encryptString($contentStream['bytes'], $xobjNum);
+        $filterEntry = $contentStream['filter'] !== '' ? ' /Filter ' . $contentStream['filter'] : '';
+        $groupEntry = $useGroup ? ' /Group << /Type /Group /S /Transparency >>' : '';
+
+        $xobjOut = \sprintf(
+            '%u 0 obj'
+            . "\n"
+            . '<< /Type /XObject /Subtype /Form /FormType 1 /BBox [%F %F %F %F]'
+            . ' /Matrix [%s] /Resources %s%s%s /Length %u >>'
+            . "\nstream\n%s\nendstream\nendobj\n",
+            $xobjNum,
+            $xMin,
+            $yMin,
+            $xMax,
+            $yMax,
+            $matrixStr,
+            $resDict,
+            $groupEntry,
+            $filterEntry,
+            \strlen($streamBytes),
+            $streamBytes,
+        );
+
+        $this->rawObjects[$tid] = $xobjOut;
+
+        // Register in xobjects so getXObjectDict() emits the resource dict entry.
+        // outdata is intentionally empty so getOutXObjects() skips it.
+        $this->xobjects[$tid] = [
+            'spot_colors' => [],
+            'extgstate' => [],
+            'gsnames' => [],
+            'gradient' => [],
+            'pattern' => [],
+            'font' => [],
+            'image' => [],
+            'xobject' => [],
+            'annotations' => [],
+            'id' => $tid,
+            'n' => $xobjNum,
+            'x' => 0.0,
+            'y' => 0.0,
+            'w' => $bboxW,
+            'h' => $bboxH,
+            'outdata' => '',
+            'pheight' => 0.0,
+            'gheight' => 0.0,
+        ];
+
+        // Template dimensions stay in points.
+        $tpl = new PageTemplate($tid, $bboxW, $bboxH, $rotate, $sourceId, $pageNum, [$xMin, $yMin, $xMax, $yMax]);
+
+        if ($useCache) {
+            $this->templateCache[$cacheKey] = $tpl;
+        }
+
+        return $tpl;
+    }
+
+    /**
+     * Import a range of pages from a registered source document.
+     *
+     * @param string        $sourceId Source document identifier.
+     * @param array<int>|null $range  1-based page numbers to import, or null to import all pages.
+     * @param array<string, mixed> $options Import options (same as importPage).
+     *
+     * @return array<int, PageTemplateInterface> Indexed array of PageTemplate, one per requested page.
+     *
+     * @throws ImportSourceNotFoundException     If the source ID is not registered.
+     * @throws ImportPageOutOfRangeException     If any page number is out of range.
+     * @throws ImportCorruptedSourceException    If the page tree is malformed.
+     * @throws ImportException                   If object mapping or cloning fails.
+     * @throws ImportUnsupportedFeatureException If an unsupported feature is encountered.
+     * @throws \Com\Tecnick\Pdf\Encrypt\Exception
+     */
+    public function importPages(string $sourceId, ?array $range = null, array $options = []): array
+    {
+        $total = $this->getSourcePageCount($sourceId);
+
+        $templates = [];
+        if ($range === null) {
+            // $total is the verified number of reachable pages, so every page
+            // number in 1..$total is resolvable; no array of page numbers is
+            // materialized up front.
+            for ($pageNum = 1; $pageNum <= $total; ++$pageNum) {
+                $templates[] = $this->importPage($sourceId, $pageNum, $options);
+            }
+
+            return $templates;
+        }
+
+        foreach ($range as $pageNum) {
+            $num = (int) $pageNum;
+            if ($num < 1 || $num > $total) {
+                throw new ImportPageOutOfRangeException('Page number ' . $num . ' is out of range [1,' . $total . '].');
+            }
+        }
+
+        foreach ($range as $pageNum) {
+            $templates[] = $this->importPage($sourceId, (int) $pageNum, $options);
+        }
+
+        return $templates;
+    }
+
+    /**
+     * Flush all queued raw PDF objects to the output stream.
+     * Called from getOutPDFBody() after getOutXObjects().
+     *
+     * @return string Serialized PDF object bytes.
+     */
+    public function getOutImportedObjects(): string
+    {
+        $out = '';
+        foreach ($this->rawObjects as $data) {
+            $out .= $data;
+        }
+
+        $this->rawObjects = [];
+        return $out;
+    }
+
+    /**
+     * Release parser memory and cached resources.
+     * Should be called after getOutImportedObjects() completes.
+     */
+    public function cleanUp(): void
+    {
+        $this->sources = [];
+        $this->objectMaps = [];
+        $this->rawObjects = [];
+        $this->pageIndexes = [];
+    }
+
+    /**
+     * Return the flattened page index for a registered source, building and
+     * caching it on first use so batch imports walk the page tree only once.
+     *
+     * @param string $sourceId Source document identifier.
+     *
+     * @return array<int, array<string, mixed>> Effective page dictionaries in document order.
+     *
+     * @throws ImportSourceNotFoundException If the source ID is not registered.
+     * @throws ImportCorruptedSourceException If the page tree is malformed.
+     */
+    private function getPageIndex(string $sourceId): array
+    {
+        $index = $this->pageIndexes[$sourceId] ?? null;
+        if ($index === null) {
+            $src = $this->requireSource($sourceId);
+            $resolver = new PageResolver();
+            $index = $resolver->buildPageIndex($src);
+            $this->pageIndexes[$sourceId] = $index;
+        }
+
+        return $index;
+    }
+
+    /**
+     * Return the SourceDocument for a registered source ID.
+     *
+     * @param string $sourceId Source document identifier.
+     *
+     * @return SourceDocument
+     *
+     * @throws ImportSourceNotFoundException If not found.
+     */
+    private function requireSource(string $sourceId): SourceDocument
+    {
+        $source = $this->sources[$sourceId] ?? null;
+        if (!$source instanceof SourceDocument) {
+            throw new ImportSourceNotFoundException('Source ID not registered: ' . $sourceId);
+        }
+
+        return $source;
+    }
+
+    /**
+     * Select the effective page box from the resolved page.
+     *
+     * @param array<string, mixed> $resolved Resolved page from PageResolver.
+     * @param string               $boxName  Preferred box name.
+     *
+     * @return array{0: float, 1: float, 2: float, 3: float} Box as [x0, y0, x1, y1].
+     */
+    private function selectBox(array $resolved, string $boxName): array
+    {
+        $boxMap = [
+            'MediaBox' => 'mediaBox',
+            'CropBox' => 'cropBox',
+            'BleedBox' => 'bleedBox',
+            'TrimBox' => 'trimBox',
+            'ArtBox' => 'artBox',
+        ];
+
+        $key = $boxMap[$boxName] ?? 'cropBox';
+        $rawBox = null;
+        if (isset($resolved[$key]) && \is_array($resolved[$key])) {
+            $rawBox = $resolved[$key];
+        } elseif (isset($resolved['mediaBox']) && \is_array($resolved['mediaBox'])) {
+            $rawBox = $resolved['mediaBox'];
+        }
+
+        if (
+            !\is_array($rawBox)
+            || !\array_key_exists(0, $rawBox)
+            || !\array_key_exists(1, $rawBox)
+            || !\array_key_exists(2, $rawBox)
+            || !\array_key_exists(3, $rawBox)
+            || !\is_numeric($rawBox[0])
+            || !\is_numeric($rawBox[1])
+            || !\is_numeric($rawBox[2])
+            || !\is_numeric($rawBox[3])
+        ) {
+            return [0.0, 0.0, 0.0, 0.0];
+        }
+
+        return [
+            (float) $rawBox[0],
+            (float) $rawBox[1],
+            (float) $rawBox[2],
+            (float) $rawBox[3],
+        ];
+    }
+
+    /**
+     * Compute the CTM matrix for a given rotation angle (0/90/180/270).
+     *
+     * Rotation matrix
+     * 0:   [ 1  0  0  1  0  0]
+     * 90:  [ 0 -1  1  0  0  W]
+     * 180: [-1  0  0 -1  W  H]
+     * 270: [ 0  1 -1  0  H  0]
+     *
+     * @param int   $rotate Page rotation in degrees.
+     * @param float $wid    Page width in points.
+     * @param float $hgt    Page height in points.
+     *
+     * @return array<int, float> Six-element CTM array [a, b, c, d, e, f].
+     */
+    private function rotationMatrix(int $rotate, float $wid, float $hgt): array
+    {
+        $normRotate = (($rotate % 360) + 360) % 360;
+
+        return match ($normRotate) {
+            90 => [0.0, -1.0, 1.0, 0.0, 0.0, $wid],
+            180 => [-1.0, 0.0, 0.0, -1.0, $wid, $hgt],
+            270 => [0.0, 1.0, -1.0, 0.0, $hgt, 0.0],
+            default => [1.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+        };
+    }
+}

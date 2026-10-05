@@ -1,493 +1,182 @@
-# PdfOut AddOn - API Referenz
+# API-Referenz (pdfout 11)
 
-## 📚 Übersicht
-
-Die PdfOut-Klasse (`FriendsOfRedaxo\PdfOut\PdfOut`) erweitert Dompdf und bietet eine umfassende API zur PDF-Erstellung in REDAXO mit erweiterten Features wie digitalen Signaturen, Passwortschutz und optimierten Workflows.
-
-## ⚠️ Wichtiger Hinweis: use-Statement
-
-**Für alle Code-Beispiele in dieser Dokumentation gilt:** Am Anfang jeder PHP-Datei muss das use-Statement eingebunden werden:
+Alle Klassen liegen im Namespace `FriendsOfRedaxo\PdfOut`.
 
 ```php
-use FriendsOfRedaxo\PdfOut\PdfOut;
+use FriendsOfRedaxo\PdfOut\{PdfOut, PdfDocument, Certificate, SignatureField, Permission, Poppler};
 ```
 
-Ohne dieses Statement funktionieren die Beispiele nicht!
+| Klasse | Aufgabe |
+| --- | --- |
+| `PdfOut` | HTML und REDAXO-Artikel in ein PDF umwandeln (dompdf), Weiterverarbeitung verketten |
+| `PdfDocument` | jedes PDF bearbeiten, absichern, ausgeben und lesen |
+| `Certificate` | Signatur-Zertifikat laden (P12/PFX oder PEM) |
+| `SignatureField` | sichtbares Signaturfeld platzieren |
+| `Permission` | erlaubte Rechte bei Passwortschutz (Enum) |
+| `Poppler` | PDFs lesen und prüfen (pdfinfo, pdfsig, pdftotext, pdftoppm) |
+| `PdfThumbnail` | Vorschaubilder (auch als Media-Manager-Effekt „PDF-Thumbnail“) |
 
-## 🚀 Schnellstart
+---
+
+## PdfOut
 
 ```php
-use FriendsOfRedaxo\PdfOut\PdfOut;
-
-// Einfachstes Beispiel
-$pdf = new PdfOut();
-$pdf->setName('mein_pdf')
-    ->setHtml('<h1>Hallo Welt!</h1>')
-    ->run();
+PdfOut::create()                       // neue Instanz mit den Standard-Einstellungen des Addons
 ```
 
-## 📋 Klassen-Referenz
+### Inhalt und Format
 
-### PdfOut-Klasse
+| Methode | Beschreibung |
+| --- | --- |
+| `html(string $html, bool $outputFilter = false)` | HTML setzen (optional durch den OUTPUT_FILTER) |
+| `article(int $id, ?int $ctype = null, bool $outputFilter = true)` | Inhalt eines Artikels anhängen |
+| `paper(string\|array $size = 'A4', string $orientation = 'portrait')` | Papierformat, z. B. `'A4'`, `'letter'` oder `[0, 0, Breite, Höhe]` in Punkt |
+| `font(string $font)` | Grundschrift (dompdf), Standard „Dejavu Sans“ |
+| `template(string $template, string $placeholder = '{{CONTENT}}')` | Grundtemplate, der Inhalt ersetzt den Platzhalter |
 
-Die Hauptklasse für PDF-Erstellung mit erweiterten REDAXO-Features.
+Im HTML kann `DOMPDF_PAGE_COUNT_PLACEHOLDER` für die Gesamtseitenzahl stehen.
 
-#### Konstruktor
-```php
-$pdf = new PdfOut();
-```
+### Weiterverarbeitung
 
-## 🔧 Basis-Methoden
+| Methode | Beschreibung |
+| --- | --- |
+| `sign(?Certificate $c = null, string $name = '', string $reason = '', string $location = '', string $contact = '', ?SignatureField $field = null)` | signieren (ohne Zertifikat: Standard des Addons) |
+| `protect(string $userPassword = '', ?string $ownerPassword = null, iterable $allow = [Permission::Print, Permission::PrintHigh])` | Passwortschutz (AES-256) |
+| `append(PdfDocument\|string ...$docs)` | PDFs anhängen (Dateipfad, PDF-Daten oder `PdfDocument`) |
+| `with(callable $step)` | beliebiger Schritt auf dem `PdfDocument`, z. B. `fn (PdfDocument $d) => $d->stamp('ENTWURF')` |
+| `document(): PdfDocument` | fertiges Dokument zum Weiterbearbeiten |
 
-### Konfiguration
+### Ausgabe
 
-#### `setName(string $name): self`
-Setzt den Namen der PDF-Datei.
-```php
-$pdf->setName('rechnung_2024');
-```
+| Methode | Rückgabe |
+| --- | --- |
+| `toString(): string` | PDF-Daten |
+| `save(string $path, bool $overwrite = true): string` | Pfad der gespeicherten Datei |
+| `inline(?string $filename = null): never` | im Browser anzeigen |
+| `download(?string $filename = null): never` | als Download senden |
 
-#### `setHtml(string $html, bool $applyOutputFilter = false): self`
-Setzt den HTML-Inhalt des PDFs.
-```php
-$pdf->setHtml('<h1>Mein Content</h1><p>Text...</p>');
-$pdf->setHtml($html, true); // Mit REDAXO Output-Filter
-```
+### Viewer und Medien
 
-#### `setPaperSize(string|array $size = 'A4', string $orientation = 'portrait'): self`
-Setzt Papierformat und Ausrichtung.
-```php
-$pdf->setPaperSize('A4', 'portrait');
-$pdf->setPaperSize('A3', 'landscape');
-$pdf->setPaperSize([595, 842], 'portrait'); // Custom in Points
-```
+| Methode | Beschreibung |
+| --- | --- |
+| `PdfOut::viewer(string $file, string $returnUrl = '')` | URL des PDF.js-Viewers; `$returnUrl` zeigt einen Knopf „Zurück“ (gleiche Domain) |
+| `PdfOut::viewerWithProfile(string $file, string $profile)` | Viewer mit einem bestimmten Toolbar-Profil |
+| `PdfOut::mediaUrl(string $type, string $file)` | Media-Manager-URL, beim PDF-Erzeugen absolut |
 
-**Verfügbare Formate:** A4, A3, A5, letter, legal, tabloid
+### Bisherige Methoden
 
-#### `setFont(string $font): self`
-Setzt die Standard-Schriftart.
-```php
-$pdf->setFont('Helvetica');
-$pdf->setFont('Dejavu Sans'); // Default
-```
+Weiter nutzbar, intern auf `PdfDocument` umgestellt: `setName()`, `setHtml()`, `setPaperSize()`, `setOrientation()`, `setFont()`, `setDpi()`, `setAttachment()`, `setRemoteFiles()`, `setSaveToPath()`, `setSaveAndSend()`, `setBaseTemplate()`, `addArticle()`, `run()`, `enableDigitalSignature()`, `setVisibleSignature()`, `enablePasswordProtection()`, `signExistingPdf()`, `generateSignedPdf()`, `generateProfessionalSignedPdf()`, `generateCleanSignedPdf()`, `validateSignedPdf()`, `createSignedWorkflow()`, `createSignedDocument()`, `createPasswordProtectedWorkflow()`, `createPasswordProtectedDocument()`, `mergePdfs()`, `mergeHtmlToPdf()`, `createWithAppendedPdfs()`, `createDocumentWithAttachments()`. Siehe README, Abschnitt „Umstieg von Version 10“.
 
-#### `setDpi(int $dpi): self`
-Setzt die DPI-Auflösung.
-```php
-$pdf->setDpi(300); // Hohe Qualität für Druck
-$pdf->setDpi(150); // Standard für Bildschirm
-```
+---
 
-#### `setAttachment(bool $attachment): self`
-Bestimmt ob PDF als Download oder Vorschau gezeigt wird.
-```php
-$pdf->setAttachment(true);  // Als Download
-$pdf->setAttachment(false); // Inline-Vorschau
-```
+## PdfDocument
 
-#### `setRemoteFiles(bool $allow): self`
-Erlaubt/verbietet externe Ressourcen (Bilder, CSS).
-```php
-$pdf->setRemoteFiles(true);  // Erlaubt externe URLs
-$pdf->setRemoteFiles(false); // Nur lokale Dateien
-```
+Schritte werden gesammelt und beim Ausgeben in einem Durchgang angewendet. Ohne Schritt bleibt das PDF byte-identisch; beim Bearbeiten werden die Seiten neu aufgebaut (Links, Formularfelder und Lesezeichen gehen verloren).
 
-### Speichern & Ausgabe
+### Quellen
 
-#### `setSaveToPath(string $path): self`
-Speichert PDF in angegebenen Pfad.
-```php
-$pdf->setSaveToPath(rex_path::addonCache('pdfout'));
-$pdf->setSaveToPath('/pfad/zum/speichern/');
-```
+| Methode | Beschreibung |
+| --- | --- |
+| `PdfDocument::fromMedia(string $filename)` | Datei aus dem Medienpool |
+| `PdfDocument::fromFile(string $path)` | Datei |
+| `PdfDocument::fromString(string $pdf, string $filename = 'document.pdf')` | PDF-Daten |
+| `PdfDocument::fromHtml(string $html, string $filename = 'document.pdf')` | HTML über `PdfOut` (Einstellungen des Addons) |
 
-#### `setSaveAndSend(bool $saveAndSend): self`
-Speichert UND sendet PDF gleichzeitig.
-```php
-$pdf->setSaveAndSend(true); // Speichern + an Browser senden
-```
+### Bearbeiten
 
-#### `run(): void`
-Führt die PDF-Erstellung aus.
-```php
-$pdf->run(); // Startet Generierung und Ausgabe
-```
+| Methode | Beschreibung |
+| --- | --- |
+| `append(PdfDocument\|string ...$docs)` | weitere PDFs anhängen |
+| `pages(array\|string $pages)` | Seiten auswählen und sortieren: `[1, 3]` oder `'1-3,5,-1'` (`-1` = letzte) |
+| `stamp(string $text, float $size = 60, string $color = '#b3261e', float $opacity = 0.15, float $angle = 45, string $pages = 'all')` | Stempel/Wasserzeichen; `$pages`: `all`, `first`, `last` oder Auswahl |
+| `pageNumbers(string $format = 'Seite {page} von {pages}', string $position = 'bottom-center', float $size = 9, string $color = '#444444', bool $skipFirst = false)` | Seitenzahlen; Position `top-`/`bottom-` + `left`/`center`/`right` |
+| `metadata(?string $title, ?string $author, ?string $subject, ?string $keywords, ?string $creator)` | Metadaten (benannte Argumente) |
+| `filename(string $filename)` | Dateiname für `inline()`/`download()` |
+| `sign(Certificate $c, string $name = '', string $reason = '', string $location = '', string $contact = '', ?SignatureField $field = null)` | Signatur nach PAdES-B-B (SHA-256) |
+| `protect(string $userPassword = '', ?string $ownerPassword = null, iterable $allow = [...])` | Passwortschutz (AES-256), `$allow` = erlaubte Rechte |
 
-## 🎨 Template-System
+### Ausgabe und Lesen
 
-#### `setBaseTemplate(string $template, string $placeholder = '{{CONTENT}}'): self`
-Verwendet Template mit Platzhalter für Inhalt.
-```php
-$template = '
-<!DOCTYPE html>
-<html>
-<head><title>Mein PDF</title></head>
-<body>
-    <header>Firmenlogo</header>
-    {{CONTENT}}
-    <footer>© 2024 Meine Firma</footer>
-</body>
-</html>';
+| Methode | Rückgabe |
+| --- | --- |
+| `toString()` | PDF-Daten |
+| `save(string $path, bool $overwrite = true)` | Pfad |
+| `inline(?string $filename = null)` / `download(...)` | sendet und beendet |
+| `pageCount()` | Seitenzahl |
+| `info()` | Metadaten (`Pages`, `Title`, `Page size`, `Encrypted` …) |
+| `text(bool $layout = false)` | Text |
+| `signatures()` | Prüfergebnis je Signatur: `signer`, `signed_at`, `hash`, `type`, `valid`, `status`, `certificate`, `certificate_trusted`, `whole_document` |
+| `PdfDocument::resolvePages(array\|string $selection, int $total)` | Seitenauswahl in Seitennummern auflösen |
 
-$pdf->setBaseTemplate($template)
-    ->setHtml('<h1>Hauptinhalt</h1>')
-    ->run();
-```
+Ausnahmen: `InvalidArgumentException` bei ungültigen Eingaben (kein PDF, Seite gibt es nicht, Zertifikat/Passwort falsch), `RuntimeException` bei Verarbeitungsfehlern.
 
-## 🖼️ REDAXO Integration
+---
 
-#### `addArticle(int $articleId, ?int $ctype = null, bool $applyOutputFilter = true): self`
-Fügt REDAXO-Artikel hinzu.
-```php
-$pdf->addArticle(5);           // Ganzer Artikel
-$pdf->addArticle(5, 1);        // Nur ctype=1
-$pdf->addArticle(5, null, false); // Ohne Output-Filter
-```
+## Certificate
 
-#### `mediaUrl(string $type, string $file): string`
-Erstellt Media Manager URLs.
-```php
-$imageUrl = $pdf->mediaUrl('rex_media_large', 'foto.jpg');
-$html = '<img src="' . $imageUrl . '" alt="Foto">';
-```
+| Methode | Beschreibung |
+| --- | --- |
+| `Certificate::fromAddon(string $name = '', ?string $password = null)` | aus `data/addons/pdfout/certificates/`; leer = Standard aus den Einstellungen |
+| `Certificate::fromP12(string $file, string $password = '')` | PKCS#12 (.p12/.pfx) |
+| `Certificate::fromPem(string $certFile, ?string $keyFile = null, string $password = '')` | PEM, Schlüssel getrennt oder in derselben Datei |
+| `Certificate::fromFile(string $file, string $password = '')` | nach Dateiendung |
+| `commonName()`, `validTo()` | Angaben aus dem Zertifikat |
 
-#### `viewer(string $file = ''): string`
-PDF-Viewer für Frontend.
-```php
-echo $pdf->viewer('dokument.pdf'); // Zeigt PDF-Viewer
-```
+Zertifikat und Schlüssel werden beim Laden geprüft (passen sie zusammen?).
 
-## 🔒 Sicherheits-Features
+## SignatureField
 
-### Passwortschutz
+Position in Millimetern ab der linken oberen Ecke, Seite `-1` = letzte.
 
-#### `enablePasswordProtection(string $userPassword, string $ownerPassword = '', array $permissions = []): self`
-Aktiviert Passwortschutz.
-```php
-$pdf->enablePasswordProtection(
-    'user123',                    // User-Passwort (zum Öffnen)
-    'owner456',                   // Owner-Passwort (Vollzugriff)
-    ['print', 'copy', 'modify']   // Erlaubte Aktionen
-);
-```
+| Methode | Beschreibung |
+| --- | --- |
+| `SignatureField::bottomLeft(float $width = 70, float $height = 25)` | unten links (A4) |
+| `SignatureField::bottomRight(...)` | unten rechts (A4) |
+| `SignatureField::at(float $x, float $y, float $width = 70, float $height = 25, int $page = -1)` | frei |
+| `->withoutBox()` | nur das Feld, ohne gezeichneten Kasten |
 
-**Verfügbare Berechtigungen:**
-- `print` - Drucken erlaubt
-- `modify` - Änderungen erlaubt
-- `copy` - Kopieren erlaubt
-- `annot-forms` - Anmerkungen/Formulare
+## Permission
 
-### Digitale Signaturen
+Erlaubte Rechte: `Print`, `PrintHigh`, `Modify`, `Copy`, `Annotate`, `FillForms`, `Extract` (immer erlaubt, Barrierefreiheit), `Assemble`. Strings (`'print'`, `'copy'` …) werden ebenfalls akzeptiert.
 
-#### `enableSigning(string $certificatePath, string $password, array $signatureInfo = []): self`
-Aktiviert digitale Signierung.
-```php
-$pdf->enableSigning(
-    '/pfad/zu/zertifikat.p12',
-    'zertifikat_passwort',
-    [
-        'Name' => 'Max Mustermann',
-        'Location' => 'Berlin, Deutschland',
-        'Reason' => 'Dokument signiert',
-        'ContactInfo' => 'max@firma.de'
-    ]
-);
-```
+## Poppler
 
-#### `setVisibleSignature(array $config): self`
-Konfiguriert sichtbare Signatur.
-```php
-$pdf->setVisibleSignature([
-    'enabled' => true,
-    'x' => 150,        // X-Position
-    'y' => 50,         // Y-Position  
-    'width' => 40,     // Breite
-    'height' => 20,    // Höhe
-    'page' => -1,      // Seite (-1 = letzte)
-    'name' => 'Max Mustermann',
-    'location' => 'Berlin',
-    'reason' => 'Signiert',
-    'contact_info' => 'max@firma.de'
-]);
-```
+| Methode | Beschreibung |
+| --- | --- |
+| `Poppler::isAvailable()`, `Poppler::missing()`, `Poppler::version()` | Verfügbarkeit |
+| `Poppler::info(string $file, string $password = '')` | Metadaten |
+| `Poppler::pageCount(string $file, string $password = '')` | Seitenzahl |
+| `Poppler::signatures(string $file, string $password = '')` | Signaturprüfung |
+| `Poppler::text(string $file, string $password = '', bool $layout = false)` | Text |
+| `Poppler::run(string $tool, array $args, int $timeout = 60)` | beliebiges Poppler-Programm ohne Shell |
 
-## 🚀 Workflow-Methoden
+Der Ordner der Programme lässt sich in den Einstellungen festlegen (`poppler_path`).
 
-### Vereinfachte Workflows (Empfohlen)
+---
 
-#### `createSignedDocument(string $html, string $filename = 'document.pdf', string $saveToPath = '', bool $replaceOriginal = false): void`
-Erstellt signiertes PDF mit Standard-Zertifikat.
-```php
-$pdf = new PdfOut();
-$pdf->createSignedDocument($html, 'rechnung.pdf');
-
-// Mit Speicherung
-$pdf->createSignedDocument(
-    $html, 
-    'rechnung.pdf',
-    '/speicher/pfad/',  // Speicherpfad
-    false               // Original nicht überschreiben
-);
-```
-
-#### `createSignedWorkflow(string $html, string $certPath, string $certPassword, array $signatureInfo, string $filename, string $cacheDir = '', string $saveToPath = '', bool $replaceOriginal = false): void`
-Vollständig konfigurierbarer Signatur-Workflow.
-```php
-$pdf = new PdfOut();
-$pdf->setPaperSize('A4', 'portrait')
-    ->setFont('Helvetica')
-    ->setDpi(300);
-
-$pdf->createSignedWorkflow(
-    $htmlContent,                           // HTML-Inhalt
-    '/pfad/zu/certificate.p12',            // Zertifikat
-    'zertifikat_passwort',                 // Zertifikat-Passwort
-    [                                      // Signatur-Info
-        'Name' => 'Max Mustermann',
-        'Location' => 'Deutschland',
-        'Reason' => 'Rechnung signiert',
-        'ContactInfo' => 'max@firma.de'
-    ],
-    'signierte_rechnung.pdf',              // Dateiname
-    '',                                    // Cache (leer = standard)
-    '/speicher/ordner/',                   // Speicherpfad  
-    false                                  // Original überschreiben
-);
-```
-
-#### `createPasswordProtectedWorkflow(string $html, string $userPassword, string $ownerPassword, array $permissions, string $filename, string $cacheDir = '', string $saveToPath = '', bool $replaceOriginal = false): void`
-Passwortgeschütztes PDF erstellen.
-```php
-$pdf = new PdfOut();
-$pdf->createPasswordProtectedWorkflow(
-    $htmlContent,
-    'user123',                    // User-Passwort
-    'owner456',                   // Owner-Passwort
-    ['print', 'copy'],           // Berechtigungen
-    'geschuetzt.pdf'             // Dateiname
-);
-```
-
-### PDF-Anhänge (Beta-Feature)
-
-#### `createDocumentWithAttachments(string $html, array $attachments, string $filename, string $saveToPath = ''): void`
-Hauptdokument mit PDF-Anhängen.
-```php
-$anhaenge = [
-    '/pfad/zu/agb.pdf',
-    '/pfad/zu/datenschutz.pdf'
-];
-
-$pdf = new PdfOut();
-$pdf->createDocumentWithAttachments(
-    $rechnungHtml,     // Hauptdokument
-    $anhaenge,         // PDF-Anhänge
-    'rechnung_komplett.pdf'
-);
-```
-
-## 🛠️ Erweiterte Features
-
-### TCPDF-Integration
-Für erweiterte Features wird automatisch TCPDF verwendet:
-```php
-// Automatischer TCPDF-Modus bei:
-$pdf->enableSigning($cert, $pass);           // Signierung
-$pdf->enablePasswordProtection($user, $owner); // Passwort
-```
-
-### Page Counter
-Automatische Seitenzählung:
-```php
-$html = '<p>Seite {{PAGE_NUM}} von {{PAGE_COUNT}}</p>';
-$pdf->setHtml($html)->run(); // Platzhalter werden ersetzt
-```
-
-### Cache-System
-```php
-// Cache-Verzeichnis anpassen
-$pdf->setCacheDir('/custom/cache/');
-
-// Cache leeren
-PdfOut::clearCache();
-```
-
-## 📊 Zertifikats-Management
-
-### Konfigurierte Zertifikate verwenden
-```php
-// Zertifikat aus AddOn-Konfiguration
-$certConfig = rex_addon::get('pdfout')->getConfig('certificates.selected');
-if ($certConfig) {
-    $pdf->enableSigning(
-        $certConfig['path'],
-        $certConfig['password']
-    );
-}
-```
-
-## 🔍 Debugging & Logging
-
-### Fehlerbehandlung
-```php
-try {
-    $pdf = new PdfOut();
-    $pdf->setHtml($html)->run();
-} catch (Exception $e) {
-    echo 'PDF-Fehler: ' . $e->getMessage();
-}
-```
-
-### Logging aktivieren
-```php
-// In REDAXO Backend: AddOns > PdfOut > Konfiguration
-// "PDF-Generierung loggen" aktivieren
-```
-
-## 📱 Responsive PDFs
-
-### Media Queries für PDF
-```php
-$css = '
-@media print {
-    .no-print { display: none; }
-    .page-break { page-break-before: always; }
-}
-@page {
-    margin: 2cm;
-    @bottom-right {
-        content: "Seite " counter(page);
-    }
-}
-';
-
-$html = '
-<style>' . $css . '</style>
-<div class="content">PDF-Inhalt</div>
-<div class="page-break"></div>
-<div class="content">Nächste Seite</div>
-';
-```
-
-## ⚡ Performance-Tipps
-
-### Optimierung
-```php
-$pdf = new PdfOut();
-$pdf->setDpi(150)              // Niedrigere DPI für kleinere Dateien
-    ->setRemoteFiles(false)    // Externe Ressourcen vermeiden
-    ->setSaveToPath($cache)    // Zwischenspeichern für Wiederverwendung
-    ->run();
-```
-
-### Batch-Verarbeitung
-```php
-// Mehrere PDFs in einem Durchgang
-$pdfs = ['rechnung1.html', 'rechnung2.html', 'rechnung3.html'];
-
-foreach ($pdfs as $index => $htmlFile) {
-    $pdf = new PdfOut();
-    $pdf->setName('batch_pdf_' . $index)
-        ->setHtml(file_get_contents($htmlFile))
-        ->setSaveToPath('/batch/output/')
-        ->run();
-}
-```
-
-## 🌍 Internationalisierung
-
-### Multi-Language Support
-```php
-// Deutsche Umlaute und Sonderzeichen
-$pdf->setFont('Dejavu Sans'); // Unterstützt Unicode
-
-// RTL-Sprachen (Arabisch, Hebräisch)
-// Verwende TCPDF für bessere RTL-Unterstützung
-$pdf->enableSigning($cert, $pass); // Aktiviert TCPDF-Modus
-```
-
-## 📋 Vollständiges Beispiel
+## Beispiele
 
 ```php
-use FriendsOfRedaxo\PdfOut\PdfOut;
+// Rechnung: erzeugen, AGB anhängen, signieren, speichern
+PdfOut::create()
+    ->html($html)
+    ->append(rex_path::media('agb.pdf'))
+    ->sign(Certificate::fromAddon('firma.p12', $pw), reason: 'Rechnung ' . $nr, field: SignatureField::bottomRight())
+    ->save(rex_path::addonData('shop', "rechnungen/$nr.pdf"));
 
-// Komplettes Beispiel mit allen Features
-$html = '
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial; margin: 20px; }
-        .header { border-bottom: 2px solid #000; padding-bottom: 10px; }
-        .footer { position: fixed; bottom: 0; font-size: 10px; color: #666; }
-        @page { margin: 2cm; }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>Rechnung #2024-001</h1>
-    </div>
-    
-    <div class="content">
-        <p>Sehr geehrte Damen und Herren,</p>
-        <p>hiermit erhalten Sie unsere Rechnung...</p>
-        
-        <table border="1" cellpadding="5">
-            <tr><th>Artikel</th><th>Menge</th><th>Preis</th></tr>
-            <tr><td>Beratung</td><td>5h</td><td>500,00 €</td></tr>
-        </table>
-    </div>
-    
-    <div class="footer">
-        Seite {{PAGE_NUM}} von {{PAGE_COUNT}} | Erstellt: ' . date('d.m.Y') . '
-    </div>
-</body>
-</html>';
+// Medienpool-PDF als Entwurf kennzeichnen und anzeigen
+PdfDocument::fromMedia('vertrag.pdf')->stamp('ENTWURF')->pageNumbers()->inline();
 
-try {
-    $pdf = new PdfOut();
-    
-    // Basis-Konfiguration
-    $pdf->setName('rechnung_2024_001')
-        ->setPaperSize('A4', 'portrait')
-        ->setFont('Dejavu Sans')
-        ->setDpi(300)
-        ->setAttachment(true);
-    
-    // Erweiterte Features
-    $pdf->enablePasswordProtection(
-        'user123', 
-        'owner456', 
-        ['print', 'copy']
-    );
-    
-    $pdf->enableSigning(
-        '/pfad/zu/firmen_zertifikat.p12',
-        'zertifikat_passwort',
-        [
-            'Name' => 'Meine Firma GmbH',
-            'Location' => 'Deutschland',
-            'Reason' => 'Rechnung digital signiert',
-            'ContactInfo' => 'info@meinefirma.de'
-        ]
-    );
-    
-    // PDF erstellen und speichern
-    $pdf->setHtml($html)
-        ->setSaveToPath(rex_path::addonData('pdfout', 'rechnungen/'))
-        ->setSaveAndSend(true)
-        ->run();
-        
-} catch (Exception $e) {
-    rex_logger::factory()->error('PDF-Erstellung fehlgeschlagen', 
-        ['error' => $e->getMessage()]);
-    echo 'Fehler beim Erstellen der Rechnung: ' . $e->getMessage();
-}
+// Signatur prüfen
+$ok = array_all(PdfDocument::fromFile($pfad)->signatures(), fn (array $s) => $s['valid']);
+
+// Viewer mit Rücksprung
+echo '<a href="' . PdfOut::viewer(rex_url::media('preise.pdf'), rex_getUrl()) . '">Preisliste ansehen</a>';
 ```
 
-## 🔗 Weitere Ressourcen
+## Weiterführend
 
-- [REDAXO PdfOut Demo-Seite](../../demo/) - Interaktive Beispiele
-- [Best Practices](BEST_PRACTICES.md) - Empfohlene Workflows
-- [dompdf Documentation](https://github.com/dompdf/dompdf) - Basis-Library
-- [TCPDF Documentation](https://tcpdf.org/docs/) - Erweiterte Features
+- [dompdf](https://github.com/dompdf/dompdf/wiki) – HTML/CSS-Unterstützung
+- [tc-lib-pdf](https://github.com/tecnickcom/tc-lib-pdf) – PDF-Bearbeitung, Signaturen, Verschlüsselung
+- [Poppler](https://poppler.freedesktop.org/) – PDF-Werkzeuge
+- [PDF.js](https://mozilla.github.io/pdf.js/) – Viewer

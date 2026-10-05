@@ -47,3 +47,12 @@ pdfout_effect_pdf_thumbnail_gamma = Gamma-Korrektur
 pdfout_effect_pdf_thumbnail_gamma_notice = Helligkeit anpassen: 1.0 = Original, > 1.0 = heller (empfohlen: 1.2 für bessere Farbwiedergabe, da PDF-Viewer wie macOS Preview Farben heller darstellen als Browser)
 pdfout_effect_pdf_thumbnail_icc_profile = ICC-Farbprofil
 pdfout_effect_pdf_thumbnail_icc_profile_notice = sRGB ICC-Profil einbetten für korrekte Farbdarstellung in Browsern und Bildprogrammen (benötigt Imagick)
+pdfout_tools = Werkzeuge
+pdfout_editor = Editor
+pdfout_verify = Prüfen
+pdfout_api = API-Referenz
+pdfout_bestpractices = Best Practices
+pdfout_perm_tools = pdfout: PDFs bearbeiten (Werkzeuge, Editor)
+pdfout_perm_demo = pdfout: Demos
+pdfout_perm_certificates = pdfout: Zertifikate verwalten
+pdfout_perm_config = pdfout: Einstellungen

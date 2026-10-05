@@ -6,36 +6,42 @@ Diese Anleitung enthält bewährte Praktiken, Tipps und Empfehlungen für die op
 
 ## ⚠️ Wichtiger Hinweis: use-Statement
 
-**Für alle Code-Beispiele in dieser Dokumentation gilt:** Am Anfang jeder PHP-Datei muss das use-Statement eingebunden werden:
+**Für alle Code-Beispiele in dieser Dokumentation gilt:** Am Anfang jeder PHP-Datei die benötigten Klassen einbinden:
 
 ```php
-use FriendsOfRedaxo\PdfOut\PdfOut;
+use FriendsOfRedaxo\PdfOut\{PdfOut, PdfDocument, Certificate, SignatureField, Permission};
 ```
-
-Ohne dieses Statement funktionieren die Beispiele nicht! Dies gilt für alle nachfolgenden Code-Beispiele.
 
 ## 🚀 Grundlegende Best Practices
 
-### 1. **Workflow-Wahl**
+### 1. **Verkettete API nutzen**
 
-#### ✅ Empfohlen: Neue Workflow-Methoden
+#### ✅ Empfohlen: ein Ausdruck vom Inhalt bis zur Ausgabe
 ```php
-// 👍 Für signierte PDFs - nur 2 Zeilen!
-$pdf = new PdfOut();
-$pdf->createSignedDocument($html, 'dokument.pdf');
-
-// 👍 Für passwortgeschützte PDFs
-$pdf = new PdfOut();
-$pdf->createPasswordProtectedWorkflow($html, 'user123', 'owner456', ['print'], 'geschuetzt.pdf');
+PdfOut::create()
+    ->html($html)
+    ->sign(Certificate::fromAddon(), reason: 'Freigabe')
+    ->protect('user123', 'owner456', allow: [Permission::Print])
+    ->download('dokument.pdf');
 ```
 
-#### ❌ Vermeiden: Manuelle TCPDF-Konfiguration
+#### ✅ Vorhandene PDFs mit `PdfDocument` bearbeiten
 ```php
-// 👎 Kompliziert und fehleranfällig
-$tcpdf = new TCPDF();
-$tcpdf->SetProtection(...);
-$tcpdf->setSignature(...);
-// ... 80+ Zeilen Code
+PdfDocument::fromMedia('vertrag.pdf')->stamp('ENTWURF')->pageNumbers()->inline();
+```
+
+#### ❌ Vermeiden: PDF-Bibliotheken direkt ansprechen
+Direkter Zugriff auf tc-lib-pdf oder dompdf-Interna ist nicht nötig und bricht bei Updates. Fehlt eine Funktion, gerne ein Issue anlegen.
+
+#### ✅ Fehler gezielt behandeln
+```php
+try {
+    $pfad = PdfOut::create()->html($html)->sign(Certificate::fromAddon('firma.p12', $pw))->save($ziel);
+} catch (InvalidArgumentException $e) {
+    // Eingabe falsch: Zertifikat/Passwort, Seitenauswahl …
+} catch (RuntimeException $e) {
+    // Verarbeitung fehlgeschlagen
+}
 ```
 
 ### 2. **HTML/CSS-Optimierung für PDFs**
@@ -186,15 +192,14 @@ Damit bleibt das globale aktive Profil unverändert.
 
 #### ✅ Sichere Zertifikat-Verwaltung
 ```php
-// Zertifikate außerhalb des Web-Roots speichern
-$certPath = rex_path::addonData('pdfout', 'certificates/firmen_cert.p12');
+// Zertifikate liegen außerhalb des Web-Roots (data/addons/pdfout/certificates/)
+// Passwort nicht im Code: z. B. Umgebungsvariable oder Addon-Konfiguration.
+// Achtung: die REDAXO-Konfiguration liegt unverschlüsselt in der Datenbank.
+$certificate = Certificate::fromAddon('firmen_cert.p12', getenv('PDF_CERT_PASSWORD') ?: null);
 
-// Passwörter in REDAXO-Config speichern (verschlüsselt)
-$certPassword = rex_addon::get('pdfout')->getConfig('cert_password');
-
-// Zertifikat-Validierung vor Verwendung
-if (!file_exists($certPath) || !is_readable($certPath)) {
-    throw new Exception('Zertifikat nicht verfügbar');
+// Certificate prüft beim Laden, ob Datei, Passwort und Schlüssel passen (InvalidArgumentException)
+if ($certificate->validTo() < new DateTimeImmutable('+30 days')) {
+    rex_logger::factory()->warning('Signatur-Zertifikat läuft bald ab: ' . $certificate->validTo()->format('d.m.Y'));
 }
 ```
 

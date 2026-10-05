@@ -862,8 +862,8 @@ class PdfThumbnail
     private static function getIccProfilePaths(): array
     {
         $paths = [
-            // Mitgeliefertes sRGB-Profil via TCPDF (immer verfügbar)
-            rex_addon::get('pdfout')->getPath('vendor/tecnickcom/tcpdf/include/sRGB.icc'),
+            // mitgeliefertes sRGB-Profil (immer verfügbar)
+            rex_addon::get('pdfout')->getPath('data/icc/sRGB.icc'),
             // Standard Linux-Pfade
             '/usr/share/color/icc/colord/sRGB.icc',
             '/usr/share/color/icc/sRGB.icc',

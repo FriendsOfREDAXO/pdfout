@@ -1,0 +1,322 @@
+# makefile
+#
+# @since       2015-05-14
+# @category    Library
+# @package     PdfFont
+# @author      Nicola Asuni <info@tecnick.com>
+# @copyright   2011-2026 Nicola Asuni - Tecnick.com LTD
+# @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE)
+# @link        https://github.com/tecnickcom/tc-lib-pdf-font
+#
+# This file is part of tc-lib-pdf-font software library.
+# ----------------------------------------------------------------------------------------------------------------------
+
+SHELL=/bin/bash
+.SHELLFLAGS=-e -o pipefail -c
+
+# Project owner
+OWNER=tecnickcom
+
+# Project vendor
+VENDOR=${OWNER}
+
+# Project name
+PROJECT=tc-lib-pdf-font
+
+# Project version
+VERSION=$(shell cat VERSION)
+
+# Project release number (packaging build number)
+RELEASE=$(shell cat RELEASE)
+
+# Name of RPM or DEB package
+PKGNAME=php-${OWNER}-${PROJECT}
+
+# Data dir
+DATADIR=usr/share
+
+# PHP home folder
+PHPHOME=${DATADIR}/php/Com/Tecnick
+
+# Default installation path for code
+LIBPATH=${PHPHOME}/Pdf/Font/
+
+# Path for configuration files (etc/$(PKGNAME)/)
+CONFIGPATH=
+
+# Default installation path for documentation
+DOCPATH=${DATADIR}/doc/$(PKGNAME)/
+
+# Installation path for the code
+PATHINSTBIN=$(DESTDIR)/$(LIBPATH)
+
+# Installation path for the configuration files
+PATHINSTCFG=$(DESTDIR)/$(CONFIGPATH)
+
+# Installation path for documentation
+PATHINSTDOC=$(DESTDIR)/$(DOCPATH)
+
+# Current directory
+CURRENTDIR=$(CURDIR)/
+
+# Target directory
+TARGETDIR=target
+
+# RPM Packaging path (where RPMs will be stored)
+PATHRPMPKG=$(TARGETDIR)/RPM
+
+# RPM local database path (avoid host rpmdb permission issues)
+RPMDBPATH=$(PATHRPMPKG)/.rpmdb
+
+# DEB Packaging path (where DEBs will be stored)
+PATHDEBPKG=$(TARGETDIR)/DEB
+
+# BZ2 Packaging path (where BZ2s will be stored)
+PATHBZ2PKG=$(TARGETDIR)/BZ2
+
+# sed argument for in-place substitutions
+SEDINPLACE=-i
+ifeq ($(shell uname -s),Darwin)
+	SEDINPLACE=-i ''
+endif
+
+# PHP binary
+PHP=$(shell which php)
+
+# Composer binary
+COMPOSER_BINARY=$(shell which composer)
+
+# Composer executable (APC disabled to work around a bug)
+COMPOSER=$(PHP) -d "apc.enable_cli=0" $(COMPOSER_BINARY)
+
+# phpDocumentor executable file
+PHPDOC=$(shell which phpDocumentor)
+
+# List of fonts to process
+FONTLIST=core pdfa cid0 freefont unifont dejavu noto
+
+# --- MAKE TARGETS ---
+
+# Display general help about this command
+.PHONY: help
+help:
+	@echo ""
+	@echo "$(PROJECT) Makefile."
+	@echo "The following commands are available:"
+	@echo ""
+	@awk '/^## /{desc=substr($$0,4)} /^\.PHONY:/{if(NF>1) {target=$$2; if(desc) printf "  make %-15s: %s\n",target,desc; desc=""}}' Makefile
+	@echo ""
+	@echo "To test and build everything from scratch, use the shortcut:"
+	@echo "    make x"
+	@echo ""
+
+# alias for help target
+.PHONY: all
+all: help
+
+# Full build and test sequence
+.PHONY: x
+x: buildall
+
+## Full build and test sequence
+.PHONY: buildall
+buildall: deps fonts qa report bz2 rpm deb
+
+## Package the library in a compressed bz2 archive
+.PHONY: bz2
+bz2:
+	rm -rf "$(PATHBZ2PKG)"
+	$(MAKE) install DESTDIR="$(PATHBZ2PKG)"
+	tar -jcvf "$(PATHBZ2PKG)/$(PKGNAME)-$(VERSION)-$(RELEASE).tbz2" -C "$(PATHBZ2PKG)" "$(DATADIR)"
+
+## Delete the vendor and target directories
+.PHONY: clean
+clean:
+	rm -rf ./vendor "$(TARGETDIR)"
+	cd util	&& make clean
+
+## Build a DEB package for Debian-like Linux distributions
+.PHONY: deb
+deb:
+	rm -rf "$(PATHDEBPKG)"
+	$(MAKE) install DESTDIR="$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)"
+	rm -f "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/$(DOCPATH)LICENSE"
+	tar -zcvf "$(PATHDEBPKG)/$(PKGNAME)_$(VERSION).orig.tar.gz" -C "$(PATHDEBPKG)/" "$(PKGNAME)-$(VERSION)"
+	cp -rf ./resources/debian "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian"
+	find "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/" -type f -name '*.bak' -delete
+	chmod 755 "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/rules"
+	find "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/" -type f -exec sed $(SEDINPLACE) "s/~#DATE#~/`date -R`/" {} \;
+	find "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/" -type f -exec sed $(SEDINPLACE) "s/~#VENDOR#~/$(VENDOR)/" {} \;
+	find "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/" -type f -exec sed $(SEDINPLACE) "s/~#PROJECT#~/$(PROJECT)/" {} \;
+	find "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/" -type f -exec sed $(SEDINPLACE) "s/~#PKGNAME#~/$(PKGNAME)/" {} \;
+	find "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/" -type f -exec sed $(SEDINPLACE) "s/~#VERSION#~/$(VERSION)/" {} \;
+	find "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/" -type f -exec sed $(SEDINPLACE) "s/~#RELEASE#~/$(RELEASE)/" {} \;
+	echo "$(LIBPATH)" > "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/$(PKGNAME).dirs"
+	echo "$(LIBPATH)* $(LIBPATH)" > "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/install"
+	echo "$(DOCPATH)" >> "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/$(PKGNAME).dirs"
+	echo "$(DOCPATH)* $(DOCPATH)" >> "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/install"
+ifneq ($(strip $(CONFIGPATH)),)
+	echo "$(CONFIGPATH)" >> "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/$(PKGNAME).dirs"
+	echo "$(CONFIGPATH)* $(CONFIGPATH)" >> "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/install"
+endif
+	echo "new-package-should-close-itp-bug" > "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)/debian/$(PKGNAME).lintian-overrides"
+	cd "$(PATHDEBPKG)/$(PKGNAME)-$(VERSION)" && debuild -us -uc
+
+## Clean all artifacts and download all dependencies
+.PHONY: deps
+deps: ensuretarget
+	rm -rf ./vendor
+	($(COMPOSER) install -vvv --no-interaction)
+	cd util && make deps
+
+## Generate source code documentation
+.PHONY: doc
+doc: ensuretarget
+	rm -rf "$(TARGETDIR)/doc"
+	$(PHPDOC) -d ./src -t "$(TARGETDIR)/doc/"
+
+## Create missing target directories for test and build artifacts
+.PHONY: ensuretarget
+ensuretarget:
+	mkdir -p "$(TARGETDIR)/logs"
+	mkdir -p "$(TARGETDIR)/report"
+	mkdir -p "$(TARGETDIR)/doc"
+	mkdir -p "$(TARGETDIR)/fonts"
+
+## Install this application
+.PHONY: install
+install: uninstall
+	mkdir -p "$(PATHINSTBIN)"
+	cp -rf ./src/* "$(PATHINSTBIN)"
+	cp -f ./resources/autoload.php "$(PATHINSTBIN)"
+	find "$(PATHINSTBIN)" -type d -exec chmod 755 {} \;
+	find "$(PATHINSTBIN)" -type f -exec chmod 644 {} \;
+	mkdir -p "$(PATHINSTDOC)"
+	cp -f ./LICENSE "$(PATHINSTDOC)"
+	cp -f ./README.md "$(PATHINSTDOC)"
+	cp -f ./VERSION "$(PATHINSTDOC)"
+	cp -f ./RELEASE "$(PATHINSTDOC)"
+	find "$(PATHINSTDOC)" -type d -exec chmod 755 {} \;
+	find "$(PATHINSTDOC)" -type f -exec chmod 644 {} \;
+ifneq ($(strip $(CONFIGPATH)),)
+	mkdir -p "$(PATHINSTCFG)"
+	touch -c "$(PATHINSTCFG)"*
+	cp -ru "./resources/${CONFIGPATH}"* "$(PATHINSTCFG)"
+	find "$(PATHINSTCFG)" -type d -exec chmod 755 {} \;
+	find "$(PATHINSTCFG)" -type f -exec chmod 644 {} \;
+endif
+
+## Format the source code
+.PHONY: format
+format:
+	$(COMPOSER) run-script cs-fix
+
+## Check that the source code is formatted
+.PHONY: formatcheck
+formatcheck:
+	$(COMPOSER) run-script fmt-check
+
+## Analyze and Lint the source code
+.PHONY: lint
+lint:
+	$(COMPOSER) run-script cs-check
+	$(COMPOSER) run-script analyse
+
+## Validate composer.json and check the dependencies for known advisories
+# Both are enforced by CI on every matrix job, so "qa" runs them too: otherwise a
+# packaging mistake or a new advisory is only reported after the PR is opened.
+.PHONY: check-deps
+check-deps:
+	$(COMPOSER) run-script check-deps
+
+## Check dependencies, formatting, lint, analyse and run all tests
+.PHONY: qa
+qa: ensuretarget check-deps formatcheck lint test
+
+## Run all checks and produce the coverage report
+.PHONY: qa-coverage
+qa-coverage: ensuretarget check-deps formatcheck lint test-coverage
+
+## Generate various reports
+# Not part of "qa": pdepend is a metrics tool, not a correctness gate, and its
+# 2.x line predates the newest PHP releases in the CI matrix.
+.PHONY: report
+report: ensuretarget
+	$(COMPOSER) run-script report
+
+## Build the RPM package for RedHat-like Linux distributions
+.PHONY: rpm
+rpm:
+	@test $(words $(CURDIR)) -eq 1 || { echo "ERROR: rpmbuild does not support spaces in the project path: $(CURDIR)"; exit 1; }
+	rm -rf "$(PATHRPMPKG)"
+	mkdir -p "$(RPMDBPATH)" "$(PATHRPMPKG)/tmp"
+	rpmbuild \
+	--define "_topdir $(CURRENTDIR)$(PATHRPMPKG)" \
+	--define "_dbpath $(CURRENTDIR)$(RPMDBPATH)" \
+	--define "_tmppath $(CURRENTDIR)$(PATHRPMPKG)/tmp" \
+	--define "_vendor $(VENDOR)" \
+	--define "_owner $(OWNER)" \
+	--define "_project $(PROJECT)" \
+	--define "_package $(PKGNAME)" \
+	--define "_version $(VERSION)" \
+	--define "_release $(RELEASE)" \
+	--define "_current_directory $(CURRENTDIR)" \
+	--define "_builddate $(shell LC_ALL=C date '+%a %b %d %Y')" \
+	--define "_libpath /$(LIBPATH)" \
+	--define "_docpath /$(DOCPATH)" \
+	--define "_configpath /$(CONFIGPATH)" \
+	-bb resources/rpm/rpm.spec
+
+## Tag this GIT version
+.PHONY: tag
+tag:
+	git checkout main && \
+	git tag -a ${VERSION} -m "Release ${VERSION}" && \
+	git push origin --tags && \
+	git pull
+
+## Run unit tests
+# PHPUnit resolves its own configuration: phpunit.xml when present, else phpunit.xml.dist.
+.PHONY: test
+test: ensuretarget
+	$(COMPOSER) run-script test
+
+## Run unit tests and write the coverage report (requires Xdebug or pcov)
+.PHONY: test-coverage
+test-coverage: ensuretarget
+	$(COMPOSER) run-script test:coverage
+
+## Remove all installed files
+.PHONY: uninstall
+uninstall:
+	rm -rf "$(PATHINSTBIN)"
+	rm -rf "$(PATHINSTDOC)"
+
+## Increase the version patch number
+.PHONY: versionup
+versionup:
+	echo ${VERSION} | gawk -F. '{printf("%d.%d.%d\n",$$1,$$2,(($$3+1)));}' > VERSION
+
+# ----------
+
+## import and convert fonts
+fonts:
+	COMPOSER_BINARY="$(COMPOSER_BINARY)" $(PHP) util/build_fonts.php
+	
+## Build fonts RPM packages for RedHat-like Linux distributions
+rpm_fonts:
+	$(foreach PKGFONTDIR,$(FONTLIST), \
+		cd "${CURRENTDIR}/util" && make rpm PKGFONTDIR="${PKGFONTDIR}" ; \
+	)
+
+## Build fonts DEB packages for Debian-like Linux distributions
+deb_fonts:
+	$(foreach PKGFONTDIR,$(FONTLIST), \
+		cd "${CURRENTDIR}/util" && make deb PKGFONTDIR="${PKGFONTDIR}" ; \
+	)
+
+## build fonts compressed bz2 archives
+bz2_fonts:
+	$(foreach PKGFONTDIR,$(FONTLIST), \
+		cd "${CURRENTDIR}/util" && make bz2 PKGFONTDIR="${PKGFONTDIR}" ; \
+	)

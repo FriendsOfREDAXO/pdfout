@@ -1,37 +1,49 @@
 package: pdfout
-version: '10.6.0'
+version: '11.0.0'
 pdfjs: '6.4.299'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout
 requires:
     redaxo: '^5.15.1'
     php:
-        version: '>=8.1'
-        extensions: [gd]
+        version: '>=8.4'
+        extensions: [gd, openssl, mbstring, zlib, dom]
 
 page:
     title: 'translate:title'
     perm: pdfout[]
     icon: rex-icon fa-file-pdf-o
     subpages:
-        overview: 
+        overview:
             title: 'translate:pdfout_overview'
             perm: pdfout[]
-        config: 
-            title: 'translate:pdfout_config'
-            perm: pdfout[config]
-        demo: 
+        tools:
+            title: 'translate:pdfout_tools'
+            icon: rex-icon fa-wrench
+            perm: pdfout[tools]
+        editor:
+            title: 'translate:pdfout_editor'
+            icon: rex-icon fa-pencil
+            perm: pdfout[tools]
+        verify:
+            title: 'translate:pdfout_verify'
+            icon: rex-icon fa-check-circle
+            perm: pdfout[]
+        demo:
             title: 'translate:pdfout_demo'
             perm: pdfout[demo]
+        certificates:
+            title: 'translate:pdfout_certificates'
+            perm: pdfout[certificates]
         toolbar:
             title: 'translate:pdfout_toolbar'
             perm: pdfout[config]
-        certificates: 
-            title: 'translate:pdfout_certificates'
-            perm: pdfout[certificates]
-        docs:  
-             { title: 'translate:pdfout_docs',  icon: "rex-icon fa-question-circle", subPath: README.md}
-        api:  
-             { title: 'API Referenz',  icon: "rex-icon fa-code", subPath: API.md}
-        bestpractices:  
-             { title: 'Best Practices',  icon: "rex-icon fa-lightbulb-o", subPath: BEST_PRACTICES.md} 
+        config:
+            title: 'translate:pdfout_config'
+            perm: pdfout[config]
+        docs:
+            { title: 'translate:pdfout_docs', icon: "rex-icon fa-question-circle", subPath: README.md }
+        api:
+            { title: 'translate:pdfout_api', icon: "rex-icon fa-code", subPath: API.md }
+        bestpractices:
+            { title: 'translate:pdfout_bestpractices', icon: "rex-icon fa-lightbulb-o", subPath: BEST_PRACTICES.md }

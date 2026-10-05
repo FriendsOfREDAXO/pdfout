@@ -1,205 +1,160 @@
 <?php
+
 /**
- * PDFOut Übersichtsseite
+ * pdfout – Übersicht: Status, Schnellstart, Bereiche
  */
 
+use Composer\InstalledVersions;
+use FriendsOfRedaxo\PdfOut\Poppler;
+
 $addon = rex_addon::get('pdfout');
+$user = rex::requireUser();
 
-// Feature-Übersicht (Hauptbereich)
-$features = '
-<div class="row">
-    <div class="col-md-8">
-        <h2>PDFOut - Professionelle PDF-Erstellung für REDAXO</h2>
-        <p class="lead">Das umfassende PDF-Addon mit erweiterten Funktionen für digitale Signaturen, Passwortschutz und professionelle PDF-Erstellung.</p>
-    </div>
-    <div class="col-md-4 text-right">
-        <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-primary btn-lg">
-            <i class="fa fa-play-circle"></i> Live-Demos starten
-        </a>
-    </div>
-</div>
+$packageVersion = static function (string $package): string {
+    try {
+        return InstalledVersions::isInstalled($package) ? (string) InstalledVersions::getPrettyVersion($package) : '–';
+    } catch (Throwable) {
+        return '–';
+    }
+};
 
-<h3><i class="fa fa-star"></i> Alle Features im Überblick</h3>
+// Zertifikate im Addon-Ordner
+$certificateCount = 0;
+$certificateDir = $addon->getDataPath('certificates/');
+foreach (is_dir($certificateDir) ? (scandir($certificateDir) ?: []) : [] as $entry) {
+    if (in_array(strtolower(pathinfo($entry, PATHINFO_EXTENSION)), ['p12', 'pfx', 'pem'], true) && is_file($certificateDir . $entry)) {
+        ++$certificateCount;
+    }
+}
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="panel panel-primary">
-            <div class="panel-heading text-center">
-                <i class="fa fa-certificate fa-2x"></i>
-                <h4>Digitale Signierung</h4>
-            </div>
-            <div class="panel-body">
-                <ul class="list-unstyled">
-                    <li><i class="fa fa-check-circle text-success"></i> Sichtbare Signaturen</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Unsichtbare Signaturen</li>
-                    <li><i class="fa fa-check-circle text-success"></i> X.509 Zertifikate</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Nachträgliche Signierung</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Mehrfach-Signaturen</li>
-                </ul>
-                <div class="text-center">
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-primary btn-sm">
-                        <i class="fa fa-play"></i> Demo
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="panel panel-success">
-            <div class="panel-heading text-center">
-                <i class="fa fa-lock fa-2x"></i>
-                <h4>Passwortschutz</h4>
-            </div>
-            <div class="panel-body">
-                <ul class="list-unstyled">
-                    <li><i class="fa fa-check-circle text-success"></i> Benutzer-Passwort</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Besitzer-Passwort</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Druck-Kontrolle</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Kopier-Schutz</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Bearbeitungs-Schutz</li>
-                </ul>
-                <div class="text-center">
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-success btn-sm">
-                        <i class="fa fa-play"></i> Demo
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="panel panel-info">
-            <div class="panel-heading text-center">
-                <i class="fa fa-file-pdf-o fa-2x"></i>
-                <h4>PDF-Erzeugung</h4>
-            </div>
-            <div class="panel-body">
-                <ul class="list-unstyled">
-                    <li><i class="fa fa-check-circle text-success"></i> HTML zu PDF</li>
-                    <li><i class="fa fa-check-circle text-success"></i> CSS Unterstützung</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Responsive Design</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Template Support</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Metadaten</li>
-                </ul>
-                <div class="text-center">
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-info btn-sm">
-                        <i class="fa fa-play"></i> Demo
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="panel panel-warning">
-            <div class="panel-heading text-center">
-                <i class="fa fa-cogs fa-2x"></i>
-                <h4>Erweiterte Features</h4>
-            </div>
-            <div class="panel-body">
-                <ul class="list-unstyled">
-                    <li><i class="fa fa-check-circle text-success"></i> Auto-Engine-Wahl</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Wasserzeichen</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Hintergründe</li>
-                    <li><i class="fa fa-check-circle text-success"></i> Mehrsprachig</li>
-                    <li><i class="fa fa-check-circle text-success"></i> API-Integration</li>
-                </ul>
-                <div class="text-center">
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/config']) . '" class="btn btn-warning btn-sm">
-                        <i class="fa fa-cog"></i> Setup
-                    </a>
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/toolbar']) . '" class="btn btn-info btn-sm">
-                        <i class="fa fa-sliders"></i> Toolbar Builder
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+$popplerMissing = Poppler::missing();
+$popplerVersion = [] === $popplerMissing ? Poppler::version() : null;
 
-<div class="row" style="margin-top: 20px;">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4><i class="fa fa-lightbulb-o"></i> Verwendungsbeispiele</h4>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h5><i class="fa fa-file-text"></i> Verträge & Rechnungen</h5>
-                        <p>Signieren Sie rechtsgültige Dokumente digital und schützen Sie sie vor unbefugten Änderungen.</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h5><i class="fa fa-graduation-cap"></i> Zertifikate & Diplome</h5>
-                        <p>Erstellen Sie fälschungssichere Bildungsnachweise mit digitaler Signatur.</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h5><i class="fa fa-shield"></i> Vertrauliche Berichte</h5>
-                        <p>Schützen Sie sensible Informationen mit Passwörtern und Zugriffsbeschränkungen.</p>
-                    </div>
-                </div>
-                
-                <div class="text-center" style="margin-top: 20px;">
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/docs']) . '" class="btn btn-lg btn-primary">
-                        <i class="fa fa-book"></i> Vollständige Dokumentation
-                    </a>
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-lg btn-success">
-                        <i class="fa fa-play-circle"></i> Live-Demos starten
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-';
+// ------------------------------------------------------------------ Status
 
-$fragment = new rex_fragment();
-$fragment->setVar('title', 'Feature-Übersicht');
-$fragment->setVar('body', $features, false);
-echo $fragment->parse('core/page/section.php');
+$status = [
+    'pdfout' => $addon->getVersion(),
+    'dompdf (HTML → PDF)' => $packageVersion('dompdf/dompdf'),
+    'tc-lib-pdf (Bearbeiten, Signatur)' => $packageVersion('tecnickcom/tc-lib-pdf'),
+    'pdf.js (Viewer)' => (string) $addon->getProperty('pdfjs', '–'),
+    'Poppler (Prüfen, Vorschau)' => [] === $popplerMissing
+        ? '<span class="text-success"><i class="rex-icon fa-check" aria-hidden="true"></i> ' . rex_escape($popplerVersion ?? 'verfügbar') . '</span>'
+        : '<span class="text-danger"><i class="rex-icon fa-times" aria-hidden="true"></i> fehlt: ' . rex_escape(implode(', ', $popplerMissing)) . '</span>',
+    'Zertifikate' => $certificateCount > 0
+        ? (string) $certificateCount
+        : '<span class="text-warning">keine</span>',
+    'PHP' => PHP_VERSION,
+];
+$rawStatus = ['Poppler (Prüfen, Vorschau)', 'Zertifikate'];
 
-// Systemstatus
-$content = '
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h4><i class="fa fa-tachometer"></i> Systemstatus</h4>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li><i class="fa fa-folder"></i> Zertifikat-Ordner: ' . (is_dir($addon->getDataPath('certificates')) ? '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : '<span class="text-danger"><i class="fa fa-times"></i> Fehlt</span>') . '</li>
-                            <li><i class="fa fa-cog"></i> PDF-Engine: ' . (class_exists('TCPDF') ? '<span class="text-success"><i class="fa fa-check"></i> Erweitert</span>' : '<span class="text-warning"><i class="fa fa-info-circle"></i> Standard</span>') . '</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li><i class="fa fa-database"></i> Cache: ' . (is_dir(rex_path::addonCache('pdfout')) ? '<span class="text-success"><i class="fa fa-check"></i> Bereit</span>' : '<span class="text-danger"><i class="fa fa-times"></i> Fehlt</span>') . '</li>
-                            <li><i class="fa fa-key"></i> OpenSSL: ' . (function_exists('openssl_pkcs12_export') ? '<span class="text-success"><i class="fa fa-check"></i> Verfügbar</span>' : '<span class="text-warning"><i class="fa fa-exclamation-triangle"></i> Eingeschränkt</span>') . '</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="text-center" style="margin-top: 15px;">
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/config']) . '" class="btn btn-info btn-sm">
-                        <i class="fa fa-wrench"></i> Konfiguration
-                    </a>
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/demo']) . '" class="btn btn-success btn-sm">
-                        <i class="fa fa-play"></i> Live-Demos
-                    </a>
-                    <a href="' . rex_url::currentBackendPage(['page' => 'pdfout/docs']) . '" class="btn btn-primary btn-sm">
-                        <i class="fa fa-book"></i> Dokumentation
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>';
+$rows = '';
+foreach ($status as $label => $value) {
+    $rows .= '<tr><th scope="row">' . rex_escape($label) . '</th><td>' . (in_array($label, $rawStatus, true) ? $value : rex_escape($value)) . '</td></tr>';
+}
+$body = '<table class="table table-condensed pdfout-status"><tbody>' . $rows . '</tbody></table>';
 
-$fragment = new rex_fragment();
-$fragment->setVar('title', 'Systemstatus');
-$fragment->setVar('body', $content, false);
-echo $fragment->parse('core/page/section.php');
+if ([] !== $popplerMissing) {
+    $body .= rex_view::warning(
+        'Die poppler-utils fehlen (' . rex_escape(implode(', ', $popplerMissing)) . '). Ohne sie funktionieren Prüfen, Seitenvorschau und Thumbnails nicht. '
+        . 'Installation z. B. mit <code>apt install poppler-utils</code> oder <code>brew install poppler</code>; '
+        . 'liegen die Programme in einem eigenen Ordner, den Pfad in den <a href="' . rex_url::backendPage('pdfout/config') . '">Einstellungen</a> eintragen.',
+    );
+}
+if (0 === $certificateCount) {
+    $body .= '<p>Zum Signieren wird ein Zertifikat benötigt: <a href="' . rex_url::backendPage('pdfout/certificates') . '" style="text-decoration: underline">Zertifikate verwalten</a>.</p>';
+}
+
+$statusFragment = new rex_fragment();
+$statusFragment->setVar('title', 'Status', false);
+$statusFragment->setVar('body', $body, false);
+$statusHtml = $statusFragment->parse('core/page/section.php');
+
+// ------------------------------------------------------------------ Schnellstart
+
+$examples = [
+    'HTML → PDF' => <<<'PHP'
+        use FriendsOfRedaxo\PdfOut\PdfOut;
+
+        PdfOut::create()
+            ->html('<h1>Hallo</h1>')   // oder ->article(5)
+            ->inline('hallo.pdf');      // oder ->download(), ->save($pfad)
+        PHP,
+    'PDF bearbeiten' => <<<'PHP'
+        use FriendsOfRedaxo\PdfOut\PdfDocument;
+
+        PdfDocument::fromMedia('preisliste.pdf')
+            ->append(PdfDocument::fromMedia('agb.pdf'))
+            ->pages('1-3,-1')
+            ->stamp('ENTWURF')
+            ->pageNumbers()
+            ->download('preisliste.pdf');
+        PHP,
+    'Signieren und schützen' => <<<'PHP'
+        use FriendsOfRedaxo\PdfOut\{PdfOut, Certificate, SignatureField, Permission};
+
+        PdfOut::create()
+            ->html($html)
+            ->sign(Certificate::fromAddon(), reason: 'Freigabe', field: SignatureField::bottomRight())
+            ->protect('geheim', allow: [Permission::Print])
+            ->save(rex_path::addonData('mein_addon', 'vertrag.pdf'));
+        PHP,
+];
+
+$quick = '';
+foreach ($examples as $title => $code) {
+    $quick .= '<h2 class="h5"><strong>' . rex_escape($title) . '</strong></h2>'
+        . '<pre tabindex="0" aria-label="' . rex_escape('Beispiel: ' . $title) . '"><code>' . rex_escape($code) . '</code></pre>';
+}
+$quick .= '<p><a href="' . rex_url::backendPage('pdfout/api') . '">API-Dokumentation</a> · <a href="' . rex_url::backendPage('pdfout/docs') . '">Handbuch</a></p>';
+
+$quickFragment = new rex_fragment();
+$quickFragment->setVar('title', 'Schnellstart', false);
+$quickFragment->setVar('body', $quick, false);
+$quickHtml = $quickFragment->parse('core/page/section.php');
+
+// ------------------------------------------------------------------ Bereiche
+
+$tiles = [
+    ['pdfout/tools', 'fa-wrench', 'Werkzeuge', 'PDFs aus dem Medienpool zusammenführen, signieren, schützen.', 'pdfout[tools]'],
+    ['pdfout/editor', 'fa-pencil', 'Editor', 'Seiten auswählen, sortieren, Stempel und Seitenzahlen.', 'pdfout[tools]'],
+    ['pdfout/verify', 'fa-check-circle', 'Prüfen', 'Signaturen, Verschlüsselung und Metadaten anzeigen.', 'pdfout[]'],
+    ['pdfout/demo', 'fa-play-circle', 'Demos', 'Ausführbare Beispiele mit Code zum Kopieren.', 'pdfout[demo]'],
+    ['pdfout/certificates', 'fa-certificate', 'Zertifikate', 'Zertifikate hochladen, erzeugen, Standard festlegen.', 'pdfout[certificates]'],
+    ['pdfout/toolbar', 'fa-sliders', 'PDF.js-Toolbar', 'Funktionen des Viewers ein- und ausblenden.', 'pdfout[config]'],
+    ['pdfout/config', 'fa-cog', 'Einstellungen', 'Papierformat, Schrift, Signatur- und Poppler-Vorgaben.', 'pdfout[config]'],
+];
+
+$tileHtml = '';
+foreach ($tiles as [$page, $icon, $title, $text, $perm]) {
+    if (!$user->isAdmin() && !$user->hasPerm($perm)) {
+        continue;
+    }
+    $tileHtml .= '<div class="col-sm-6 col-md-4 col-lg-3">'
+        . '<a class="pdfout-tile" href="' . rex_url::backendPage($page) . '">'
+        . '<i class="rex-icon ' . $icon . '" aria-hidden="true"></i>'
+        . '<strong>' . rex_escape($title) . '</strong>'
+        . '<span>' . rex_escape($text) . '</span>'
+        . '</a></div>';
+}
+
+$tilesFragment = new rex_fragment();
+$tilesFragment->setVar('title', 'Bereiche', false);
+$tilesFragment->setVar('body', '<div class="row pdfout-tiles">' . $tileHtml . '</div>', false);
+$tilesHtml = $tilesFragment->parse('core/page/section.php');
+
+echo '<style>
+.pdfout-tiles > div { margin-bottom: 15px; }
+.pdfout-tile { display: block; height: 100%; min-height: 110px; padding: 12px 14px; border: 1px solid rgba(128,128,128,.35); border-radius: 4px; color: inherit; }
+.pdfout-tile:hover, .pdfout-tile:focus { text-decoration: none; border-color: currentColor; }
+.pdfout-tile .rex-icon { float: left; font-size: 22px; margin: 2px 12px 0 0; }
+.pdfout-tile strong { display: block; margin-bottom: 4px; }
+.pdfout-tile span { display: block; font-size: 12px; }
+.pdfout-status th { width: 45%; font-weight: normal; }
+.pdfout-overview pre { overflow: auto; font-size: 12px; }
+.pdfout-overview pre, .pdfout-overview pre code { white-space: pre; word-break: normal; overflow-wrap: normal; word-wrap: normal; }
+</style>';
+
+echo '<div class="pdfout-overview">';
+echo $tilesHtml;
+echo '<div class="row"><div class="col-md-5">' . $statusHtml . '</div><div class="col-md-7">' . $quickHtml . '</div></div>';
+echo '</div>';

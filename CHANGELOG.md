@@ -1,5 +1,37 @@
 # Changelog
 
+## 11.0.0 – 2026
+
+pdfout wird zum PDF-Werkzeug für REDAXO: erzeugen, bearbeiten, absichern, prüfen, anzeigen.
+
+### Breaking Changes
+
+- **PHP 8.4** ist Mindestversion
+- **poppler-utils** sind Voraussetzung (`pdfinfo`, `pdfsig`, `pdftoppm`, `pdftotext`); die Installation prüft das und nennt die Installationsbefehle. Ordner einstellbar (`poppler_path`)
+- **TCPDF und FPDI entfernt**, ersetzt durch **tc-lib-pdf** (Nachfolger von TCPDF). Wer TCPDF/FPDI direkt im eigenen Code nutzt, bindet sie selbst ein oder stellt auf `PdfDocument` um
+- Entfernte geschützte Methoden (nur für Unterklassen): `runWithTcpdf()`, `addDigitalSignature()`, `addDigitalSignatureFinal()`, `addPasswordProtection()`, `processTcpdfOutput()`, `drawSignatureArea()`, `addSignatureAreaToFpdi()`, `addCleanSignatureArea()`
+- Signaturen nach PAdES (`ETSI.CAdES.detached`, SHA-256) statt `adbe.pkcs7.detached`; Passwortschutz mit AES-256
+- Sichtbare Signatur: Position und Größe in Millimetern ab links oben; neue Standardwerte (unten links, 70 × 25 mm)
+
+### Neue Features
+
+- **Verkettete API**: `PdfOut::create()->html()->sign()->protect()->append()->download()` – plus `toString()`, `save()`, `inline()`, `document()`, `with()`
+- **`PdfDocument`**: jedes PDF bearbeiten – `fromMedia()`, `fromFile()`, `fromString()`, `fromHtml()`; `append()`, `pages('1-3,-1')`, `stamp()` (Wasserzeichen), `pageNumbers()`, `metadata()`, `sign()`, `protect()`; lesen mit `pageCount()`, `info()`, `text()`, `signatures()`. Ohne Bearbeitung bleibt das PDF byte-identisch
+- **`Certificate`** (P12/PFX/PEM, Prüfung von Passwort und Schlüssel), **`SignatureField`**, **`Permission`** (Enum der erlaubten Rechte), **`Poppler`** (ohne Shell aufgerufen)
+- **Echte Signaturprüfung**: `validateSignedPdf()` prüft jetzt mit `pdfsig` (bisher wurde immer „gültig“ gemeldet)
+- Backend-Seiten **Werkzeuge** (zusammenführen, Seiten wählen, stempeln, nummerieren, signieren, schützen; herunterladen oder in den Medienpool), **Editor** (PDF.js-Editor: Text, Zeichnen, Unterschrift, Bilder – speichern in den Medienpool), **Prüfen** (Metadaten, Signaturen, Text); neue **Übersicht** und **Demos** mit der neuen API
+- Schriften für tc-lib-pdf werden mit `scripts/build-fonts.php` erzeugt und unter `fonts/` mitgeliefert (Standard-Schriften)
+
+### Fixes
+
+- **Rechte beim Passwortschutz**: die Liste nennt wie dokumentiert die *erlaubten* Rechte – bisher wurden sie durch die TCPDF-Logik gesperrt (`['print']` verbot das Drucken)
+- Rechte `pdfout[tools]`, `pdfout[demo]`, `pdfout[certificates]`, `pdfout[config]` werden jetzt registriert (vorher nur für Admins nutzbar)
+- Einstellungen mit CSRF-Schutz
+- Seiten-Import übernimmt die Originalgröße jeder Seite (bisher teils fest A4)
+- `rex_dir` fehlte als Import (Fehler, wenn der Cache-Ordner nicht existierte)
+- sRGB-Profil für Vorschaubilder wird jetzt mitgeliefert (`data/icc/sRGB.icc`, bisher aus TCPDF)
+
+
 ## 10.6.0 – 05.10.2026
 
 ### Neue Features
