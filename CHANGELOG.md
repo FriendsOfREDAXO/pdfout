@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.6.0 – 05.10.2026
+
+### Neue Features
+
+- **Rücksprung-Knopf im Viewer:** `PdfOut::viewer($file, $returnUrl)` bzw. der URL-Parameter `returnUrl` (optional `returnLabel`) zeigt links in der Viewer-Leiste „← Zurück“. Gedacht für den Viewer als eigene Seite, etwa auf iPhone/iPad, wo eingebettete Viewer schlecht scrollen. Nur Adressen derselben Domain; kommt der Besuch von dieser Seite, geht es per Verlauf zurück (Scrollposition bleibt erhalten)
+
+
 ## 10.5.0 – 05.10.2026
 
 ### Update

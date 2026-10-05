@@ -547,7 +547,7 @@ $imageUrl = PdfOut::mediaUrl('media_type', 'bild.jpg');
 $html = '<img src="' . $imageUrl . '" alt="Mein Bild">';
 ```
 
-### `viewer(string $file = '')`
+### `viewer(string $file = '', string $returnUrl = '')`
 Erzeugt eine URL für den integrierten PDF-Viewer:
 
 ```php
@@ -556,7 +556,15 @@ echo '<a href="' . PdfOut::viewer('/media/dokument.pdf') . '" download>PDF anzei
 
 // Als iFrame eingebettet
 echo '<iframe src="' . PdfOut::viewer('/media/dokument.pdf') . '"></iframe>';
+
+// Als eigene Seite mit Knopf „← Zurück“ (z. B. für iPhone/iPad, wo eingebettete Viewer schlecht scrollen)
+$current = rex_yrewrite::getFullUrlByArticleId(rex_article::getCurrentId());
+echo '<a href="' . PdfOut::viewer('/media/dokument.pdf', $current) . '">Speisekarte</a>';
 ```
+
+Der Rücksprung-Knopf erscheint nur für Adressen derselben Domain. Eine eigene Beschriftung geht per
+URL-Parameter `returnUrl=…&returnLabel=Zur%20Speisekarte`. Kommt der Besuch von der Rücksprung-Seite,
+führt der Knopf im Verlauf zurück – die Scrollposition bleibt dann erhalten.
 
 ### Neue Workflow-Methoden
 

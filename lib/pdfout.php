@@ -474,9 +474,11 @@ class PdfOut extends Dompdf
      * Generiert eine URL für den PDF-Viewer
      *
      * @param string $file Optional: Die anzuzeigende PDF-Datei
+     * @param string $returnUrl Optional: Rücksprung-Adresse (gleiche Domain) – zeigt im Viewer einen Knopf „Zurück“,
+     *                          z. B. wenn der Viewer als eigene Seite geöffnet wird
      * @return string Die generierte URL
      */
-    public static function viewer(string $file = ''): string
+    public static function viewer(string $file = '', string $returnUrl = ''): string
     {
         if ($file !== '') {
             $addon = rex_addon::get('pdfout');
@@ -487,6 +489,9 @@ class PdfOut extends Dompdf
                 $params = array_merge($params, $toolbarParams);
             }
 
+            if ('' !== $returnUrl) {
+                $params['returnUrl'] = $returnUrl;
+            }
             $params['viewerVersion'] = $addon->getVersion();
 
             return self::buildViewerUrl($params);
