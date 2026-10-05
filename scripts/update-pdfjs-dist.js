@@ -19,6 +19,7 @@ const TEMP_DIR = path.join(__dirname, '..', '.tmp');
 class PdfJsUpdater {
     constructor() {
         this.currentVersion = this.getCurrentVersion();
+        this.currentVariant = this.getCurrentVariant();
     }
 
     getCurrentVersion() {
@@ -31,20 +32,51 @@ class PdfJsUpdater {
         }
     }
 
-    async fetchLatestRelease() {
-        console.log('🔍 Checking for latest PDF.js release...');
-        
+    /**
+     * Build-Variante aus package.json (pdfjs.build): "legacy" (Standard) läuft auch auf älteren
+     * Browsern, u. a. Safari/iOS vor Version 18 – die moderne Variante nur in aktuellen Browsern.
+     */
+    getBuildVariant() {
+        try {
+            const packageData = require(path.join(__dirname, '..', 'package.json'));
+            return packageData.pdfjs?.build === 'modern' ? 'modern' : 'legacy';
+        } catch (error) {
+            return 'legacy';
+        }
+    }
+
+    getCurrentVariant() {
+        try {
+            return require(path.join(__dirname, '..', 'package.json')).pdfjs?.currentBuild || 'modern';
+        } catch (error) {
+            return 'modern';
+        }
+    }
+
+    async fetchRelease(version = null) {
+        const variant = this.getBuildVariant();
+        const url = version ? `${GITHUB_API}/tags/v${version.replace(/^v/, '')}` : `${GITHUB_API}/latest`;
+        console.log(version ? `🔍 Fetching PDF.js release ${version} (${variant})...` : `🔍 Checking for latest PDF.js release (${variant})...`);
+
         return new Promise((resolve, reject) => {
-            https.get(GITHUB_API + '/latest', { headers: { 'User-Agent': 'REDAXO-PdfOut' } }, (res) => {
+            https.get(url, { headers: { 'User-Agent': 'REDAXO-PdfOut' } }, (res) => {
                 let data = '';
                 res.on('data', chunk => data += chunk);
                 res.on('end', () => {
                     try {
                         const release = JSON.parse(data);
+                        if (!release.tag_name) {
+                            reject(new Error(`Release not found: ${release.message || url}`));
+                            return;
+                        }
+                        const assets = release.assets || [];
+                        const asset = variant === 'legacy'
+                            ? assets.find(a => a.name.endsWith('-legacy-dist.zip'))
+                            : assets.find(a => a.name.endsWith('-dist.zip') && !a.name.includes('-legacy-'));
                         resolve({
                             version: release.tag_name.replace('v', ''),
-                            downloadUrl: release.assets.find(asset => 
-                                asset.name.includes('-dist.zip'))?.browser_download_url,
+                            variant,
+                            downloadUrl: asset?.browser_download_url,
                             name: release.name,
                             publishedAt: release.published_at
                         });
@@ -54,6 +86,10 @@ class PdfJsUpdater {
                 });
             }).on('error', reject);
         });
+    }
+
+    async fetchLatestRelease() {
+        return this.fetchRelease(null);
     }
 
     async downloadFile(url, destinationPath) {
@@ -125,7 +161,7 @@ class PdfJsUpdater {
             const targetPath = path.join(target, item.name);
             
             // Check if this directory should be excluded
-            if (item.isDirectory() && excludedComponents.includes(item.name)) {
+            if (excludedComponents.includes(item.name)) {
                 console.log(`⏭ Skipped: ${item.name} (excluded)`);
                 continue;
             }
@@ -138,17 +174,57 @@ class PdfJsUpdater {
         }
     }
 
+    /**
+     * Module als .js statt .mjs (package.json: pdfjs.moduleExtension, Standard "js").
+     * Viele Server (z. B. nginx unter Plesk, der statische Dateien selbst ausliefert) kennen .mjs nicht und
+     * senden "application/octet-stream" – Browser führen Module mit falschem Typ nicht aus, der Viewer bleibt leer.
+     */
+    async convertModulesToJs() {
+        let extension = 'js';
+        try {
+            extension = require(path.join(__dirname, '..', 'package.json')).pdfjs?.moduleExtension === 'mjs' ? 'mjs' : 'js';
+        } catch (error) {
+            // Standard
+        }
+        if (extension === 'mjs') {
+            return;
+        }
+        const rewrite = (code) => code
+            // Verweise zwischen den pdf.js-Dateien (Viewer, Bibliothek, Worker, Sandbox, Debugger)
+            .replace(/((?:\.\.\/build\/|\.\/)?(?:pdf|pdf\.worker|pdf\.sandbox|viewer|debugger))\.mjs(?=["'`])/g, '$1.js')
+            .replace(/sourceMappingURL=([\w.-]+)\.mjs\.map/g, 'sourceMappingURL=$1.js.map');
+        for (const dir of ['build', 'web']) {
+            const dirPath = path.join(ASSETS_TARGET, dir);
+            for (const name of await fs.readdir(dirPath)) {
+                const filePath = path.join(dirPath, name);
+                if (name.endsWith('.mjs')) {
+                    const code = await fs.readFile(filePath, 'utf8');
+                    await fs.writeFile(filePath.replace(/\.mjs$/, '.js'), rewrite(code), 'utf8');
+                    await fs.unlink(filePath);
+                } else if (name.endsWith('.mjs.map')) {
+                    await fs.rename(filePath, filePath.replace(/\.mjs\.map$/, '.js.map'));
+                } else if (name === 'viewer.html') {
+                    await fs.writeFile(filePath, rewrite(await fs.readFile(filePath, 'utf8')), 'utf8');
+                }
+            }
+        }
+        console.log('✓ Module als .js gespeichert (Server ohne .mjs-MIME-Typ)');
+    }
+
     async patchViewerHtml() {
         const viewerHtmlPath = path.join(ASSETS_TARGET, 'web', 'viewer.html');
 
         try {
             let viewerHtml = await fs.readFile(viewerHtmlPath, 'utf8');
-            const scriptTag = '  <script src="../../viewer-toolbar.js?v=10.4.0"></script>\n';
+            const ymlContent = await fs.readFile(path.join(__dirname, '..', 'package.yml'), 'utf8');
+            const addonVersion = (ymlContent.match(/^version:\s*'([^']+)'/m) || [])[1] || Date.now();
+            const scriptTag = `  <script src="../../viewer-toolbar.js?v=${addonVersion}"></script>\n`;
+            const viewerScript = viewerHtml.includes('src="viewer.js"') ? 'viewer.js' : 'viewer.mjs';
 
             if (!viewerHtml.includes('viewer-toolbar.js')) {
                 viewerHtml = viewerHtml.replace(
-                    '  <script src="viewer.mjs" type="module"></script>\n',
-                    '  <script src="viewer.mjs" type="module"></script>\n' + scriptTag,
+                    `  <script src="${viewerScript}" type="module"></script>\n`,
+                    `  <script src="${viewerScript}" type="module"></script>\n` + scriptTag,
                 );
 
                 await fs.writeFile(viewerHtmlPath, viewerHtml, 'utf8');
@@ -168,6 +244,7 @@ class PdfJsUpdater {
             const packageData = require(packagePath);
             packageData.pdfjs = packageData.pdfjs || {};
             packageData.pdfjs.currentVersion = version;
+            packageData.pdfjs.currentBuild = this.getBuildVariant();
             
             await fs.writeFile(packagePath, JSON.stringify(packageData, null, 2) + '\n', 'utf8');
             console.log('✓ Updated package.json');
@@ -201,8 +278,8 @@ class PdfJsUpdater {
             console.log('=====================================\n');
 
             // Get latest or specific version
-            const release = await this.fetchLatestRelease();
-            const version = targetVersion || release.version;
+            const release = await this.fetchRelease(targetVersion);
+            const version = release.version;
             
             if (!release.downloadUrl) {
                 throw new Error('No distribution ZIP found in latest release');
@@ -212,7 +289,7 @@ class PdfJsUpdater {
             console.log(`📅 Released: ${new Date(release.publishedAt).toLocaleDateString()}\n`);
 
             // Check if already up to date
-            if (this.currentVersion === version && !targetVersion) {
+            if (this.currentVersion === version && this.currentVariant === release.variant && !targetVersion) {
                 console.log('✓ PDF.js is already up to date!');
                 return;
             }
@@ -246,6 +323,10 @@ class PdfJsUpdater {
 
             console.log('📁 Installing PDF.js files...');
 
+            // alte Version vollständig entfernen (sonst bleiben verwaiste Dateien liegen)
+            await fs.rm(path.join(ASSETS_TARGET, 'build'), { recursive: true, force: true });
+            await fs.rm(path.join(ASSETS_TARGET, 'web'), { recursive: true, force: true });
+
             // Copy build directory
             const buildSource = path.join(sourcePath, 'build');
             const buildTarget = path.join(ASSETS_TARGET, 'build');
@@ -278,6 +359,7 @@ class PdfJsUpdater {
                 console.warn('⚠ LICENSE file not found or failed to copy');
             }
 
+            await this.convertModulesToJs();
             await this.patchViewerHtml();
 
             // Update version info

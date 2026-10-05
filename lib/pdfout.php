@@ -487,7 +487,7 @@ class PdfOut extends Dompdf
                 $params = array_merge($params, $toolbarParams);
             }
 
-            $params['viewerVersion'] = '10.4.0';
+            $params['viewerVersion'] = $addon->getVersion();
 
             return self::buildViewerUrl($params);
         } else {
@@ -520,7 +520,7 @@ class PdfOut extends Dompdf
             $params = array_merge($params, $toolbarParams);
         }
 
-        $params['viewerVersion'] = '10.4.0';
+        $params['viewerVersion'] = $addon->getVersion();
 
         return self::buildViewerUrl($params);
     }

@@ -153,6 +153,27 @@ pdfjs-document-properties-linearized = Snelle webweergave:
 pdfjs-document-properties-linearized-yes = Ja
 pdfjs-document-properties-linearized-no = Nee
 pdfjs-document-properties-close-button = Sluiten
+pdfjs-digital-signature-properties-view-certificate = Certificaat bekijken
+# Shown beneath an invalid signature card to explain why verification
+# failed. The text comes from NSS (e.g. "Signature integrity has been
+# compromised", "PKCS#7 signature could not be parsed") and is not
+# itself localized — it is the underlying error message produced by
+# the verification backend.
+# Variables:
+#   $reason (String) - error message describing why the signature
+#                      could not be verified.
+pdfjs-digital-signature-properties-reason = Reden: { $reason }
+# Variables:
+#   $dateObj (Date) - the signing time from the /Sig dict's /M entry.
+pdfjs-digital-signature-properties-timestamp = Tijdstempel: { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
+# Variables:
+#   $count (Number) - number of nested sub-signatures (one per earlier
+#                     incremental revision of the document).
+pdfjs-digital-signature-properties-sub-signatures =
+    { $count ->
+        [one] Ondertekening ({ $count })
+       *[other] Ondertekeningen ({ $count })
+    }
 
 ## Print
 
@@ -166,23 +187,6 @@ pdfjs-printing-not-ready = Waarschuwing: de PDF is niet volledig geladen voor af
 
 ## Tooltips and alt text for side panel toolbar buttons
 
-pdfjs-toggle-sidebar-button =
-    .title = Zijbalk in-/uitschakelen
-pdfjs-toggle-sidebar-notification-button =
-    .title = Zijbalk in-/uitschakelen (document bevat overzicht/bijlagen/lagen)
-pdfjs-toggle-sidebar-button-label = Zijbalk in-/uitschakelen
-pdfjs-document-outline-button =
-    .title = Documentoverzicht tonen (dubbelklik om alle items uit/samen te vouwen)
-pdfjs-document-outline-button-label = Documentoverzicht
-pdfjs-attachments-button =
-    .title = Bijlagen tonen
-pdfjs-attachments-button-label = Bijlagen
-pdfjs-layers-button =
-    .title = Lagen tonen (dubbelklik om alle lagen naar de standaardstatus terug te zetten)
-pdfjs-layers-button-label = Lagen
-pdfjs-thumbs-button =
-    .title = Miniaturen tonen
-pdfjs-thumbs-button-label = Miniaturen
 pdfjs-current-outline-item-button =
     .title = Huidig item in inhoudsopgave zoeken
 pdfjs-current-outline-item-button-label = Huidig item in inhoudsopgave
@@ -195,20 +199,12 @@ pdfjs-additional-layers = Aanvullende lagen
 
 # Variables:
 #   $page (Number) - the page number
-pdfjs-thumb-page-title =
-    .title = Pagina { $page }
-# Variables:
-#   $page (Number) - the page number
 pdfjs-thumb-page-canvas =
     .aria-label = Miniatuur van pagina { $page }
 # Variables:
 #   $page (Number) - the page number
 pdfjs-thumb-page-checkbox1 =
     .title = Pagina { $page } selecteren
-# Variables:
-#   $page (Number) - the page number
-pdfjs-thumb-page-checkbox =
-    .aria-label = Pagina { $page } selecteren
 # Variables:
 #   $page (Number) - the page number
 #   $total (Number) - the number of pages
@@ -218,8 +214,8 @@ pdfjs-thumb-page-title1 =
 ## Find panel button title and messages
 
 pdfjs-find-input =
-    .title = Zoeken
     .placeholder = Zoeken in document…
+    .title = Zoeken
 pdfjs-find-previous-button =
     .title = De vorige overeenkomst van de tekst zoeken
 pdfjs-find-previous-button-label = Vorige
@@ -314,16 +310,16 @@ pdfjs-editor-highlight-button =
     .title = Markeren
 pdfjs-editor-highlight-button-label = Markeren
 pdfjs-highlight-floating-button1 =
-    .title = Markeren
     .aria-label = Markeren
+    .title = Markeren
 pdfjs-highlight-floating-button-label = Markeren
 pdfjs-comment-floating-button =
-    .title = Opmerking
     .aria-label = Opmerking
+    .title = Opmerking
 pdfjs-comment-floating-button-label = Opmerking
 pdfjs-editor-comment-button =
-    .title = Opmerking
     .aria-label = Opmerking
+    .title = Opmerking
 pdfjs-editor-comment-button-label = Opmerking
 pdfjs-editor-signature-button =
     .title = Handtekening toevoegen
@@ -396,8 +392,8 @@ pdfjs-editor-comments-sidebar-title =
        *[other] Opmerkingen
     }
 pdfjs-editor-comments-sidebar-close-button =
-    .title = De zijbalk sluiten
     .aria-label = De zijbalk sluiten
+    .title = De zijbalk sluiten
 pdfjs-editor-comments-sidebar-close-button-label = De zijbalk sluiten
 # Instructional copy to add a comment by selecting text or an annotations.
 pdfjs-editor-comments-sidebar-no-comments1 = Ziet u iets noemenswaardigs? Markeer het en laat een opmerking achter.
@@ -520,13 +516,6 @@ pdfjs-editor-alt-text-settings-dialog-label = Instellingen voor alternatieve tek
 pdfjs-editor-alt-text-settings-automatic-title = Automatische alternatieve tekst
 pdfjs-editor-alt-text-settings-create-model-button-label = Alternatieve tekst automatisch aanmaken
 pdfjs-editor-alt-text-settings-create-model-description = Stelt beschrijvingen voor om mensen te helpen die de afbeelding niet kunnen zien of voor wie de afbeelding niet wordt geladen.
-# Variables:
-#   $totalSize (Number) - the total size (in MB) of the AI model.
-pdfjs-editor-alt-text-settings-download-model-label = AI-model voor alternatieve tekst ({ $totalSize } MB)
-pdfjs-editor-alt-text-settings-ai-model-description = Wordt lokaal op uw apparaat uitgevoerd, zodat uw gegevens privé blijven. Vereist voor automatische alternatieve tekst.
-pdfjs-editor-alt-text-settings-delete-model-button = Verwijderen
-pdfjs-editor-alt-text-settings-download-model-button = Downloaden
-pdfjs-editor-alt-text-settings-downloading-model-button = Downloaden…
 pdfjs-editor-alt-text-settings-editor-title = Alternatieve-tekstbewerker
 pdfjs-editor-alt-text-settings-show-dialog-button-label = Alternatieve-tekstbewerker meteen tonen bij toevoegen van een afbeelding
 pdfjs-editor-alt-text-settings-show-dialog-description = Helpt u ervoor te zorgen dat al uw afbeeldingen alternatieve tekst hebben.
@@ -654,12 +643,9 @@ pdfjs-editor-add-comment-button =
 ##  - layers.
 ## The thumbnails view is used to edit the pdf: remove/insert pages, ...
 
-pdfjs-toggle-views-manager-button =
-    .title = Zijbalk in-/uitschakelen
 pdfjs-toggle-views-manager-notification-button =
     .title = Zijbalk in-/uitschakelen (document bevat miniaturen/overzicht/bijlagen/lagen)
 pdfjs-toggle-views-manager-button1-label = Pagina’s beheren
-pdfjs-toggle-views-manager-button-label = Zijbalk in-/uitschakelen
 pdfjs-views-manager-sidebar =
     .aria-label = Zijbalk
 pdfjs-views-manager-sidebar-resizer =
@@ -670,11 +656,9 @@ pdfjs-views-manager-view-selector-button-label = Weergaven
 pdfjs-views-manager-pages-title = Pagina’s
 pdfjs-views-manager-outlines-title1 = Documentoverzicht
     .title = Documentoverzicht (dubbelklik om alle items uit te vouwen/samen te vouwen)
-pdfjs-views-manager-outlines-title = Documentoverzicht
 pdfjs-views-manager-attachments-title = Bijlagen
 pdfjs-views-manager-layers-title1 = Lagen
     .title = Lagen (dubbelklik om alle lagen naar de standaardstatus terug te zetten)
-pdfjs-views-manager-layers-title = Lagen
 pdfjs-views-manager-pages-option-label = Pagina’s
 pdfjs-views-manager-outlines-option-label = Documentoverzicht
 pdfjs-views-manager-attachments-option-label = Bijlagen
@@ -695,7 +679,6 @@ pdfjs-views-manager-pages-status-copy-button-label = Kopiëren
 pdfjs-views-manager-pages-status-cut-button-label = Knippen
 pdfjs-views-manager-pages-status-delete-button-label = Verwijderen
 pdfjs-views-manager-pages-status-export-selected-button-label = Geselecteerde exporteren…
-pdfjs-views-manager-pages-status-save-as-button-label = Opslaan als…
 # Variables:
 #   $count (Number) - the number of selected pages to be cut.
 pdfjs-views-manager-status-undo-cut-label =
@@ -738,8 +721,77 @@ pdfjs-views-manager-paste-button-after =
 # Badge used to promote a new feature in the UI, keep it as short as possible.
 # It's spelled uppercase for English, but it can be translated as usual.
 pdfjs-new-badge-content = NIEUW
+pdfjs-views-manager-waiting-for-file = Bestand uploaden…
 pdfjs-toggle-views-manager-button1 =
     .title = Pagina’s beheren
+
+## Digital signature properties (signature verification panel)
+
+pdfjs-digital-signature-properties-button =
+    .aria-label = Eigenschappen digitale handtekening
+    .title = Eigenschappen digitale handtekening
+pdfjs-digital-signature-properties-button-label = Eigenschappen digitale handtekening
+
+## Banner shown above the signature list summarising the overall
+## verification state of the document. Each variant is selected by the
+## viewer based on the worst per-signature status; one signature is
+## enough to lower the banner.
+##
+## Variables:
+##   $count (Number) - number of signatures at the worst level.
+
+pdfjs-digital-signature-properties-banner-verified = Document is ondertekend met een geldige digitale handtekening
+pdfjs-digital-signature-properties-banner-unknown =
+    { $count ->
+        [one] Document ondertekend, maar { $count } digitale handtekening kon niet worden geverifieerd
+       *[other] Document ondertekend, maar { $count } digitale handtekeningen konden niet worden geverifieerd
+    }
+pdfjs-digital-signature-properties-banner-untrusted =
+    { $count ->
+        [one] Document ondertekend met { $count } certificaat dat niet wordt vertrouwd
+       *[other] Document ondertekend met { $count } certificaten die niet worden vertrouwd
+    }
+pdfjs-digital-signature-properties-banner-expired =
+    { $count ->
+        [one] Document ondertekend met { $count } verlopen certificaat
+       *[other] Document ondertekend met { $count } verlopen certificaten
+    }
+pdfjs-digital-signature-properties-banner-invalid =
+    { $count ->
+        [one] Document heeft { $count } ongeldige digitale handtekening
+       *[other] Document heeft { $count } ongeldige digitale handtekeningen
+    }
+pdfjs-digital-signature-properties-banner-revoked =
+    { $count ->
+        [one] Document ondertekend met { $count } ingetrokken certificaat
+       *[other] Document ondertekend met { $count } ingetrokken certificaten
+    }
+
+## Per-signature status row. Only three distinct strings are needed:
+## the signature crypto either verified (the cert chain may still be
+## untrusted/expired/revoked, but that's surfaced on the cert row
+## below), or it failed, or its sub-format isn't supported.
+
+pdfjs-digital-signature-properties-status-verified = Status: handtekening geverifieerd
+pdfjs-digital-signature-properties-status-invalid = Status: handtekening ongeldig
+pdfjs-digital-signature-properties-status-unknown = Status: kan niet worden geverifieerd (niet ondersteund)
+
+## Per-signature certificate row. The variants with an issuer / date in
+## parentheses embed fully-localized context — no English fall-through.
+##
+## Variables:
+##   $issuer (String) - issuer or subject common name from the cert.
+##   $dateObj (Date)  - notAfter date for the expired-with-date form.
+
+pdfjs-digital-signature-properties-certificate-trusted = Certificaat: vertrouwd ({ $issuer })
+pdfjs-digital-signature-properties-certificate-unknown = Certificaat: niet beschikbaar
+pdfjs-digital-signature-properties-certificate-untrusted = Certificaat: niet vertrouwd
+pdfjs-digital-signature-properties-certificate-untrusted-unknown-issuer = Certificaat: onbekende uitgever ({ $issuer })
+pdfjs-digital-signature-properties-certificate-untrusted-self-signed = Certificaat: zelfondertekend ({ $issuer })
+pdfjs-digital-signature-properties-certificate-untrusted-untrusted-issuer = Certificaat: niet-vertrouwde uitgever ({ $issuer })
+pdfjs-digital-signature-properties-certificate-expired = Certificaat: verlopen
+pdfjs-digital-signature-properties-certificate-expired-with-date = Certificaat: verlopen ({ DATETIME($dateObj, dateStyle: "medium") })
+pdfjs-digital-signature-properties-certificate-revoked = Certificaat: ingetrokken
 
 ## Main menu for adding/removing signatures
 

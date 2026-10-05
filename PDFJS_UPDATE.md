@@ -77,7 +77,8 @@ Die Exclusion-Liste in `package.json` steuert, welche Komponenten übersprungen 
 ```json
 {
   "pdfjs": {
-    "currentVersion": "5.4.394",
+    "currentVersion": "6.4.299",
+    "build": "legacy",
     "source": "github-releases",
     "excludeComponents": [
       "cmaps",  // Character Maps für CJK-Schriften (Chinesisch/Japanisch/Koreanisch)
@@ -86,6 +87,23 @@ Die Exclusion-Liste in `package.json` steuert, welche Komponenten übersprungen 
   }
 }
 ```
+
+### Build-Variante: `legacy` (Standard) oder `modern`
+
+PDF.js erscheint in zwei Varianten. Die **moderne** läuft nur in aktuellen Browsern – auf iPhones/iPads
+mit älterem iOS bleibt der Viewer dann leer. Die **Legacy**-Variante bringt Polyfills mit und läuft auch
+in älteren Safari-, Chrome- und Firefox-Versionen. Darum ist `"build": "legacy"` voreingestellt;
+`"modern"` spart etwas Größe, wenn nur aktuelle Browser unterstützt werden müssen. Welche Variante
+installiert ist, steht in `pdfjs.currentBuild`.
+
+### Dateiendung der Module: `.js` (Standard) oder `.mjs`
+
+PDF.js liefert seine Module als `.mjs`. Viele Server kennen diese Endung nicht und senden
+`application/octet-stream` – Browser verweigern dann die Ausführung, der Viewer bleibt leer
+(betrifft z. B. nginx unter Plesk, der statische Dateien direkt ausliefert und `AddType` in der
+`.htaccess` ignoriert). Darum speichert das Update-Skript die Module als `.js` und passt die
+Verweise in `viewer.html`, `viewer.js` und `pdf.js` an. Mit `"moduleExtension": "mjs"` bleibt es
+bei den Original-Dateien.
 
 ### Was wird ausgeschlossen?
 
@@ -104,10 +122,10 @@ Wenn du doch CJK-Unterstützung brauchst, entferne einfach `"cmaps"` aus der Lis
 
 ## 🔄 Update-Prozess im Detail
 
-1. **GitHub API-Abfrage**: Neueste Release-Version ermitteln
-2. **Distribution-Download**: Vollständige ZIP-Datei von GitHub herunterladen
+1. **GitHub API-Abfrage**: Neueste (oder angegebene) Release-Version ermitteln
+2. **Distribution-Download**: ZIP der gewählten Variante (`legacy`/`modern`) von GitHub herunterladen
 3. **Extraktion**: ZIP in temporäres Verzeichnis entpacken
-4. **Asset-Kopie**: Alle benötigten Dateien nach `assets/vendor/` kopieren
+4. **Asset-Kopie**: `assets/vendor/build` und `assets/vendor/web` werden geleert und neu befüllt (keine Reste alter Versionen), `viewer.html` bekommt das Toolbar-Skript
 5. **Version-Update**: `package.json` und `package.yml` aktualisieren
 6. **Aufräumen**: Temporäre Dateien entfernen
 
