@@ -1,5 +1,9 @@
 # Changelog
 
+## 11.1.1 – 26.10.2026
+
+- Update von 10.x über den Installer brach ab mit `Class "FriendsOfRedaxo\PdfOut\Poppler" not found` ([#121](https://github.com/FriendsOfREDAXO/pdfout/issues/121)). Beim Update läuft `install.php` aus dem neuen Ordner, der Autoloader kennt aber nur `lib/` der alten Version; die Klasse wird jetzt über `__DIR__` geladen. Neuinstallationen waren nicht betroffen.
+
 ## 11.1.0 – 05.10.2026
 
 ### Poppler ist optional

@@ -9,7 +9,11 @@ use FriendsOfRedaxo\PdfOut\Poppler;
 
 $addon = rex_addon::get('pdfout');
 
-require_once $addon->getPath('vendor/autoload.php');
+// Beim Update laeuft diese Datei aus .new.pdfout, der Autoloader kennt aber nur lib/ der alten Version.
+// Den Vendor-Ordner braucht diese Datei nicht (ueber __DIR__ geladen, zeigte er nach dem Update ins Leere).
+if (!class_exists(Poppler::class)) {
+    require_once __DIR__ . '/lib/Poppler.php';
+}
 
 // Poppler ist optional: ohne die poppler-utils fehlen nur Prüfen und Auslesen (Signaturen, Metadaten, Text)
 $missing = function_exists('proc_open') ? Poppler::missing() : Poppler::REQUIRED;
