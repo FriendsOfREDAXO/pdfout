@@ -1,5 +1,10 @@
 # Changelog
 
+## 11.1.2 – 28.10.2026
+
+- Mindestversion ist jetzt **PHP 8.2** (bisher 8.4); mehr verlangen auch die Abhängigkeiten nicht
+- Lief ein Prozess mit älterem PHP als vom Addon verlangt (z. B. ein Cronjob über eine andere PHP-CLI), brach REDAXO komplett ab mit `Composer detected issues in your platform` ([#123](https://github.com/FriendsOfREDAXO/pdfout/issues/123)). Der Composer-Plattform-Check ist abgeschaltet; in solchen Prozessen bleibt pdfout aus, der Rest von REDAXO läuft weiter. Die Mindestversion prüft weiterhin der Installer.
+
 ## 11.1.1 – 26.10.2026
 
 - Update von 10.x über den Installer brach ab mit `Class "FriendsOfRedaxo\PdfOut\Poppler" not found` ([#121](https://github.com/FriendsOfREDAXO/pdfout/issues/121)). Beim Update läuft `install.php` aus dem neuen Ordner, der Autoloader kennt aber nur `lib/` der alten Version; die Klasse wird jetzt über `__DIR__` geladen. Neuinstallationen waren nicht betroffen.
