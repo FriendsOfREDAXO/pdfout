@@ -1,12 +1,12 @@
 package: pdfout
-version: '11.1.1'
+version: '11.1.2'
 pdfjs: '6.4.299'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/pdfout
 requires:
     redaxo: '^5.15.1'
     php:
-        version: '>=8.4'
+        version: '>=8.2'
         extensions: [gd, openssl, mbstring, zlib, dom]
 
 page:

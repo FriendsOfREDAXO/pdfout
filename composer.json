@@ -1,14 +1,15 @@
 {
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.2",
         "dompdf/dompdf": "^3.1.5",
         "tecnickcom/tc-lib-pdf": "^8.78"
     },
     "config": {
         "platform": {
-            "php": "8.4.0"
+            "php": "8.2.0"
         },
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "platform-check": false
     },
     "scripts": {
         "tc-lib-pdf-fonts": [

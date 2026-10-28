@@ -31,7 +31,7 @@ Alle Klassen und Methoden im Detail: [API-Referenz](API.md). Tipps für den Eins
 
 Installation über den REDAXO-Installer oder von [GitHub](https://github.com/FriendsOfREDAXO/pdfout).
 
-- PHP 8.4 oder neuer mit den Erweiterungen dom, mbstring, gd, openssl und zlib
+- PHP 8.2 oder neuer mit den Erweiterungen dom, mbstring, gd, openssl und zlib
 - REDAXO 5.15 oder neuer
 - optional: **poppler-utils** (`pdfinfo`, `pdfsig`, `pdftoppm`, `pdftotext`) und die PHP-Funktion `proc_open()`
 
@@ -293,7 +293,7 @@ Die bisherigen Methoden bleiben erhalten und nutzen intern die neue Technik.
 
 Was sich ändert:
 
-- PHP 8.4 ist Mindestversion. Poppler ist optional (ab 11.1, in 11.0 noch Voraussetzung).
+- PHP 8.2 ist Mindestversion (bis 11.1.1: 8.4). Poppler ist optional (ab 11.1, in 11.0 noch Voraussetzung).
 - TCPDF und FPDI sind entfernt. Wer sie im eigenen Code direkt nutzt, bindet sie selbst per Composer ein oder stellt auf `PdfDocument` um.
 - Entfernte geschützte Methoden (nur für Unterklassen relevant): `runWithTcpdf()`, `addDigitalSignature()`, `addDigitalSignatureFinal()`, `addPasswordProtection()`, `processTcpdfOutput()`, `drawSignatureArea()`, `addSignatureAreaToFpdi()`, `addCleanSignatureArea()`.
 - Passwortschutz: Die Liste nennt die erlaubten Rechte, wie dokumentiert. Bisher wurden die genannten Rechte versehentlich gesperrt – mit `['print']` war Drucken verboten.
@@ -319,7 +319,7 @@ Schriften für tc-lib-pdf erzeugen (nach `composer install`; mitgeliefert werden
 php scripts/build-fonts.php core
 ```
 
-Composer-Abhängigkeiten werden für PHP 8.4 aufgelöst (`config.platform`), `vendor/` wird mit dem Addon ausgeliefert.
+Composer-Abhängigkeiten werden für PHP 8.2 aufgelöst (`config.platform`), `vendor/` wird mit dem Addon ausgeliefert.
 
 ## Bibliotheken und Lizenzen
 

@@ -1,6 +1,18 @@
 <?php
 
 $addon = rex_addon::get('pdfout');
+
+// Läuft ein Prozess mit älterem PHP (z. B. Cronjob über eine andere PHP-CLI), bleibt pdfout dort aus,
+// statt REDAXO abzubrechen. Die Mindestversion prüft der Installer.
+if (PHP_VERSION_ID < 80200) {
+    if (rex::isBackend()) {
+        rex_extension::register('PAGES_PREPARED', static function (): void {
+            rex_be_controller::getPageObject('pdfout')?->setHidden(true);
+        });
+    }
+    return;
+}
+
 rex_dir::create($addon->getCachePath());
 rex_dir::create(rex_path::addonCache('pdfout', 'fonts'));
 
