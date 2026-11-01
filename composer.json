@@ -2,7 +2,7 @@
     "require": {
         "php": ">=8.2",
         "dompdf/dompdf": "^3.1.5",
-        "tecnickcom/tc-lib-pdf": "^8.78"
+        "tecnickcom/tc-lib-pdf": "^8.82"
     },
     "config": {
         "platform": {
